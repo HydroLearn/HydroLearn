@@ -2,8 +2,11 @@
 Repository for the HydroLearn Project
 
 HydroLearn has been developed utilizing:  
-Python 3.5
+- Python 3.5.4
+- django 1.11.7
+- djangocms 3.5.2
 
+*Note:* the following steps will be simplified in a future release.
 
 # Running Project
 
@@ -82,10 +85,10 @@ Once the project is running you will need to connect some pages to the installed
   2. Login using the credentials you provided in the `createsuperuser` prompts in the previous section. 
     
   3. once in the admin interface, You should see a section titled 'DJANGOCMS'
-    - find this section and click the `Pages` link.
+      - find this section and click the `Pages` link.
     
   4. First things first, we need to generate the Home page. Select the "New Page" button on the top right and in the form that appears add the following:
-      - Title should be set to Home
+      - Title should be set to "Home" (no quotes)
         - *the slug field should have auto generated as 'home' when entering the title.*
       - At the bottom of the form click the 'Save and continue editing' button (this will trigger a page refresh)
       - Scroll to the bottom of the form and you should now see an 'Advanced Settings' option to the bottom left. click it.
@@ -94,17 +97,47 @@ Once the project is running you will need to connect some pages to the installed
       - you will be redirected to the Page Tree and you will now see the 'Home' page listed. 
       - click on the Blue dot on the page and select 'Publish'
       
-  5. Next, we will need to add the application pages to the project. There are currently 3, and the process to add each is similar so I will detail this once and you can substitute the names of the pages.
-    using the 'Module' page as the example:
+  5. Next, we will need to add the application pages to the project. There are currently 4, and the process to add each is similar so I will detail this once and you can substitute the names of the pages. Using the 'Core' page as the example:
       1. Click the 'New Page' button to the top right of the Page Tree listing.
-      2. Once the form loads, enter 'Module' as the title, and the slug field should auto-generate.
+      2. Once the form loads, enter 'Core' as the title, and the slug field should auto-generate.
       3. Scroll to the bottom of the form and click, 'Save and continue editing'
       4. Scroll to the bottom again and click, 'Advanced Settings'
-      5. Scroll down until you see the 'APPLICATION' dropdown box, and select the 'Module' option.
+      5. Scroll down until you see the 'APPLICATION' dropdown box, and select the 'Core' option. an additional field will appear showing the auto-generated application namespace
       6. Save the page.
+      7. When the Page Tree Listing loads, Publish the newly created page.      
+      8. Repeat this process for the 'Module', 'Manage', and 'Tags' applications. substituting the names where appropriate.
       
-      7. Repeat this process for the 'Manage' and 'Tags' applications. substituting the names.
-    
+      
+6. For the above generated application pages, we don't want each to be visible in the Navigation of the site. so from the Page Tree listing, uncheck the 'Menu' checkbox on the `Core`, `Tags`, and `Module` pages. and re-publish them.
+
+7. Finally, we need to add the Login/Logout pages to the site navigation. Return to the Page Tree Listing and we need to make two more pages. Which will redirect to the account Login and Logout pages respectively. The process is similar for both so, similarly to the above section, just replace the names where needed.
+      1. Click the 'New Page' Button on the top right of the page.
+      2. Set the Title to "Login"
+      3. Click 'Save and continue editing'
+      4. Scroll to the bottom and click 'Advanced Settings'
+      5. In the 'REDIRECT' field, enter `/accounts/login` (be sure to include the preceeding '/')
+      6. Save the page.
+      7. Repeat this process for the "Logout" page, substuting `/accounts/logout` for the Redirect path.
+      
+8. Now we need to set permissions to view the above generated pages in the menu.
+      - to set permissions on a page: 
+        - Navigate to the Page tree listing in the Admin interface
+        - Click on the menu-icon (three bars) to the far right of the page you wish to set permissions on.
+        - Click the 'Permissions' option from the menu.
+        
+      - the following permission settings should be used for the following pages.
+        - `Manage` - Check the 'Login Required' checkbox, and under 'Menu Visibility' select the `for logged in users only` option
+        - `Logout` - Check the 'Login Required' checkbox, and under 'Menu Visibility' select the `for logged in users only` option
+        - `Login` - under 'Menu Visibility' select the `for anonomous users only` option
+        
+9. PUBLISH each of the generated pages. (click on the blue dot on each page item and click 'Publish')
+
+
+10. If logged in (which you should be), you should now be able to access the `Manage` interface and begin developing learning modules.
+http://localhost:8000/en/manage/
+
+
+  
   
     
 
