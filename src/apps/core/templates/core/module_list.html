@@ -1,0 +1,25 @@
+<!--extend this to provide a detail view for a module-->
+{% extends CMS_TEMPLATE %}
+{% load sekizai_tags static thumbnail %}
+
+
+
+
+{% block content %}
+    {% addtoblock "css" %}{% endaddtoblock "css" %}
+
+    <h3>CORE MODULE LIST</h3>
+    
+    <div>
+        <ul class="module-list">
+            {% for module in object_list %}
+            <li>
+                <a href="{{ module.absolute_url }}">{{ module.name }}</a>
+            </li>
+            {% empty %}
+            <p>no modules yet, please add some!</p>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content %}
+

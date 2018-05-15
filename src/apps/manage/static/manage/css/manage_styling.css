@@ -1,0 +1,62 @@
+/*
+#content-wrapper > { div { border: 1px solid #ccc; //width:75%; margin: auto; margin-bottom: 15px; background: #fff; padding: 10px; } #meta_box { background: #eef; } #preview_box { background: #fff; }
+
+
+}
+*/
+.view_stack_child { padding: 10px; }
+
+input.has_error { border: 1px dashed red; }
+
+label.form-error { color: #ff5555; font-style: italic; padding: 0 10px; }
+
+.form_error_container { width: 100%; background-color: #ffe5e5; border-left: 3px solid red; padding: 10px; margin: 10px 0; clear: both; text-align: center; color: red; font-style: italic; font-weight: bold; display: none; }
+.form_error_container ul { list-style: none !important; list-style-type: none !important; }
+
+#manage-content { margin-top: 54px; padding-top: 30px; }
+
+#modules-content #my_modules_header { float: left; }
+@media (max-width: 480px) { #modules-content #my_modules_header { font-size: 17px; } }
+#modules-content #create_module { float: right; margin: 13px 0 10px; transition: all .2s; font-weight: bold; background-color: #85cfc1; border: none; }
+#modules-content #create_module:hover { background-color: #45a4f3; }
+@media (max-width: 480px) { #modules-content #create_module { font-size: 12px; } }
+#modules-content .module-action-container { width: 275px; }
+#modules-content .module-action-container a { margin: 3px 5px; }
+#modules-content .module-action-container a i { font-size: 20px; padding: 3px 3px; border-radius: .3em; }
+#modules-content .module-action-container a i:hover { background-color: #eee; }
+#modules-content .module-action-container a.disabled_action i { color: #ccc; }
+#modules-content .module-action-container a.disabled_action i:hover { cursor: not-allowed; background-color: transparent; }
+@media (max-width: 480px) { #modules-content .module-action-container { width: 200px; } }
+#modules-content #crumb_trail a.crumb_entry { color: #45a4f3; cursor: pointer; }
+#modules-content #crumb_trail a.crumb_entry:hover { color: #85cfc1; }
+#modules-content #crumb_trail a.crumb_entry.current_view { cursor: default; color: #666; }
+#modules-content input[name$='-DELETE'], #modules-content label[for$='-DELETE'] { display: none; }
+#modules-content #post-new-module table tr td { padding: 10px; }
+#modules-content #post-new-module .helptext { font-style: italic; font-size: .9em; }
+#modules-content #post-new-module .Add_button { background: #85cfc1; color: white; margin: 0 10px; }
+#modules-content #post-new-module .Add_button:hover { background: #45a4f3; }
+#modules-content #post-new-module .Remove_button { background: #b1213c; color: white; margin: 0 10px 10px; }
+#modules-content #post-new-module .Remove_button:hover { background: red; }
+#modules-content #post-new-module .topic_listing_header { display: inline-block; }
+#modules-content #post-new-module .topic_actions_btn_group { float: right; }
+#modules-content #post-new-module .topic_actions_btn_group i { font-size: 1.2em; vertical-align: middle; }
+#modules-content #post-new-module .Topic-Accord .ui-state-focus { outline: none; }
+#modules-content #post-new-module .Topic-Accord h3.ui-accordion-header { margin: 2px 0; padding: 0.3em 1em; background: #45a4f3; color: #fff; transition: background .2s; box-shadow: #dcdcdc 2px 2px 5px 1px; }
+#modules-content #post-new-module .Topic-Accord h3.ui-accordion-header:hover { background: #3D6BAA; }
+#modules-content #post-new-module .Topic-Accord div.ui-accordion-content { margin: -1px 0 8px 0; padding: 1em; border: 1px solid #F5F5F5; box-shadow: #dcdcdc 2px 2px 5px 1px; background: #fff; }
+#modules-content #post-new-module .Topic-Accord .section_listing_header { display: inline-block; }
+#modules-content #post-new-module .Topic-Accord .add_new_sections_btn_group { float: right; }
+#modules-content #post-new-module .Topic-Accord .add_new_sections_btn_group i { font-size: 1.2em; vertical-align: middle; }
+#modules-content #post-new-module .lesson_listing_header { display: inline-block; }
+#modules-content #post-new-module .lesson_actions_btn_group { float: right; }
+#modules-content #post-new-module .lesson_actions_btn_group i { font-size: 1.2em; vertical-align: middle; }
+#modules-content #post-new-module .Lesson-Accord .ui-state-focus { outline: none; }
+#modules-content #post-new-module .Lesson-Accord h3.ui-accordion-header { margin: 2px 0; padding: 5px 5px; background: #9cc4f7; color: #333; border: 1px solid #ccc; font-size: 17px; }
+#modules-content #post-new-module .Lesson-Accord h3.ui-accordion-header:hover { background: #83aadc; }
+#modules-content #post-new-module .Lesson-Accord div.ui-accordion-content { padding: 1em; margin: -2px 1px 8px 0; }
+#modules-content #post-new-module .Section-Accord .ui-state-focus { outline: none; }
+#modules-content #post-new-module .Section-Accord h3.ui-accordion-header { margin: 2px 0; padding: 5px 5px; background: #F5F5F5; color: #666; border: 1px solid #ccc; font-size: 17px; }
+#modules-content #post-new-module .Section-Accord h3.ui-accordion-header:hover { background: #e1e1e3; }
+#modules-content #post-new-module .Section-Accord div.ui-accordion-content { padding: 1em; margin: -2px 1px 8px 0; }
+
+/*# sourceMappingURL=manage_styling.css.map */

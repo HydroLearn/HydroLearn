@@ -1,0 +1,1676 @@
+﻿
+/*#main-content {
+            
+            padding-top: 124px;
+            min-width: 1150px;
+            max-width: 1250px;
+            overflow: visible;
+        }*/
+#map-content {
+    position: fixed;
+}
+
+.map {
+    height: 100%;
+    width: 100%;
+}
+
+#map-content #content {
+    position: fixed;
+    top: 76px;
+    height: 405px;
+    width: 1399px;
+    background-color: #ddd;
+}
+
+#mapPanel {
+    position: absolute;
+    /*background: none repeat scroll 0 0 rgba(255, 255, 255, 0.4);*/
+    border-radius: 4px;
+    padding: 5px;
+    z-index: 1000;
+    /*width: 40px;*/
+    height: auto;
+    top: 5px;
+    margin-left: 40px;
+}
+    /*styling for ol2 map controls*/
+    #mapPanel .olButton{
+        /*background: none repeat scroll 0 0 rgba(0, 60, 136, 0.5);*/
+        /*float: left;*/
+        background-position: 3px 3px;
+        background-color: rgba(255, 255, 255, 0.4);
+        display: block;
+        position: relative;
+
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        margin: 0px 0px;
+        padding: 0;
+        color: white;
+        
+        
+        
+        /*font-family: 'Lucida Grande',Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+        font-size: 18px;
+        font-weight: bold;
+        line-height: 19px;
+        
+        text-align: center;
+        text-decoration: none;*/
+        
+    }
+        #mapPanel .olButton:first-child {
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+        #mapPanel .olButton:last-child{
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+    
+    #mapPanel .popover {
+        top: 8px !important;
+        left: 30px !important;  
+        background: #eeeeee;  
+    }
+
+    #mapPanel .popover .arrow {
+        display: none;   
+    }
+
+    #mapPanel .popover .popover-title {
+        background: #EF8C08;
+        color: white;
+        font-weight: bold;
+    }
+
+    #Map_Help_content{
+        display: none;
+    }
+
+    #mapPanel .help_entry_container {
+        display: table;
+        border-spacing: 2px 5px;
+    }
+
+    #mapPanel .help_entry {
+        margin-bottom: 5px;
+        display: table-row;
+    }
+
+    #mapPanel .help_entry_item {
+        display: table-cell;
+        width: 52px;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    #mapPanel .help_entry_description {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    #mapPanel .help_entry_title {
+        font-weight: bold;
+    }
+
+    #mapPanel .control-sample {
+        display: inline-block;
+        margin: 1px;
+        padding: 0;
+        color: #fff;
+        font-size: 1.14em;
+        font-weight: 700;
+        text-decoration: none;
+        height: 1.375em;
+        width: 1.375em;
+        background-color: rgba(0,60,136,.5);
+        text-align: center;
+        border-radius: 3px;
+    }
+
+    #mapPanel .control-sample img {
+        vertical-align: middle;
+    }
+
+    .olControlAttribution {
+        left: 40px;
+        padding-bottom: 50px;
+    }
+
+    .olControlZoomBoxItemInactive {
+    background: url('../../images/Map_Icons/zoombox.png') no-repeat 0 0;
+}
+
+    .olControlZoomBoxItemActive {
+        background: url('../../images/Map_Icons/zoombox_active.png') no-repeat 0 0;
+    }
+
+    .olControlZoomOutItemInactive {
+        background: url('../../images/Map_Icons/zoomout.png') no-repeat 0 0;
+    }
+
+    .olControlZoomInItemInactive {
+        background: url('../../images/Map_Icons/zoomin.png') no-repeat 0 0;
+    }
+
+    .olControlZoomToMaxExtentItemInactive {
+        background: url('../../images/Map_Icons/zoommax.png') no-repeat 0 0;
+    }
+
+    .olControlZoomBoxItemInactive:hover {
+        background: url('../../images/Map_Icons/zoombox_hover.png') no-repeat 0 0;
+    }
+
+    .olControlZoomBoxItemActive:hover {
+        background: url('../../images/ap_Icons/zoombox_hover.png') no-repeat 0 0;
+    }
+
+    .olControlZoomOutItemInactive:hover {
+        background: url('../../images/Map_Icons/zoomout_hover.png') no-repeat 0 0;
+    }
+
+    .olControlZoomInItemInactive:hover {
+        background: url('../../images/Map_Icons/zoomin_hover.png') no-repeat 0 0;
+    }
+
+    .olControlZoomToMaxExtentItemInactive:hover {
+        background: url('../../images/Map_Icons/zoommax_hover.png') no-repeat 0 0;
+    }
+
+    .olControlLayerSwitcher .maximizeDiv, .olControlLayerSwitcher .minimizeDiv {
+        display: none;
+    }
+
+    .olPopupContent {
+        background-color: #eee;
+        font-size: 12px;
+    }
+
+
+.dlsteps {
+    padding: 5px;
+}
+
+.dlsteps label {
+    width: 150px;
+    display: block;
+    float: left;
+}
+
+.ui-tooltip {
+    white-space: pre-line;
+}
+
+#map .collapsible_container .content_container {
+    border: 1px solid #aaa;
+    background-color: #ccc;
+    /*overflow-x: auto;*/
+    transition: all .4s;
+    opacity: .9;
+}
+
+    #map .collapsible_container .icon {
+        padding: 5px 25px;
+    }
+
+    #map .collapsible_container.HORIZ .icon {
+        padding: 7px 5px 20px 4px;
+    }
+
+    #map .collapsible_container .icon.flipY {
+        -moz-transform: scaleY(-1);
+        -o-transform: scaleY(-1);
+        -webkit-transform: scaleY(-1);
+        transform: scaleY(-1);
+        filter: FlipV;
+        -ms-filter: "FlipV";
+    }
+
+    #map .collapsible_container .icon.flipY div {
+        -moz-transform: none;
+        -o-transform: none;
+        -webkit-transform: none;
+        transform: none;
+        filter: none;
+        -ms-filter: "none";
+
+    }
+
+
+    #map .collapsible_container .icon .text {
+        float: left;
+        font-weight: bold;
+        font-size: 14px;
+        /*margin: 0 0 0 12px;*/
+        color: #fff;
+        transition: .5s color ease;
+    }
+
+    #map .collapsible_container.HORIZ .icon .text {
+        transform-origin: left bottom 0;
+        transform: rotate(90deg);
+        
+        float: left;
+        font-weight: bold;
+        font-size: 14px;
+        margin: -14px 0 0 0;
+        color: #fff;
+        transition: .5s color ease;
+    }
+
+    #map .collapsible_container .icon:hover .text {
+        color: #333;
+    }
+
+    #map .collapsible_container .icon.flipY .text {
+        
+        transform: scaleY(-1) rotate(90deg) translateX(-120%);
+    }
+
+
+    #map .collapsible_container .selectedTab .text {
+        color: #333 !important;
+    }
+
+    #map .collapsible_container .selectedTab:hover .text {
+        color: #fff !important;
+    }
+
+#basemap {
+    position: fixed;
+    z-index: 2000;
+    right: 0px;
+    float: right;
+    margin-top: 5px;
+    /*height: 200px;*/
+}
+
+    #basemap .content_container {
+        height: 120px;
+        width: 300px;
+        float: right;
+        border-bottom-left-radius: .75em;
+        opacity: 0.9;
+    }
+
+    #basemap div.icon {
+        position: relative;
+        background: transparent url('../../images/Map_Icons/vert_tab_default_small.png') no-repeat center;
+        margin-top: 0px;
+        float: right;
+        width: 22px;
+        height: 100px;
+        z-index: 2002;
+        cursor: pointer;
+    }
+
+    #basemap div.icon .text {
+        font-size: 14px;
+        /*margin: 0 0 0 12px;*/
+    }
+
+    #basemap .selectedTab {
+        background: transparent url('../../images/Map_Icons/vert_tab_selected_small.png') no-repeat center !important;
+    }
+
+    
+
+    #basemap div.content {
+        position: relative;
+        float: left;
+        padding: 10px;
+        font-size: 12px;
+        z-index: 2001;
+        display: none;
+    }
+
+        #basemap div.content h3 {
+            margin: 5px;
+            padding: 0;
+            color: white;
+            font-size: 150%;
+        }
+
+        #basemap div.content div {
+            margin-bottom: 10px;
+        }
+
+        #basemap div.content img {
+            width: 73px;
+            border: 3px solid white;
+        }
+
+        #basemap div.content a {
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+
+#layers {
+    position: fixed;
+    bottom: 20px;
+    right: 0;
+    z-index: 1005;
+    /*width: 315px;*/
+}
+
+    #layers .content_container {
+        height: 300px;
+        width: 295px;
+        background-color: #ccc;
+        overflow-x: hidden;
+        overflow-y: auto;
+        float: right;
+        border-top-left-radius: .75em;
+        transition: all .4s;
+        opacity: 0.9;
+    }
+
+    #layers .icon {
+        position: relative;
+        float: right;
+        background: transparent url('../../images/Map_Icons/vert_tab_default.png') no-repeat center;
+        height: 198px;
+        width: 22px;
+        margin-top: 106px;
+        z-index: 1007;
+        cursor: pointer;
+    }
+
+    #layers div.icon .text {
+        font-size: 16px !important;
+        /*margin: 140px 0 0 12px !important;*/
+    }
+
+
+
+    #layers .selectedTab {
+        background: transparent url('../../images/Map_Icons/vert_tab_selected.png') no-repeat center !important;
+    }
+
+    
+
+    #layers .content {
+        position: relative;
+        float: left;
+        background-color: #ccc;
+        background-color: rgba(204, 204, 204, 0.8);
+        width: 290px;
+        max-height: 450px;
+        padding: 0 10px;
+        font-size: 12px;
+        z-index: 1006;
+    }
+
+        #layers .content h3 {
+            margin: 5px;
+            padding: 0;
+            color: white;
+            font-size: 150%;
+        }
+
+        #layers .content div.layers_content_title {
+            margin: 5px;
+            padding: 0;
+            color: white;
+            font-size: 150%;
+        }
+
+        #layers .content div.layers_content_toolbox {
+            width: 95%;
+            text-align: center;
+            margin-top: 4px;
+            margin-bottom: 10px;
+            background-color: #ccc;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+            padding: 3px 10px;
+        }
+
+        #layers .content div {
+            background: transparent;
+        }
+
+/* legend panel  styles */
+#legpanel {
+    /*display: none;*/
+    text-align: left;
+    position: absolute;
+    left: 55px;
+    bottom: 20px;
+    z-index: 1005;
+}
+
+
+    #legpanel .selectedTab {
+        background: transparent url('../../images/Map_Icons/horiz_tab_selected.png') no-repeat left !important;
+    }
+
+    #legpanel .icon {
+        background: transparent url('../../images/Map_Icons/horiz_tab_default.png') no-repeat left;
+        padding: 2px;
+        border-top-right-radius: 4px;
+        border-top-left-radius: 4px;
+        cursor: pointer;
+        height: 22px;
+        width: 225px;
+    }
+
+    #legpanel .icon .text {
+        font-size: 16px;
+        /*margin: 2px 0 0 12px;*/
+    }
+
+    #legpanel .content_container {
+        background-color: #CCCCCC;
+        padding: 2px;
+        border-bottom-right-radius: 4px;
+        border-bottom-left-radius: 4px;
+        border-top-right-radius: 4px;
+        width: 300px;
+        max-height: 370px;
+        overflow-y: auto;
+        text-align: left;
+        opacity: 0.9;
+        transition: all .4s;
+        color: #CCCCCC;
+    }
+
+    #legpanel .content_container #legImg {
+            margin-left: 5px;
+    }
+
+
+
+    /* Define custom legend table object styles */
+    .layer_legend {
+        display: table;
+        margin: 0 0 5px 5px;
+        width: 265px;
+    }
+    
+        .layer_legend div {
+            color: #333;
+        }
+
+        .layer_legend .legend_title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            display: table-caption;
+        }
+
+        .layer_legend .legend_row {
+            display: table-row;
+        }
+
+        .legend_row .legend_icon_cell {
+            display: table-cell;
+            vertical-align: middle;
+            width: 25px;
+            padding: 2px 10px 5px 10px;
+        }
+            
+            .legend_icon_cell .legend_color_block {
+                border: 1px solid #555555;
+                display: block;
+                height: 12px;
+                width: 20px;
+            }
+            .legend_icon_cell .legend_icon_img {
+                display: block;
+                max-height: 12px;
+                max-width: 20px;
+                margin: auto;
+            }
+        
+        .legend_desc_cell {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        
+
+
+
+/* end legend panel  styles */
+
+#infodialog {
+    color: #2C4359;
+    font-size: 12px;
+    z-index: 2000;
+}
+
+    #infodialog a {
+        color: #2C4359;
+        font-size: 12px;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+        #infodialog a:hover {
+            text-decoration: none;
+        }
+
+
+
+.ui-widget, .ui-widget select {
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 12px;
+}
+/* tooltip start */
+.ui-tooltip, .arrow:after {
+    background: white;
+    border: 2px solid #eee;
+}
+
+.ui-tooltip {
+    padding: 10px 20px;
+    color: black;
+    border-radius: 20px;
+    font: 12px "Helvetica Neue", Sans-Serif;
+    box-shadow: 0 0 7px black;
+    width: 200px;
+}
+
+.arrow {
+    width: 70px;
+    height: 16px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -35px;
+    bottom: -16px;
+}
+
+    .arrow.top {
+        top: -16px;
+        bottom: auto;
+    }
+
+    .arrow.left {
+        left: 20%;
+    }
+
+    .arrow:after {
+        content: "";
+        position: absolute;
+        left: 20px;
+        top: -20px;
+        width: 25px;
+        height: 25px;
+        box-shadow: 6px 5px 9px -9px black;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    .arrow.top:after {
+        bottom: -20px;
+        top: auto;
+    }
+
+.infoWin {
+    padding: 5px 5px 5px 5px;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 12px;
+}
+
+    .infoWin img {
+        border: 1px solid #93C3CD;
+    }
+
+    .infoWin text {
+        line-height: 18px;
+    }
+
+    .infoWin a {
+        text-decoration: none;
+        color: #2C4359;
+        font-size: 13px;
+        border-bottom: 1px solid #93C3CD;
+    }
+
+        .infoWin a:hover {
+            background: #E1E463;
+        }
+
+    .infoWin b {
+        border-bottom: 2px solid #E1E463;
+        font-size: 13px;
+        font-weight: normal;
+        margin: 0;
+        height: 20px;
+    }
+
+    .infoWin ul {
+        background: #eee;
+        width: 400px;
+    }
+
+    .infoWin li {
+        list-style: circle outside;
+        line-height: 30px;
+    }
+
+#runDialog {
+    position: relative;
+    width: 400px;
+    height: auto;
+    padding: 15px;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 12px;
+}
+
+/*
+    Correcting issue where dragging a dynamically modified dialog resets height variable (must be done per dynamic dialog)
+
+*/
+.ui-dialog[aria-describedby="runDialog"] {
+    height: auto !important;
+}
+
+.runTable {
+    border: 1px solid #93C3CD;
+    padding: 0px;
+    width: 400px;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+#runDialog h2 {
+    border-bottom: 2px solid #E1E463;
+    font-size: 13px;
+    font-weight: normal;
+    margin: 0;
+    height: 20px;
+    width: 95%;
+}
+
+.runTable td b {
+    color: #2C4359;
+    font-size: 13px;
+    font-weight: normal;
+}
+
+.runTable td {
+    width: 70px;
+    border: 1px solid #93C3CD;
+    padding: 0px;
+}
+
+#downloadDialog {
+    position: relative;
+    width: 350px;
+    height: 250px;
+    padding: 5px 5px 5px 5px;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 12px;
+}
+
+/*the map dialog download button*/
+#download {
+    float: right;
+    color: white;
+    background: #6997AC;
+    border-radius: .75em;
+}
+
+    #download:hover {
+        background: #EF8C08;
+    }
+
+#visualize {
+    float: right;
+    color: white;
+    background: #6997AC;
+    border-radius: .75em;
+}
+
+    #visualize:hover {
+        background: #EF8C08;
+    }
+
+#visualization_extent_error_msg {
+    display: none;
+    color: #E4522F;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 0.75em;
+    text-align: right;
+}
+
+#download_model_data_btn {
+    float: right;
+}
+
+    #download_model_data_btn:hover {
+        background: #EF8C08;
+    }
+
+/*
+    Dialog box styling
+    */
+
+/*Toggle Cell Clickable*/
+#cell_control_panel {
+    background: none repeat scroll 0 0 rgba(255, 255, 255, 0.4);
+    position: absolute;
+    border-radius: 4px;
+    padding: 3px;
+    z-index: 1000;
+    width: 36px;
+    top: 160px;
+    margin-left: 45px;
+}
+
+#cell_toggle_control {
+    height: 30px;
+    width: 30px;
+    background: url('../../images/Map_Icons/cell_toggle_inactive.png') no-repeat scroll 0 0;
+}
+
+    #cell_toggle_control.active {
+        background: url('../../images/Map_Icons/cell_toggle_active.png') no-repeat scroll 0 0;
+    }
+
+    #cell_toggle_control:hover {
+        background: url('../../images/Map_Icons/cell_toggle_inactive_hover.png') no-repeat scroll 0 0;
+    }
+
+    #cell_toggle_control.active:hover {
+        background: url('../../images/Map_Icons/cell_toggle_active_hover.png') no-repeat scroll 0 0;
+    }
+
+/*End Toggle Cell Clickable*/
+
+
+/*.ui-state-default .ui-icon {
+    background-image: none ;
+}*/
+
+
+.ui-datepicker-div {
+}
+
+.ui-datepicker-title {
+    color: #333333;
+}
+
+/*
+    Date Picker styling
+    */
+/* Calendar Container */
+#ui-datepicker-div {
+    width: auto;
+    height: auto;
+    margin: 5px auto 0;
+    font: 9pt Arial, sans-serif;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);
+}
+
+    #ui-datepicker-div a {
+        text-decoration: none;
+    }
+/* Date Picker Header */
+.ui-datepicker-header {
+    background: #A0D7E0;
+    color: #e0e0e0;
+    font-weight: bold;
+    -webkit-box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, 2);
+    -moz-box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, .2);
+    box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, .2);
+    text-shadow: 1px -1px 0px #000;
+    filter: dropshadow(color=#000, offx=1, offy=-1);
+    line-height: 30px;
+}
+
+.ui-datepicker-title {
+    text-align: center;
+}
+
+.ui-datepicker-prev {
+    float: left;
+    background-position: center -30px;
+}
+
+.ui-datepicker-next {
+    float: right;
+}
+
+.ui-datepicker-prev, .ui-datepicker-next {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    line-height: 550%;
+    overflow: hidden;
+}
+/* Date Picker Table */
+.ui-datepicker table {
+    width: 100%;
+}
+
+.ui-datepicker thead {
+    background-color: #f7f7f7;
+    background-image: -moz-linear-gradient(top, #f7f7f7 0%, #f1f1f1 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(100%,#f1f1f1));
+    background-image: -webkit-linear-gradient(top, #f7f7f7 0%,#f1f1f1 100%);
+    background-image: -o-linear-gradient(top, #f7f7f7 0%,#f1f1f1 100%);
+    background-image: -ms-linear-gradient(top, #f7f7f7 0%,#f1f1f1 100%);
+    background-image: linear-gradient(top, #f7f7f7 0%,#f1f1f1 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#f1f1f1',GradientType=0 );
+    border-bottom: 1px solid #bbb;
+}
+
+.ui-datepicker th {
+    text-transform: uppercase;
+    font-size: 6pt;
+    padding: 5px 0;
+    color: #666666;
+    text-shadow: 1px 0px 0px #fff;
+    filter: dropshadow(color=#fff, offx=1, offy=0);
+}
+
+.ui-datepicker tbody td {
+    padding: 0;
+    border-right: 1px solid #bbb;
+}
+
+    .ui-datepicker tbody td:last-child {
+        border-right: 0px;
+    }
+
+.ui-datepicker tbody tr {
+    border-bottom: 1px solid #bbb;
+}
+
+    .ui-datepicker tbody tr:last-child {
+        border-bottom: 0px;
+    }
+
+.ui-datepicker td span, .ui-datepicker td a {
+    display: inline-block;
+    font-weight: bold;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    color: #666666;
+    text-shadow: 1px 1px 0px #fff;
+    filter: dropshadow(color=#fff, offx=1, offy=1);
+}
+/* Date Picker Hover & Active */
+.ui-datepicker-calendar .ui-state-default {
+    background: #ededed;
+    background: -moz-linear-gradient(top, #ededed 0%, #dedede 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ededed), color-stop(100%,#dedede));
+    background: -webkit-linear-gradient(top, #ededed 0%,#dedede 100%);
+    background: -o-linear-gradient(top, #ededed 0%,#dedede 100%);
+    background: -ms-linear-gradient(top, #ededed 0%,#dedede 100%);
+    background: linear-gradient(top, #ededed 0%,#dedede 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#dedede',GradientType=0 );
+    -webkit-box-shadow: inset 1px 1px 0px 0px rgba(250, 250, 250, .5);
+    -moz-box-shadow: inset 1px 1px 0px 0px rgba(250, 250, 250, .5);
+    box-shadow: inset 1px 1px 0px 0px rgba(250, 250, 250, .5);
+    border: 0;
+    color: #333333;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+}
+
+.ui-datepicker-calendar .ui-state-active {
+    background: #6eafbf;
+    -webkit-box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, .1);
+    -moz-box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, .1);
+    box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, .1);
+    color: #e0e0e0;
+    text-shadow: 0px 1px 0px #4d7a85;
+    filter: dropshadow(color=#4d7a85, offx=0, offy=1);
+    border: 1px solid #55838f;
+    position: relative;
+    margin: -1px;
+}
+
+.ui-datepicker-calendar td:first-child .ui-state-active {
+    width: 29px;
+    margin-left: 0;
+}
+
+.ui-datepicker-calendar td:last-child .ui-state-active {
+    width: 29px;
+    margin-right: 0;
+}
+
+.ui-datepicker-calendar tr:last-child .ui-state-active {
+    height: 29px;
+    margin-bottom: 0;
+}
+
+.ui-datepicker-unselectable .ui-state-default {
+    background: #f4f4f4;
+    color: #b4b3b3;
+}
+
+/*.ui-datepicker  .ui-state-default {
+    border: 1px solid #aaaaaa !important;
+    background: #CCCCCC !important;
+}
+
+.ui-datepicker  .ui-datepicker-days-cell-over {
+    padding: 0;
+}
+
+.ui-datepicker td {
+    color: #eeeeee !important;
+    padding: 0 !important;
+}
+
+.ui-datepicker .ui-datepicker-other-month {
+    color: #eeeeee !important;
+    padding: 0 !important;
+    background-color: #dddddd;
+    border: 1px #aaaaaa solid;
+}*/
+
+#visualization_container {
+    /*min-width: 310px;
+    height: 400px;*/
+    margin: 0 auto;
+    clear: both;
+}
+
+#visualization_container {
+    /*min-width: 310px;
+    height: 400px;*/
+    margin: 0 auto;
+    
+}
+
+#visualization_container .highcharts-container{
+    clear: both;
+}
+
+#visualization_error_msg {
+    display: none;
+    clear: both;
+    color: #E4522F;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 0.75em;
+    text-align: center;
+}
+
+#visualization_date_error_msg {
+    display: none;
+    clear: both;
+    color: #E4522F;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 0.75em;
+    text-align: center;
+}
+
+
+.selected_basemap_tile img{
+    border-color: #CEFF46 !important;
+}
+
+.ol-control {
+    position: relative;
+    margin: 3px;
+
+}
+
+.ol-zoom {
+    top: auto;
+    left: auto;
+
+}
+
+.ol-control.Featured_Control {
+    position: relative;
+    margin: 3px;
+
+}
+
+
+/*    #region Layer Container Styling    */
+
+div#Layer_Listing_wrapper {
+    width: 95%;
+    margin: 0;
+}
+
+div#Layer_Listing_wrapper .Layer_Group_accord {
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+
+
+div#Layer_Listing_wrapper .ui-state-highlight{
+    min-height: 30px;
+    border-color: #4474B9;
+    background: #5B9ECF
+}
+
+div#Layer_Listing_wrapper div.enabler {
+    height: 30px;
+    width: 30px;
+    background-color: #E1E3E6;
+    background-color: rgba(255,255,255,0.5);
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+
+    border-radius: 5px;
+    border-right: 1px solid #ccc;
+    display: table-cell;
+
+    cursor: pointer;
+    
+}
+
+    div#Layer_Listing_wrapper div.enabler.enabled {
+        background-image: url(../../images/Map_Icons/Layer_Icons/check.png);
+    }
+
+    div#Layer_Listing_wrapper div.enabler.partial {
+        background-image: url(../../images/Map_Icons/Layer_Icons/check-partial.png);
+    }
+
+
+div#Layer_Listing_wrapper div.enabler:hover {
+    background-color: rgba(255,255,255,0.8);
+   
+    
+}
+
+/* Group Styling */
+div#Layer_Listing_wrapper .group_title {
+    margin: 0;
+    color: #333333;
+    
+    background-repeat: no-repeat;
+    background-image: url(../../images/Map_Icons/Layer_Icons/expand_arrow.png);
+    background-position:  98% 50%;
+
+    border: none;
+    border-radius: 5px;
+
+    font-size: 13px;
+    height: 30px;
+
+    display: table;
+    width: 100%;
+}
+    
+    div#Layer_Listing_wrapper .group_title.ui-state-active {
+        background-color: rgba(91, 158, 207, .3);
+        background-image: url(../../images/Map_Icons/Layer_Icons/collapse_arrow.png);
+
+    }
+
+    div#Layer_Listing_wrapper .group_title.ui-state-hover {
+        background-color: rgba(148, 212, 193,.3);
+    }
+
+    div#Layer_Listing_wrapper .group_title.ui-state-focus {
+        background-color: rgba(148, 212, 193,.3);
+    }
+
+    div#Layer_Listing_wrapper .group_handle {
+        display: table-cell;
+        vertical-align: middle;
+        padding-left: 10px;
+        cursor: pointer;
+    
+    }
+
+
+
+
+div#Layer_Listing_wrapper .ui-icon { display: none; }
+div#Layer_Listing_wrapper .ui-accordion-header a { padding-left: 0; }
+
+/* Layer Styling */
+
+div#Layer_Listing_wrapper div.Layer_Listing {
+    padding: 0;
+    padding-left: 15px;
+    border: none;
+
+    /*background-color: #000000;*/
+}
+
+
+div#Layer_Listing_wrapper li{
+    display: block;
+    height: 30px;
+    margin: 0;
+}
+
+div#Layer_Listing_wrapper .layer_entry{
+    display: table;
+    height: 30px;
+    width: 100%;
+    background: none;
+    background-color: #C5C7CA;
+    background-color: rgba(255,255,255,.3);
+
+}
+
+    div#Layer_Listing_wrapper .layer_entry:hover {
+        background-color: #CFD1D4;
+        background-color: rgba(255, 255, 255, .5);
+    }
+
+div#Layer_Listing_wrapper .layer_handle
+{
+    display: table-cell;
+    height: 30px;
+    padding-left: 10px;
+    vertical-align: middle;
+    
+    cursor: pointer;
+}
+
+div#Layer_Listing_wrapper .group_handle .layer_text {
+    
+}
+
+div#Layer_Listing_wrapper .layer_type_icon{
+    height: 16px;
+    padding: 0 5px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+div#Layer_Listing_wrapper .layer_text{
+    display: inline-block;
+    padding: 0 5px;
+    vertical-align: middle;
+    width: 130px;
+    font-weight: bold;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+}
+
+
+
+div#Layer_Listing_wrapper div.layer_action_btn {
+    
+    height: 30px;
+    width: 20px;
+
+    cursor: pointer;
+
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    display: table-cell;
+
+    
+}
+    div#Layer_Listing_wrapper div.layer_action_btn:hover:not(.disabled) {
+        background-color: #f2f2f2;
+    }
+
+    div#Layer_Listing_wrapper div.layer_action_btn.enabled{
+        background-color: #FF9D00;
+    }
+        div#Layer_Listing_wrapper div.layer_action_btn.enabled:hover{
+            background-color: #ffaf38;
+        }
+
+    div#Layer_Listing_wrapper div.layer_action_btn.disabled{
+        cursor: not-allowed;
+    }
+
+
+    
+
+div#Layer_Listing_wrapper div.layer_action_btn.info_selector {
+    
+    background-image: url(../../images/icons/infoIcon.png);
+    cursor: help;
+    
+}
+
+    div#Layer_Listing_wrapper div.layer_action_btn.info_selector.disabled {
+    
+        background-image: url(../../images/icons/infoIcon_gray.png);
+    }
+
+    div#Layer_Listing_wrapper div.layer_action_btn.info_selector.enabled {
+    
+        background-image: url(../../images/icons/infoIcon_white.png);
+    }
+
+div#Layer_Listing_wrapper div.layer_action_btn.filtering_btn {
+    
+    background-image: url(../../images/icons/filterIcon_blue_bordered.png);
+    
+}
+
+    div#Layer_Listing_wrapper div.layer_action_btn.filtering_btn.disabled {
+    
+        background-image: url(../../images/icons/filterIcon_gray_bordered.png);
+    }
+
+    div#Layer_Listing_wrapper div.layer_action_btn.filtering_btn.enabled {
+    
+        background-image: url(../../images/icons/filterIcon_white_bordered.png);
+        
+    }
+
+/*#endregion Layer Container styling*/
+
+#Map_Help_popover {
+        display: none;
+        z-index: 2000;
+        position: absolute;
+        top: 18px;
+        left: 93px;
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        
+     }
+
+
+/* #region Layer Interaction Dialog Styling */
+
+.ui-helper-reset li{
+        display: inline-block;
+        padding: 0 !important;
+        margin: 3px 5px;
+    }
+
+    .ui-dialog {
+        height:auto !important;
+        width: auto !important;
+        min-width: 450px;
+    }
+
+
+div.Interaction_Dialog_tabs {
+    
+    padding: 0px;
+    background: none;
+    border-width: 0px;
+
+}
+
+    div.Interaction_Dialog_tabs .ui-state-default {
+        background: #d2d2d2;
+        border-bottom-width: 0;
+    }
+
+    div.Interaction_Dialog_tabs .ui-tabs-active {
+        background: #EEEEEE;
+        margin-top: 2px;
+    }
+
+    div.Interaction_Dialog_tabs .Interaction_Dialog_tab_headers{
+    
+        padding-left: 0px;
+        background: transparent;
+        border-width: 0px 0px 1px 0px;
+        -moz-border-radius: 0px;
+        -webkit-border-radius: 0px;
+        border-radius: 0px;
+        width: 100%;
+
+    }
+
+    div.Interaction_Dialog_tabs .ui-tabs-panel {
+        background: none;
+        border-width: 1px;
+    }
+
+
+div.Interaction_Dialog_tabs .Interaction_Dialog_control {
+     width: 20px;
+    height: 20px;
+    float: right;
+}
+
+div.Interaction_Dialog button:disabled {
+    background: #A1A9AF;
+    color: #CDD6DA;
+    cursor: not-allowed;
+}
+
+div.Interaction_Dialog .ui-buttonset {
+    text-align: center;
+
+     /*prevent the selecton of these control's text*/
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+div.Interaction_Dialog .ui-buttonset input{
+    display: none;   
+}
+
+div.Interaction_Dialog .ui-buttonset label{
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    
+}
+
+div.Interaction_Dialog .ui-buttonset label:first-of-type{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+div.Interaction_Dialog .ui-buttonset label:last-of-type{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+div.Interaction_Dialog .ui-buttonset label:hover{
+    background: #D2D2D2;
+    cursor: pointer;
+}
+
+div.Interaction_Dialog .ui-buttonset label.selected{
+    background: #1C94C4;
+    color: #fff;
+    
+    
+}
+
+div.Interaction_Dialog .ui-buttonset label.disabled{
+    background: #A1A9AF;
+    color: #CDD6DA;
+    cursor: not-allowed;
+}
+
+div.Interaction_Dialog .reset_button {
+    cursor: pointer;
+    background: transparent url(../../images/icons/Reset_icon_blue.png) no-repeat;
+    transition: all ease .5s;
+    width: 16px;
+    height: 16px;
+}
+
+    div.Interaction_Dialog .reset_button:hover {
+        background: transparent url(../../images/icons/Reset_icon_orange.png) no-repeat;
+        transform: rotate(-270deg);
+    }
+
+div.Interaction_Dialog_tabs .Interaction_Dialog_control.help_button {
+    cursor: pointer;
+    background: transparent url(../../images/icons/helpIcon.png) no-repeat;
+    transition: all ease .5s;
+}
+
+    div.Interaction_Dialog_tabs .Interaction_Dialog_control.help_button:hover {
+        background: transparent url(../../images/icons/helpIcon_orange.png) no-repeat;
+        
+    }
+
+div.Interaction_Dialog select.filter_selection {
+    width: 340px;
+}
+div.Interaction_Dialog select.classification_var_selection {
+    width: 340px;
+}
+
+div.Interaction_Dialog div.var_description {
+    font-style: italic;
+    padding: 5px 10px;
+    max-width: 400px;
+}
+
+
+div.Interaction_Dialog div.classification_method_wrapper {
+    display: none;
+}
+
+div.Interaction_Dialog fieldset {
+    border: 1px solid #ccc;
+    border-radius: .75em;
+    width: 100%;
+    padding: 5px 10px;
+}
+    div.Interaction_Dialog fieldset legend{
+        text-align: left;
+        width: initial;
+        font-weight: bold;
+        padding: 5px;
+    }
+
+    div.Interaction_Dialog div.added_filters {
+        display: table;
+        margin: 5px;
+    }
+
+    div.Interaction_Dialog div.default_filtering_wrapper {
+        display: table;
+        margin: 5px;
+    }
+
+
+div.Interaction_Dialog fieldset.added_filters_wrapper {
+    
+    margin: 10px 0px;
+}
+
+div.Interaction_Dialog div.layer_control_wrapper {
+    margin: 0px;
+    text-align: left;
+    
+     /*prevent the selecton of these control's text*/
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+    div.Interaction_Dialog fieldset.layer_control_wrapper .layer_control_input{
+        cursor: pointer;
+    }
+
+
+div.Interaction_Dialog div.filter {
+    display: table-row;
+    align-items: center;
+    border-radius: 5px;
+    
+    transition: background ease .3s;
+    -webkit-transition: background ease .3s;
+    -moz-transition: background ease .3s;
+    -o-transition: background ease .3s;
+
+}
+    div.Interaction_Dialog div.filter:hover {
+        background: #f9f9f9;
+    }
+
+
+div.Interaction_Dialog div.filter .filter_controls {
+    
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 5px;
+}
+    div.Interaction_Dialog div.filter .filter_control {
+        
+        margin: 0 0 0 10px;
+    }
+    
+
+div.Interaction_Dialog div.filter .filter_input_form {
+    display: table-cell;
+}
+
+div.Interaction_Dialog button.download_button img {
+     vertical-align: text-bottom;
+     padding: 0 3px;
+}
+
+div.Interaction_Dialog button.add_filter_btn,
+div.Interaction_Dialog button.remove_filter_btn {
+    height: 17px;
+    
+}
+    div.Interaction_Dialog button.remove_filter_btn {
+        background: #E4522F;
+        float: right;
+        margin: auto 0;
+        
+    }
+    div.Interaction_Dialog button.remove_filter_btn:hover {
+        background: #FFA228;
+    } 
+
+div.Interaction_Dialog div.filter .threshold {
+        display: flex;
+        align-items: center;
+        margin: 3px 0px;
+        
+    }
+
+div.Interaction_Dialog div.filter .threshold > .threshold_var {
+        width: 165px;
+        margin: 5px;
+        text-align: center;
+        display: inline-block;
+
+    }
+
+div.Interaction_Dialog div.filter .threshold > input.val_input {
+        width: 80px;
+        margin: 2px;
+    }
+
+
+    div.Interaction_Dialog div.filter .search .search_input{
+        margin: 3px 5px;
+        width: 200px;
+        /*float: right;*/
+    }
+
+    div.Interaction_Dialog div.filter .text_label{
+        min-width: 100px;
+        max-width: 150px;
+        vertical-align: middle;
+    }
+
+    div.Interaction_Dialog div.filter .multiselect .text_label{
+        
+        max-width: 150px;
+        vertical-align: middle;
+    }
+
+div.Interaction_Dialog div.filter .ui-multiselect.ui-state-default {
+    background: #eeeeee;
+    color: #1C94C4;
+    border: 1px solid #bbb;
+    /*float: right;*/
+}
+
+div.Interaction_Dialog div.filter .ui-multiselect.ui-state-hover {
+    background: #eeeeee;
+    color: #FFA228;
+}
+
+    .ui-multiselect-checkboxes li{
+        min-width: 55px;
+    }
+
+     .ui-multiselect-checkboxes label{
+        padding: 3px 0px;
+    }
+
+     .ui-multiselect-checkboxes label input{
+        margin: 0 11px 0 0;
+    }
+
+     .ui-multiselect-header {
+        background: #A1A9AF;
+    }
+
+     .ui-multiselect-header a {
+        text-decoration: none;
+        vertical-align: middle;
+    }
+
+     .ui-multiselect-header a:hover {
+        text-decoration: none;
+        color: #1c94c4;
+    }
+
+
+div.Interaction_Dialog .button_wrapper {
+    width: 100%;
+    text-align: right;
+}
+
+
+div.Interaction_Dialog a {
+    color: #1c94c4;
+    cursor: pointer !important;
+        
+}
+
+    div.Interaction_Dialog a:hover {
+        color: #ef8c08;
+    }
+
+    div.Interaction_Dialog ul.Interaction_Dialog_tab_headers li.ui-state-disabled a {
+        cursor: not-allowed !important;    
+    }
+
+/* #endregion Layer Interaction Dialog Styling */
+
+/* #region Selection dialog styling */
+.Feature_Popup_table {
+         display: table;
+         min-width: 300px;
+     }
+     .Feature_Popup_table_row {
+         display: table-row;
+     }
+
+     .Feature_Popup_table_cell {
+         display: table-cell;
+         background: #B6EFFD;
+         padding: 3px 5px;
+     }
+
+     .Feature_Popup_table_cell.alt {
+         background: #D6F7FF;
+     }
+
+     .Feature_Popup_table_header_cell {
+        background: #5B9ECF;
+        color: white;
+        font-weight: bold;
+        padding-top: 5px;
+     }
+
+     .Feature_Popup_table .Feature_Popup_table_row:first-child .Feature_Popup_table_cell:first-child {
+         border-top-left-radius: 10px;
+     }
+     .Feature_Popup_table .Feature_Popup_table_row:first-child .Feature_Popup_table_cell:last-child {
+         border-top-right-radius: 10px;
+     }
+
+     .Feature_Popup_table .Feature_Popup_table_row:last-child .Feature_Popup_table_cell:first-child {
+         border-bottom-left-radius: 10px;
+     }
+     .Feature_Popup_table .Feature_Popup_table_row:last-child .Feature_Popup_table_cell:last-child {
+         border-bottom-right-radius: 10px;
+     }
+/* #endregion selection dialog styling*/

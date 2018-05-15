@@ -1,0 +1,124 @@
+﻿
+/* #region StylizedTable Styling */
+
+div.StyledTable {
+    display: table;
+    margin: 20px;
+    min-width: 200px;
+    text-indent: 0;
+}
+
+    div.StyledTable .StyledTable_Row {
+        display: table-row;
+        margin: 1px;
+    }
+
+    div.StyledTable .StyledTable_Row .StyledTable_Cell{
+        display: table-cell;
+        padding: 10px;
+        background-color: #B3E1F2;
+        margin: 1px;
+        border: 1px solid #eee;
+        border-bottom: 0;
+        border-right: 0;
+        vertical-align: middle;
+    }
+
+    div.StyledTable .StyledTable_Row .StyledTable_Cell.Header_Cell{
+        background-color: #559DB9;
+        color: white;
+        font-weight: bold;
+    }
+
+        div.StyledTable .StyledTable_Row:first-child .StyledTable_Cell:first-child {
+            border-top-left-radius: 5px;
+            -webkit-border-top-left-radius: 5px;
+            -moz-border-top-left-radius: 5px;
+        }
+
+        div.StyledTable .StyledTable_Row:first-child .StyledTable_Cell:last-child{
+            border-top-right-radius: 5px;
+            -webkit-border-top-right-radius: 5px;
+            -moz-border-top-right-radius: 5px;
+        }
+
+        div.StyledTable .StyledTable_Row:last-child .StyledTable_Cell:first-child {
+            border-bottom-left-radius: 5px;
+            -webkit-border-bottom-left-radius: 5px;
+            -moz-border-bottom-left-radius: 5px;
+        }
+
+        div.StyledTable .StyledTable_Row:last-child .StyledTable_Cell:last-child{
+            border-bottom-right-radius: 5px;
+            -webkit-border-bottom-right-radius: 5px;
+            -moz-border-bottom-right-radius: 5px;
+        }
+        
+
+        /* #region Nested table styling overrides */
+
+        div.StyledTable div.StyledTable {
+            margin: 0;
+            
+        }
+
+        div.StyledTable div.StyledTable div.StyledTable_Row div.StyledTable_Cell{
+            border-radius: 0;
+        }
+
+        /* Table nested in a table cell should remove borders/margins */
+
+
+        div.StyledTable_Cell div.StyledTable {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        div.StyledTable_Cell div.StyledTable div.StyledTable_Row div.StyledTable_Cell{
+            border-radius: 0;
+        }
+
+        
+
+        /* #endregion Nested table styling overrides */
+
+
+
+
+        /* #region colorize StyledTable by class*/
+
+        div.StyledTable .StyledTable_Row .StyledTable_Cell.green{
+            background-color: #CCE6B3;
+        }
+
+            div.StyledTable .StyledTable_Row .StyledTable_Cell.darkGreen{
+            background-color: #BFD1AD;
+
+        }
+
+            div.StyledTable .StyledTable_Row .StyledTable_Cell.red{
+            background-color: #FCC2C2;
+
+        }
+
+            div.StyledTable .StyledTable_Row .StyledTable_Cell.orange{
+            background-color: #F9DEC0;
+
+        }
+            
+        div.StyledTable .StyledTable_Row .StyledTable_Cell.Header_Cell.green{
+            background-color: #9ABF76;
+        }
+
+        div.StyledTable .StyledTable_Row .StyledTable_Cell.Header_Cell.red{
+            background-color: #D66464;
+        }
+
+        div.StyledTable .StyledTable_Row .StyledTable_Cell.Header_Cell.orange{
+            background-color: #EF8C08;
+        }
+
+        /* #endregion colorize StyledTable by class*/
+
+/* #endregion StylizedTable Styling */

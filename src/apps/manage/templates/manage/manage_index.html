@@ -1,0 +1,72 @@
+{% extends CMS_TEMPLATE %}
+{% load cms_tags menu_tags sekizai_tags static %}
+
+{% block title %}Manage{% endblock title %}
+
+{% block content %}
+    {% addtoblock "css" %}
+        <link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
+
+    {% endaddtoblock "css" %}
+
+
+        <div id="content-wrapper" class="always_full">
+
+            <div id="content-tab-header">
+                <div class="manage_navbar_wrapper">
+                    <ul id="manage_nav" class="nav nav-tabs nav-fill" role="tablist">
+
+                        <li class="nav-item">
+                        <!--<li class="nav-item">-->
+                            <a class="nav-link" id="home-tab" data-toggle="tab" href="#home-content" role="tab" >Home</a>
+                        </li>
+                        <li class="nav-item">
+                        <!--<li class="nav-item">-->
+                            <a class="nav-link" id="modules-tab" data-toggle="tab" href="#modules-content" role="tab" >My Modules</a>
+                        </li>
+                        <li class="nav-item">
+                        <!--<li class="nav-item">-->
+                            <a class="nav-link" id="find-tab" data-toggle="tab" href="#find-content" role="tab" >Find Modules</a>
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <div id="content-tab-body" class="tab-content">
+
+                <div id="home-content" class="tab-pane fade" role="tabpanel">
+                    {% include "manage/partials/_manage_home_tab_content.html" %}
+                </div>
+
+                <div id="modules-content" class="tab-pane fade" role="tabpanel">
+                    {% include "manage/partials/_my_modules_tab_content.html" %}
+
+                </div>
+
+                <div id="find-content" class="tab-pane fade" role="tabpanel">
+                    {% include "manage/partials/_find_modules_tab_content.html" %}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    
+
+    {% addtoblock "js" %}
+        <script type="text/javascript" src="{% static 'js/plugins/jquery.validate.js' %}"></script>
+        <!--<script type="text/javascript" src="{% static 'js/plugins/jquery.validate.additional-methods.js' %}"></script>-->
+        <script>
+            $('#modules-tab').tab('show') // Select home tab
+        </script>
+    {% endaddtoblock %}
+
+{% endblock content%}
+
+
+

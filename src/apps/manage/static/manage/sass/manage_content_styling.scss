@@ -1,0 +1,46 @@
+@import 'branding';
+
+.manage-details-accord {
+
+    &.module-accord {
+
+    }
+    &.topic-accord {
+
+    }
+    &.lesson-accord {
+
+    }
+    &.section-accord {
+
+    }
+
+
+    .ui-state-focus { outline: none; }
+
+
+    h3.ui-accordion-header{
+        margin:2px 0;
+        padding: 0.3em 1em;
+        background: $HL_blue;
+        color: #fff;
+        //border: 1px solid #fff;
+        transition: background .2s;
+        box-shadow:#dcdcdc 2px 2px 5px 1px;
+
+        &:hover{
+            background: $HL_darkBlue;
+        }
+    }
+
+    div.ui-accordion-content{
+        margin: -1px 0 8px 0;
+        padding: 1em;
+        border: 1px solid $light_gray;
+
+        box-shadow: #dcdcdc 2px 2px 5px 1px;
+        background: #fff;
+    }
+
+
+}

@@ -1,0 +1,29 @@
+<!--extend this to provide a detail view for a module-->
+
+{% load cms_tags sekizai_tags static thumbnail menu_tags %}
+
+{% block content %}
+    {% addtoblock "css" %}{% endaddtoblock "css" %}
+    
+    <div class='lesson'>
+        {# add in permission check to determine if this gets loaded #}
+        {% include "module/parts/section_edit_toolbar.html" %}
+        
+        
+        
+        <h2 class="lesson-header">{{object.name}}</h2>
+        <hr class="headerSpacer">
+    
+    
+        {% render_placeholder object.content %}    
+    </div>
+    
+{% endblock content %}
+
+
+{% block addtl_js %}
+<script>
+    $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
+</script>
+{% endblock addtl_js %}
+

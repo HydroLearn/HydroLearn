@@ -1,0 +1,44 @@
+<h1>Confirm Delete</h1>
+
+<form method="post" action="{% url 'manage:module_delete' object.slug%}">{% csrf_token %}
+    <p>Are you sure you want to delete: "{{ object.name }}" and all of it's child objects? </p>
+
+    <ul>
+        <li>{{object.name}}</li>
+
+        {% if object.topics %}
+
+            <ul>
+                {% for topic in object.topics.all %}
+                    <li>{{topic.name}}</li>
+
+                    {% if topic.lessons %}
+
+                        <ul>
+                            {% for lesson in topic.lessons.all %}
+                                <li>{{lesson.name}}</li>
+
+                                {% if lesson.sections %}
+
+                                <ul>
+                                    {% for section in lesson.sections.all %}
+                                        <li>{{section.name}}</li>
+                                    {% endfor %}
+                                </ul>
+
+                                {% endif %}
+
+                            {% endfor %}
+                        </ul>
+
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% endif %}
+    </ul>
+
+    <input type="submit" value="Confirm" class="btn Remove_button">
+    <a href="/manage" class="btn btn-default">Cancel</a>
+
+</form>

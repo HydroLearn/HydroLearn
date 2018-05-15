@@ -1,0 +1,6 @@
+.manage-details-accord .ui-state-focus { outline: none; }
+.manage-details-accord h3.ui-accordion-header { margin: 2px 0; padding: 0.3em 1em; background: #45a4f3; color: #fff; transition: background .2s; box-shadow: #dcdcdc 2px 2px 5px 1px; }
+.manage-details-accord h3.ui-accordion-header:hover { background: #3D6BAA; }
+.manage-details-accord div.ui-accordion-content { margin: -1px 0 8px 0; padding: 1em; border: 1px solid #F5F5F5; box-shadow: #dcdcdc 2px 2px 5px 1px; background: #fff; }
+
+/*# sourceMappingURL=manage_content_styling.css.map */

@@ -1,0 +1,261 @@
+{% load cms_tags menu_tags sekizai_tags static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>
+        HydroLearn {% block subtitle %}{% endblock subtitle %}
+    </title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Favicons ================================================== -->
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicons/apple-touch-icon.png' %}">
+    <link rel="icon" sizes="32x32" href="{% static 'img/favicons/favicon-32x32.png' %}">
+    <link rel="icon" sizes="16x16" href="{% static 'img/favicons/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'img/favicons/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'img/favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
+
+    <link rel="shortcut icon" href="{% static 'img/favicons/favicon.ico' %}" type="image/x-icon">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" type="text/css"  href="{% static 'css/bootstrap.css' %}">
+
+    <!--fonts-->
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome/css/fontawesome-all.css' %}">
+    <link href="{% static 'fonts/Lato/css/Lato.css' %}" rel='stylesheet' type='text/css'>
+    <link href="{% static 'fonts/OpenSans/css/OpenSans.css' %}" rel='stylesheet' type='text/css'>
+
+    <!-- Stylesheet    ================================================== -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/prettyPhoto.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stacktable.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+
+
+
+
+    {% render_block "css" %}
+    {% block addtl_css %}{% endblock addtl_css%}
+
+    {% block head_scripts %}{% endblock head_scripts %}
+
+    <script type="text/javascript" src="{% static 'js/helios_js/modernizr.custom.js' %}"></script>
+
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="{% static 'js/plugins/html5shiv.min.js' %}"></script>
+      <script src="{% static 'js/plugins/respond.min.js' %}"></script>
+<![endif]-->
+
+</head>
+<body>
+    <div id="cms-toolbar-container">
+    {% cms_toolbar %}
+    </div>
+
+
+    <div class="sidebar_wrapper">
+
+        <nav id="sidebar" class="active">
+            <!-- Close Sidebar Button -->
+            <div id="dismiss" title="Close Menu">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+
+            <div class="sidebar_content_wrapper">
+
+                <ul id="sidebar_nav" class="nav nav-tabs nav-fill">
+                    <li class="nav-item">
+                        <a class="nav-link" id="navigation-tab" data-toggle="tab" href="#navigation" role="tab" aria-controls="navigation" aria-selected="false">Navigation</a>
+                    </li>
+
+
+
+                    {% block sidebar_nav_links %}{% endblock sidebar_nav_links %}
+
+                </ul>
+
+
+                <!-- Sidebar Header -->
+                <!--<div class="sidebar-header">-->
+                    <!--<h3>Navigation</h3>-->
+                <!--</div>-->
+
+                <div class="tab-content" id="nav-tabContent">
+
+                    <div class="tab-pane fade" id="navigation" role="tabpanel" aria-labelledby="navigation-tab">
+                        <!-- Sidebar Links -->
+                        <ul class="list-unstyled components">
+                            {% show_menu 0 100 100 100 %}
+                        </ul>
+                    </div>
+
+                    {% block sidebar_nav_content %}{% endblock sidebar_nav_content %}
+
+
+
+
+                </div>
+
+
+
+            </div>
+        </nav>
+
+
+
+        <div id="content" class="active">
+
+                <!-- Navigation
+                ==========================================-->
+                <nav id="menu" class="navbar navbar-default navbar-fixed-top on">
+                  <div class="container-fluid">
+
+
+                    <div class="navbar-header">
+                        <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
+                            <i class="fas fa-bars"></i>
+                            <span>Menu</span>
+                        </button>
+                        <a class="navbar-brand" href="/" title="Return Home"><div class="logo"></div></a>
+
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                          <ul class="nav navbar-nav navbar-right">
+                            {% show_menu 0 100 100 100 %}
+
+                              <!--replaced by redirect pages in menu itself-->
+                          {# if not request.user.is_authenticated #}
+                            <!--<li><a href="/accounts/login">Login</a></li>-->
+                            <!--<li><a href="/accounts/register">Register</a></li>-->
+                          {# else #}
+                            <!--<li><a href="/accounts/logout">Logout</a></li>-->
+                          {# endif #}
+                            <!--<li><a href="#home" class="page-scroll">Home</a></li>-->
+                          </ul>
+                        </div>
+
+                    </div>
+
+                  </div>
+                  <!-- /.container-fluid -->
+                </nav>
+
+
+
+                {% block precontent %}{% endblock precontent %}
+
+                {% block content %}{% endblock content %}
+
+                {% block postcontent %}{% endblock postcontent %}
+
+
+                {% block footer %}
+                    <div id="footer-spacer"></div>
+                    <div id="footer">
+                        <div class="container">
+                            <div class="footer-nav collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <ul class="nav navbar-nav navbar-right">
+                                    {% show_menu 0 100 100 100 %}
+                                    <!--<li><a href="#home" class="page-scroll">Home</a></li>-->
+                                </ul>
+                            </div>
+
+                            <div class="copyright">
+                                <p>Copyright &copy; HydroLearn.</p>
+                            </div>
+
+                            <div class="social">
+                              <ul>
+                                <li><a href="#"><i class="fab fa-facebook"></i></a></li>
+                                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                                <li><a href="#"><i class="fab fa-github"></i></a></li>
+                              </ul>
+                            </div>
+
+
+                        </div>
+                    </div>
+                {% endblock footer %}
+
+
+        </div>
+
+
+
+    </div>
+
+    <div class="overlay no_show"></div>
+
+
+
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) --> 
+<script type="text/javascript" src="{% static 'js/plugins/jquery.min.js' %}"></script>
+<!--<script type="text/javascript" src="{% static 'js/plugins/jquery.js' %}"></script>-->
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script type="text/javascript" src="{% static 'js/plugins/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/plugins/mCustomScrollbar.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/plugins/stacktable.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/plugins/jquery-ui.min.js' %}"></script>
+
+
+
+<script type="text/javascript" src="{% static 'js/helios_js/SmoothScroll.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/helios_js/jquery.counterup.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/helios_js/waypoints.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/helios_js/jquery.prettyPhoto.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/helios_js/jquery.isotope.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/helios_js/jqBootstrapValidation.js' %}"></script>
+
+
+<!--<script type="text/javascript" src="js/contact_me.js"></script> -->
+
+<!-- Javascripts
+    ================================================== --> 
+<script type="text/javascript" src="{% static 'js/helios_js/main.js' %}"></script>
+
+{% render_block "js" %}
+
+<script>
+    $(document).ready(function () {
+
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+        });
+
+        // if there is no sidebar tab set to active, set 'Naviation' to active by default
+        if( !$('#sidebar_nav .nav-item.active').length ){
+            $('#sidebar_nav li:first-child a').tab('show') // Select first tab
+
+        }
+
+        // when opening the sidebar
+        $('#sidebarCollapse, #dismiss, .overlay').on('click', function () {
+            // open sidebar
+            $('#sidebar,#content').toggleClass('active');
+
+            $('.collapse.in').toggleClass('in');
+            $('.overlay').toggleClass('no_show');
+
+        });
+    });
+</script>
+
+{% block addtl_js %}{% endblock addtl_js %}
+
+<!-- final javascript javascript settings intended to be done after loading of any partial view content -->
+<script>
+    $('.responsive_table').stacktable();
+</script>
+
+</body>
+</html>

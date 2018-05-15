@@ -1,0 +1,15 @@
+{% extends CMS_TEMPLATE %}
+<!--
+    This view is expected to be a partial view,
+    jquery-ui accordion listing all
+    Sections for the current topic
+-->
+
+<div class="section-list">
+    {% for Section in object_list %}
+    <h3> {{Section.name }} </h3>
+    <div>sample</div>
+    {% empty %}
+    <div>no topics yet, please add some!</div>
+    {% endfor %}
+</div>

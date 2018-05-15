@@ -1,0 +1,412 @@
+{% load polymorphic_formset_tags static sekizai_tags %}
+
+{% addtoblock "css" %}
+
+{% endaddtoblock %}
+
+<div id="module_form_wrapper">
+
+    <h3>Manage Module - {% if object %} {{object.name}} {% else %} New Module {% endif %}</h3>
+
+    <div id="module_form_error_message" class="form_error_container" style="display:none"></div>
+    <div id="returned_result"></div>
+
+    <div class="FM_formset_header" FM-Type="TOPICS" FM-Prefix="{{ Topics.prefix }}">
+        <div class="FM_formset_errors">{{ Topics.non_form_errors }}</div>
+        <div class="FM_mgmt_form">{{ Topics.management_form }}</div>
+
+        <h4 class="topic_listing_header">Topics</h4>
+
+        <div class="topic_actions_btn_group btn-group" role="group">
+            <a id="" type="button" class="FM_add_form Add_button btn btn-default" FM-Type="TOPICS" >
+                <i class="fas fa-plus-circle"></i>
+                Add Topic
+            </a>
+        </div>
+
+        <div class="topic_actions_btn_group btn-group" role="group">
+            <a id="collapse_all_Topic" type="button" class="btn btn-default">
+                Collapse All
+            </a>
+
+            <a id="expand_all_Topic" type="button" class="btn btn-default">
+                Expand All
+            </a>
+        </div>
+
+        <hr/>
+
+    </div>
+
+    <div class="FM_formset_header" FM-Type="LESSONS" FM-Prefix="{{ Topics.empty_form.child_lessons.prefix }}">
+        <div class="FM_formset_errors">{{ Topics.empty_form.child_lessons.non_form_errors }}</div>
+        <div class="FM_mgmt_form">{{ Topics.empty_form.child_lessons.management_form }}</div>
+
+        <h4 class="lesson_listing_header">Lessons</h4>
+
+        <div class="lesson_actions_btn_group btn-group" role="group">
+            <a id="" type="button" class="FM_add_form Add_button btn btn-default" FM-Type="LESSONS" >
+                <i class="fas fa-plus-circle"></i>
+                Add Lesson
+            </a>
+        </div>
+
+        <!--<div class="lesson_actions_btn_group btn-group" role="group">-->
+            <!--<a id="collapse_all_Lesson" type="button" class="btn btn-default">-->
+                <!--Collapse All-->
+            <!--</a>-->
+
+            <!--<a id="expand_all_Lesson" type="button" class="btn btn-default">-->
+                <!--Expand All-->
+            <!--</a>-->
+        <!--</div>-->
+
+        <hr/>
+
+    </div>
+
+    <div class="FM_formset_header" FM-Type="SECTIONS" FM-Prefix="{{Topics.empty_form.child_lessons.empty_form.child_sections.prefix}}">
+        <div class="FM_formset_errors">{{ Topics.empty_form.child_lessons.empty_form.child_sections.non_form_errors }}</div>
+        <div class="FM_mgmt_form">{{ Topics.empty_form.child_lessons.empty_form.child_sections.management_form }}</div>
+
+        <h4 class="section_listing_header">Sections</h4>
+
+        {# django-polymorphic formset (e.g. PolymorphicInlineFormSetView) #}
+
+        <!--<div class="topic_actions_btn_group btn-group" role="group">-->
+            <!--<a type="button" class="btn btn-default collapse_all_section">-->
+                <!--Collapse All-->
+            <!--</a>-->
+
+            <!--<a type="button" class="btn btn-default expand_all_section">-->
+                <!--Expand All-->
+            <!--</a>-->
+        <!--</div>-->
+
+        <div class="add_new_sections_btn_group btn-group" role="group">
+
+            {# add a seperate add-button for each polymorphic type #}
+            {% for model in Topics.empty_form.child_lessons.empty_form.child_sections.child_forms %}
+                <a class="FM_add_form btn btn-default Add_button" type="button" FM-Type="SECTIONS" FM-poly-type="{{ model|as_model_name }}" >
+                    <i class="fas fa-plus-circle"></i>
+                    {{ model|as_model_name }}
+                </a>
+            {% endfor %}
+
+        </div>
+
+        <hr>
+    </div>
+
+    <!--empty Topic form-->
+    <div class="FM_empty_form" FM-Type="TOPICS">
+
+        <div class="Topic-Accord accordion-form">
+            <h3 class="Topic-Header"> New Topic </h3>
+            <div class="Topic-Container">
+
+                {% if Topics.can_delete %}
+                <a class="FM_remove_form Remove_button btn btn-default" type="button" style="float:right;">
+                    <i class="fas fa-minus-circle"></i>
+                    remove this form
+                </a>
+                {% endif %}
+
+                <div class="FM_form_content">
+                    <div class="FM_form_errors form_error_container"></div>
+                    <table class="topic-table">
+                        {{ Topics.empty_form.as_table }}
+                    </table>
+
+                    <!--add in placeholder for nested sections formset-->
+                    <div class="FM_formset" FM-parent="TOPICS" FM-Type="LESSONS" FM-Prefix="{{Topics.empty_form.child_lessons.prefix}}"></div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <!--empty Lesson form-->
+    <div class="FM_empty_form" FM-Type="LESSONS">
+
+        <div class="Lesson-Accord accordion-form">
+            <h3 class="Lesson-Header"> New Lesson </h3>
+            <div class="Lesson-Container">
+
+                {% if Topics.empty_form.child_lessons.can_delete %}
+                <a class="FM_remove_form Remove_button btn btn-default" type="button" style="float:right;">
+                    <i class="fas fa-minus-circle"></i>
+                    remove this form
+                </a>
+                {% endif %}
+
+                <div class="FM_form_content">
+                    <div class="FM_form_errors form_error_container"></div>
+                    <table class="topic-table">
+                        {{ Topics.empty_form.child_lessons.empty_form.as_table }}
+                    </table>
+
+                    <!--add in placeholder for nested sections formset-->
+                    <div class="FM_formset" FM-parent="LESSONS" FM-Type="SECTIONS" FM-Prefix="{{Topics.empty_form.child_lessons.empty_form.child_sections.prefix}}"></div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- empty section forms for each polymorphic type of section form -->
+    {% for empty_form in Topics.empty_form.child_lessons.empty_form.child_sections.empty_forms %}
+        <div class="FM_empty_form" FM-Type="SECTIONS" FM-poly-type="{{ empty_form|as_form_type }}">
+            <div class="Section-Accord accordion-form">
+                <h3>New {{ empty_form|as_form_type }}</h3>
+                <div>
+                    {% if Topics.empty_form.child_lessons.empty_form.child_sections.can_delete %}
+                    <a class="FM_remove_form Remove_button btn btn-default" type="button" style="float:right;">
+                        <i class="fas fa-minus-circle"></i>
+                        remove this form
+                    </a>
+                    {% endif %}
+
+                    <div class="FM_form_content">
+                        <div class="FM_form_errors form_error_container"></div>
+                        <table class="section-table">
+                            {{ empty_form.as_table }}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+
+
+    <!--<form id="post-new-module" action="create/module/" method="post">-->
+    <form id="post-new-module" action="{{ request.path }}" method="post">
+        {% csrf_token %}
+
+        <button class="Submit_button btn btn-default" type="submit" style="float:right;">Submit Module</button>
+        {# add module management form and list any errors #}
+
+
+        {# add the module form #}
+        <table>
+            {{ form.as_table }}
+        </table>
+
+        <br/>
+
+        {# add formset wrappers for the module's topics #}
+
+
+        <div id="Topics-Wrapper">
+            <div class="FM_formset" FM-Type="TOPICS" FM-Prefix="{{Topics.prefix}}">
+                <div class="FM_mgmt_form">{{ Topics.management_form }}</div>
+                <div class="FM_formset_errors">{{ Topics.non_form_errors }}</div>
+
+
+
+                <div class="FM_formset_forms" FM-Type="TOPICS">
+
+                {% for topic_form in Topics %}
+
+                        <div class="FM_form" FM-Type="TOPICS">
+
+                            <div class="FM_form_content">
+                                <div class="FM_form_errors form_error_container">{{topic_form.errors}}</div>
+                                <table class="topic-table">{{ topic_form.as_table }}</table>
+
+
+                                {% if topic_form.child_lessons %}
+
+                                    <div class="FM_formset" FM-Type="LESSONS" FM-Prefix="{{topic_form.child_lessons.prefix}}">
+                                        <div class="FM_formset_errors">{{ topic_form.child_lessons.non_form_errors }}</div>
+                                        <div class="FM_mgmt_form">{{ topic_form.child_lessons.management_form }}</div>
+
+                                        <div class="FM_formset_forms" FM-Type="LESSONS">
+
+                                            {% for lesson_form in topic_form.child_lessons %}
+
+                                                    <div class="FM_form" FM-Type="LESSONS">
+
+                                                        <div class="FM_form_content">
+                                                            <div class="FM_form_errors form_error_container">{{lesson_form.errors}}</div>
+                                                            <table class="section-table">
+                                                                {{ lesson_form.as_table }}
+                                                            </table>
+
+
+                                                            {% if lesson_form.child_sections %}
+
+                                                                <div class="FM_formset" FM-Type="SECTIONS" FM-Prefix="{{lesson_form.child_sections.prefix}}">
+                                                                    <div class="FM_formset_errors">{{ lesson_form.child_sections.non_form_errors }}</div>
+                                                                    <div class="FM_mgmt_form">{{ lesson_form.child_sections.management_form }}</div>
+
+                                                                    <div class="FM_formset_forms" FM-Type="SECTIONS">
+
+                                                                        {% for section_form in lesson_form.child_sections %}
+
+                                                                                <div class="FM_form" FM-Type="SECTIONS" FM-poly-type="{{ section_form|as_form_type }}">
+
+                                                                                    <div class="FM_form_content">
+                                                                                        <div class="FM_form_errors form_error_container">{{section_form.errors}}</div>
+                                                                                        <table class="section-table">
+                                                                                            {{ section_form.as_table }}
+                                                                                        </table>
+                                                                                    </div>
+
+                                                                                </div>
+
+
+                                                                        {% endfor  sections_loop %}
+
+                                                                    </div>
+                                                                </div>
+                                                            {% endif %}
+
+
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                            {% endfor  lessons_loop %}
+
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                {% endfor topics_loop %}
+                </div>
+            </div>
+        </div>
+
+
+
+        <button class="Submit_button btn btn-default" type="submit" style="float:right;">Submit Module</button>
+    </form>
+
+</div>
+
+
+
+{# addtoblock "js" #}
+<script type="text/javascript" src="{% static 'manage/js/manage_ModuleFormManager.js' %}"></script>
+<script type="text/javascript" src="{% static 'manage/js/manage_ModuleFormValidation.js' %}"></script>
+<!--<script type="text/javascript" src="{% static 'tags/js/bootstrap-tagsinput.js' %}"></script>-->
+
+<script>
+    // disable 'Enter' key action in forms (causes submission of form by default)
+    $("form").keypress(function(e) {
+      //Enter key
+      if (e.which == 13) {
+        return false;
+      }
+    });
+
+    FormManager.init('#post-new-module');
+    initialize_existing_validation()
+
+
+    // initialize the current topic/section accordions
+
+    // initialize the topic accordions
+    $('.accordion-form').each(function(){
+        $(this).accordion({
+            active: false,
+            collapsible:true,
+            heightStyle: "content",
+        });
+    });
+
+
+    // add an ALL post add event to initialize the form accordions
+    FormManager.add_post_add_event("ALL", function(){
+
+        // get all uninitialized accordions
+        $('.accordion-form:not(.ui-accordion)').each(function(){
+            $(this).accordion({
+                active: 0,
+                collapsible:true,
+                heightStyle: "content",
+            });
+
+            // add validation rules to newly generated fields
+            $(this).find('input[name$="-name"]').each(function(){
+                $(this).rules('add',custom_validator_rules['name']);
+            });
+
+            $(this).find('input[name$="-duration"]').each(function(){
+                $(this).rules('add', custom_validator_rules['duration']);
+            });
+
+        });
+    });
+
+//      TODO: FIGURE THIS OUT
+//    FormManager.add_post_formset_init_event("SECTIONS", function(){
+//
+//        // add functionality to expand a topics sections
+//        $('.expand_all_section').click(function(){
+//
+//            // set the active option to 0 for each initialized topic-accordion
+//            $.each($('.accordion-form.Section-Accord.ui-accordion'), function(){
+//                $(this).accordion("option", {active: 0})
+//            });
+//        });
+//
+//        // add functionality to collapse topic sections
+//        $('.collapse_all_section').click(function(){
+//
+//            // set the active option to false for each initialized topic-accordion
+//            $.each($('.accordion-form.Section-Accord.ui-accordion'), function(){
+//                $(this).accordion("option",{active: false})
+//            });
+//
+//        });
+//    });
+
+    // add functionality to topic expand
+    $('#expand_all_Topic').click(function(){
+        // set the active option to 0 for each initialized topic-accordion
+        $.each($('.accordion-form.Topic-Accord.ui-accordion'), function(){
+            $(this).accordion("option", {active: 0})
+        });
+    });
+
+
+    // add functionality to topic collapse
+    $('#collapse_all_Topic').click(function(){
+        // set the active option to false for each initialized topic-accordion
+        $.each($('.accordion-form.Topic-Accord.ui-accordion'), function(){
+            $(this).accordion("option",{active: false})
+        });
+    });
+
+
+
+
+    $('#post-new-module').on('submit', function(event){
+        event.preventDefault();
+
+        // serialize the data from the form
+
+        console.log('performing validation');
+
+        //form = $(this)
+
+
+
+
+
+    });
+
+</script>
+
+{# endaddtoblock #}
+

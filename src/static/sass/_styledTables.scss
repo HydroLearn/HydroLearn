@@ -1,0 +1,134 @@
+/*
+    TODO: Currently not very pretty in mobile view
+
+*/
+
+// div tables (uses old style)
+.styledTable{
+    display: table;
+
+
+    width:100%;
+    max-width:100%;
+
+
+    .row {
+        display: table-row;
+        .cell{
+
+            display: table-cell;
+            padding: 3px 10px;
+            background-color: #e1e1e1;
+            font-family: $body_font;
+
+
+            &.header{
+                background: $HL_blue;
+                //background-color:rgba(69, 164, 243, 0.3);
+                border-bottom: 2px solid $HL_seafoam;
+                color: white;
+
+                font-family: $header_font;
+                font-weight: bold;
+                font-style: italic;
+                font-size:1.2em;
+            }
+
+        }
+
+        /* set row coloring rules (color cell background, not row [for rounding rules to take affect] )*/
+        &:nth-child(even){
+            .cell{
+                &:not(.header){
+                    background-color: #f1f1f1;
+
+                }
+
+            }
+        }
+
+
+        /* ******* set cell border rounding rules
+        */
+        &:first-child {
+            .cell:first-child { border-top-left-radius: .75em;}
+            .cell:last-child { border-top-right-radius: .75em;}
+        }
+        &:last-child {
+            .cell:first-child { border-bottom-left-radius: .75em;}
+            .cell:last-child { border-bottom-right-radius: .75em;}
+        }
+
+    }
+}
+
+
+/* standardized custom styling for responsive tables */
+table.responsive_table, table.responsive_table table.responsive_table{
+    width: 100%;
+    border:none; // clear out the default border
+    tr {
+        border:none; // clear out the default border
+        th {
+            padding: 20px 10px 3px;
+            border:none; // clear out the default border
+            border-bottom: 3px solid $HL_blue;
+            font-family: $header_font;
+            font-size: 17px;
+
+
+        }
+        td {
+            padding: 3px 10px;
+            background-color: #F1F1F1;
+
+            border:none; // clear out the default border
+
+
+        }
+
+        /* stacktable 'key' cell which contains header values */
+        .st-key{
+            background-color: #eee;
+            font-weight:bold;
+            font-style:italic;
+        }
+
+        /* stacktable 'value' cell which contains header values */
+        .st-val{
+            background-color: #eee;
+        }
+
+        &.head_row {
+
+            .st-head-row:first-child { border-top-left-radius: .75em;}
+            .st-head-row:last-child { border-top-right-radius: .75em;}
+        }
+
+        .st-head-row {
+            //background-color: $HL_blue;
+
+
+        }
+
+        .st-head-row-main {
+            background-color: $HL_darkBlue;
+            display:none;
+        }
+
+        &:nth-child(even){
+            td{
+                background-color: #FFF;
+            }
+
+        }
+
+        &:first-child {
+            th:first-child { border-top-left-radius: .75em; }
+            th:last-child { border-top-right-radius: .75em; }
+        }
+    }
+
+
+
+}

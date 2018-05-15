@@ -1,0 +1,436 @@
+
+/*
+    Exclude 'style-reset' as it causes some other issues
+    @import 'browserStylingReset';
+
+*/
+@import 'branding';
+
+/*
+    bootstrap overrides
+*/
+
+.container {
+    max-width:100%;
+}
+
+
+/*
+    General overrides
+*/
+
+body, html {
+	font-family: $body_font;
+	text-rendering: optimizeLegibility !important;
+	-webkit-font-smoothing: antialiased !important;
+	//color: #777;
+
+
+    // POTENTIAL SIDE EFFECTS fix issues with double-click to edit extending width of page
+    overflow-x: hidden;
+
+}
+
+.cms {
+    width: 100vw !important;
+}
+
+
+html{
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+
+    width: 100vw;
+	max-width: 100%;
+
+	&.cms-toolbar-expanded{
+	    //#menu, #content-wrapper,#page-content-container {
+	    #content {
+	        margin-top:46px;
+
+	    }
+	    #menu {
+	        //margin-top:46px;
+	        top:46px !important;
+	    }
+	    .sidebar_wrapper{
+	        margin-top:46px;
+	    }
+
+	    #content #content-wrapper #content-tab-header{
+	        top:96px;
+	    }
+	    #content #content-wrapper #content-tab-body{
+            //margin-top:106px;
+	    }
+
+	}
+}
+
+body{
+    margin: 0;
+    max-width: 100%;
+    //div { max-width: 100%;}
+}
+
+.logo{
+    background: url($logo_215x40) no-repeat left center;
+    width: 215px;
+    height: 40px;
+
+    @media (max-width: 400px){
+        background: url($logo_150x28) no-repeat left center;
+        width:150px;
+        height:28px;
+    }
+}
+
+.logo-large{
+    background: url($logo_1280x720) no-repeat center center;
+    background-size: 80%;
+    //width: 1025px;
+    height: 200px;
+
+
+
+}
+
+h1,h2,h3,h4,h5 {
+    font-family: $header_font;
+    color: $dark_gray;
+
+    strong {
+        font-weight: 900;
+    }
+}
+
+h2 {
+	line-height: 32px;
+	font-size: 32px;
+	font-weight: 700;
+	margin: 0;
+	margin-bottom: .5em;
+
+}
+
+h3 {
+	font-size: 20px;
+	color: #666;
+	font-weight: 700;
+}
+
+h4 {
+	font-size: 20px;
+	color: #666;
+}
+
+h5 {
+	text-transform: uppercase;
+	font-weight: 700;
+	line-height: 20px;
+}
+
+p{
+    font-family: $body_font;
+    padding-bottom: 1em;
+}
+
+
+
+.clearfix {
+    display: inline-block;
+
+    &:after{
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0;
+    }
+
+    display: block;
+}
+
+* {
+    html {
+        .clearfix {
+            height: 1%;
+        }
+    }
+
+}
+
+ul, ol {
+	padding: 0;
+	webkit-padding: 0;
+	moz-padding: 0;
+	list-style: none;
+}
+hr {
+    border-top: 1px solid $HL_blue;
+    width: 98%;
+    border-radius: .75em;
+	height: 3px;
+
+	position: relative;
+	background: $HL_blue;
+	border: 0;
+	margin: .5em auto 1em;
+	text-align: center;
+
+}
+
+.darkSection {
+    padding: 2em 3em;
+    background-color: #f6f6f6;
+    width: 100%;
+}
+
+
+
+/* Multicolumn element responsive styling */
+div[class^='multicolumn'] {
+    //padding: 2em 50px 2em;
+    display:flex;
+    flex-wrap: wrap;
+
+    .column{
+        flex: 1 0 200px;
+        box-sizing: border-box;
+        color: $dark_gray;
+        padding: 1em 1em;
+        margin-left: 10px;
+        margin-top: 10px;
+    }
+
+}
+
+/* helios overrides
+    TODO: Phase out origional Helios style sheet entirely with this document
+*/
+
+#services-section i.fas {
+    font-size: 40px;
+    margin-bottom: 20px;
+    transition: all 0.5s;
+    color: $HL_seafoam;
+}
+
+
+#content {
+
+    width: 100vw;
+    max-width:100%;
+    //padding-top: 35px;
+    //margin-top: $header-height;
+    min-height: calc(100vh - #{$header-height + $footer-height});
+    transition: all 0.3s;
+
+    top: 0;
+    right: 0;
+
+    &:not(.always_full) > *:not(#menu):not(#footer):not(.always_full) {
+
+        @media (min-width: 1000px){
+            padding-left: 5%;
+            padding-right: 5%;
+
+        }
+
+    }
+
+    a {
+        color: $HL_blue;
+        :hover{
+            color: $HL_seafoam;
+        }
+    }
+
+    ul{
+        list-style: disc;
+        margin-left: 3em;
+
+        &:not(.nav){
+            padding-bottom: 1em;
+        }
+
+    }
+
+    .container{
+        padding-top:1.5em;
+        padding-bottom:1em;
+    }
+
+    #content-wrapper {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        min-width: 100%;
+
+        #content-tab-header {
+            position: fixed;
+            top: 50px;
+            background-color: #f1f1f1;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 57px;
+            z-index: 100;
+
+            ul {
+                width: 100%;
+                padding: 15px 0 0 0;
+
+                li {
+                    padding-left: 15px;
+
+                    a {
+                        background-color: transparent;
+
+                        &:hover:not(.active) {
+                            background-color: $trans_gray;
+                        }
+                    }
+
+                    &.active{
+                        a, a:hover {
+                            background-color: #fff;
+                        }
+                    }
+                }
+            }
+        }
+
+        #content-tab-body{
+            margin-top: 106px;
+            padding: 25px 25px 110px;
+        }
+    }
+}
+
+
+/* Social Section */
+
+#social-section {
+  padding: 30px 0;
+  background-color: $HL_blue;
+  text-align: center;
+  .social {
+    ul li {
+      display: inline-block;
+      margin: 0 20px;
+    }
+    i.fas {
+      font-size: 24px;
+      padding: 4px 5px;
+      color: #fff;
+      transition: all 0.5s;
+      &:hover {
+        color: #666;
+      }
+    }
+  }
+}
+
+/* Footer */
+
+#footer-spacer{
+    height:100px;
+}
+
+#footer {
+  background-color: #222222;
+  color: #777;
+  //padding: 15px 0 10px 0;
+  text-align: center;
+
+  p {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+
+  a {
+    color: #999;
+
+    &:hover {
+      text-decoration: none;
+      color: $HL_blue;
+
+    }
+
+  }
+
+  .container {
+        height: $footer-height;
+    }
+
+
+    .footer-nav{
+        float: left;
+    }
+
+    .copyright{
+        float:right;
+    }
+
+    .social {
+        float:right;
+        padding: 5px 0;
+
+        ul{
+            list-style: none;
+            margin: 0 10px;
+
+            li {
+                display:inline;
+                font-size: 20px;
+                padding: 0 10px;
+
+
+            }
+        }
+    }
+
+}
+
+a:focus {
+  text-decoration: none;
+  color: $HL_darkBlue;
+}
+
+//@import 'navigation';
+@import 'sidebar-nav';
+@import 'styledTables';
+
+
+
+
+/* Media Styling */
+@media (max-width: $mobile_large) {
+    .content {
+        padding: 40% 0 0;
+    }
+
+}
+
+@media (max-width: 603px) {
+    #menu.navbar-default {
+        //background-color: rgba(0, 0, 0, 0.7);
+    }
+    label {
+        float: none !important
+    }
+    .hover-bg .hover-text {
+        padding: 12% 10%;
+    }
+
+
+}
+
+@media (max-width: 360px) {
+    .hover-bg .hover-text {
+        padding: 22% 10%;
+    }
+
+
+}

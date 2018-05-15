@@ -1,0 +1,19 @@
+<!--
+
+    This view is expected to be a partial view,
+    jquery-ui accordion listing all
+    topcs for the current module 
+-->
+
+    
+<div class="topic-list">
+    {% for topic in object_list %}
+    <h3> {{topic.name }} </h3>
+    <div>sample</div>
+    {% empty %}
+    <p>no topics yet, please add some!</p>
+    {% endfor %}
+</div>
+
+
+

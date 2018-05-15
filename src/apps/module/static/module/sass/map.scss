@@ -1,0 +1,13 @@
+@import 'branding';
+
+// styling specific to module-view
+#map-content {
+    height: 100%;
+    width: 100%;
+    //padding-bottom: 50px;
+    //padding-top: 70px;
+
+    /* TODO: find less hacky way to remove parent's padding for map viewer*/
+    margin:-25px;
+
+}

@@ -1,0 +1,18 @@
+{% extends CMS_TEMPLATE %}
+{% load cms_tags menu_tags sekizai_tags static %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+
+<h3>Thanks For Registering!</h3>
+<p>Please fill out your login information below and submit to being creating your new account.</p>
+<form action="" method="post">{% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <br>
+    <input type="submit" value="Register">
+</form>
+
+{% endblock content %}

@@ -1,0 +1,16 @@
+/*
+    this file provides the styling overrides for the custom admin interface.
+    
+*/
+
+.inline_accordion h3 {
+    margin-bottom: 0 !important;
+}
+
+.inline_accordion .ui-widget-content{
+    background: #eeeeee;
+}
+
+.inline_accordion .ui-state-default{
+    background: #f6f6f6;
+}

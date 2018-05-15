@@ -1,0 +1,304 @@
+@import 'branding';
+
+
+/*
+#content-wrapper > {
+  div {
+    border: 1px solid #ccc;
+    //width:75%;
+    margin: auto;
+    margin-bottom: 15px;
+    background: #fff;
+    padding: 10px;
+  }
+  #meta_box {
+    background: #eef;
+  }
+  #preview_box {
+    background: #fff;
+  }
+
+
+}
+*/
+
+.view_stack_child {
+    padding: 10px;
+
+}
+
+input.has_error {
+    border: 1px dashed red;
+
+}
+
+label.form-error {
+    color: #ff5555;
+    font-style: italic;
+    padding: 0 10px
+}
+
+.form_error_container {
+    width: 100%;
+    background-color: #ffe5e5;
+    border-left: 3px solid red;
+    padding: 10px;
+    margin: 10px 0;
+    clear:both;
+
+    text-align: center;
+    color: red;
+    font-style: italic;
+    font-weight: bold;
+
+    display:none;
+
+
+    ul{
+         list-style: none !important;
+         list-style-type: none !important;
+
+    }
+}
+
+#manage-content{
+    margin-top: 54px;
+    padding-top: 30px;
+}
+
+#modules-content{
+    #my_modules_header{
+        float:left;
+
+        @media(max-width:$mobile_small){
+            font-size:17px;
+        }
+    }
+
+    #create_module{
+        float:right;
+        margin: 13px 0 10px;
+        transition: all .2s;
+
+        font-weight: bold;
+        background-color: $HL_seafoam;
+        border:none;
+
+        &:hover {
+            background-color: $HL_blue;
+        }
+
+        @media(max-width:$mobile_small){
+            font-size:12px;
+        }
+    }
+
+    .module-action-container{
+        width: 275px;
+
+        a{
+            margin: 3px 5px;
+
+            i{
+                font-size: 20px;
+                padding: 3px 3px;
+                border-radius: .3em;
+
+                &:hover{
+                    background-color: #eee;
+                }
+
+
+            }
+
+            &.disabled_action{
+                i{
+                    color: #ccc;
+                    &:hover{
+                        cursor: not-allowed;
+                        background-color: transparent;
+                    }
+                }
+            }
+        }
+
+
+
+
+
+        @media(max-width: $mobile_small){
+            width:200px;
+        }
+    }
+
+    #crumb_trail{
+        a.crumb_entry{
+            color: $HL_blue;
+            cursor: pointer;
+
+            &:hover{
+                color: $HL_seafoam;
+            }
+
+            &.current_view{
+                cursor: default;
+                color: #666;
+            }
+        }
+
+
+
+
+    }
+
+    input[name$='-DELETE'], label[for$='-DELETE']{
+        display:none
+    }
+
+
+    #post-new-module{
+
+        table{
+            tr{
+                td{
+                    padding: 10px;
+                }
+            }
+        }
+
+        .helptext{
+            font-style: italic;
+            font-size: .9em;
+        }
+
+        .Add_button{
+            background: $HL_seafoam;
+            color: white;
+            margin: 0 10px;
+            &:hover{
+                background: $HL_blue;
+            }
+        }
+
+        .Remove_button{
+            background: $red;
+            color: white;
+            margin: 0 10px 10px;
+
+
+            &:hover{
+                background: red;
+            }
+        }
+
+        .topic_listing_header{
+            display:inline-block
+        }
+
+        .topic_actions_btn_group{
+            float: right;
+            i{
+                font-size: 1.2em;
+                vertical-align: middle;
+            }
+        }
+
+        .Topic-Accord {
+            .ui-state-focus { outline: none; }
+            h3.ui-accordion-header{
+                margin:2px 0;
+                padding: 0.3em 1em;
+                background: $HL_blue;
+                color: #fff;
+                //border: 1px solid #fff;
+                transition: background .2s;
+                box-shadow:#dcdcdc 2px 2px 5px 1px;
+
+                &:hover{
+                    background: $HL_darkBlue;
+                }
+            }
+
+            div.ui-accordion-content{
+                margin: -1px 0 8px 0;
+                padding: 1em;
+                border: 1px solid $light_gray;
+
+                box-shadow: #dcdcdc 2px 2px 5px 1px;
+                background: #fff;
+            }
+
+            .section_listing_header{
+                display: inline-block;
+            }
+
+            .add_new_sections_btn_group{
+                float:right;
+
+                i{
+                    font-size: 1.2em;
+                    vertical-align: middle;
+                }
+            }
+        }
+
+        .lesson_listing_header{
+            display:inline-block
+        }
+
+        .lesson_actions_btn_group{
+            float: right;
+            i{
+                font-size: 1.2em;
+                vertical-align: middle;
+            }
+        }
+
+        .Lesson-Accord {
+            .ui-state-focus { outline: none; }
+
+
+            h3.ui-accordion-header{
+                margin:2px 0;
+                padding: 5px 5px;
+                background: #9cc4f7;
+                color: #333;
+                border: 1px solid #ccc;
+                font-size: 17px;
+
+                &:hover{
+                    background: #83aadc;
+                }
+            }
+
+            div.ui-accordion-content{
+                padding: 1em;
+                margin: -2px 1px 8px 0;
+            }
+        }
+
+        .Section-Accord {
+            .ui-state-focus { outline: none; }
+
+
+            h3.ui-accordion-header{
+                margin:2px 0;
+                padding: 5px 5px;
+                background: $light_gray;
+                color: #666;
+                border: 1px solid #ccc;
+                font-size: 17px;
+
+                &:hover{
+                    background: #e1e1e3;
+                }
+            }
+
+            div.ui-accordion-content{
+                padding: 1em;
+                margin: -2px 1px 8px 0;
+            }
+        }
+    }
+
+}

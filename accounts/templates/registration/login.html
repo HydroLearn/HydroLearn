@@ -1,0 +1,51 @@
+{% extends CMS_TEMPLATE %}
+{% load cms_tags menu_tags sekizai_tags static %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+    {% if form.errors %}
+    <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+        <p>Your account doesn't have access to this page. To proceed,
+        please login with an account that has access.</p>
+        {% else %}
+        <p>Please login to see this page.</p>
+        {% endif %}
+    {% endif %}
+
+    <h3>Welcome Back!</h3>
+
+    <p>Please fill out your login credentials below.</p>
+
+    <form method="post" action="{% url 'login' %}">{% csrf_token %}
+        <table>
+            {{ form.as_table}}
+        </table>
+
+        <input type="submit" value="Login" />
+        <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+
+    {# Assumes you setup the password_reset view in your URLconf #}
+    <p>
+        <!--currently unavailable due to Email Settings (need a host)-->
+        <!--<a href="{% url 'password_reset' %}">Lost password?</a>-->
+    </p>
+
+
+    <!--<form action="" method="post">{% csrf_token %}-->
+        <!--<table>-->
+        <!--{{ form.as_table }}-->
+        <!--</table>-->
+        <!--<br>-->
+        <!--<input type="submit" value="Login">-->
+
+        <!--<br><br>-->
+        <!--<p>New to HydroLearn? <a href="/accounts/register/">Click here to register</a></p>-->
+    <!--</form>-->
+
+{% endblock content %}

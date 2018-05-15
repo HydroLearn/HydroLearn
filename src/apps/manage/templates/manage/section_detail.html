@@ -1,0 +1,67 @@
+<!--extend this to provide a detail view for a module-->
+{% extends CMS_TEMPLATE %}
+{% load cms_tags sekizai_tags static thumbnail %}
+
+{% block content %}
+    {% addtoblock "css" %}{% endaddtoblock "css" %}
+    
+    <h1>*UNCATAGORIZED* manage SECTION DETAIL VIEW</h1>
+    
+    <div id="manage-content">
+        
+
+
+        <div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ object.slug }}</div>
+        <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>
+
+        <div><span style="font-weight: bold; font-style: italic">Created by: </span>{{ object.created_by }}</div>
+        <div><span style="font-weight: bold; font-style: italic">Date Created: </span>{{ object.created_at }}</div><br>
+
+        <div><span style="font-weight: bold; font-style: italic">Last Modified by: </span>{{ object.updated_by }}</div>
+        <div><span style="font-weight: bold; font-style: italic">Date Modified: </span>{{ object.updated_at }}</div><br/>
+        <!-- Output any related tags -->
+        <div><span style="font-weight: bold; font-style: italic">(Module) Inherited Tags: </span>{{ object.lesson.topic.module.tags.names | join:", " }}</div>
+        <div><span style="font-weight: bold; font-style: italic">(Topic) Inherited Tags: </span>{{ object.lesson.topic.tags.names | join:", " }}</div>
+        <div><span style="font-weight: bold; font-style: italic">(Lesson) Inherited Tags: </span>{{ object.lesson.tags.names | join:", " }}</div>
+        <div><span style="font-weight: bold; font-style: italic">Tags: </span>{{ object.tags.names | join:", " }}</div>
+
+        <h4>Parent Objects</h4>
+        <ul>
+            <li><span style="font-weight: bold; font-style: italic">Module: </span><a href="{{object.lesson.topic.module.manage_url}}">{{ object.lesson.topic.module.name}}</a></li>
+            <ul>
+                <li><span style="font-weight: bold; font-style: italic">Topic: </span><a href="{{object.lesson.topic.manage_url}}">{{ object.lesson.topic.name}}</a></li>
+                <ul><li><span style="font-weight: bold; font-style: italic">Lesson: </span><a href="{{object.lesson.manage_url}}">{{ object.lesson.name}}</a></li></ul>
+            </ul>
+
+        </ul>
+
+        <!--<div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ Section.slug }}</div>-->
+        <!--<div><span style="font-weight: bold; font-style: italic">Type: </span>{{ Section.section_type }}</div>-->
+        <!--<div><span style="font-weight: bold; font-style: italic">Parent Module: </span><a href="{{Section.topic.module.absolute_url}}">{{ Section.topic.module.name}}</a></div>-->
+        <!--<div><span style="font-weight: bold; font-style: italic">Parent Topic: </span><a href="{{Section.topic.absolute_url}}">{{ Section.topic.name}}</a></div>-->
+        <!--<div><span style="font-weight: bold; font-style: italic">Created: </span>{{ Section.created_at }}</div>-->
+        <!--<div><span style="font-weight: bold; font-style: italic">Last Modified: </span>{{ Section.updated_at }}</div>-->
+        <!--<div><span style="font-weight: bold; font-style: italic">url: </span>{{ request.path_info }}</div>-->
+        <div id="lesson-content">
+            <div class="lesson">
+                <h2>{% render_model Section 'name' %}</h2>
+                <div>
+                    {% if object.content %}
+                        {% render_placeholder object.content %}
+
+                    {% else %}
+                        <p>there is no content please add some</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+{% endblock content %}
+
+{% block addtl_js %}
+<script>
+    $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
+</script>
+{% endblock addtl_js %}

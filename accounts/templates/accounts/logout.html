@@ -1,0 +1,15 @@
+{% extends CMS_TEMPLATE %}
+{% load cms_tags menu_tags sekizai_tags static %}
+
+{% block title %}Logged out!{% endblock title %}
+
+{% block content %}
+
+<!--CURRENTLY NOT USED, Logout redirects to home-->
+    <h3>Logged out!</h3>
+
+    <p>Thanks for being a part of HydroLearn.</p>
+
+    <p><a href="/accounts/login/">Login again</a> | <a href="/">Back To Home</a></p>
+
+{% endblock content %}

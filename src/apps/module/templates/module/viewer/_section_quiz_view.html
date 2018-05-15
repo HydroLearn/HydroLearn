@@ -1,0 +1,44 @@
+<!--extend this to provide a detail view for a module-->
+
+{% load cms_tags sekizai_tags static thumbnail %}
+
+{% block content %}
+    {% addtoblock "css" %}{% endaddtoblock "css" %}
+    <div class='lesson'>
+        {# add in permission check to determine if this gets loaded #}
+        {% include "module/parts/section_edit_toolbar.html" %}
+        
+        <h2 class="lesson-header">{{object.name}}</h2>
+        <hr class="headerSpacer">
+        
+        {% for question in object.quiz_question_item.all %}
+
+        <div>question: {% render_placeholder question.question_text %}</div>
+
+
+            {% for answer in question.answer_item.all %}
+
+                <p>Answer: {% render_placeholder answer.answer_text %}</p>
+
+            {% empty %}
+                <p>There don't appear to be answers for this question... paradoxical </p>
+            {% endfor %}
+        <hr/>
+        {% empty %}
+
+        <p> There doesn't appear to be any questions in this quiz, please add some. </p>
+
+        {% endfor %}
+    </div>    
+    
+        
+        
+    
+{% endblock content %}
+
+{% block addtl_js %}
+<script>
+    $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
+</script>
+{% endblock addtl_js %}
+

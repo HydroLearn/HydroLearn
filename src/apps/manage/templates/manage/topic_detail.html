@@ -1,0 +1,85 @@
+<!--extend this to provide a detail view for a module-->
+{% extends CMS_TEMPLATE%}
+{% load cms_tags sekizai_tags static thumbnail %}
+
+{% block subtitle%} - Manage Topic {% endblock subtitle %}
+
+{% block content %}
+    {% addtoblock "css" %}
+        <link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'manage/css/manage_content_styling.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
+
+    {% endaddtoblock "css" %}
+    
+
+    <div id="manage-content">
+        <h3>Manage Topic</h3>
+        <div class="manage-details-accord topic-accord">
+            <h3>Additional Information</h3>
+
+            <div id="meta_box">
+                <div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ object.slug }}</div>
+                <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>
+
+                <div><span style="font-weight: bold; font-style: italic">Created by: </span>{{ object.created_by }}</div>
+                <div><span style="font-weight: bold; font-style: italic">Date Created: </span>{{ object.created_at }}</div><br>
+
+                <div><span style="font-weight: bold; font-style: italic">Last Modified by: </span>{{ object.updated_by }}</div>
+                <div><span style="font-weight: bold; font-style: italic">Date Modified: </span>{{ object.updated_at }}</div><br/>
+                <!-- Output any related tags -->
+                <h4>Tags</h4>
+                <ul>
+                    <li><span style="font-weight: bold; font-style: italic">Module Tags: </span>{{ object.module.tags.names | join:", " }}</li>
+                    <li><span style="font-weight: bold; font-style: italic">Tags: </span>{{ object.tags.names | join:", " }}</li>
+                </ul>
+
+                <h4>Parent Objects</h4>
+                <ul>
+                    <li><span style="font-weight: bold; font-style: italic">Module: </span><a href="{{object.module.manage_url}}">{{ object.module.name}}</a></li>
+                </ul>
+                <div>
+                    <h4>Lessons:</h4>
+                    <ul>
+                        {% for lesson in object.lessons.all %}
+                            <li>
+                                <a href='{% url "manage:lesson_content" module_slug=topic.module.slug  topic_slug=topic.slug  slug=lesson.slug %}'>{{lesson.name}}</a>
+                            </li>
+                        {% empty %}
+                            <p>No Lessons for this topic yet, add some to view them here.</p>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div id="lesson-content">
+            <div class="lesson">
+                <h2>{% render_model object 'name' %}</h2>
+                <h3>Intro (Summary) Content</h3>
+                <hr>
+                <div>
+                    {% render_placeholder object.summary%}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block addtl_js %}
+<script>
+    $('.manage-details-accord').accordion({
+        active: false,
+        collapsible:true,
+        heightStyle: "content",
+    });
+    $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
+
+</script>
+{% endblock addtl_js %}
+

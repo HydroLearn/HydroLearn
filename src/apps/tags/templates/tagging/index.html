@@ -1,0 +1,59 @@
+<!--extend this to provide a detail view for a module-->
+{% extends CMS_TEMPLATE %}
+{% load sekizai_tags static thumbnail %}
+
+
+
+
+{% block content %}
+    {% addtoblock "css" %}{% endaddtoblock "css" %}
+    
+    
+    
+    <!--<ul>
+    {% for tag in tags %}
+        <li>{{ tag.name }}</li>
+      {% empty %}
+        <li>No Tags</li>
+      {% endfor %}
+    </ul>-->
+    
+    <h3> Modules Tagged with '...'</h3>    
+    <div>
+        <ul class="section-list">
+            {% for object in tagged_modules %}
+            <li>
+                <a href="{{ object.manage_url }}">{{ object.name }}</a>
+            </li>
+            {% empty %}
+            <p>No Modules contain this tag!</p>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <h3> Topics Tagged with '...'</h3>    
+    <div>
+        <ul class="section-list">
+            {% for object in tagged_topics %}
+            <li>
+                <a href="{{ object.manage_url }}">{{ object.name }}</a>
+            </li>
+            {% empty %}
+            <p>No Topics contain this tag!</p>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <h3> Sections Tagged with '...'</h3>    
+    <div>
+        <ul class="section-list">
+            {% for object in tagged_sections %}
+            <li>
+                <a href="{{ object.manage_url }}">{{ object.name }}</a>
+            </li>
+            {% empty %}
+            <p>No Sections contain this tag!</p>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content %}

@@ -1,0 +1,12 @@
+<!--extend this to provide a detail view for a module-->
+{% extends CMS_TEMPLATE %}
+{% load cms_tags sekizai_tags static thumbnail %}
+
+{% block content %}
+    {% addtoblock "css" %}{% endaddtoblock "css" %}
+    <div class='lesson'>
+        We're sorry. The section you are looking for could not be found.
+    </div>
+    
+{% endblock content %}
+

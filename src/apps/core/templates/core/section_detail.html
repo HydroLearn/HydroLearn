@@ -1,0 +1,52 @@
+<!--extend this to provide a detail view for a module-->
+{% extends CMS_TEMPLATE %}
+{% load cms_tags sekizai_tags static thumbnail %}
+
+{% block content %}
+    {% addtoblock "css" %}{% endaddtoblock "css" %}
+    
+    <h1>*UNCATAGORIZED* core SECTION DETAIL VIEW</h1>
+    
+    <div class="section-detail">
+        
+        <h2>{% render_model Section 'name' %}</h2>
+        
+        <div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ object.slug }}</div>
+            <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>
+
+            <div><span style="font-weight: bold; font-style: italic">Created by: </span>{{ object.created_by }}</div>
+            <div><span style="font-weight: bold; font-style: italic">Date Created: </span>{{ object.created_at }}</div><br>
+
+            <div><span style="font-weight: bold; font-style: italic">Last Modified by: </span>{{ object.updated_by }}</div>
+            <div><span style="font-weight: bold; font-style: italic">Date Modified: </span>{{ object.updated_at }}</div><br/>
+            <!-- Output any related tags -->
+            <h4>Tags</h4>
+            <ul>
+                <li><span style="font-weight: bold; font-style: italic">Module Tags: </span>{{ object.lesson.topic.module.tags.names | join:", " }}</li>
+                <li><span style="font-weight: bold; font-style: italic">Topic Tags: </span>{{ object.lesson.topic.tags.names | join:", " }}</li>
+                <li><span style="font-weight: bold; font-style: italic">Lesson Tags: </span>{{ object.lesson.tags.names | join:", " }}</li>
+                <li><span style="font-weight: bold; font-style: italic">Tags: </span>{{ object.tags.names | join:", " }}</li>
+            </ul>
+
+            <h4>Parent Objects</h4>
+            <ul>
+                <li><span style="font-weight: bold; font-style: italic">Parent Module: </span><a href="{{object.lesson.topic.module.absolute_url}}">{{ object.lesson.topic.module.name}}</a></li>
+                <li><span style="font-weight: bold; font-style: italic">Parent Topic: </span><a href="{{object.lesson.topic.absolute_url}}">{{ object.lesson.topic.name}}</a></li>
+                <li><span style="font-weight: bold; font-style: italic">Parent Lesson: </span><a href="{{object.lesson.absolute_url}}">{{ object.lesson.name}}</a></li>
+            </ul>
+
+        <div>
+            {% if object.content %}
+                {% render_placeholder object.content %}
+            
+            {% else %}
+                <p>there is no content please add some</p>
+            {% endif %}
+        </div>
+        
+        
+        
+        
+    </div>
+{% endblock content %}
+

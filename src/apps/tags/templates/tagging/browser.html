@@ -1,0 +1,22 @@
+<!--extend this to provide a detail view for a module-->
+{% extends CMS_TEMPLATE %}
+{% load sekizai_tags static thumbnail %}
+
+
+
+
+{% block content %}
+    {% addtoblock "css" %}{% endaddtoblock "css" %}
+    <h3>Existing Tags</h3>
+    <ul>
+        {% for tag in tags %}
+            <li>
+                <a target="_blank" href="{% url 'tags:tagged' tag.slug %}">{{tag.name}}</a>
+            </li>
+        {% empty %}
+            <p>Sorry! There doesn't appear to be any tags in the system</p>
+        {% endfor %}
+    </ul>
+    
+   
+{% endblock content %}
