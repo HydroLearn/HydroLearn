@@ -8,7 +8,7 @@ class Publication(models.Model):
 
 
     # map to a user and a module
-    # user = models.ForeignKey(User, null=False, blank=False, related_name='shared_with')
+    # created_by = models.ForeignKey(User, null=False, blank=False, related_name='publication')
     # module = models.ForeignKey(Module, null=False, blank=False, related_name='shared_module')
 
     # record the date the module was shared with the user
@@ -19,7 +19,7 @@ class Publication(models.Model):
     published = models.ForeignKey(Module, null=True, related_name='published_copy')
 
 
-class PublishableModelMixin(models.Model):
+class PublishableModel(models.Model):
     class Meta:
         abstract = True
 

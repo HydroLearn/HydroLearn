@@ -15,7 +15,10 @@ class ShareMapping(models.Model):
 
     # map to a user and a module
     user = models.ForeignKey(User, null=False, blank=False, related_name='shared_with')
-    module = models.ForeignKey(Module, null=False, blank=False, related_name='shared_module')
+
+    # potentially better to have mapping to Publishable instead of module
+    #module = models.ForeignKey(Module, null=False, blank=False, related_name='shared_module')
+
 
     # record the date the module was shared with the user
     shared_date = models.DateTimeField(auto_now_add=True)
