@@ -21,8 +21,15 @@
     model sending signal must contain a 'clear_placeholderfields' method which calls 'clear()' on
     each of it's required placeholderfields
 '''
-from cms.models import PlaceholderField
+#from cms.models import PlaceholderField
 
+
+# def module_pre_save_handler(sender, instance, *args, **kwargs):
+#     print("in module PRE_SAVE")
+#     # some case
+#     if instance.is_draft:
+#
+#         raise Exception('OMG')
 
 # def clear_placeholderfields(sender, instance, **kwargs):
 #     # instance_fields = instance._meta.get_fields()

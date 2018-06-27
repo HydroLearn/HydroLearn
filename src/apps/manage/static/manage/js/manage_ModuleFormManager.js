@@ -365,12 +365,6 @@ var FormManager = {
 
 
             form.addClass('FM_deleted_form')
-            // set the delete checkbox to checked
-            debugger;
-
-
-
-
 
             // animate the removal of the form then actually remove it
             form.slideUp(function(){});

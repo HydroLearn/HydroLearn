@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'manage:module_revert' object.slug%}">{% csrf_token %}
+    Are you sure?
+    Reverting to the previously published copy will remove any changes in you current draft.
+    <input type="submit" name="revert" value="Revert" class="btn">
+</form>

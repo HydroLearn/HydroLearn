@@ -10,9 +10,11 @@ def list_my_modules(context):
     :param context: the context of the current page
     :return: templated listing of all modules created by the user specified in view context
     '''
-    my_modules = context['user'].created_modules.all().order_by('-updated_at')
+    my_modules = context['user'].created_modules.drafts().order_by('-changed_date')
+    shared_modules = None
     return {
         'my_modules': my_modules,
+        'shared_modules': shared_modules,
     }
 
 # not sure how to handle this yet...

@@ -15,10 +15,10 @@
         <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>
 
         <div><span style="font-weight: bold; font-style: italic">Created by: </span>{{ object.created_by }}</div>
-        <div><span style="font-weight: bold; font-style: italic">Date Created: </span>{{ object.created_at }}</div><br>
+        <div><span style="font-weight: bold; font-style: italic">Date Created: </span>{{ object.creation_date }}</div><br>
 
-        <div><span style="font-weight: bold; font-style: italic">Last Modified by: </span>{{ object.updated_by }}</div>
-        <div><span style="font-weight: bold; font-style: italic">Date Modified: </span>{{ object.updated_at }}</div><br/>
+        <div><span style="font-weight: bold; font-style: italic">Last Modified by: </span>{{ object.changed_by }}</div>
+        <div><span style="font-weight: bold; font-style: italic">Date Modified: </span>{{ object.changed_date }}</div><br/>
         <!-- Output any related tags -->
         <div><span style="font-weight: bold; font-style: italic">(Module) Inherited Tags: </span>{{ object.lesson.topic.module.tags.names | join:", " }}</div>
         <div><span style="font-weight: bold; font-style: italic">(Topic) Inherited Tags: </span>{{ object.lesson.topic.tags.names | join:", " }}</div>
@@ -39,8 +39,8 @@
         <!--<div><span style="font-weight: bold; font-style: italic">Type: </span>{{ Section.section_type }}</div>-->
         <!--<div><span style="font-weight: bold; font-style: italic">Parent Module: </span><a href="{{Section.topic.module.absolute_url}}">{{ Section.topic.module.name}}</a></div>-->
         <!--<div><span style="font-weight: bold; font-style: italic">Parent Topic: </span><a href="{{Section.topic.absolute_url}}">{{ Section.topic.name}}</a></div>-->
-        <!--<div><span style="font-weight: bold; font-style: italic">Created: </span>{{ Section.created_at }}</div>-->
-        <!--<div><span style="font-weight: bold; font-style: italic">Last Modified: </span>{{ Section.updated_at }}</div>-->
+        <!--<div><span style="font-weight: bold; font-style: italic">Created: </span>{{ Section.creation_date }}</div>-->
+        <!--<div><span style="font-weight: bold; font-style: italic">Last Modified: </span>{{ Section.changed_date }}</div>-->
         <!--<div><span style="font-weight: bold; font-style: italic">url: </span>{{ request.path_info }}</div>-->
         <div id="lesson-content">
             <div class="lesson">

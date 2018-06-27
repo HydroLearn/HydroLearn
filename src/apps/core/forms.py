@@ -1,14 +1,15 @@
 from django import forms
 from django.utils.translation import ugettext as _
 
-from src.apps.core.models.module_models import (
+from src.apps.core.models.ModuleModels import (
     Module,
     Topic,
     Lesson,
     Section,
 )
+from src.apps.core.models.PublicationModels import Publication
 
-from src.apps.core.models.section_types import (
+from src.apps.core.models.SectionTypeModels import (
     ReadingSection,
     ActivitySection,
     QuizSection
@@ -35,17 +36,23 @@ class ModuleForm(forms.ModelForm):
     # def __init__(self, *args, **kwargs):
     #     self.user = kwargs.pop('user', None)
     #     super(ModuleForm, self).__init__(*args,**kwargs)
-    # 
+    #
+
     class Meta:
         model = Module
-        fields = ['name', 'tags']
+        fields = [
+            'name',
+            'tags',
+            #"publish_status"
+        ]
         exclude = ['created_by']
-        
+
         #tags = forms.ModelChoiceField(queryset=qs, widget=Select2Multiple(select2attrs={'width': 'auto'}))
         
-        # widgets = {
-        #     'tags': apply_select2(forms.Select),
-        # }
+        #widgets = {
+            #'tags': apply_select2(forms.Select),
+
+        #}
     
 
 
@@ -66,7 +73,16 @@ class ModuleForm(forms.ModelForm):
     #     required=False
     # )
     
-    
+class Module_ActionConfirmationForm(forms.Form):
+
+    class Meta:
+        # model = Module
+
+
+        widgets = {
+            'confirm': forms.HiddenInput(),
+        }
+
 
 class add_TopicForm(forms.ModelForm):
     class Meta:
@@ -233,7 +249,7 @@ class CreateNewModule_WizardForm(BaseFormMixin, forms.ModelForm):
         # this form should only be used in creating the initial instance so this should work
         print('*** adding created by for %s' % new_module.name)
         new_module.created_by = self.user
-        new_module.last_updated_by = self.user
+        new_module.changed_by = self.user
     #   
     #     pprint(new_topic.__dict__)
         if(commit):

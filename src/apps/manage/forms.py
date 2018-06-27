@@ -450,7 +450,7 @@ Formset Factories
 inlineTopicFormset = inlineformset_factory(
         Module,
         Topic,
-        exclude=['created_by', 'updated_by','created_at', 'updated_at'],
+        exclude=['created_by', 'changed_by','creation_date', 'changed_date'],
         extra=0,
         form=manage_TopicForm,
         formset=BaseTopicFormset,
@@ -460,7 +460,7 @@ inlineTopicFormset = inlineformset_factory(
 inlineLessonFormset = inlineformset_factory(
         Topic,
         Lesson,
-        exclude=['created_by', 'updated_by','created_at', 'updated_at'],
+        exclude=['created_by', 'changed_by','creation_date', 'changed_date'],
         extra=0,
         form=manage_LessonForm,
         formset=BaseLessonFormset,
@@ -471,7 +471,7 @@ inlineLessonFormset = inlineformset_factory(
 inlineSectionFormset = polymorphic_inlineformset_factory(
     Lesson,
     Section,
-    exclude=['created_by', 'updated_by','created_at', 'updated_at'],
+    exclude=['created_by', 'changed_by','creation_date', 'changed_date'],
     extra=0,
     formset=BaseSectionFormset,
     formset_children=( # add the inline polymorphic children and link their custom forms.

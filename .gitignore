@@ -1,7 +1,9 @@
 .idea/
-project.db
+*.db
 media/
 static_files/
+fixtures/
+generateHydroLearnFixtures.bat
 
 
 # Byte-compiled / optimized / DLL files

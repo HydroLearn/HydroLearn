@@ -1,9 +1,10 @@
 #from urllib.parse import to_bytes
 
 from django.core.exceptions import (
-        ImproperlyConfigured,
-        PermissionDenied
-    )
+    ImproperlyConfigured,
+    PermissionDenied,
+    ValidationError,
+)
 
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
@@ -25,24 +26,26 @@ from django.views.generic import (
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import (
-        JsonResponse,
+
         HttpResponse,
-        HttpResponseRedirect,
         Http404,
-        HttpResponseForbidden
+        #HttpResponseRedirect,
+        #JsonResponse,
+        #HttpResponseForbidden
     )
 #from taggit.models import Tag
 from django.contrib.contenttypes.models import ContentType
+from django.views.generic.edit import FormMixin
 from djangocms_installer.compat import unicode
 
-from src.apps.core.models.module_models import (
+from src.apps.core.models.ModuleModels import (
     Module,
     Topic,
     Lesson,
     Section,
 )
 
-from src.apps.core.models.section_types import (
+from src.apps.core.models.SectionTypeModels import (
     ActivitySection,
     QuizSection,
     ReadingSection
@@ -51,6 +54,10 @@ from src.apps.core.models.section_types import (
 
 from src.apps.core.model_queries import *
 #from src.apps.core.forms import *
+from src.apps.core.views.PublicationViews import (
+    PublicationChildViewMixin,
+    PublicationViewMixin
+)
 from src.apps.manage.forms import *
 
 #from src.apps.tags.query_utils import *
@@ -300,7 +307,7 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 new_module = form.save(commit=False)
                 print("saving module: ", new_module.name)
                 new_module.created_by = self.request.user
-                new_module.updated_by = self.request.user
+                new_module.changed_by = self.request.user
 
                 # save the module
                 new_module.save()
@@ -309,13 +316,13 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 print('adding topics (num): ', len(topics.forms))
                 for topic_index, topic in enumerate(topics):
 
-                    # instance the topic, set its module, created_by, and updated_by fields
+                    # instance the topic, set its module, created_by, and changed_by fields
                     new_topic = topic.save(commit=False)
 
                     print("creating topic: ", new_topic.name)
                     new_topic.module = new_module
                     new_topic.created_by = self.request.user
-                    new_topic.updated_by = self.request.user
+                    new_topic.changed_by = self.request.user
                     new_topic.position = topic_index
 
                     # save the topic and it's many-to-many relationships (tags)
@@ -326,12 +333,12 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
                     # for each section in the current topic
                     for lesson_index, lesson in enumerate(topic.child_lessons):
-                        # instance the section and set its parent topic, created_by, and updated_by fields
+                        # instance the section and set its parent topic, created_by, and changed_by fields
                         new_lesson = lesson.save(commit=False)
 
                         new_lesson.topic = new_topic
                         new_lesson.created_by = self.request.user
-                        new_lesson.updated_by = self.request.user
+                        new_lesson.changed_by = self.request.user
                         new_lesson.position = lesson_index
 
                         # save the section and it's many-to-many fields (tags)
@@ -342,12 +349,12 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
                         # for each section in the current topic
                         for section_index, section in enumerate(lesson.child_sections):
-                            # instance the section and set its parent topic, created_by, and updated_by fields
+                            # instance the section and set its parent topic, created_by, and changed_by fields
                             new_section = section.save(commit=False)
 
                             new_section.lesson = new_lesson
                             new_section.created_by = self.request.user
-                            new_section.updated_by = self.request.user
+                            new_section.changed_by = self.request.user
                             new_section.position = section_index
 
                             # save the section and it's many-to-many fields (tags)
@@ -369,7 +376,7 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
         return super(manage_ModuleCreateView, self).form_valid(form)
 
-class manage_ModuleEditView(LoginRequiredMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
+class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
     model = Module
     template_name = 'manage/forms/module_form.html'
     form_class = manage_ModuleForm
@@ -456,10 +463,10 @@ class manage_ModuleEditView(LoginRequiredMixin, OwnershipRequiredMixin, Ajaxable
         try:
             with transaction.atomic():
 
-                # instantiate the module and set it's updated_by field
+                # instantiate the module and set it's changed_by field
                 new_module = form.save(commit=False)
                 print("saving module: ", new_module.name)
-                new_module.updated_by = self.request.user
+                new_module.changed_by = self.request.user
 
                 # save the module and its many-to-many relations (tags)
                 new_module.save()
@@ -486,7 +493,7 @@ class manage_ModuleEditView(LoginRequiredMixin, OwnershipRequiredMixin, Ajaxable
                         curr_topic = changed_topic.save(commit=False)
 
                         # set who has just updated this topic
-                        curr_topic.updated_by = self.request.user
+                        curr_topic.changed_by = self.request.user
 
 
                         # save the instance and it's m2m relationships (tags)
@@ -513,8 +520,8 @@ class manage_ModuleEditView(LoginRequiredMixin, OwnershipRequiredMixin, Ajaxable
                                     # instantiate the edited section
                                     curr_lesson = changed_lesson.save(commit=False)
 
-                                    # set updated_by
-                                    curr_lesson.updated_by = self.request.user
+                                    # set changed_by
+                                    curr_lesson.changed_by = self.request.user
 
                                     # save the section
                                     curr_lesson.save()
@@ -540,8 +547,8 @@ class manage_ModuleEditView(LoginRequiredMixin, OwnershipRequiredMixin, Ajaxable
                                                 # instantiate the edited section
                                                 curr_section = changed_section.save(commit=False)
 
-                                                # set updated_by
-                                                curr_section.updated_by = self.request.user
+                                                # set changed_by
+                                                curr_section.changed_by = self.request.user
 
                                                 # save the section
                                                 curr_section.save()
@@ -559,7 +566,57 @@ class manage_ModuleEditView(LoginRequiredMixin, OwnershipRequiredMixin, Ajaxable
         messages.success(self.request, _("Successfully edited Module:'%s'" % new_module.name))
         return super(manage_ModuleEditView,self).form_valid(form)
 
-class manage_ModuleDeleteView(LoginRequiredMixin, OwnershipRequiredMixin, DeleteView):
+class manage_ModulePublishIndex(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DetailView):
+    template_name = 'manage/forms/module_publication_index.html'
+    success_url = '/manage/'
+    model = Module
+
+    def get_object(self, queryset=None):
+        # get the default object based on the slug
+        object = super(manage_ModulePublishIndex, self).get_object(queryset)
+
+        # if the object was found by the slug: get the draft object, check ownership, and return
+        if object:
+            object = object.get_draft_object()
+
+            if object.is_owner(self.request.user):
+                return object
+            else:
+                return None
+
+
+class manage_ModulePublish(LoginRequiredMixin, FormView):
+    template_name = 'manage/forms/module_publish_form.html'
+    form_class = Module_ActionConfirmationForm
+    success_url = '/manage/'
+
+    def form_valid(self, form):
+        test = "test"
+
+        if 'publish' in self.request.POST:
+
+            draft_instance = get_object_or_404(Module, slug=self.kwargs['slug'])
+            draft_instance.publish()
+
+
+        if 'unpublish' in self.request.POST:
+
+            draft_instance = get_object_or_404(Module, slug=self.kwargs['slug'])
+            draft_instance.unpublish()
+
+        if 'revert' in self.request.POST:
+
+            draft_instance = get_object_or_404(Module, slug=self.kwargs['slug'])
+            draft_instance.revert_to_live()
+
+        return super(manage_ModulePublish, self).form_valid(form)
+
+    def form_invalid(self, form, **kwargs):
+        test = 'test'
+        return super(manage_ModulePublish, self).form_invalid(form)
+
+
+class manage_ModuleDeleteView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DeleteView):
     model = Module
     template_name = 'manage/forms/module_delete.html'
     success_url = '/manage/'
@@ -577,14 +634,13 @@ class manage_ModuleDeleteView(LoginRequiredMixin, OwnershipRequiredMixin, Delete
 
         raise Http404
 
-
-class manage_ModuleShareView(LoginRequiredMixin, OwnershipRequiredMixin, TemplateView):
+class manage_ModuleShareView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, TemplateView):
     template_name = 'manage/partials/_module_shared_list.html'
 
 ###############################################################################
 ###                 CONTENT EDITING VIEWS                                   ###
 ###############################################################################
-class manage_ModuleContent(OwnershipRequiredMixin, DetailView):
+class manage_ModuleContent(OwnershipRequiredMixin, PublicationViewMixin, DetailView):
     model = Module
     template_name = "manage/module_detail.html"
 
@@ -594,7 +650,7 @@ class manage_ModuleContent(OwnershipRequiredMixin, DetailView):
         return context
 
 
-class manage_TopicContent(OwnershipRequiredMixin, DetailView):
+class manage_TopicContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
     model = Topic
     template_name = "manage/topic_detail.html"
 
@@ -603,7 +659,7 @@ class manage_TopicContent(OwnershipRequiredMixin, DetailView):
         context['edit'] = True
         return context
 
-class manage_LessonContent(OwnershipRequiredMixin, DetailView):
+class manage_LessonContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
     model = Lesson
     template_name = "manage/lesson_detail.html"
 
@@ -612,7 +668,7 @@ class manage_LessonContent(OwnershipRequiredMixin, DetailView):
         context['edit'] = True
         return context
 
-class manage_SectionContent(OwnershipRequiredMixin, DetailView):
+class manage_SectionContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
     model = Section
 
     def get_context_data(self, **kwargs):

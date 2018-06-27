@@ -55,7 +55,6 @@ $(function(){
         for (var i = 0, elements = (this.currentElements = this.elements()); elements[i]; i++) {
             if (this.findByName(elements[i].name).length !== undefined && this.findByName(elements[i].name).length > 1) {
                 for (var cnt = 0; cnt < this.findByName(elements[i].name).length; cnt++) {
-                    debugger
                     this.check(this.findByName(elements[i].name)[cnt]);
                 }
             } else {
@@ -147,7 +146,7 @@ $(function(){
         messages: custom_validator_messages,
 
         submitHandler: function(form){
-            debugger;
+
             console.log('Submitting new module');
             form_action = $(form).attr('action')
             form_data = FormManager.generate_post_data()
@@ -159,7 +158,7 @@ $(function(){
                 data: form_data,
 
                 success: function(response){
-                    debugger;
+
 
                     // if form submission was valid, redirect to the provided redirect url
                     if(response.success){
@@ -187,7 +186,7 @@ $(function(){
                 },
 
                 error: function(data){
-                    debugger;
+
                     $('#module_form_error_message').html('There was an error processing your submitted form! Please try again later.')
                     $('#module_form_error_message').show()
 

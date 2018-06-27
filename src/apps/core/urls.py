@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 
-from src.apps.core.views import *
+from src.apps.core.views.ModuleViews import *
 
 # 'core' app urls
 urlpatterns = [

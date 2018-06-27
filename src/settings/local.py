@@ -1,12 +1,12 @@
 import os
-print("***In Local Settings")
+print("// Loading Local Settings")
 
 # ************************SECURITY SETTINGS************************************
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 
-print('****************************** IN DEBUG:', DEBUG)
+print('//   DEBUG MODE:', DEBUG)
 
 '''
     Dev settings

@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 #from taggit.models import Tag
 from django.contrib.contenttypes.models import ContentType
 
-from src.apps.core.models.module_models import (
+from src.apps.core.models.ModuleModels import (
     Module,
     Topic,
     Lesson,
@@ -19,14 +19,17 @@ from src.apps.core.models.module_models import (
 #     ReadingSection,
 # )
 
-from src.apps.core.model_queries import *
+from src.apps.core.model_queries import (
+    get_module_TOC_obj
+)
+from src.apps.core.views.PublicationViews import PublicationViewMixin, PublicationChildViewMixin
 
 
 class module_ModuleListView(ListView):
     model = Module
     queryset = Module.objects.all() #select all of the modules, add in published filter later
-    
-    
+
+
     def render_to_response(self, context, **response_kwargs):
         # can define a custom DjangoCMS toolbar entry here (as an alternative to doubleclick edit)
         
@@ -36,26 +39,10 @@ class module_ModuleListView(ListView):
         
         return super(module_ModuleListView, self).render_to_response(context, **response_kwargs)
         
-class module_ModuleDetailView(DetailView):
+class module_ModuleDetailView(PublicationViewMixin, DetailView):
     model = Module
     context_object_name = 'module'  
     template_name = 'module/viewer/module_index.html'
-
-    def get(self, request, *args, **kwargs):
-
-        try:
-            self.object = self.get_object()
-        except Http404:
-            # redirect here
-            return redirect('modules:404')
-
-        context = self.get_context_data(object=self.object)
-        #context['topic'] = request.GET.get('t','None')
-        context['loaded_section'] = request.GET.get('v', '')
-        #context['section'] = request.GET.get('s', 'None')
-        context['edit'] = False
-        return self.render_to_response(context)
-
 
     def get_context_data(self, **kwargs):
         context = super(module_ModuleDetailView, self).get_context_data(**kwargs)
@@ -63,8 +50,10 @@ class module_ModuleDetailView(DetailView):
         # get the current module's child topics based on module slug
         # layers = get_module_layers(self.kwargs.get('slug'))
         # context['layers'] = layers
-
+        context['loaded_section'] = self.request.GET.get('v', '')
         context['TOC_Listing'] = get_module_TOC_obj(self.kwargs.get('slug'))
+
+        context['is_dirty'] = self.object.is_dirty
 
         return context
     
@@ -111,59 +100,43 @@ def module_ModuleRefLookup(request, ref_id):
         if module:
             return redirect('modules:module_detail', module.slug)
     except:
-        #return handler404(request)
         raise Http404
 
-class module_ModuleIntro(DetailView):
+class module_ModuleIntro(PublicationViewMixin, DetailView):
     model = Module
     template_name = 'module/viewer/_module_intro.html'
 
     def get_context_data(self, **kwargs):
         context = super(module_ModuleIntro, self).get_context_data(**kwargs)
-        context['edit_link'] = reverse('manage:module_content', kwargs={
-            'slug': self.object.slug,
-        })
+
+        # if self.object.is_draft:
+        #     context['edit_link'] = reverse('manage:module_content', kwargs={
+        #         'slug': self.object.slug,
+        #     })
         return context
 
-class module_TopicIntro(DetailView):
+class module_TopicIntro(PublicationChildViewMixin, DetailView):
     model = Topic
     template_name = 'module/viewer/_topic_intro.html'
 
     def get_context_data(self, **kwargs):
         context = super(module_TopicIntro, self).get_context_data(**kwargs)
-        context['edit_link'] = reverse('manage:topic_content', kwargs={
-            'module_slug': self.object.module.slug,
-            'slug': self.object.slug,
-        })
         return context
 
-class module_LessonIntro(DetailView):
+class module_LessonIntro(PublicationChildViewMixin, DetailView):
     model = Lesson
     template_name = 'module/viewer/_lesson_intro.html'
 
     def get_context_data(self, **kwargs):
         context = super(module_LessonIntro, self).get_context_data(**kwargs)
-        context['edit_link'] = reverse('manage:lesson_content', kwargs={
-            'module_slug': self.object.topic.module.slug,
-            'topic_slug': self.object.topic.slug,
-            'slug': self.object.slug,
-
-        })
         return context
 
-class module_SectionDetailView(DetailView):
+class module_SectionDetailView(PublicationChildViewMixin, DetailView):
     model = Section
     context_object_name = 'Section'
 
     def get_context_data(self, **kwargs):
         context = super(module_SectionDetailView, self).get_context_data(**kwargs)
-        context['edit_link'] = reverse('manage:section_content', kwargs={
-            'module_slug':self.object.lesson.topic.module.slug,
-            'topic_slug': self.object.lesson.topic.slug,
-            'lesson_slug': self.object.lesson.slug,
-            'slug': self.object.slug,
-        })
-
         return context
 
     def get_template_names(self):

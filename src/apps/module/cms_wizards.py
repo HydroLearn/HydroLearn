@@ -4,7 +4,7 @@ from cms.wizards.wizard_pool import wizard_pool
 from cms.wizards.wizard_base import Wizard
 
 from src.apps.core.forms import CreateNewModule_WizardForm, CreateNewTopic_WizardForm, CreateNewSection_WizardForm
-from src.apps.core.models.module_models import Module
+from src.apps.core.models.ModuleModels import Module
 
 #from pprint import pprint
 
@@ -33,11 +33,11 @@ class ModuleWizard(Wizard):
             {
                 '_state': <django.db.models.base.ModelState object at 0x04B55DD0>,
                 '_uncommitted_filefields': [],
-                'created_at': datetime.datetime(2017, 11, 30, 22, 17, 56, 210888, tzinfo=<UTC>),
+                'creation_date': datetime.datetime(2017, 11, 30, 22, 17, 56, 210888, tzinfo=<UTC>),
                 'id': 6,
                 'name': 'wizard 2',
                 'slug': 'wizard-2',
-                'updated_at': datetime.datetime(2017, 11, 30, 22, 17, 56, 210888, tzinfo=<UTC>)
+                'changed_date': datetime.datetime(2017, 11, 30, 22, 17, 56, 210888, tzinfo=<UTC>)
             }
            so if anything this may be useful for grabbing the slug for generating the new success url
            

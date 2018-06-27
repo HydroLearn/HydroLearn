@@ -1,0 +1,75 @@
+<h1>Confirm Publication</h1>
+
+<!--<form method="post" action="{% url 'manage:module_publish' object.slug%}">{% csrf_token %}-->
+    <p>Are you sure you want to Publish "{{ object.name }}"?
+        If this object has been previously published, this action will replace the current
+        published Module with the current 'Draft' content.
+    </p>
+
+    <ul>
+        <li>{{object.name}}</li>
+
+        {% if object.topics %}
+
+            <ul>
+                {% for topic in object.topics.all %}
+                    <li>{{topic.name}}</li>
+
+                    {% if topic.lessons %}
+
+                        <ul>
+                            {% for lesson in topic.lessons.all %}
+                                <li>{{lesson.name}}</li>
+
+                                {% if lesson.sections %}
+
+                                <ul>
+                                    {% for section in lesson.sections.all %}
+                                        <li>{{section.name}}</li>
+                                    {% endfor %}
+                                </ul>
+
+                                {% endif %}
+
+                            {% endfor %}
+                        </ul>
+
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% endif %}
+    </ul>
+
+<form method="post" action="{% url 'manage:module_publish' object.slug %}"> {% csrf_token %}
+
+
+
+
+    {% if object.publish_status != object.DRAFT_ONLY%}
+
+        <input type="submit" name="publish" value="Re-Publish" class="btn">
+        <input type="submit" name="unpublish" value="Unpublish" class="btn">
+        <!--<input type="submit" name="revert" value="Revert" class="btn">-->
+
+    {% else %}
+
+        <input type="submit" name="publish" value="Publish" class="btn">
+
+    {% endif %}
+
+
+
+    <a href="/manage" class="btn btn-default">Cancel</a>
+</form>
+<!--</form>-->
+
+<script>
+    // disable 'Enter' key action in forms (causes submission of form by default)
+    $("form").keypress(function(e) {
+      //Enter key
+      if (e.which == 13) {
+        return false;
+      }
+    });
+</script>

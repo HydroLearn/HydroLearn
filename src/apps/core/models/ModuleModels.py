@@ -1,6 +1,7 @@
+from copy import deepcopy
 from datetime import timedelta
 
-from cms.models import PlaceholderField
+from cms.models import PlaceholderField, ValidationError, uuid
 from django.urls import reverse
 from django.db import models
 # from django.conf import settings
@@ -12,20 +13,33 @@ from django_extensions.db.fields import (
 
 from taggit.managers import TaggableManager
 
-from src.apps.core.QuerysetManagers import IterativeDeletion_Manager, PolyIterativeDeletion_Manager
-from src.apps.core.models.creation_tracking_model import (
-    CreationTrackingBaseModel,
-    PolyCreationTrackingBaseModel,
+# from src.apps.core.QuerysetManagers import IterativeDeletion_Manager, PolyIterativeDeletion_Manager
+from src.apps.core.managers.IterativeDeletionManagers import (
+    IterativeDeletion_Manager,
+    PolyIterativeDeletion_Manager
 )
 
+from src.apps.core.models.PublicationModels import (
+    Publication,
+    #PolyPublication,
+    PublicationChild,
+    PolyPublicationChild)
 
-class Module(CreationTrackingBaseModel):
-    objects = IterativeDeletion_Manager()
+from cms.utils.copy_plugins import copy_plugins_to
+
+
+# checking plugin dates (module.intro.cmsplugin_set.filter(changed_date__gt=module.creation_date))
+
+#class Module(CreationTrackingBaseModel):
+class Module(Publication):
 
     class Meta:
         app_label = 'core'
         ordering = ('name',)
         verbose_name_plural = 'Modules'
+        unique_together = ('pub_id', 'is_draft', 'name')
+
+
 
     # path to the core module view
     def absolute_url(self):
@@ -62,26 +76,57 @@ class Module(CreationTrackingBaseModel):
     def __str__(self):
         return self.name
 
-    def copy_relations(self, oldinstance):
+    def copy(self):
+
+        new_instance = deepcopy(self)
+        new_instance.pk = None
+
+        return new_instance
+
+    def copy_relations(self, from_instance):
+
+        # copy over the content
+        self.copy_content(from_instance)
+
+        # add any tags from the 'from_instance'
+        self.tags.add(*list(from_instance.tags.names()))
+
         # Before copying related objects from the old instance, the ones
         # on the current one need to be deleted. Otherwise, duplicates may
         # appear on the public version of the page
-        self.topic_item.all().delete()
+        self.topics.delete()
 
-        for topic_item in oldinstance.topic_item.all():
-            # instance.pk = None; instance.pk.save() is the slightly odd but
-            # standard Django way of copying a saved model instance
-            topic_item.pk = None
-            topic_item.plugin = self
-            topic_item.save()
+        # for each topic in the 'from_instance'
+        for topic_item in from_instance.topics.all():
+
+            # copy the topic item and set its linked module
+            new_topic = topic_item.copy()
+            new_topic.module = self
+
+            # save the new topic instance
+            new_topic.save()
+
+            new_topic.copy_relations(topic_item)
+
+    def copy_content(self, from_instance):
+        # get the list of plugins in the 'from_instance's intro
+        plugins = from_instance.intro.get_plugins_list()
+
+        # copy 'from_instance's intro plugins to this object's intro
+        copy_plugins_to(plugins, self.intro, no_signals=True)
+
+    def validate_unique(self, exclude=None):
+        # add a conditional unique constraint to prevent
+        #   creation of multiple drafts with the same name
+        if self.is_draft and Module.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
+            raise ValidationError('A Draft-Module with this name already exists')
+
+        return super(Module, self).validate_unique(exclude)
 
     def delete(self, *args, **kwargs):
         print("----- in module overridden delete")
-        # self.cleanup_placeholders()
-        placeholders = [self.intro]
 
-        # get all child Topics and delete them
-        # Topic.objects.filter(module=self).delete()
+        placeholders = [self.intro]
 
         self.topics.delete()
 
@@ -91,12 +136,31 @@ class Module(CreationTrackingBaseModel):
             ph.clear()
             ph.delete()
 
+    @property
+    def is_dirty(self):
+
+        # a module is considered dirty if there are non published changes
+        if self.published_copy is None: return True
+
+        result = any([
+            super(Module, self).is_dirty,
+            self.intro.cmsplugin_set.filter(
+                changed_date__gt=self.published_copy.creation_date).exists(),
+        ])
+
+        if result: return result
+
+        for t in self.topics.all():
+            if t.is_dirty: return True
+
+        return False
+
     name = models.CharField(u'Module Name',
                             blank=False,
                             default='',
                             help_text=u'Please enter a name for this module',
                             max_length=250,
-                            unique=True,
+                            #unique=True,
                             )
 
     ref_id = RandomCharField(unique=True,
@@ -125,8 +189,9 @@ class Module(CreationTrackingBaseModel):
     # for any given module, potentially adding in the map layer links
 
 
-class Topic(CreationTrackingBaseModel):
+class Topic(PublicationChild):
     objects = IterativeDeletion_Manager()
+    #objects = PublicationManager()
 
     class Meta:
         app_label = 'core'
@@ -162,18 +227,51 @@ class Topic(CreationTrackingBaseModel):
         # return self.name
         return "%s:%s" % (self.module.name, self.name)
 
-    def copy_relations(self, oldinstance):
+    def copy(self):
+
+        new_instance = deepcopy(self)
+        new_instance.pk = None
+
+        # new_instance.copy_relations(self)
+
+        return new_instance
+
+    def copy_relations(self, from_instance):
+
+        # copy over the content
+        self.copy_content(from_instance)
+
+        # add any tags from the 'from_instance'
+        self.tags.add(*list(from_instance.tags.names()))
+
         # Before copying related objects from the old instance, the ones
         # on the current one need to be deleted. Otherwise, duplicates may
         # appear on the public version of the page
-        self.lesson_item.all().delete()
+        self.lessons.delete()
 
-        for lesson_item in oldinstance.lesson_item.all():
-            # instance.pk = None; instance.pk.save() is the slightly odd but
-            # standard Django way of copying a saved model instance
-            lesson_item.pk = None
-            lesson_item.plugin = self
-            lesson_item.save()
+        for lesson_item in from_instance.lessons.all():
+            # copy the lesson item and set its linked topic
+            new_lesson = lesson_item.copy()
+            new_lesson.topic = self
+
+            # save the new topic instance
+            new_lesson.save()
+
+            new_lesson.copy_relations(lesson_item)
+
+
+        # get the list of plugins in the 'from_instance'
+        #plugins = from_instance.summary.get_plugins_list()
+
+        # copy 'from_instance's intro plugins to this object's intro
+        #copy_plugins_to(plugins, self.summary, no_signals=True)
+
+    def copy_content(self, from_instance):
+        # get the list of plugins in the 'from_instance's intro
+        plugins = from_instance.summary.get_plugins_list()
+
+        # copy 'from_instance's intro plugins to this object's intro
+        copy_plugins_to(plugins, self.summary, no_signals=True)
 
     def delete(self, *args, **kwargs):
         print("----- in topic overridden delete")
@@ -181,15 +279,42 @@ class Topic(CreationTrackingBaseModel):
 
         placeholders = [self.summary]
 
-        # get all child sections and delete them
-        # Section.objects.filter(topic=self).delete()
+        # Before copying related objects from the old instance, the ones
+        # on the current one need to be deleted. Otherwise, duplicates may
+        # appear on the public version of the page
         self.lessons.delete()
+
 
         super(Topic, self).delete(*args, **kwargs)
 
         for ph in placeholders:
             ph.clear()
             ph.delete()
+
+    def get_Publishable_parent(self):
+        return self.module
+
+    @property
+    def is_dirty(self):
+
+        # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
+        # edited after the most recent change date.
+
+        result = any([
+            super(Topic, self).is_dirty,
+            self.summary.cmsplugin_set.filter(
+                changed_date__gt=self.get_Publishable_parent().published_copy.creation_date).exists(),
+        ])
+
+        if result: return result
+
+        for t in self.lessons.all():
+            if t.is_dirty: return True
+
+        return False
+
+
+
 
     parent = 'module'
 
@@ -242,8 +367,9 @@ class Topic(CreationTrackingBaseModel):
     summary = PlaceholderField('topic_summary')
 
 
-class Lesson(CreationTrackingBaseModel):
+class Lesson(PublicationChild):
     objects = IterativeDeletion_Manager()
+    #objects = PublicationManager()
 
     class Meta:
         app_label = 'core'
@@ -281,18 +407,51 @@ class Lesson(CreationTrackingBaseModel):
     def __str__(self):
         return "%s:%s:%s" % (self.topic.module.name, self.topic.name, self.name)
 
-    def copy_relations(self, oldinstance):
+    def copy(self):
+
+        new_instance = deepcopy(self)
+        new_instance.pk = None
+
+        # new_instance.copy_relations(self)
+
+        return new_instance
+
+    def copy_relations(self, from_instance):
+
+
+        # copy over the content
+        self.copy_content(from_instance)
+
+        # add any tags from the 'from_instance'
+        self.tags.add(*list(from_instance.tags.names()))
+
         # Before copying related objects from the old instance, the ones
         # on the current one need to be deleted. Otherwise, duplicates may
         # appear on the public version of the page
-        self.section_item.all().delete()
+        self.sections.delete()
 
-        for section_item in oldinstance.section_item.all():
-            # instance.pk = None; instance.pk.save() is the slightly odd but
-            # standard Django way of copying a saved model instance
-            section_item.pk = None
-            section_item.plugin = self
-            section_item.save()
+        for section_item in from_instance.sections.all():
+            # copy the lesson item and set its linked topic
+            new_section = section_item.copy()
+            new_section.lesson = self
+
+            # save the new topic instance
+            new_section.save()
+
+            new_section.copy_relations(section_item)
+
+        # get the list of plugins in the 'from_instance'
+        #plugins = from_instance.summary.get_plugins_list()
+
+        # copy 'from_instance's intro plugins to this object's intro
+        #copy_plugins_to(plugins, self.summary, no_signals=True)
+
+    def copy_content(self, from_instance):
+        # get the list of plugins in the 'from_instance's intro
+        plugins = from_instance.summary.get_plugins_list()
+
+        # copy 'from_instance's intro plugins to this object's intro
+        copy_plugins_to(plugins, self.summary, no_signals=True)
 
     def delete(self, *args, **kwargs):
         print("----- in Lesson overridden delete")
@@ -306,6 +465,29 @@ class Lesson(CreationTrackingBaseModel):
         for ph in placeholders:
             ph.clear()
             ph.delete()
+
+    def get_Publishable_parent(self):
+        return self.topic.module
+
+    @property
+    def is_dirty(self):
+
+        # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
+        # edited after the most recent change date.
+
+        result = any([
+            super(Lesson, self).is_dirty,
+            self.summary.cmsplugin_set.filter(changed_date__gt=self.get_Publishable_parent().published_copy.creation_date).exists(),
+        ])
+
+        if result: return result
+
+        for t in self.sections.all():
+            if t.is_dirty: return True
+
+
+        return False
+
 
     topic = models.ForeignKey('core.Topic',
                               related_name="lessons",
@@ -357,9 +539,9 @@ class Lesson(CreationTrackingBaseModel):
     summary = PlaceholderField('lesson_summary')
 
 
-class Section(PolyCreationTrackingBaseModel):
+#class Section(PolyCreationTrackingBaseModel):
+class Section(PolyPublicationChild):
     # class Section(CreationTrackingBaseModel, PolymorphicModel):
-
     objects = PolyIterativeDeletion_Manager()
 
     class Meta:
@@ -403,7 +585,19 @@ class Section(PolyCreationTrackingBaseModel):
 
     # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
     def __str__(self):
-        return "%s:%s:%s:%s" & (self.lesson.topic.module.name, self.lesson.topic.name, self.lesson.name, self.name)
+        return "%s:%s:%s:%s" % (self.lesson.topic.module.name, self.lesson.topic.name, self.lesson.name, self.name)
+
+    def get_Publishable_parent(self):
+        return self.lesson.topic.module
+
+    @property
+    def is_dirty(self):
+
+        # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
+        # edited after the most recent change date.
+        return super(Section, self).is_dirty
+
+
 
     parent = 'lesson'
 
@@ -467,11 +661,19 @@ class Section(PolyCreationTrackingBaseModel):
 
 '''
 
+
+
+
+#signals.pre_save.connect(module_pre_save_handler, sender=Module, dispatch_uid='Module_pre_save')
+
+
 # signals.pre_delete.connect(clear_placeholderfields, sender=Module, dispatch_uid='Module_pre_delete')
 # signals.pre_delete.connect(clear_placeholderfields, sender=Topic, dispatch_uid='Topic_pre_delete')
 #
 # signals.pre_delete.connect(clear_placeholderfields, sender=ReadingSection, dispatch_uid='ReadingSection_pre_delete')
 # signals.pre_delete.connect(clear_placeholderfields, sender=ActivitySection, dispatch_uid='Activity_pre_delete')
+
+
 
 
 # didn't seem to change anything

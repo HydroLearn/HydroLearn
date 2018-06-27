@@ -103,12 +103,6 @@ label.form-error {
                 font-size: 20px;
                 padding: 3px 3px;
                 border-radius: .3em;
-
-                &:hover{
-                    background-color: #eee;
-                }
-
-
             }
 
             &.disabled_action{
@@ -132,6 +126,14 @@ label.form-error {
     }
 
     #crumb_trail{
+        background-color: #eee;
+        border-radius: 7px;
+        padding: 5px 10px;
+
+        &:empty {
+           display: none;
+        }
+
         a.crumb_entry{
             color: $HL_blue;
             cursor: pointer;
@@ -302,3 +304,31 @@ label.form-error {
     }
 
 }
+
+.glyph-button {
+    color: $HL_blue;
+
+    &:hover {
+        color: $HL_seafoam;
+        background-color: #eee;
+    }
+}
+
+.publish_status_icon_draft {
+    color: #808080;
+}
+
+.publish_status_icon_pending {
+    color: #ffb500;
+}
+
+.publish_status_icon_published {
+    color: $HL_blue;
+}
+
+.Info_legend_icon{
+    color: $HL_blue;
+    font-size: .9em;
+    cursor: help;
+}
+

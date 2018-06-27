@@ -1,6 +1,6 @@
 {% extends CMS_TEMPLATE %}
 
-{% load cms_tags menu_tags sekizai_tags static %}
+{% load cms_tags module_template_tags menu_tags sekizai_tags static %}
 
 {% block subtitle %}
    - {{ module.name }}
@@ -95,12 +95,8 @@
 
 {% block content %}
 
-
     <div id="content-wrapper">
-
-
-                <div id="main-content">
-
+            <div id="main-content">
                     <div id="content-tab-header">
 
                         <div class="module_navbar_wrapper">
@@ -120,7 +116,13 @@
                     </div>
 
                     <div id="content-tab-body" class="tab-content">
+                        <div id="pre-content-banner">
+                            {% if user.is_authenticated and object.created_by == user %}
+                                {% publication_status_banner object %}
+                            {% endif %}
+                        </div>
 
+                        <div id="body-content">
                         <div id="lesson-content" class="tab-pane fade" role="tabpanel">
                             <div class='lesson'>
                                 <h2>Welcome to HydroLearn!</h2>
@@ -154,7 +156,9 @@
                         </div>
 
                     </div>
-                        <!--@RenderBody()-->
+
+                    </div>
+
 
                 </div>
 
@@ -232,11 +236,6 @@
 
             URL_UTILS.init('{{LANGUAGE_CODE}}')
 
-            // TODO: add this in after loading in the '_VideoPlayer' partial view
-            //Load_youtube_API();
-
-
-
             LESSON_MGR.init('#lesson-content', '{{module.name}}', '{{module.slug}}', '{{section}}');
             //MAP_MGR.init(false, '@ViewBag.region', '@ViewBag.caseStudy', '@ViewBag.subStudy');
 
@@ -245,14 +244,6 @@
             VIEWPORT_MGR.init('#main-content');
             VIEWPORT_MGR.Register_View('Lessons', '#lesson-content', '#lesson-tab', LESSON_MGR.get_content_query_data, LESSON_MGR.pre_display, LESSON_MGR.post_display, LESSON_MGR.on_Show, LESSON_MGR.on_Hide);
             //VIEWPORT_MGR.Register_View('Map', '#map-content', '#map-tab', MAP_MGR.get_content_query_data, MAP_MGR.pre_display, MAP_MGR.post_display, MAP_MGR.on_Show, MAP_MGR.on_Hide);
-
-
-
-
-
-
-
-
 
             // initialize the Table of contents to link to the different SubStudies/sections
             TOC_MGR.init('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));

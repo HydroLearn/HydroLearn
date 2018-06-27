@@ -21,10 +21,10 @@
             <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>
 
             <div><span style="font-weight: bold; font-style: italic">Created by: </span>{{ object.created_by }}</div>
-            <div><span style="font-weight: bold; font-style: italic">Date Created: </span>{{ object.created_at }}</div><br>
+            <div><span style="font-weight: bold; font-style: italic">Date Created: </span>{{ object.creation_date }}</div><br>
 
-            <div><span style="font-weight: bold; font-style: italic">Last Modified by: </span>{{ object.updated_by }}</div>
-            <div><span style="font-weight: bold; font-style: italic">Date Modified: </span>{{ object.updated_at }}</div><br/>
+            <div><span style="font-weight: bold; font-style: italic">Last Modified by: </span>{{ object.changed_by }}</div>
+            <div><span style="font-weight: bold; font-style: italic">Date Modified: </span>{{ object.changed_date }}</div><br/>
             <!-- Output any related tags -->
             <h4>Tags</h4>
             <ul>

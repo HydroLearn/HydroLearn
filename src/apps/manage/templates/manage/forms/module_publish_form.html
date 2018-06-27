@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'manage:module_publish' object.slug %}">{% csrf_token %}
+    Are you sure?
+    This will copy the current draft of the module and make it publicly accessible.
+    <input type="submit" name="publish" value="Publish" class="btn">
+</form>

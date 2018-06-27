@@ -1,6 +1,6 @@
 import os
 
-print("***In Prod Settings")
+print("// Loading Production Settings")
 
 # ************************SECURITY SETTINGS************************************
 DEBUG = False

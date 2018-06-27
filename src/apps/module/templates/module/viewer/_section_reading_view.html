@@ -1,15 +1,12 @@
 <!--extend this to provide a detail view for a module-->
 
-{% load cms_tags sekizai_tags static thumbnail menu_tags %}
+{% load cms_tags module_template_tags sekizai_tags static thumbnail menu_tags %}
 
 {% block content %}
     {% addtoblock "css" %}{% endaddtoblock "css" %}
     
     <div class='lesson'>
-        {# add in permission check to determine if this gets loaded #}
-        {% include "module/parts/section_edit_toolbar.html" %}
-        
-        
+        {% content_editor_button request.user object %}
         
         <h2 class="lesson-header">{{object.name}}</h2>
         <hr class="headerSpacer">

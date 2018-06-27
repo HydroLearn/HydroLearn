@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'manage:module_unpublish' object.slug%}">{% csrf_token %}
+    Are you sure?
+    This will remove the current public version of this module (non-reversible).
+    <input type="submit" name="unpublish" value="Unpublish" class="btn">
+</form>

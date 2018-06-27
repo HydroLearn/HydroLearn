@@ -1,5 +1,9 @@
 from .base import *
-from .production import *
+
+try:
+    from .production import *
+except:
+    pass
 
 # try to load local settings if they exist, (expected not to on production instance)
 try:

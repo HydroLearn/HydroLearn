@@ -8,7 +8,7 @@ from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
 #from djangocms_text_ckeditor.widgets import TextEditorWidget
 
-from src.apps.core.admin_actions import *
+#from src.apps.core.admin_actions import *
 
 from src.apps.core.forms import (
     ModuleForm,
@@ -16,27 +16,27 @@ from src.apps.core.forms import (
     Edit_TopicForm,
     add_LessonForm,
     Edit_LessonForm,
-    SectionForm,
+    #SectionForm,
     ReadingSectionForm,
     ActivitySectionForm,
 )
 
 
-from src.apps.core.models.module_models import (
+from src.apps.core.models.ModuleModels import (
     Module,
     Topic,
     Lesson,
     Section,
 
 )
-from src.apps.core.models.section_types import (
+from src.apps.core.models.SectionTypeModels import (
     ReadingSection,
     ActivitySection,
     QuizSection,
 
 )
 
-from src.apps.core.models.quiz_question_models import (
+from src.apps.core.models.QuizQuestionModels import (
     QuizQuestion,
     MultiChoice_question,
     MultiChoice_answer,
@@ -81,6 +81,23 @@ class CreationTrackingMixin(object):
 
         obj.save()
 
+
+class PublicationChangeTrackingMixin(object):
+    def save_model(self, request, obj, form, change):
+        print('***************** IN CUSTOM PUBLICATION SAVE MODEL')
+        # if this is the first save of the model set 'created_by' to the current user
+        if not obj.pk:
+            #print("*** changing created by for '{obj.name}'")
+            obj.created_by = request.user
+            obj.changed_by = request.user
+
+        # if the object exists and there are changes
+        #   store the current user as the most recent updator
+        if obj.pk and change:
+            #print("*** updating 'last updator' for '{obj.name}'")
+            obj.changed_by = request.user
+
+        obj.save()
 
 
 # ============================================================
@@ -158,7 +175,7 @@ class TopicInline(SortableInlineAdminMixin, admin.TabularInline ):
     #classes = ['collapse']
     sortable_field_name = "position"
     
-    # list_display = ('name', 'updated_at','created_at',)
+    # list_display = ('name', 'changed_date','creation_date',)
 
 
 
@@ -172,18 +189,7 @@ class TopicInline(SortableInlineAdminMixin, admin.TabularInline ):
 #   Regular Admin interfaces
 # ============================================================   
 
-# class LayerRefAdmin(admin.ModelAdmin):
-#     model = LayerRef
-#     #sortable_field_name = "position"
-#     list_display = [
-#                     'name',
-#                     'created_at',
-#                     'updated_at',    
-#                     ]
-#     #pass
-
- 
-class SectionChildAdmin(CreationTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin):
+class SectionChildAdmin(PublicationChangeTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin):
     #model = Section
     base_model  = Section
     show_in_index = False
@@ -194,8 +200,8 @@ class SectionChildAdmin(CreationTrackingMixin, PolymorphicChildModelAdmin, Sorta
     list_display = [
                     'name',
                     'lesson',
-                    'created_at',
-                    'updated_at',                    
+                    'creation_date',
+                    'changed_date',
                     ]
 
     list_select_related = (
@@ -212,12 +218,12 @@ class ReadingSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
 
     
     sortable_field_name = "position"
-    exclude = ['position', 'created_by', 'updated_by']
+    exclude = ['position', 'created_by', 'changed_by']
     list_display = [
                     'lesson',
                     'name',                    
-                    'created_at',
-                    'updated_at',
+                    'creation_date',
+                    'changed_date',
                     'tag_list',
                     ]
 
@@ -239,12 +245,12 @@ class ActivitySectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
     sortable_field_name = "position"
     base_form = ActivitySectionForm
 
-    exclude = ['position', 'created_by', 'updated_by']
+    exclude = ['position', 'created_by', 'changed_by']
     list_display = [
         'lesson',
         'name',
-        'created_at',
-        'updated_at',
+        'creation_date',
+        'changed_date',
         'tag_list',
     ]
 
@@ -263,13 +269,13 @@ class QuizSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin, SortableAdminMi
     #show_in_index = False
     sortable_field_name = "position"
 
-    exclude = ['position', 'created_by', 'updated_by']
+    exclude = ['position', 'created_by', 'changed_by']
 
     list_display = [
                     'lesson',
                     'name',                    
-                    'created_at',
-                    'updated_at',                    
+                    'creation_date',
+                    'changed_date',
                     ]
 
     list_select_related = (
@@ -289,7 +295,7 @@ class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
     show_in_index = True
     ordering = ('lesson','name',)
 
-    exclude = ['created_by', 'updated_by']
+    exclude = ['created_by', 'changed_by']
     child_models = (
         ReadingSection,
         ActivitySection,
@@ -299,8 +305,8 @@ class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
     list_display = [
         'lesson',
         'name',
-        'created_at',
-        'updated_at',
+        'creation_date',
+        'changed_date',
         #'tag_list',
     ]
 
@@ -309,7 +315,7 @@ class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
     )
     
     search_fields = ['name', 'short_name']
-    list_filter = (PolymorphicChildModelFilter, 'created_at', 'tags')
+    list_filter = (PolymorphicChildModelFilter, 'creation_date', 'tags')
     list_display_links = ['name']
     frontend_editable_fields = ("content")
 
@@ -322,9 +328,9 @@ class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
         return u", ".join(o.name for o in obj.tags.all())
     
 
-class QuizQuestionChildAdmin(CreationTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin, PlaceholderAdminMixin):
+class QuizQuestionChildAdmin(PublicationChangeTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin, PlaceholderAdminMixin):
     base_model = QuizQuestion
-    exclude = ["position", 'created_by', 'updated_by']
+    exclude = ["position", 'created_by', 'changed_by']
 
 
 class MultiChoice_QuestionAdmin(QuizQuestionChildAdmin, SortableAdminMixin):
@@ -353,20 +359,20 @@ class QuizQuestionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin
     )
 
 
-class MultiChoice_AnswerAdmin(PlaceholderAdminMixin, CreationTrackingMixin, admin.ModelAdmin):
+class MultiChoice_AnswerAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
     model = MultiChoice_answer
 
     sortable_field_name = "position"
-    exclude = ['position', 'created_by', 'updated_by']
+    exclude = ['position', 'created_by', 'changed_by']
 
-class MultiSelect_AnswerAdmin(PlaceholderAdminMixin, CreationTrackingMixin, admin.ModelAdmin):
+class MultiSelect_AnswerAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
     model = MultiSelect_answer
 
     sortable_field_name = "position"
-    exclude = ['position', 'created_by', 'updated_by']
+    exclude = ['position', 'created_by', 'changed_by']
 
 
-class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
+class LessonAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
     model = Lesson
     form = Edit_LessonForm
     ordering = ('topic', 'name',)
@@ -375,8 +381,8 @@ class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehol
     list_display = [
         'topic',
         'name',
-        'created_at',
-        'updated_at',
+        'creation_date',
+        'changed_date',
 
     ]
 
@@ -387,7 +393,7 @@ class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehol
     list_display_links = ['name']
 
     search_fields = ['name', 'short_name']
-    list_filter = ('created_at',)
+    list_filter = ('creation_date',)
 
     inlines = [SectionInline,]
 
@@ -408,7 +414,7 @@ class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehol
             return super(LessonAdmin, self).get_form(request, obj, **kwargs)
 
 #class TopicAdmin(NonSortableParentAdmin, PolymorphicInlineSupportMixin, admin.ModelAdmin):
-class TopicAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
+class TopicAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
     model = Topic
     form = Edit_TopicForm
     ordering = ('module','name',)
@@ -417,8 +423,8 @@ class TopicAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehold
     list_display = [
             'module',
             'name',
-            'created_at',
-            'updated_at',
+            'creation_date',
+            'changed_date',
 
         ]
 
@@ -429,7 +435,7 @@ class TopicAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehold
     list_display_links = ['name']
 
     search_fields = ['name', 'short_name']
-    list_filter = ('created_at', )
+    list_filter = ('creation_date', )
 
     # inlines = [SectionInline,]
     inlines = [LessonInline, ]
@@ -478,21 +484,22 @@ class TopicAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehold
 
 
 #class ModuleAdmin(PolymorphicInlineSupportMixin, NonSortableParentAdmin, admin.ModelAdmin):
-class ModuleAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
+class ModuleAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
     model = Module
     form = ModuleForm
     
     # fields to show in the admin interface when viewing all modules list    
     list_display = [
         'name',
-        'created_at',
-        'updated_at',
+        'creation_date',
+        'changed_date',
     ]
     
     # filtering functionality on the date fields in admin
     list_filter = [
-        'created_at',
-        'updated_at',
+        'creation_date',
+        'changed_date',
+        'publish_status'
     ]
     
     # search modules by name in admin

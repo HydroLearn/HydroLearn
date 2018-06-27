@@ -6,7 +6,7 @@
 #
 from django.urls import reverse
 
-from src.apps.core.models.module_models import (
+from src.apps.core.models.ModuleModels import (
     Module,Topic,Lesson,Section
 )
 import json
