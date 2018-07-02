@@ -2,7 +2,7 @@ from django import template
 
 register = template.Library()
 
-@register.inclusion_tag('module/parts/_pubstatus_banner.html')
+@register.inclusion_tag('module/tag_templates/_pubstatus_banner.html')
 def publication_status_banner(publication):
     '''
         renders the publication banner for the passed publication
@@ -45,7 +45,7 @@ def publication_status_banner(publication):
         'publish_status_display': publication.get_publish_status_display,
     }
 
-@register.inclusion_tag('module/parts/_section_edit_toolbar.html')
+@register.inclusion_tag('module/tag_templates/_section_edit_toolbar.html')
 def content_editor_button(user, editable_obj):
 
     edit_link = None

@@ -1,0 +1,51 @@
+{% if edit_link %}
+<style>
+    #section_edit_toolbar{
+        background:#f1f1f1;
+        border-radius: .75em;
+        padding: 5px;
+        float: right;
+    }
+    
+    #section_edit_toolbar .toolbar_link{
+        display:inline-block;
+        color: #1E90FF;
+        padding: 5px;
+        border-radius: .75em;
+        transition: all .4s;
+    }
+    
+    #section_edit_toolbar .toolbar_link a{
+        color: #1E90FF !important;
+        text-decoration: none;
+        transition: all .4s;
+
+
+    }
+    
+    #section_edit_toolbar .toolbar_link i{
+        font-size: 1.5em
+    }
+    
+    #section_edit_toolbar .toolbar_link:hover{
+        display:inline-block;
+        color: #F98600;
+        background: #fff;        
+        cursor: pointer;
+    }
+    
+    #section_edit_toolbar .toolbar_link a:hover{
+        color: #F98600 !important;
+    }
+</style>
+
+<div id="section_edit_toolbar">
+    <div class="toolbar_link">
+        <a target="_blank" href='{{ edit_link }}'>
+            <i class="fas fa-pencil-alt" aria-hidden="true"></i> Edit Content
+        </a>
+    </div>
+    <!--<div class="toolbar_link">a</div>
+    <div class="toolbar_link">link</div>-->
+</div>
+{% endif %}

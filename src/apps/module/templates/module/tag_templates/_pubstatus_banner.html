@@ -1,0 +1,94 @@
+<style>
+    #PubStatus_banner{
+        //position: fixed;
+
+        z-index: 50;
+        padding: 4px 12px;
+        margin-bottom: 25px;
+
+        //margin-top: -25px;
+        //width: 80%;
+
+
+        //border-bottom-left-radius: 8px;
+        //border-bottom-right-radius: 8px;
+        border-radius: 8px;
+
+        /* red by default to mark invalid state */
+        background-color: #ffe3e3;
+        border: 1px solid red;
+
+
+    }
+
+
+    #PubStatus_banner.draft_only {
+        /* gray */
+        background-color: #e9e6f2;
+        border: 1px solid #d5d5d5;
+
+    }
+
+
+    #PubStatus_banner.draft_dirty {
+        /* yellow */
+        background-color: #fffcb9;
+        border: 1px solid #c7bd06;
+
+    }
+
+
+    #PubStatus_banner.draft_clean {
+        /* green */
+        background-color: #c3ffc1;
+        border: 1px solid #06c758;
+    }
+
+
+    #PubStatus_banner.published_current {
+        /* blue */
+        background-color: #d6ecff;
+        border: 1px solid #45a4f3;
+
+    }
+
+
+    #PubStatus_banner.published_past {
+        /* orange */
+        background-color: #ffe6d6;
+        border: 1px solid #f38a45;
+    }
+
+
+</style>
+
+<div id="PubStatus_banner" class="{{banner_class}}">
+{% if draft_copy %}
+
+    <div> <span style="font-weight:bold">DRAFT</span>
+        {% if banner_class == 'draft_only' %}
+            (draft only): There is currently no published copy of this Module.
+
+        {% elif banner_class == 'draft_dirty' %}
+
+            (pending changes): This draft is currently published, but there have been changes since most recent <a href="{{ link_url }}">Published Copy</a>.
+
+        {% elif banner_class == 'draft_clean' %}
+
+            (up to date): This draft is currently up to date with the <a href="{{ link_url }}">Published Copy</a>.
+
+        {% endif %}
+    </div>
+
+{% else  %}
+    <div> <span style="font-weight:bold">PUBLICATION</span> ({{publish_status_display}}):
+        {% if banner_class == 'published_current' %}
+            Would you like to view the <a href="{{ link_url }}">Draft Copy</a>?
+
+        {% elif banner_class == 'published_past' %}
+            This is an old version of this publication. <a href="{{ link_url }}">Published Copy</a>.
+        {% endif %}
+    </div>
+
+{% endif %}
+</div>
