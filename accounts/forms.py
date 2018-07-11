@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from accounts.models import User
+from accounts.models import User, Profile
+import six
 
 
 class RegisterForm(forms.ModelForm):
@@ -91,3 +92,36 @@ class LoginForm(forms.Form):
     email = forms.EmailField(label='Email')
     password = forms.CharField(widget=forms.PasswordInput)
 
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['email']
+
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if not isinstance(data, six.string_types) or len(data.strip()) == 0:
+            raise forms.ValidationError("Email is a required field.")
+        return data
+
+
+class UserProfileForm(forms.ModelForm):
+    # def __init__(self, *args, **kwargs):
+    #     super(UserProfileForm, self).__init__(*args, **kwargs)
+    #     self.fields['identifiers'].required = False
+
+    class Meta:
+        model = Profile
+        exclude = ['user']
+
+    def clean_first_name(self):
+        data = self.cleaned_data['first_name']
+        if not isinstance(data, six.string_types) or len(data.strip()) == 0:
+            raise forms.ValidationError("First name is a required field.")
+        return data
+
+    def clean_last_name(self):
+        data = self.cleaned_data['last_name']
+        if not isinstance(data, six.string_types) or len(data.strip()) == 0:
+            raise forms.ValidationError("Last name is a required field.")
+        return data

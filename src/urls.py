@@ -32,7 +32,8 @@ from django.views.static import serve
 from accounts.views import (
         RegisterView,
         #LoginView,
-        #LogoutView
+        #LogoutView,
+        UserProfileUpdateView,
     )
 
 admin.autodiscover()
@@ -62,8 +63,11 @@ urlpatterns += i18n_patterns(
     url(r'^accounts/PasswordChange/$', PasswordChangeView.as_view(), name='password_change'),
     url(r'^accounts/PasswordChangeDone/$', PasswordChangeDoneView.as_view(), name='password_change_done'),
 
+    url(r'^accounts/profile/$', UserProfileUpdateView.as_view(), name='user_profile'),
+    url(r'^accounts/profile/(?P<email>.*)/', UserProfileUpdateView.as_view()),
 
     url(r'^admin/', include(admin.site.urls)),  # NOQA
+    url(r'^oauth2/', include('social_django.urls', namespace='social')),  # OAuth, should be placed prior to cms urls
     url(r'^', include('cms.urls')),
 )  + staticfiles_urlpatterns()
 

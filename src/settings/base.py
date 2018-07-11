@@ -99,6 +99,8 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.template.context_processors.csrf',
                 'django.template.context_processors.tz',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 'sekizai.context_processors.sekizai',
                 'django.template.context_processors.static',
                 'cms.context_processors.cms_settings'
@@ -144,6 +146,8 @@ INSTALLED_APPS = (
 
     # include custom User from accounts app before loading the cms
     'accounts',
+    # OAuth client
+    'social_django',
 
     # add in the django-cms apps
     'cms',
@@ -412,3 +416,12 @@ CKEDITOR_SETTINGS_OverlayImg = {
 
 
 
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['first_name', 'email']
+SOCIAL_AUTH_SLUGIFY_USERNAMES = True
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/manage/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
+
+AUTHENTICATION_BACKENDS = (
+    'accounts.oauth.hydroshare.HydroShareOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)

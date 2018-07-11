@@ -1,0 +1,19 @@
+{% extends CMS_TEMPLATE %}
+{% load cms_tags menu_tags sekizai_tags static %}
+
+{% block title %}User Profile{% endblock title %}
+
+{% block content %}
+
+<br/>
+<br/>
+<br/>
+<h3>User Email: {{user.email}}</h3>
+
+<form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Update" />
+</form>
+
+{% endblock content %}
