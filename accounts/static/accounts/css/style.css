@@ -1,0 +1,37 @@
+.label {
+    width: 100%;
+    padding-left: 0;
+  }
+
+.label-hydroshare {
+  color: #71a43a;
+  border: #aaaaaa solid 1px;
+}
+.label-hydroshare:hover {
+  color: #ffffff;
+  background-color: #71a43a;
+}
+
+.span-hydroshare-logo {
+    width: 100px;
+    height: 20px;
+    background-size: 50%;
+    background: url('https://www.hydroshare.org/static/img/logo-lg.png') no-repeat;
+    display:block;
+}
+
+.hs-logo-container {
+    float: left;
+    /*position: absolute;*/
+    bottom: 8px; //8
+}
+.hs-logo-container img {
+    float: left;
+    height: 30px; //50
+    /*width: 50px; //50*/
+}
+.hs-logo-container span {
+    position: relative;
+    top: 25px; //25px
+    margin-left: 10px;
+}

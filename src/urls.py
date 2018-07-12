@@ -66,6 +66,7 @@ urlpatterns += i18n_patterns(
     url(r'^accounts/profile/$', UserProfileUpdateView.as_view(), name='user_profile'),
     url(r'^accounts/profile/(?P<email>.*)/', UserProfileUpdateView.as_view()),
 
+
     url(r'^admin/', include(admin.site.urls)),  # NOQA
     url(r'^oauth2/', include('social_django.urls', namespace='social')),  # OAuth, should be placed prior to cms urls
     url(r'^', include('cms.urls')),

@@ -131,5 +131,9 @@ class UserProfileUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileUpdateView, self).get_context_data(**kwargs)
-        context["user"] = self.request.user
+
+        u = self.request.user
+        if "email" in self.kwargs:
+            u = User.objects.get(email=self.kwargs['email'])
+        context["parameter_user"] = u
         return context

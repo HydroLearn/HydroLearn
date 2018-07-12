@@ -1,9 +1,15 @@
 {% extends CMS_TEMPLATE %}
-{% load cms_tags menu_tags sekizai_tags static %}
+{% load cms_tags menu_tags sekizai_tags accounts_tags static %}
+
+
 
 {% block title %}User Profile{% endblock title %}
 
 {% block content %}
+
+    {% addtoblock "css" %}
+        <link rel="stylesheet" type="text/css" href="{% static 'accounts/css/style.css' %}" />
+    {% endaddtoblock "css" %}
 
 <br/>
 <br/>
@@ -15,5 +21,29 @@
         {{ form.as_p }}
         <input type="submit" value="Update" />
 </form>
+
+
+    {% block social_parameters %}
+        <h3>Social Accounts</h3>
+
+        <div class="hs-logo-container">
+        <a href="https://www.hydroshare.org/">
+        <img src={% static  "accounts/images/hs_logo.png"%}>
+        </a>
+        </div>
+
+        {% if "hydroshare" not in backends.not_associated %}
+            {%  with backends.associated|provider_filter:"hydroshare" as association %}
+            <form role="form" method="post" action="{% url 'social:disconnect_individual' association.provider association.id %}?next=/accounts/profile/{{ user.username }}/">
+                     {% csrf_token %}
+                  <button type="submit" id="disconnect-social-submit" class="btn btn-danger" name="disconnect-social-submit">Disconnect</button>
+            </form>
+            {% endwith %}
+        {% else %}
+            <a href="{% url 'social:begin' 'hydroshare' %}?next={{ request.path }}"><span class="btn btn-success">Connect</span></a>
+        {% endif %}
+{% endblock %}
+
+
 
 {% endblock content %}
