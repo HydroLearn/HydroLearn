@@ -116,6 +116,7 @@ class UserProfileUpdateView(UpdateView):
     def get_object(self, queryset=None):
         obj = Profile.objects.none()
         try:
+
             if self.request.user.is_authenticated():
 
                 if "email" not in self.kwargs:
