@@ -29,6 +29,9 @@
                         <!--<li class="nav-item">-->
                             <a class="nav-link" id="find-tab" data-toggle="tab" href="#find-content" role="tab" >Find Modules</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="app" data-toggle="tab" href="#app-tab" role="tab" >App</a>
+                        </li>
                     </ul>
 
                 </div>
@@ -49,6 +52,9 @@
                 <div id="find-content" class="tab-pane fade" role="tabpanel">
                     {% include "manage/partials/_find_modules_tab_content.html" %}
 
+                </div>
+                <div id="app-tab" class="tab-pane fade" role="tabpanel">
+                    {% include "manage/partials/_apps_tab_content.html" %}
                 </div>
 
             </div>
