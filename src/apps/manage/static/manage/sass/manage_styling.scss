@@ -332,3 +332,29 @@ label.form-error {
     cursor: help;
 }
 
+.ui-state-highlight {
+        background: #ddd;
+        border: 1px dashed #999;
+        height: 1.5em;
+        line-height: 1.2em;
+    }
+
+.FM-sort-control-panel{
+    background: #ffffff44;
+    display:inline-block;
+    border-radius: 7px;
+    padding: 0 10px;
+    margin: 0 5px 0 0;
+
+}
+
+.FM-sort-control{
+    cursor: pointer;
+    padding: 3px 3px;
+    border-radius: 7px;
+
+    &:hover{
+        background: #ffffff44
+    }
+}
+

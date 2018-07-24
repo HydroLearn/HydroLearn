@@ -591,7 +591,6 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
     success_url = '/manage/'
 
     def form_valid(self, form):
-        test = "test"
 
         if 'publish' in self.request.POST:
 
@@ -612,7 +611,6 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
         return super(manage_ModulePublish, self).form_valid(form)
 
     def form_invalid(self, form, **kwargs):
-        test = 'test'
         return super(manage_ModulePublish, self).form_invalid(form)
 
 

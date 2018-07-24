@@ -8,7 +8,8 @@ from src.apps.core.models.ModuleModels import Section
 
 class ReadingSection(Section):
     class Meta:
-        verbose_name_plural = 'Sections (Reading)'
+        verbose_name = "Reading Section"
+        verbose_name_plural = 'Reading Sections'
         manager_inheritance_from_future = True
 
     def absolute_url(self):
@@ -79,7 +80,8 @@ class ReadingSection(Section):
 
 class ActivitySection(Section):
     class Meta:
-        verbose_name_plural = 'Sections (Activity)'
+        verbose_name = "Activity Section"
+        verbose_name_plural = 'Activity Sections'
         manager_inheritance_from_future = True
 
     def absolute_url(self):
@@ -148,7 +150,8 @@ class ActivitySection(Section):
 
 class QuizSection(Section):
     class Meta:
-        verbose_name_plural = 'Sections (Quiz)'
+        verbose_name = "Quiz Section"
+        verbose_name_plural = 'Quiz Sections'
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={

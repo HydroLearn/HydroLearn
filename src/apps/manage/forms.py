@@ -24,12 +24,16 @@ class manage_ModuleForm(forms.ModelForm):
         exclude = ['created_by']
 
         widgets = {
+            'name': forms.TextInput(attrs={
+                    'required': 'true',
+                    'class': 'object_name'
+                }),
             'tags': TagWidget(attrs={
-                'class': 'tag_input',
-                'data-role': "tagsinput",
-                'placeholder':'Add Tags',
+                    'class': 'tag_input',
+                    'data-role': "tagsinput",
+                    'placeholder':'Add Tags',
 
-            }),
+                }),
 
         }
 
@@ -41,18 +45,22 @@ class manage_TopicForm(forms.ModelForm):
             'name',
             'short_name',
             'tags',
+            'position',
         ]
 
         widgets = {
             'position': forms.HiddenInput(),
-            'name': forms.TextInput(attrs={'required': 'true'}),
+            'name': forms.TextInput(attrs={
+                    'required': 'true',
+                    'class':'object_name'
+                }),
             #'module': apply_select2(forms.Select),
             'tags': TagWidget(attrs={
-                'class': 'tag_input',
-                'data-role': "tagsinput",
-                'placeholder': 'Add Tags',
+                    'class': 'tag_input',
+                    'data-role': "tagsinput",
+                    'placeholder': 'Add Tags',
 
-            }),
+                }),
 
         }
 
@@ -63,18 +71,21 @@ class manage_LessonForm(forms.ModelForm):
             'name',
             'short_name',
             'tags',
+            'position',
         ]
 
         widgets = {
             'position': forms.HiddenInput(),
-            'name': forms.TextInput(attrs={'required': 'true'}),
+            'name': forms.TextInput(attrs={
+                    'required': 'true',
+                    'class':'object_name'
+                }),
             #'module': apply_select2(forms.Select),
             'tags': TagWidget(attrs={
-                'class': 'tag_input',
-                'data-role': "tagsinput",
-                'placeholder': 'Add Tags',
-
-            }),
+                    'class': 'tag_input',
+                    'data-role': "tagsinput",
+                    'placeholder': 'Add Tags',
+                }),
 
         }
 
@@ -87,9 +98,13 @@ class manage_SectionForm(forms.ModelForm):
             'duration',
             'tags',
             # 'topic',
-            # 'position',
+            'position',
         ]
         widgets = {
+            'name': forms.TextInput(attrs={
+                    'required': 'true',
+                    'class': 'object_name'
+                }),
             'position': forms.HiddenInput(),
             'tags': TagWidget(attrs={
                 'class': 'tag_input',
@@ -119,18 +134,21 @@ class manage_ReadingSectionForm(forms.ModelForm):
             'short_name',
             'duration',
             'tags',
-            # 'topic',
-            # 'position',
+            'position',
+
         ]
         widgets = {
             'position': forms.HiddenInput(),
-            'name': forms.TextInput(attrs={'required': 'true'}),
+            'name': forms.TextInput(attrs={
+                    'required': 'true',
+                    'class':'object_name'
+                }),
             'tags': TagWidget(attrs={
-                'class': 'tag_input',
-                'data-role': "tagsinput",
-                'placeholder': 'Add Tags',
+                    'class': 'tag_input',
+                    'data-role': "tagsinput",
+                    'placeholder': 'Add Tags',
 
-            }),
+                }),
 
         }
 
@@ -140,22 +158,26 @@ class manage_ActivitySectionForm(forms.ModelForm):
         fields = [
             'name',
             'short_name',
-            #'topic',
             'duration',
             'tags',
+            'position',
         ]
 
         widgets = {
             # 'content': TextEditorWidget(),
             'position': forms.HiddenInput(),
             #'topic': apply_select2(forms.Select),
-            'name': forms.TextInput(attrs={'required': 'true'}),
+            'name': forms.TextInput(attrs={
+                    'required': 'true',
+                    'class':'object_name'
+                }),
             'tags': TagWidget(attrs={
-                'class': 'tag_input',
-                'data-role': "tagsinput",
-                'placeholder': 'Add Tags',
+                    'class': 'tag_input',
+                    'data-role': "tagsinput",
+                    'placeholder': 'Add Tags',
 
-            }),
+
+                }),
 
         }
 
@@ -168,23 +190,26 @@ class manage_QuizSectionForm(forms.ModelForm):
         fields = [
             'name',
             'short_name',
-            #'topic',
             'duration',
             'tags',
+            'position',
         ]
 
         widgets = {
             # 'content': TextEditorWidget(),
             'position': forms.HiddenInput(),
-            'name': forms.TextInput(attrs={'required': 'true'}),
+            'name': forms.TextInput(attrs={
+                    'required': 'true',
+                    'class': 'object_name'
+                }),
             #'duration':
             #'topic': apply_select2(forms.Select),
             'tags': TagWidget(attrs={
-                'class': 'tag_input',
-                'data-role': "tagsinput",
-                'placeholder': 'Add Tags',
+                    'class': 'tag_input',
+                    'data-role': "tagsinput",
+                    'placeholder': 'Add Tags',
 
-            }),
+                }),
         }
 
         readonly_fields = ['topic']

@@ -425,3 +425,4 @@ AUTHENTICATION_BACKENDS = (
     'accounts.oauth.hydroshare.HydroShareOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
+

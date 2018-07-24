@@ -60,7 +60,9 @@ var FormManager = {
     formset_header_templates: {},  // dictionary of formset headers indexed by object type
     empty_form_templates: {},
 
-
+    /*****************************************************
+                INITIALIZATION
+    *****************************************************/
     init: function(form_selector, is_bound){
 
         if(!!!form_selector)
@@ -178,42 +180,38 @@ var FormManager = {
         // for each of the provided forms of this type,
         // instantiate it's empty form and replace the content
         $(formset_forms).children('.FM_form[FM-type='+ formset_type + ']').each(function(){
-            var form_content = $(this).children('.FM_form_content')
+
             var form_content = $(this).children('.FM_form_content')
 
             var form_poly_type = $(this).attr('FM-poly-type')
             var empty_form_instance = FormManager.get_empty_form_of_type(formset_type, form_poly_type)
 
-
-            // if this formset is unbound, treat as empty form, but populate provided values
-
-//            if(!is_bound){
-//                debugger;
-//                // mark as new empty form
-//                $(empty_form_instance).addClass('FM_new_form')
-//
-//                populated_fields = $(form_content).find('input')
-//                empty_fields = $(empty_form_instance).find('input')
-//
-//                $(empty_fields).each(function(index){
-//                    $(this).val($(populated_fields[index]).val())
-//                })
-//
-//            }else{
-                // if formset is bound, just add in the content directly
-                $(empty_form_instance).find('.FM_form_content').replaceWith(form_content)
-
-            //}
-
+            // if formset is bound, just add in the content directly
+            $(empty_form_instance).find('.FM_form_content').replaceWith(form_content)
 
             // mark this form as non-empty
             $(empty_form_instance).removeClass('FM_empty_form')
             $(empty_form_instance).addClass('FM_form')
 
-
-
             // set up the 'remove' button click event
-            $(empty_form_instance).find('.FM_remove_form').click(FormManager.remove_form_event)
+            $(empty_form_instance).find('.FM_remove_form').click(FormManager._remove_form_event)
+
+            // set any applicable click events for sorting
+            var move_up_button = $(empty_form_instance).find('.FM-sort-up')
+            if(move_up_button.length > 0){
+                move_up_button.click(FormManager._move_form_up)
+                move_up_button.attr('title', 'Move Up')
+            }
+
+            var move_down_button = $(empty_form_instance).find('.FM-sort-down')
+            if(move_down_button.length > 0){
+                move_down_button.click(FormManager._move_form_down)
+                move_down_button.attr('title', 'Move Down')
+            }
+
+            $(empty_form_instance).find('.FM-sorting-handle').attr('title', 'Move Form (click and drag)')
+
+            FormManager.init_linked_labels(empty_form_instance)
 
             forms_container.append(empty_form_instance)
 
@@ -243,14 +241,81 @@ var FormManager = {
                 FM_poly_type:polymorphic_type
             }
 
-            $(this).click(event_args, FormManager.add_form_btn_event)
+            $(this).click(event_args, FormManager._add_form_btn_event)
 
         })
+
+        FormManager.init_container_sortability(forms_container)
 
         formset_element.addClass('FM_initialized')
 
         FormManager._perform_post_formset_init_event(formset_type)
     },
+
+    init_container_sortability: function(forms_container){
+
+        // add sortable functionality to the forms container
+        $(forms_container).sortable({
+            items: ".FM_form[fm-type='"+ forms_container.attr('fm-type') +"']",
+            placeholder: "ui-state-highlight",
+            start: function(e, ui){
+                    // set the placeholder's height to be the current item height
+                    //  helps with visual representation
+                    ui.placeholder.height(ui.item.height());
+                },
+            handle: ".FM-sorting-handle",
+            helper : 'clone',
+            update: FormManager._formset_sorted_evt
+        })
+
+    },
+
+    init_linked_labels: function(form){
+
+        // grab all linked labels in this form
+        var linked_label = $(form).find('.FM_linked_label').filter(function(){
+                return $(this).closest('.FM_form').is(form)
+            })
+
+        // for each linked label set up the update events on input change
+        $.each(linked_label, function(index, label_obj) {
+
+            // get the specified selector for input object we're listening for
+            var linked_input_selector = $(label_obj).attr('FM-linked-selector')
+
+            // if found
+            if(linked_input_selector){
+
+                // get the linked input on the current form
+                var linked_input = $(form).find(linked_input_selector).filter(function(){
+                    return $(this).closest('.FM_form').is(form)
+                })
+
+                // if the linked input has a value, update the label
+                if(linked_input.val()){
+                    linked_label.html(linked_input.val())
+                }else{
+                    // otherwise set label text to specified default value
+                    var default_value = linked_label.attr('fm-label-default')
+                    linked_label.html((default_value? default_value: "no default specified"))
+                }
+                //debugger;
+                // listen for change event on input label to trigger label update
+                $(linked_input).on('change', { 'linked_label': linked_label}, FormManager._linked_input_changed_evt)
+
+                // listen for update signal on the label
+                $(linked_label).on('update_linked_labels', FormManager._update_linked_labels)
+            }else
+                throw new Error('A linked label was specified without a "FM-linked-selector" attribute.')
+        });
+
+
+
+    },
+
+    /*****************************************************
+                METHODS
+    *****************************************************/
 
     get_formset_header_of_type: function(formset_type){
 
@@ -273,8 +338,66 @@ var FormManager = {
         return $('.FM_formset_forms[FM-Prefix='+ formset_prefix +']').find('.FM_form[FM-Type='+ formset_type +']').length
     },
 
+    move_form_up: function(form){
+        var prev_form = $(form).prev('.FM_form[fm-type="'+form.attr('fm-type') +'"]')
 
-    add_form_btn_event: function(event){
+        if (prev_form.length > 0){
+            $(form).fadeOut(function(){
+                $(form).insertBefore(prev_form)
+                FormManager.update_positions($(form).closest('.FM_formset_forms'))
+                $(form).fadeIn(400)
+            })
+
+        }
+
+
+    },
+
+    move_form_down: function(form){
+        var next_form = $(form).next('.FM_form[fm-type="'+form.attr('fm-type') +'"]')
+
+        if (next_form.length > 0){
+            $(form).fadeOut(function(){
+                $(form).insertAfter(next_form)
+                FormManager.update_positions($(form).closest('.FM_formset_forms'))
+                $(form).fadeIn(400)
+            })
+        }
+
+    },
+
+    // set the values for 'position' for each form of a passed formset, based on current position
+    update_positions: function(formset){
+        // get the list of forms associated with this formset from jquery-ui sortable
+        child_forms = formset.children('.FM_form')
+
+        // update the position value for each of the child forms for the current sortable
+        $.each(child_forms, function(index, child){
+            $(child).find('[id$="-position"]').first().val(index)
+        })
+    },
+
+    /*****************************************************
+                EVENTS
+    *****************************************************/
+
+    // form order sorted event (sortable plugin event)
+    _formset_sorted_evt: function(event, ui){
+        FormManager.update_positions($(this))
+
+    },
+
+    _move_form_up: function(event){
+        event.stopPropagation();
+        FormManager.move_form_up($(this).closest('.FM_form'))
+    },
+
+    _move_form_down: function(event){
+        event.stopPropagation();
+        FormManager.move_form_down($(this).closest('.FM_form'))
+    },
+
+    _add_form_btn_event: function(event){
 
         var formset_type = event.data.FM_type
         var formset_prefix = event.data.FM_prefix
@@ -308,6 +431,23 @@ var FormManager = {
         new_form.addClass('FM_form')
         new_form.addClass('FM_new_form')
 
+        // set any applicable click events for sorting
+        var move_up_button = new_form.find('.FM-sort-up')
+        if(move_up_button.length > 0){
+            move_up_button.click(FormManager._move_form_up)
+            move_up_button.attr('title', 'Move Up')
+        }
+
+        var move_down_button = new_form.find('.FM-sort-down')
+        if(move_down_button.length > 0){
+            move_down_button.click(FormManager._move_form_down)
+            move_down_button.attr('title', 'Move Down')
+        }
+
+        new_form.find('.FM-sorting-handle').attr('title', 'Move Form (click and drag)')
+
+        FormManager.init_linked_labels(new_form)
+
         // add the new form to the end of its wrapper
         //new_form_wrapper.append(new_form)
 
@@ -315,8 +455,10 @@ var FormManager = {
         //forms_container.append(new_form_wrapper);
         forms_container.append(new_form);
 
+        FormManager.update_positions(forms_container);
+
         // add the click event to any 'remove form' buttons contained in this form
-        $(new_form).find('.FM_remove_form').click(FormManager.remove_form_event)
+        $(new_form).find('.FM_remove_form').click(FormManager._remove_form_event)
 
         // check if the empty form contains a nested child formset
         if(new_form.find('.FM_formset').length > 0){
@@ -333,7 +475,7 @@ var FormManager = {
 
     },
 
-    remove_form_event: function(){
+    _remove_form_event: function(){
         //debugger;
         // TODO: maybe add in a prompt to confirm
 
@@ -350,19 +492,13 @@ var FormManager = {
         }else{
             // otherwise, set the 'DELETE' field for the current form to checked
             //      and hide it. (maybe populate a deleted list for restoring it)
-//            var form_content = form.find('.FM_form_content').filter(function(){
-//                return $(this).closest('.FM_form').is(form)
-//            })
-
 
             // find this form's delete field (technically... each child should be deleted too... right?)
             var delete_field = form.find("input[name$='-DELETE']").filter(function(){
                 return $(this).closest('.FM_form').is(form)
             })
-            //delete_field.show()
-            //delete_field.prop('checked', true)
-            delete_field.val(true)
 
+            delete_field.val(true)
 
             form.addClass('FM_deleted_form')
 
@@ -375,6 +511,19 @@ var FormManager = {
 
     },
 
+    _linked_input_changed_evt: function(event){
+        //debugger;
+        $(event.data.linked_label).trigger('update_linked_labels', [$(event.currentTarget).val()])
+    },
+
+    _update_linked_labels: function(event, new_val) {
+        //debugger;
+        $(event.currentTarget).html(new_val)
+    },
+
+    /*****************************************************
+                CUSTOM USER-ADDED EVENTS
+    *****************************************************/
     add_post_formset_init_event: function(formset_type, post_add_event){
         FormManager._post_formset_init_events[formset_type] = post_add_event
 
@@ -385,6 +534,10 @@ var FormManager = {
 
     },
 
+
+    /*****************************************************
+                INTERNAL FUNCTIONALITY
+    *****************************************************/
     _perform_post_add_event: function(formset_type){
 
         // perform specific event defined for this formset
@@ -454,10 +607,10 @@ var FormManager = {
             mgmt_form.html(mgmt_form.html().replace(/([\w-]*?)__prefix__/g, "$1" + level))
 
             // update the total number of forms in container
-            //mgmt_form.find('input[name$="-TOTAL_FORMS"]').val(forms_count)
+            // mgmt_form.find('input[name$="-TOTAL_FORMS"]').val(forms_count)
             mgmt_form.find('input[name$="-TOTAL_FORMS"]').attr('FM-value',forms_count)
-//            mgmt_form.find('input[name$="-INITIAL_FORMS"]').attr('FM-value',forms_count)
-//            mgmt_form.find('input[name$="-MAX_NUM_FORMS"]').attr('FM-value',forms_count)
+            // mgmt_form.find('input[name$="-INITIAL_FORMS"]').attr('FM-value',forms_count)
+            // mgmt_form.find('input[name$="-MAX_NUM_FORMS"]').attr('FM-value',forms_count)
 
 
             // for each child form in the forms_container

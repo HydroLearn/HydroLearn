@@ -1,4 +1,4 @@
-{% load polymorphic_formset_tags static sekizai_tags %}
+{% load core_tags polymorphic_formset_tags static sekizai_tags %}
 
 {% addtoblock "css" %}
 
@@ -89,7 +89,7 @@
             {% for model in Topics.empty_form.child_lessons.empty_form.child_sections.child_forms %}
                 <a class="FM_add_form btn btn-default Add_button" type="button" FM-Type="SECTIONS" FM-poly-type="{{ model|as_model_name }}" >
                     <i class="fas fa-plus-circle"></i>
-                    {{ model|as_model_name }}
+                    {{ model|verbose_name }}
                 </a>
             {% endfor %}
 
@@ -102,7 +102,15 @@
     <div class="FM_empty_form" FM-Type="TOPICS">
 
         <div class="Topic-Accord accordion-form">
-            <h3 class="Topic-Header"> New Topic </h3>
+            <h3 class="Topic-Header">
+                <div class="FM-sort-control-panel">
+                    <i class="FM-sort-control FM-sorting-handle fas fa-arrows-alt"></i>
+                    <i class="FM-sort-control FM-sort-up fas fa-chevron-up"></i>
+                    <i class="FM-sort-control FM-sort-down fas fa-chevron-down"></i>
+                </div>
+
+                <span class="FM_linked_label" FM-linked-selector="input.object_name" FM-label-default="New Topic"></span>
+            </h3>
             <div class="Topic-Container">
 
                 {% if Topics.can_delete %}
@@ -121,9 +129,6 @@
                     <!--add in placeholder for nested sections formset-->
                     <div class="FM_formset" FM-parent="TOPICS" FM-Type="LESSONS" FM-Prefix="{{Topics.empty_form.child_lessons.prefix}}"></div>
                 </div>
-
-
-
             </div>
         </div>
     </div>
@@ -132,7 +137,14 @@
     <div class="FM_empty_form" FM-Type="LESSONS">
 
         <div class="Lesson-Accord accordion-form">
-            <h3 class="Lesson-Header"> New Lesson </h3>
+            <h3 class="Lesson-Header">
+                <div class="FM-sort-control-panel">
+                    <i class="FM-sort-control FM-sorting-handle fas fa-arrows-alt"></i>
+                    <i class="FM-sort-control FM-sort-up fas fa-chevron-up"></i>
+                    <i class="FM-sort-control FM-sort-down fas fa-chevron-down"></i>
+                </div>
+                <span class="FM_linked_label" FM-linked-selector="input.object_name" FM-label-default="New Lesson"></span>
+            </h3>
             <div class="Lesson-Container">
 
                 {% if Topics.empty_form.child_lessons.can_delete %}
@@ -162,7 +174,14 @@
     {% for empty_form in Topics.empty_form.child_lessons.empty_form.child_sections.empty_forms %}
         <div class="FM_empty_form" FM-Type="SECTIONS" FM-poly-type="{{ empty_form|as_form_type }}">
             <div class="Section-Accord accordion-form">
-                <h3>New {{ empty_form|as_form_type }}</h3>
+                <h3>
+                    <div class="FM-sort-control-panel">
+                        <i class="FM-sort-control FM-sorting-handle fas fa-arrows-alt"></i>
+                        <i class="FM-sort-control FM-sort-up fas fa-chevron-up"></i>
+                        <i class="FM-sort-control FM-sort-down fas fa-chevron-down"></i>
+                    </div>
+                    <span class="FM_linked_label" FM-linked-selector="input.object_name" FM-label-default="New {{ empty_form|form_model_verbose_name }}"></span>
+                </h3>
                 <div>
                     {% if Topics.empty_form.child_lessons.empty_form.child_sections.can_delete %}
                     <a class="FM_remove_form Remove_button btn btn-default" type="button" style="float:right;">
@@ -200,8 +219,6 @@
         <br/>
 
         {# add formset wrappers for the module's topics #}
-
-
         <div id="Topics-Wrapper">
             <div class="FM_formset" FM-Type="TOPICS" FM-Prefix="{{Topics.prefix}}">
                 <div class="FM_mgmt_form">{{ Topics.management_form }}</div>
@@ -234,7 +251,7 @@
 
                                                         <div class="FM_form_content">
                                                             <div class="FM_form_errors form_error_container">{{lesson_form.errors}}</div>
-                                                            <table class="section-table">
+                                                            <table class="lesson-table">
                                                                 {{ lesson_form.as_table }}
                                                             </table>
 
@@ -325,7 +342,7 @@
     });
 
 
-    // add an ALL post add event to initialize the form accordions
+    // add an ALL post add event to initialize the form accordions and set events for sorting
     FormManager.add_post_add_event("ALL", function(){
 
         // get all uninitialized accordions
@@ -346,6 +363,8 @@
             });
 
         });
+
+
     });
 
 //      TODO: FIGURE THIS OUT
@@ -389,6 +408,21 @@
     });
 
 
+    // add sorting to existing formsets
+
+    //$(".FM_formset_forms").each(function(){
+//        var fm_type = $(this).attr('fm-type')
+//        $(this).sortable({
+//            items: ".FM_form[fm-type='"+ fm_type +"']",
+//            placeholder: "ui-state-highlight",
+//            start: function(e, ui){
+//                    ui.placeholder.height(ui.item.height());
+//                },
+//            handle: ".FM-sorting-handle",
+//            helper : 'clone',
+//            update: FormManager._formset_sorted_evt
+//        })
+//    });
 
 
     $('#post-new-module').on('submit', function(event){
@@ -397,13 +431,7 @@
         // serialize the data from the form
 
         console.log('performing validation');
-
         //form = $(this)
-
-
-
-
-
     });
 
 </script>
