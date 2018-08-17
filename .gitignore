@@ -3,6 +3,7 @@
 media/
 static_files/
 fixtures/
+src/settings/test_settings/
 generateHydroLearnFixtures.bat
 
 
