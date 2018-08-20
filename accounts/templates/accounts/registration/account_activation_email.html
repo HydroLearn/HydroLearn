@@ -1,0 +1,13 @@
+{% autoescape off %}
+Hi {{ user.username }},
+
+There was a request to register this email account with an account at HydroLearn.org.
+
+To verify your account, Please click on the link below to continue with your registration:
+
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+If this signup request was not completed by you, do not click the link above.
+Instead, ignore this email and the activation process will terminate.
+
+{% endautoescape %}

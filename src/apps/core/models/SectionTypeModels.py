@@ -52,7 +52,7 @@ class ReadingSection(Section):
         copy_plugins_to(plugins, self.content, no_signals=True)
 
     def delete(self, *args, **kwargs):
-        print("----- in ReadingSection overridden delete")
+        #print("----- in ReadingSection overridden delete")
         # self.cleanup_placeholders()
         placeholders = [self.content]
         super(ReadingSection, self).delete(*args, **kwargs)
@@ -120,7 +120,7 @@ class ActivitySection(Section):
         copy_plugins_to(plugins, self.content, no_signals=True)
 
     def delete(self, *args, **kwargs):
-        print("----- in ActivitySection overridden delete")
+        #print("----- in ActivitySection overridden delete")
         # self.cleanup_placeholders()
 
         placeholders = [self.content]

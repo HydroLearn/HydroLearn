@@ -1,6 +1,8 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin, AbstractUser
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from accounts.UserManager import UserManager
 
@@ -23,7 +25,7 @@ from accounts.UserManager import UserManager
 class User(AbstractUser):
     # password is a default field, so no need to add it here
     email = models.EmailField(max_length=255, unique=True)
-    is_active = models.BooleanField(default=True)  # can log in
+    is_active = models.BooleanField(default=False)  # can log in
     is_staff = models.BooleanField(default=False)  # staff user
     is_superuser = models.BooleanField(default=False)  # superuser
 
@@ -37,8 +39,6 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-
-
     def __str__(self):
         return self.email
 
@@ -49,10 +49,10 @@ class User(AbstractUser):
         return self.email
 
     def has_perm(self, perm, obj=None):
-        return True
+        return super(User, self).has_perm(perm, obj)
 
     def has_module_perms(self, app_label):
-        return True
+        return super(User,self).has_module_perms(app_label)
 
     @property
     def username(self):
@@ -85,6 +85,8 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True)
     last_name = models.CharField(max_length=255, blank=True, null=True)
 
+    email_confirmed = models.BooleanField(default=False)
+
     # add any additional information to be tied to the user
     #
     # bio = models.TextField(max_length=500, blank=True)
@@ -102,15 +104,10 @@ class Profile(models.Model):
     # created_sections =
     # shared_with_sections =
 
-# Extend the post_save event's create method to map a user to a profile instance
-# @receiver(post_save, sender=User)
-# def create_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         Profile.objects.create(user=instance)
-
-# Extend the post_save event's save method to also save the profile
-# @receiver(post_save, sender=User)
-# def save_user_profile(sender, instance, **kwargs):
-#     instance.profile.save()
-
-# potentially need to tap into the modules's creation method to update the user's modules as well
+# Extend the post_save event's create method to map a user to a
+# profile instance for newly created users
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.profile.save()

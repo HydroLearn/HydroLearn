@@ -112,7 +112,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        exclude = ['user']
+        exclude = ['user', 'email_confirmed']
 
     def clean_first_name(self):
         data = self.cleaned_data['first_name']

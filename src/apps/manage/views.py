@@ -305,7 +305,6 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
                 # instance the module and set the created-by and updated-by fields
                 new_module = form.save(commit=False)
-                print("saving module: ", new_module.name)
                 new_module.created_by = self.request.user
                 new_module.changed_by = self.request.user
 
@@ -313,13 +312,13 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 new_module.save()
 
                 # for each topic in the topics formset
-                print('adding topics (num): ', len(topics.forms))
+                #print('adding topics (num): ', len(topics.forms))
                 for topic_index, topic in enumerate(topics):
 
                     # instance the topic, set its module, created_by, and changed_by fields
                     new_topic = topic.save(commit=False)
 
-                    print("creating topic: ", new_topic.name)
+                    #print("creating topic: ", new_topic.name)
                     new_topic.module = new_module
                     new_topic.created_by = self.request.user
                     new_topic.changed_by = self.request.user
@@ -329,7 +328,7 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                     new_topic.save()
                     topic.save_m2m() # needed to save the tags
 
-                    print('adding lessons (num): ', len(topic.child_lessons.forms))
+                    #print('adding lessons (num): ', len(topic.child_lessons.forms))
 
                     # for each section in the current topic
                     for lesson_index, lesson in enumerate(topic.child_lessons):
@@ -345,7 +344,7 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                         new_lesson.save()
                         lesson.save_m2m()
 
-                        print('adding sections (num): ', len(lesson.child_sections.forms))
+                        #print('adding sections (num): ', len(lesson.child_sections.forms))
 
                         # for each section in the current topic
                         for section_index, section in enumerate(lesson.child_sections):
@@ -363,13 +362,13 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
 
 
-            print("returning success")
+            #print("returning success")
             messages.success(self.request, _("Successfully created Module:'%s'" % new_module.name))
 
         except ValidationError as err:
             # if there was an error at any point while saving the module or its child formset
             form.add_error(_('The submitted form is invalid'))
-            print("...returning invalid")
+            #print("...returning invalid")
 
             return self.form_invalid(form, topics)
 
@@ -432,7 +431,7 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
 
 
     def form_invalid(self, form, topics, *args, **kwargs):
-        print("xxxxxxxx in custom edit form_invalid xxxxxxxx")
+        #print("xxxxxxxx in custom edit form_invalid xxxxxxxx")
 
         # trigger a full clean on the topics/child sections to populate form errors
 
@@ -465,7 +464,6 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
 
                 # instantiate the module and set it's changed_by field
                 new_module = form.save(commit=False)
-                print("saving module: ", new_module.name)
                 new_module.changed_by = self.request.user
 
                 # save the module and its many-to-many relations (tags)
@@ -562,7 +560,6 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
             form.add_error(None, _(err))
             return self.form_invalid(form)
 
-        print('++++++++++++++++++++++++++++++++++++++++++++++++')
         messages.success(self.request, _("Successfully edited Module:'%s'" % new_module.name))
         return super(manage_ModuleEditView,self).form_valid(form)
 
