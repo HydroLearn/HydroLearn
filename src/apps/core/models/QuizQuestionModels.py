@@ -77,7 +77,7 @@ class QuizQuestion(PolyPublicationChild):
 
 
     def delete(self, *args, **kwargs):
-        print("----- in Lesson overridden delete")
+
         # self.cleanup_placeholders()
         placeholders = [self.question_text]
 
@@ -290,7 +290,7 @@ class MultiChoice_answer(QuizAnswerBase):
 
 
     def delete(self, *args, **kwargs):
-        print("----- in Lesson overridden delete")
+
         # self.cleanup_placeholders()
         placeholders = [self.answer_text]
 
@@ -432,7 +432,7 @@ class MultiSelect_answer(QuizAnswerBase):
 
 
     def delete(self, *args, **kwargs):
-        print("----- in Lesson overridden delete")
+
         # self.cleanup_placeholders()
         placeholders = [self.answer_text]
 

@@ -296,7 +296,6 @@ class BaseTopicFormset(BaseInlineFormSet):
             # for lesson in topic.child_lessons:
             #     lesson.clean()
 
-        print("~*~*~*~*~*~* passed topic clean")
         # perform the standard clean
         super(BaseTopicFormset, self).clean()
 
@@ -389,7 +388,6 @@ class BaseLessonFormset(BaseInlineFormSet):
             # for section in lesson.child_sections:
             #     section.clean()
 
-        print("~*~*~*~*~*~* passed lesson clean")
         # perform the standard clean
         super(BaseLessonFormset, self).clean()
 
@@ -461,8 +459,6 @@ class BaseSectionFormset(BasePolymorphicInlineFormSet):
 
             #if not marked_delete:
             encountered_name.append(curr_name)
-
-        print("~*~*~*~*~*~* passed section clean")
 
         # perform the standard clean
         super(BaseSectionFormset, self).clean()

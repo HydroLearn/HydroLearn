@@ -1,7 +1,19 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.views import LoginView, LogoutView
-from django.shortcuts import render, redirect
-from django.utils.http import is_safe_url
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordResetView
+)
+from django.contrib import messages
+from django.db import transaction
+from django.http import (
+    HttpResponseRedirect,
+    HttpResponse,
+
+)
+# from django.shortcuts import render, redirect
+# from django.utils.http import is_safe_url
+from django.shortcuts import render, render_to_response, redirect
 from django.views.generic import CreateView, FormView, RedirectView
 
 from accounts.forms import LoginForm, RegisterForm, UserForm, UserProfileForm
@@ -13,43 +25,104 @@ from accounts.models import Profile
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse_lazy
+from django.utils.translation import gettext as _
+
+# used in register view (from tutorial, may be better ways)
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from accounts.tokens import account_activation_token
+
 
 class RegisterView(CreateView):
     form_class = RegisterForm
     template_name = "accounts/register.html"
-    success_url = "/accounts/login/"
+    #success_url = "/accounts/login/"
+    success_url = "/accounts/activation-sent/"
 
-# class LoginView(FormView):
-#     form_class = LoginForm
-#     template_name = "accounts/login.html"
-#     success_url = "/"
-#
-#     def form_valid(self, form):
-#
-#         next_ = self.request.GET.get('next')
-#         next_post = self.request.POST.get('next')
-#         redirect_path = next_ or next_post or None
-#
-#         email = form.cleaned_data.get("email")
-#         password = form.cleaned_data.get("password")
-#         user = authenticate(self.request, username=email, password=password)
-#
-#         if user is not None:
-#             login(self.request, user)
-#
-#             # leftovers from tutorial for his session based guest login
-#             # try:
-#             #     del request.session['guest_email_id']
-#             # except:
-#             #     pass
-#             #
-#
-#             if is_safe_url(redirect_path, self.request.get_host()):
-#                 return redirect(redirect_path)
-#             else:
-#                 return redirect('/')
-#         else:
-#             return super(LoginView, self).form_invalid(form)
+    def form_valid(self, form):
+
+        try:
+            with transaction.atomic():
+                # create record for new user to track activation
+                user = form.save(commit=False)
+                user.is_active = False
+                user.save()
+                self.object = user
+
+                current_site = get_current_site(self.request)
+
+                # construct the account verification email
+                subject = "Activate your HydroLearn.org Account"
+                message = render_to_string('/accounts/registration/account_activation_email.html', {
+                        'user': user,
+                        'domain':current_site.domain,
+                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                        'token': account_activation_token.make_token(user)
+                    })
+
+
+                # send email to supplied email address
+                user.email_user(subject,message)
+
+                return HttpResponseRedirect("{0}?u={1}".format(self.get_success_url(), user.get_username()))
+                #return redirect(self.get_success_url(), context={'username':user.username})
+
+        except:
+            return render(self.request, '/accounts/registration/account_activation_invalid.html')
+
+        #return super().form_valid(form)
+
+class UserAccount_VerificationSent(TemplateView):
+    template_name = '/accounts/registration/account_activation_sent.html'
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(UserAccount_VerificationSent, self).get_context_data(**kwargs)
+
+        #context['user_requesting_activation'] = kwargs.get('user_requesting_activation')
+        context['new_account'] = self.request.GET.get('u','Error')
+
+        return context
+
+
+
+'''
+    Account activation view.
+    expected to recieve a uidb64 value and an activation token
+    generated during the registration process.
+    
+    upon calling this view:
+        - the uid is decoded and if there is a user associated
+        - the token is checked for validity, against the received user
+        - if everything checks out the user's 'is_active' flag is set to true
+            -this will allow the user to login in the future
+'''
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.profile.email_confirmed = True
+        user.save()
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+        messages.success(request, _("Successfully Verified Account:'%s'" % user.get_username()))
+        return HttpResponseRedirect('/')
+    else:
+        return render(request, '/accounts/registration/account_activation_invalid.html')
+
+
+class LoginView(LoginView):
+    next_page = '/manage/'
+
 
 class LogoutView(LogoutView):
     """
@@ -69,6 +142,10 @@ class LogoutView(LogoutView):
             logout(self.request)
         return super(LogoutView, self).get_redirect_url(*args, **kwargs)
 
+
+class PasswordResetView(PasswordResetView):
+    template_name = 'accounts/registration/password_reset_form.html'
+    email_template_name = 'accounts/registration/password_reset_email.html'
 
 class UserProfileView(TemplateView):
     template_name = 'accounts/profile.html'

@@ -4,6 +4,8 @@
 {% block title %}Login{% endblock title %}
 
 {% block content %}
+<div class="content-inner">
+
     {% if form.errors %}
     <p>Your username and password didn't match. Please try again.</p>
     {% endif %}
@@ -52,5 +54,5 @@
         <!--<br><br>-->
         <!--<p>New to HydroLearn? <a href="/accounts/register/">Click here to register</a></p>-->
     <!--</form>-->
-
+</div>
 {% endblock content %}

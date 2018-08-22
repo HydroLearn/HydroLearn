@@ -66,7 +66,7 @@ from polymorphic.admin import PolymorphicParentModelAdmin,PolymorphicChildModelA
 
 class CreationTrackingMixin(object):
     def save_model(self, request, obj, form, change):
-        print('***************** IN CUSTOM SAVE MODEL')
+        #print('***************** IN CUSTOM SAVE MODEL')
         # if this is the first save of the model set 'created_by' to the current user
         if not obj.pk:
             #print("*** changing created by for '{obj.name}'")
@@ -84,7 +84,7 @@ class CreationTrackingMixin(object):
 
 class PublicationChangeTrackingMixin(object):
     def save_model(self, request, obj, form, change):
-        print('***************** IN CUSTOM PUBLICATION SAVE MODEL')
+        #print('***************** IN CUSTOM PUBLICATION SAVE MODEL')
         # if this is the first save of the model set 'created_by' to the current user
         if not obj.pk:
             #print("*** changing created by for '{obj.name}'")

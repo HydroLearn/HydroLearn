@@ -15,7 +15,7 @@ from polymorphic.query import PolymorphicQuerySet
 class IterativeDeletion_QuerySet(models.QuerySet):
 
     def delete(self, *args, **kwargs):
-        print("in custom queryset delete")
+        #print("in custom queryset delete")
         with transaction.atomic():
             #self.clear_placeholders()
 

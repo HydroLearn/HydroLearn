@@ -463,7 +463,7 @@ class PolyPublication(PolyCreationTrackingBaseModel):
         return display
 
     def save(self, **kwargs):
-        print("**************** IN PUBLICATION SAVE")
+        #print("**************** IN PUBLICATION SAVE")
         is_new_instance = not bool(self.pk)
 
         if not self.is_draft:  # if saving a non-draft publication

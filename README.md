@@ -26,6 +26,30 @@ it is expected that you install hydrolearn in it's own seperated virtual environ
 
 once python and virtualenvwrapper are installed, it is expected that you to generate a new virtual environment to contain the packages outlined in requirements.txt
 
+
+ADDITIONALLY
+you will need to provide a json config file for the project in a protected directory
+and map the HYDROLEARN_CONF environment variable within the environment
+
+this JSON file is expected to contain a single dictionary containing the following values: 
+*more can be added if needed, keep in mind the below example uses placeholder values instead of production values for security purposes*
+
+*Additionally, comments are not allowed in this file*
+
+    {
+        "SECRET_KEY": "...provide a hash value here...",
+        "EMAIL_PASS": "...provide your valid email password here...",
+        "HS_KEY": "...provide your Hydroshare auth key here...",
+        "HS_SECRET": "...provide your HydroShare secret key here..."
+    }
+
+You will need to ensure that the environment variable linking to this file is mapped before the project will be able to run. 
+
+depending on how you've installed the environment you will have to determine the best way to define this environment variable so that is accessible by the project settings.
+
+
+
+
 ## Installation
 
 Generate a directory where you would like the project to be placed on your machine, and perform a checkout of the source code.

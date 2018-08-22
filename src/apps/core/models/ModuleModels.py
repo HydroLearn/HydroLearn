@@ -124,7 +124,7 @@ class Module(Publication):
         return super(Module, self).validate_unique(exclude)
 
     def delete(self, *args, **kwargs):
-        print("----- in module overridden delete")
+        #print("----- in module overridden delete")
 
         placeholders = [self.intro]
 
@@ -274,7 +274,7 @@ class Topic(PublicationChild):
         copy_plugins_to(plugins, self.summary, no_signals=True)
 
     def delete(self, *args, **kwargs):
-        print("----- in topic overridden delete")
+        #print("----- in topic overridden delete")
         # self.cleanup_placeholders()
 
         placeholders = [self.summary]
@@ -454,7 +454,7 @@ class Lesson(PublicationChild):
         copy_plugins_to(plugins, self.summary, no_signals=True)
 
     def delete(self, *args, **kwargs):
-        print("----- in Lesson overridden delete")
+        #print("----- in Lesson overridden delete")
         # self.cleanup_placeholders()
         placeholders = [self.summary]
 

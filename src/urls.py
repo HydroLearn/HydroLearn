@@ -16,9 +16,11 @@ from django.contrib.auth.views import (
         LogoutView,
 
         #password reset views
-        PasswordResetView,
+        #PasswordResetView,
+        PasswordResetDoneView,
         PasswordResetConfirmView,
         PasswordResetCompleteView,
+
 
         #password change views
         PasswordChangeView,
@@ -33,7 +35,11 @@ from accounts.views import (
         RegisterView,
         #LoginView,
         #LogoutView,
+        PasswordResetView,
         UserProfileUpdateView,
+
+        UserAccount_VerificationSent,
+        activate
     )
 
 admin.autodiscover()
@@ -50,22 +56,55 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
 
     # include accounts url
-    url(r'^accounts/login/$', LoginView.as_view(), name='login'),
+    url(r'^accounts/login/$', LoginView.as_view(
+            template_name='accounts/registration/login.html'
+        ), name='login'),
+
     url(r'^accounts/logout/$', LogoutView.as_view(next_page='/'), name='logout'),
-    url(r'^accounts/register/$', RegisterView.as_view(), name="register"),
 
-    # password reset views (Currently don't work as requires email)
-    url(r'^accounts/PasswordReset/$', PasswordResetView.as_view(), name='password_reset'),
-    url(r'^accounts/PasswordResetConfirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    url(r'^accounts/PasswordResetComplete/$', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
-    # password change views
-    url(r'^accounts/PasswordChange/$', PasswordChangeView.as_view(), name='password_change'),
-    url(r'^accounts/PasswordChangeDone/$', PasswordChangeDoneView.as_view(), name='password_change_done'),
+    #***************************************************** password reset views
+    url(r'^accounts/password/reset/$',
+        PasswordResetView.as_view(),name='password_reset'),
 
+    url(r'^accounts/password/reset/done/$',
+        PasswordResetDoneView.as_view(
+            template_name='accounts/registration/password_reset_done.html'
+        ), name='password_reset_done'),
+
+    url(r'^accounts/password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,23})/$',
+        PasswordResetConfirmView.as_view(
+            template_name='accounts/registration/password_reset_confirm.html'
+        ), name='password_reset_confirm'),
+
+    url(r'^accounts/password/reset/complete/$',
+        PasswordResetCompleteView.as_view(
+            template_name='accounts/registration/password_reset_complete.html'
+        ), name='password_reset_complete'),
+
+    #*****************************************************
+
+    #***************************************************** password change views
+
+    url(r'^accounts/password/change/$', PasswordChangeView.as_view(), name='password_change'),
+    url(r'^accounts/password/change/done/$', PasswordChangeDoneView.as_view(), name='password_change_done'),
+
+    #*****************************************************
+
+    #***************************************************** Account Profile
     url(r'^accounts/profile/$', UserProfileUpdateView.as_view(), name='user_profile'),
     url(r'^accounts/profile/(?P<email>.*)/', UserProfileUpdateView.as_view()),
 
+    #*****************************************************
+
+    #***************************************************** Account Activation
+    url(r'^accounts/register/$', RegisterView.as_view(), name="register"),
+    url(r'^accounts/activation-sent/$', UserAccount_VerificationSent.as_view(), name='account_activation_sent'),
+    #
+    url(r'^accounts/activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        activate, name='activate'),
+
+    # *****************************************************
 
     url(r'^admin/', include(admin.site.urls)),  # NOQA
     url(r'^oauth2/', include('social_django.urls', namespace='social')),  # OAuth, should be placed prior to cms urls

@@ -247,7 +247,7 @@ class CreateNewModule_WizardForm(BaseFormMixin, forms.ModelForm):
         new_module = super(CreateNewModule_WizardForm, self).save(commit=False)
                 
         # this form should only be used in creating the initial instance so this should work
-        print('*** adding created by for %s' % new_module.name)
+        #print('*** adding created by for %s' % new_module.name)
         new_module.created_by = self.user
         new_module.changed_by = self.user
     #   

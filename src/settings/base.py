@@ -12,11 +12,7 @@ https://docs.djangoproject.com/en/1.8/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
-import os
-
-print("// Loading Base Settings")
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -34,27 +30,21 @@ DEBUG = False
 ROOT_URLCONF = 'src.urls'
 WSGI_APPLICATION = 'src.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en'
-
 TIME_ZONE = 'America/Chicago'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
 # directory to place static files on collection action
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_files')
 
@@ -76,19 +66,14 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/manage/'
 
 ATOMIC_REQUESTS = True
-# Mail is sent using the SMTP host and port specified in the
-# EMAIL_HOST and EMAIL_PORT settings.
-
-# The EMAIL_HOST_USER and EMAIL_HOST_PASSWORD settings,
-# if set, are used to authenticate to the
-# SMTP server, and the EMAIL_USE_TLS and EMAIL_USE_SSL settings control
-# whether a secure connection is used.
-
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'src', 'templates'), ],
+
+        'DIRS': [
+                os.path.join(BASE_DIR, 'src', 'templates'),
+             ],
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
@@ -134,6 +119,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 INSTALLED_APPS = (
+    # include custom User from accounts app before loading the cms
     'djangocms_admin_style',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -144,8 +130,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.messages',
 
-    # include custom User from accounts app before loading the cms
     'accounts',
+
     # OAuth client
     'social_django',
 
@@ -199,151 +185,6 @@ LANGUAGES = (
     ('en', gettext('en')),
 )
 
-CMS_LANGUAGES = {
-    ## Customize this
-    1: [
-        {
-            'code': 'en',
-            'name': gettext('en'),
-            'redirect_on_fallback': True,
-            'public': True,
-            'hide_untranslated': False,
-        },
-    ],
-    'default': {
-        'redirect_on_fallback': True,
-        'public': True,
-        'hide_untranslated': False,
-    },
-}
-
-CMS_TEMPLATES = (
-    ## Customize this
-    ('layout.html', 'HYDROLEARN_TEMPLATE'),
-    ('home.html', 'HOME_TEMPLATE'),
-)
-
-CMS_PERMISSION = True
-
-CMS_PLACEHOLDER_CONF = {
-    'module_intro': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This module\'s introduction doesn\'t appear to have any content.',
-                }
-            }
-        ]
-    },
-
-    'topic_summary': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This topic\'s summary doesn\'t appear to have any content.',
-                }
-            }
-        ]
-    },
-
-    'lesson_summary': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This lesson\'s summary doesn\'t appear to have any content.',
-                }
-            }
-        ]
-    },
-
-    'reading_content': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This Reading Section doesn\'t appear to have any content.',
-                }
-            }
-        ]
-    },
-
-    'activity_content': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This Activity Section doesn\'t appear to have any content.',
-                }
-            }
-        ]
-    },
-
-    'question_text': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This Question hasn\'t been populated yet! Please add the question content!',
-                }
-            }
-        ]
-    },
-
-    'answer_text': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This Answer hasn\'t been populated yet! Please add the answer content!',
-                }
-            }
-        ]
-    },
-
-}
-
-DATABASES = {
-    'default': {
-        'CONN_MAX_AGE': 0,
-        'ENGINE': 'django.db.backends.sqlite3',
-        'HOST': 'localhost',
-        'NAME': 'project.db',
-        'PASSWORD': '',
-        'PORT': '',
-        'USER': ''
-    }
-}
 
 MIGRATION_MODULES = {
 
@@ -358,71 +199,4 @@ THUMBNAIL_PROCESSORS = (
 )
 
 THUMBNAIL_SUBDIR = 'thumbnails'
-
-# CKeditor settings (adding style elements to content dropdown)
-CKEDITOR_SETTINGS = {
-    # 'language': '{{ language }}',
-    # 'toolbar': 'CMS',
-    # 'skin': 'moono',
-    'toolbar_CMS': [
-        ['Undo', 'Redo'],
-        ['cmsplugins', '-', 'ShowBlocks'],
-        ['Styles'],
-        ['TextColor', 'BGColor', '-', 'PasteText', 'PasteFromWord'],
-        ['Maximize', ''],
-        '/',
-        ['Bold', 'Italic', 'Underline', '-', 'HorizontalRule', "-", 'Subscript', 'Superscript', '-', 'Blockquote',
-         'RemoveFormat'],
-
-        ['JustifyLeft', 'JustifyCenter', 'JustifyRight'],
-        ['Link', 'Unlink'],
-        ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Table'],
-        ['Source']
-    ],
-
-    # See: https://github.com/yakupadakli/django_blog/blob/master/ckeditor/ckeditor/styles.js
-    # for default style definitions.
-    'stylesSet': [
-
-        {
-            'name': 'Main Section Header',
-            'element': 'h2',
-            'attributes': {
-                'class': 'lesson-header',
-            }
-        },
-        {
-            'name': 'Subsection Header',
-            'element': 'h3',
-            'attributes': {
-                'class': 'lesson-subheader',
-            }
-        },
-        {
-            'name': 'body text',
-            'element': 'p',
-        },
-
-    ]
-}
-
-CKEDITOR_SETTINGS_OverlayImg = {
-    'toolbar_HTMLField': [
-        ['Undo', 'Redo'],
-        ['Format', 'Styles'],
-        ['Bold', 'Italic', 'Underline', '-', 'Subscript', 'Superscript', '-', 'RemoveFormat'],
-    ]
-}
-
-
-
-SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['email']
-SOCIAL_AUTH_SLUGIFY_USERNAMES = True
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/manage/'
-SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
-
-AUTHENTICATION_BACKENDS = (
-    'accounts.oauth.hydroshare.HydroShareOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-)
 
