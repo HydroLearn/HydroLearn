@@ -113,7 +113,7 @@ div[class^='multicolumn'] .column { flex: 1 0 200px; box-sizing: border-box; col
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003296}}
 #content #content-wrapper #content-tab-header ul li.active a, #content #content-wrapper #content-tab-header ul li.active a:hover { background-color: #fff; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003304}}
-#content #content-wrapper #content-tab-body { margin-top: 106px; padding: 25px 25px 110px; }
+#content #content-wrapper #content-tab-body { margin-top: 60px; padding: 25px 25px 110px; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003309}}
 #content #content-wrapper .content-inner { padding: 20px 10px; }
 
