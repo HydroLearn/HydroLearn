@@ -36,12 +36,33 @@ this JSON file is expected to contain a single dictionary containing the followi
 
 *Additionally, comments are not allowed in this file*
 
+
     {
-        "SECRET_KEY": "...provide a hash value here...",
-        "EMAIL_PASS": "...provide your valid email password here...",
-        "HS_KEY": "...provide your Hydroshare auth key here...",
-        "HS_SECRET": "...provide your HydroShare secret key here..."
+          "SECRET_KEY": "...enter a long randomized string for secret key value...",
+
+          "EMAIL_USE_TLS": true,
+          "EMAIL_USER": "...add a test email user (generated a seperate gmail account for testing)...",
+          "EMAIL_PASS": "...supply password...",
+          "EMAIL_HOST": "...this will depend on email being used ('smtp.gmail.com' used for testing)",
+          "EMAIL_PORT": 587,
+          "EMAIL_DEFAULT_FROM": "HydroLearn <...value from EMAIL_USER ...>",
+
+
+          "DB_ENGINE":"...db engine (recommend 'django.db.backends.sqlite3' for testing)...",
+          "DB_PORT":"...db port     ('' by default for sqlite)...",
+          "DB_NAME":"...db name     ('project.db' for testing instance)...",
+          "DB_HOST":"...db host     ('localhost')",
+          "DB_USER":"...db user     ('' by default)...",
+          "DB_PASS":"...db password ('' by default)...",
+
+
+          "HS_KEY": "...hydroshare key value...",
+          "HS_SECRET": "...hydroshare secret key..."
+
+        
     }
+
+*if these values are not present in the config file an error will be thrown upon running the server.*
 
 You will need to ensure that the environment variable linking to this file is mapped before the project will be able to run. 
 
