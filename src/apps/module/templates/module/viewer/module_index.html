@@ -23,7 +23,7 @@
 
 {% block head_scripts %}
 
-    <script src="{% static 'module/js/plugins/OpenLayers3.js' %}"></script>
+    <script src="{% static 'module/js/plugins/OpenLayers/v3.14.2/OpenLayers3.js' %}"></script>
 
     <script type="text/javascript">
         //window.CaseStudyRegion = '{{region}}';
@@ -45,6 +45,7 @@
         },
 
         "HTML-CSS": {
+            imageFont: null,
             styles: {
                 '.MathJax_Display': {
                     "text-align": "left",
@@ -212,11 +213,11 @@
     <script src="{% static 'module/js/Lesson_Resource_Manager.js' %}"></script>
 
     <!--// mathjax-->
-    <script src="{% static 'module/js/plugins/MathJax/MathJax.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/config/TeX-AMS-MML_HTMLorMML.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/jax/input/TeX/config.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/jax/element/mml/jax.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/jax/input/TeX/jax.js' %}"></script>
+    <script src="{% static 'module/js/plugins/MathJax/legacy/MathJax.js' %}"></script>
+    <script src="{% static 'module/js/plugins/MathJax/legacy/config/TeX-AMS-MML_HTMLorMML.js' %}"></script>
+    <script src="{% static 'module/js/plugins/MathJax/legacy/jax/input/TeX/config.js' %}"></script>
+    <script src="{% static 'module/js/plugins/MathJax/legacy/jax/element/mml/jax.js' %}"></script>
+    <script src="{% static 'module/js/plugins/MathJax/legacy/jax/input/TeX/jax.js' %}"></script>
 
 
 
