@@ -13,31 +13,23 @@
 .map {
     height: 100%;
     width: 100%;
+    /* account for the content margin */
+    margin: -28px -25px;
 }
 
-#map-content #content {
-    position: fixed;
-    top: 76px;
-    height: 405px;
-    width: 1399px;
-    background-color: #ddd;
-}
+
 
 #mapPanel {
     position: absolute;
-    /*background: none repeat scroll 0 0 rgba(255, 255, 255, 0.4);*/
     border-radius: 4px;
     padding: 5px;
     z-index: 1000;
-    /*width: 40px;*/
     height: auto;
     top: 5px;
     margin-left: 40px;
 }
     /*styling for ol2 map controls*/
     #mapPanel .olButton{
-        /*background: none repeat scroll 0 0 rgba(0, 60, 136, 0.5);*/
-        /*float: left;*/
         background-position: 3px 3px;
         background-color: rgba(255, 255, 255, 0.4);
         display: block;
@@ -555,7 +547,7 @@
 
 
 .ui-widget, .ui-widget select {
-    font-family: Verdana,Arial,Helvetica,sans-serif;
+    /* font-family: Verdana,Arial,Helvetica,sans-serif; */
     font-size: 12px;
 }
 /* tooltip start */

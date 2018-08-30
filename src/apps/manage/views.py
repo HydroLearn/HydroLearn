@@ -677,10 +677,10 @@ class manage_SectionContent(OwnershipRequiredMixin, PublicationChildViewMixin, D
         c_type = str(ContentType.objects.get_for_id(self.get_object().polymorphic_ctype_id))
 
         return {
-                'reading section':  'manage/section_reading_detail.html',
-                'activity section': 'manage/section_activity_detail.html',
-                'quiz section':     'manage/section_quiz_detail.html',
-            }.get(c_type, 'module/manage/section_detail.html')
+                'Reading Section':  'manage/section_reading_detail.html',
+                'Activity Section': 'manage/section_activity_detail.html',
+                'Quiz Section':     'manage/section_quiz_detail.html',
+            }.get(c_type, 'manage/section_detail.html')
 
 
 ###############################################################################

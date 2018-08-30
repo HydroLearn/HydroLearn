@@ -40,10 +40,8 @@
 
 
 
-    {% render_block "css" %}
-    {% block addtl_css %}{% endblock addtl_css%}
 
-    {% block head_scripts %}{% endblock head_scripts %}
+    {% render_block 'head_js'%}
 
     <script type="text/javascript" src="{% static 'js/helios_js/modernizr.custom.js' %}"></script>
 
@@ -55,6 +53,13 @@
       <script src="{% static 'js/plugins/respond.min.js' %}"></script>
 <![endif]-->
 
+    <!-- rendered css, needed for cms toolbar-->
+    {% render_block 'css'%}
+    <!-- end rendered css-->
+
+    <!--template css-->
+    {% render_block 'template_css' %}
+    <!--end template css-->
 </head>
 <body>
 
@@ -248,15 +253,19 @@
             $('.overlay').toggleClass('no_show');
 
         });
+
+
     });
 </script>
-
-{% block addtl_js %}{% endblock addtl_js %}
 
 <!-- final javascript javascript settings intended to be done after loading of any partial view content -->
 <script>
     $('.responsive_table').stacktable();
 </script>
+
+<!-- template js -->
+{% render_block "template_js"%}
+<!-- end template js -->
 
 </body>
 </html>

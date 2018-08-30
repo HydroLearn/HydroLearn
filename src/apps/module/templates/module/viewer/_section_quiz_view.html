@@ -3,7 +3,7 @@
 {% load cms_tags module_template_tags sekizai_tags static thumbnail %}
 
 {% block content %}
-    {% addtoblock "css" %}{% endaddtoblock "css" %}
+    {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
 
     <div class='lesson'>
         {% content_editor_button request.user object %}
@@ -29,16 +29,16 @@
         <p> There doesn't appear to be any questions in this quiz, please add some. </p>
 
         {% endfor %}
-    </div>    
-    
-        
-        
-    
+    </div>
+
+
+    {% addtoblock 'template_js' %}
+    <script>
+            $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
+        </script>
+    {% endaddtoblock 'template_js' %}
+
+
 {% endblock content %}
 
-{% block addtl_js %}
-<script>
-    $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
-</script>
-{% endblock addtl_js %}
 

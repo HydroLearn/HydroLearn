@@ -6,68 +6,6 @@
    - {{ module.name }}
 {% endblock subtitle %}
 
-{% block addtl_css %}
-    <link rel="stylesheet" href="{% static 'module/css/Load_Spinner_Manager.css' %}" type="text/css">
-
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">
-
-
-    <link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">
-    <!--<link rel="stylesheet" href="{% static 'module/css/DIV-TableStyle.css' %}" type="text/css">-->
-
-    <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'module/css/map.css' %}" type="text/css">
-{% endblock addtl_css%}
-
-
-{% block head_scripts %}
-
-    <script src="{% static 'module/js/plugins/OpenLayers/v3.14.2/OpenLayers3.js' %}"></script>
-
-    <script type="text/javascript">
-        //window.CaseStudyRegion = '{{region}}';
-        window.current_module = '{{module.name}}';
-        window.current_module_slug = '{{module.slug}}';
-        //window.SubStudy = '{{subStudy}}';
-
-    </script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        extensions: ["tex2jax.js"],
-        jax: ["input/TeX","output/HTML-CSS"],
-        tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]},
-        showMathMenu: false,
-        displayAlign: "left",
-        menuSettings: {
-            zoom: "None"
-        },
-
-        "HTML-CSS": {
-            imageFont: null,
-            styles: {
-                '.MathJax_Display': {
-                    "text-align": "left",
-                    "margin": 0,
-                    "display": "inline",
-                }
-            }
-        },
-
-
-      });
-
-    </script>
-
-<!-- TODO: get this working!
-            @Html.Partial("_googleAnalytics")
-        -->
-
-
-{% endblock head_scripts %}
-
-
 {% block sidebar_nav_links %}
 
     <!--activate this tab in the sidebar by adding active-->
@@ -95,11 +33,57 @@
 
 
 {% block content %}
+    {% addtoblock 'head_js' %}
+
+        <!-- load the mathjax configuration in the head of the page -->
+        <script src="{% static 'module/js/plugins/MathJax/v2.7.1/MathJax.js' %}?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+            tex2jax: {
+                    inlineMath: [["$$","$$"],["\\(","\\)"]],
+                    preview:'none'
+                },
+            showMathMenu: false,
+            displayAlign: "left",
+
+            "HTML-CSS": {
+                imageFont: null,
+                styles: {
+                    '.MathJax_Display': {
+                        "text-align": "left",
+                        "margin": 0,
+                        "display": "inline",
+                    }
+                }
+            },
+
+
+          });
+
+        </script>
+
+        <script type="text/javascript">
+            window.current_module = '{{module.name}} where is this';
+            window.current_module_slug = '{{module.slug}}';
+        </script>
+
+    {% endaddtoblock 'head_js' %}
+
+
+    {% addtoblock 'template_css' %}
+        <link rel="stylesheet" href="{% static 'module/css/Load_Spinner_Manager.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
+        <!--<link rel="stylesheet" href="{% static 'module/css/DIV-TableStyle.css' %}" type="text/css">-->
+        <!--<link rel="stylesheet" href="{% static 'module/css/map.css' %}" type="text/css">-->
+    {% endaddtoblock 'template_css' %}
 
     <div id="content-wrapper">
             <div id="main-content">
                     <div id="content-tab-header">
-
                         <div class="module_navbar_wrapper">
                             <ul id="module_nav" class="nav nav-tabs nav-fill" role="tablist">
 
@@ -113,50 +97,56 @@
                                 </li>
                             </ul>
 
+
                         </div>
                     </div>
 
                     <div id="content-tab-body" class="tab-content">
-                        <div id="pre-content-banner">
-                            {% if user.is_authenticated and object.created_by == user %}
-                                {% publication_status_banner object %}
-                            {% endif %}
-                        </div>
+
 
                         <div id="body-content">
-                        <div id="lesson-content" class="tab-pane fade" role="tabpanel">
-                            <div class='lesson'>
-                                <h2>Welcome to HydroLearn!</h2>
-                                <hr class="headerSpacer">
-                                <p>Please select a lesson from the table of contents to get started.</p>
+                            <div id="pre-content-banner">
+                                {% if user.is_authenticated and object.created_by == user %}
+                                    {% publication_status_banner object %}
+                                {% endif %}
                             </div>
+                            <div id="lesson-content" class="tab-pane fade" role="tabpanel">
+                                <div class='lesson'>
+                                    <h2>Welcome to HydroLearn!</h2>
+                                    <hr class="headerSpacer">
+                                    <p>Please select a lesson from the table of contents to get started.</p>
+                                </div>
+                            </div>
+
+                            <div class="lesson-nav-container">
+                                <button class="prev_lesson_link" ><i class="fas  fa-caret-left"></i> Previous Section</button>
+                                <button class="next_lesson_link" >Next Section <i class="fas  fa-caret-right"></i></button>
+                                <span class="lesson_complete_message">Module Complete!</span>
+
+                                <div id="lesson-nav-warning-dialog" title="Warning!">
+                                    <p>
+                                        If you navigate away from this quiz you will lose your answers.
+                                        Are you sure you would like to continue?
+                                    </p>
+
+                                    <button id="lesson-nav-confirm" title="Leave current quiz">Continue</button>
+                                    <button id="lesson-nav-cancel" title="Stay on current quiz">Cancel</button>
+
+                                </div>
+                            </div>
+
+                            <div id="map-content" class="tab-pane fade" role="tabpanel">
+                                {# placeholder Map_Content or #}
+                                    <!--<p>Currently In Development. Please check back later</p>-->
+                                {# endplaceholder #}
+
+                                {% map_container %}
+
+
+
+                            </div>
+
                         </div>
-
-                        <div class="lesson-nav-container">
-                        <button class="prev_lesson_link" ><i class="fas  fa-caret-left"></i> Previous Section</button>
-                        <button class="next_lesson_link" >Next Section <i class="fas  fa-caret-right"></i></button>
-                        <span class="lesson_complete_message">Module Complete!</span>
-
-                        <div id="lesson-nav-warning-dialog" title="Warning!">
-                            <p>
-                                If you navigate away from this quiz you will lose your answers.
-                                Are you sure you would like to continue?
-                            </p>
-
-                            <button id="lesson-nav-confirm" title="Leave current quiz">Continue</button>
-                            <button id="lesson-nav-cancel" title="Stay on current quiz">Cancel</button>
-
-                        </div>
-                    </div>
-
-                        <div id="map-content" class="tab-pane fade" role="tabpanel">
-                            {% placeholder Map_Content or %}
-                                <p>Currently In Development. Please check back later</p>
-                            {% endplaceholder %}
-
-                        </div>
-
-                    </div>
 
                     </div>
 
@@ -168,110 +158,127 @@
         </div>
 
 
+    {% addtoblock 'template_js' %}
+
+        <script>
+            $('#content').addClass('always_full')
+        </script>
+
+        <script src="{% static 'js/plugins/jquery-ui.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery-ui.multiselect.js' %}"></script>
+        <script src="{% static 'js/plugins/highcharts.js' %}"></script>
+
+
+        <!--
+            TODO: Replace with prettyphoto.js (already loaded in layout.js)
+        -->
+        <script src="{% static 'module/js/plugins/lightbox/ekko-lightbox.js' %}"></script>
+
+
+        <!--<script type="text/javascript" src="{% static 'javascript/knockout-3.3.0.js' %}"/>-->
+        <script src="{% static 'module/js/plugins/History_js/jquery.history.js' %}"></script>
+
+
+        <!--// spinner functionality-->
+        <script src="{% static 'js/plugins/spin-1.2.8.js' %}"></script>
+        <script src="{% static 'js/Load_Spinner_Manager.js' %}"></script>
+
+        <script src="{% static 'module/js/default.js' %}"></script>
+        <script src="{% static 'module/js/URL_Utility.js' %}"></script>
+        <script src="{% static 'module/js/Lesson_functionality.js' %}"></script>
+        <script src="{% static 'module/js/Map_functionality.js' %}"></script>
+
+
+
+        <!--//JSLINQ-->
+        <script src="{% static 'module/js/plugins/JSLINQ.js' %}"></script>
+
+        <!--// custom glossary object-->
+        <script src="{% static 'module/js/Glossary_object.js' %}"></script>
+
+        <!--// lesson resource manager-->
+        <script src="{% static 'module/js/Lesson_Resource_Manager.js' %}"></script>
+
+        <script type='text/javascript'>
+
+            $(document).delegate('*[data-toggle="lightbox"]', 'click', function (event) {
+                event.preventDefault();
+                $(this).ekkoLightbox();
+            });
+
+
+
+
+            $(document).ready(function () {
+
+                URL_UTILS.init('{{LANGUAGE_CODE}}')
+
+                LESSON_MGR.init('#lesson-content', '{{module.name}}', '{{module.slug}}', '{{section}}');
+                MAP_MGR.init('#map-content','@ViewBag.region', '@ViewBag.caseStudy', '@ViewBag.subStudy');
+
+
+                // setup the viewport manager
+                VIEWPORT_MGR.init('#main-content');
+                VIEWPORT_MGR.Register_View('Lessons', '#lesson-content', '#lesson-tab', LESSON_MGR.get_content_query_data, LESSON_MGR.pre_display, LESSON_MGR.post_display, LESSON_MGR.on_Show, LESSON_MGR.on_Hide);
+                VIEWPORT_MGR.Register_View('Map', '#map-content', '#map-tab', MAP_MGR.get_content_query_data, MAP_MGR.pre_display, MAP_MGR.post_display, MAP_MGR.on_Show, MAP_MGR.on_Hide);
+
+                // initialize the Table of contents to link to the different SubStudies/sections
+                TOC_MGR.init('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
+
+
+
+                // initialize content to the provided section (defaults to module intro if not provided)
+                //VIEWPORT_MGR.Load_View('Lessons', ['{{loaded_section}}']);
+                //$('#lesson-tab').tab('show') // Select lesson tab
+
+                {% if loaded_section %}
+                    VIEWPORT_MGR.Load_View('Lessons', ['{{loaded_section}}']);
+                    $('#lesson-tab').tab('show') // Select lesson tab
+
+                {% else %}
+
+                    VIEWPORT_MGR.Load_View('Map');
+                    $('#map-tab').tab('show') // Select map tab
+
+                {% endif %}
+
+
+
+
+
+                // OLD MAP INITIALIZATION CODE FROM Map/Index.cshtml
+                //
+                //if (!!WMS_WORKSPACE) GEOSERVER_DATA_MGR.init(WMS_WORKSPACE);
+                //MAP_MGR.Init_Map(GEOSERVER_DATA_MGR._WORKSPACE_URL);
+                //
+                //var checkedLayers = "@ViewBag.checkedLayers";
+                //displayed_layers = checkedLayers.split(',');
+
+
+                MAP_MGR.Init_Map();
+
+
+                ResizeEventHandler();
+
+                // if screen is larger than 786 pixels (desktop view) expand the sidebar on page load
+                if($( window ).width() >= 768){
+                    $('#sidebarCollapse').click()
+                }
+
+
+
+
+
+            });
+
+
+        </script>
+
+
+    {% endaddtoblock 'template_js' %}
 {% endblock content %}
 
 
-{% block addtl_js %}
-
-    <script>
-        $('#content').addClass('always_full')
-    </script>
-
-    <script src="{% static 'js/plugins/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/plugins/jquery-ui.multiselect.js' %}"></script>
-    <script src="{% static 'js/plugins/highcharts.js' %}"></script>
-
-
-    <!--
-        TODO: Replace with prettyphoto.js (already loaded in layout.js)
-    -->
-    <script src="{% static 'module/js/plugins/lightbox/ekko-lightbox.js' %}"></script>
-
-
-    <!--<script type="text/javascript" src="{% static 'javascript/knockout-3.3.0.js' %}"/>-->
-    <script src="{% static 'module/js/plugins/History_js/jquery.history.js' %}"></script>
-
-
-    <!--// spinner functionality-->
-    <script src="{% static 'js/plugins/spin-1.2.8.js' %}"></script>
-    <script src="{% static 'js/Load_Spinner_Manager.js' %}"></script>
-
-    <script src="{% static 'module/js/default.js' %}"></script>
-    <script src="{% static 'module/js/URL_Utility.js' %}"></script>
-    <script src="{% static 'module/js/Lesson_functionality.js' %}"></script>
-    <!--<script src="{% static 'javascript/Map_functionality.js' %}"></script>-->
-
-
-
-    <!--//JSLINQ-->
-    <script src="{% static 'module/js/plugins/JSLINQ.js' %}"></script>
-
-    <!--// custom glossary object-->
-    <script src="{% static 'module/js/Glossary_object.js' %}"></script>
-
-    <!--// lesson resource manager-->
-    <script src="{% static 'module/js/Lesson_Resource_Manager.js' %}"></script>
-
-    <!--// mathjax-->
-    <script src="{% static 'module/js/plugins/MathJax/v2.7.1/MathJax.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/v2.7.1/config/TeX-AMS-MML_HTMLorMML.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/v2.7.1/jax/input/TeX/config.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/v2.7.1/jax/element/mml/jax.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/v2.7.1/jax/input/TeX/jax.js' %}"></script>
-
-
-
-    <script type='text/javascript'>
-
-        //var legacy_flag = ('@ViewBag.is_Legacy' == 'True');
-
-        $(document).delegate('*[data-toggle="lightbox"]', 'click', function (event) {
-            event.preventDefault();
-            $(this).ekkoLightbox();
-        });
-
-
-
-
-        $(document).ready(function () {
-
-            URL_UTILS.init('{{LANGUAGE_CODE}}')
-
-            LESSON_MGR.init('#lesson-content', '{{module.name}}', '{{module.slug}}', '{{section}}');
-            //MAP_MGR.init(false, '@ViewBag.region', '@ViewBag.caseStudy', '@ViewBag.subStudy');
-
-
-            // setup the viewport manager
-            VIEWPORT_MGR.init('#main-content');
-            VIEWPORT_MGR.Register_View('Lessons', '#lesson-content', '#lesson-tab', LESSON_MGR.get_content_query_data, LESSON_MGR.pre_display, LESSON_MGR.post_display, LESSON_MGR.on_Show, LESSON_MGR.on_Hide);
-            //VIEWPORT_MGR.Register_View('Map', '#map-content', '#map-tab', MAP_MGR.get_content_query_data, MAP_MGR.pre_display, MAP_MGR.post_display, MAP_MGR.on_Show, MAP_MGR.on_Hide);
-
-            // initialize the Table of contents to link to the different SubStudies/sections
-            TOC_MGR.init('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
-
-
-
-            // initialize content to the provided section (defaults to module intro if not provided)
-            VIEWPORT_MGR.Load_View('Lessons', ['{{loaded_section}}']);
-            $('#lesson-tab').tab('show') // Select lesson tab
-
-            //VIEWPORT_MGR.Load_View('Map');
-            //$('#map-tab').tab('show') // Select map tab
-
-
-            ResizeEventHandler();
-
-            // if screen is larger than 786 pixels (desktop view) expand the sidebar on page load
-            if($( window ).width() >= 768){
-                $('#sidebarCollapse').click()
-            }
-        });
-
-
-    </script>
-
-
-{% endblock addtl_js %}
 
 
 

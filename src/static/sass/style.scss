@@ -42,13 +42,24 @@ html{
 
     width: 100vw;
 	max-width: 100%;
+    margin-top: 0 !important;
 
 	&.cms-toolbar-expanded{
-	    //#menu, #content-wrapper,#page-content-container {
-	    #content {
-	        margin-top:46px;
 
+        body{
+            height: calc(100vh - 46px);
+        }
+
+	    #content{
+	        margin-top:46px;
+	        min-height: calc(100vh - 46px);
 	    }
+
+	    #sidebar {
+	        margin-top:46px;
+	        height: calc(100vh - 46px);
+	    }
+
 	    #menu {
 	        //margin-top:46px;
 	        top:46px !important;
@@ -242,7 +253,7 @@ div[class^='multicolumn'] {
 
     a {
         color: $HL_blue;
-        :hover{
+        &:hover{
             color: $HL_seafoam;
         }
     }
@@ -264,8 +275,8 @@ div[class^='multicolumn'] {
 
     #content-wrapper {
         width: 100%;
-        height: 100%;
-        min-height: 100%;
+        //height: 100%;
+        //min-height: 100%;
         min-width: 100%;
 
         #content-tab-header {
@@ -282,7 +293,7 @@ div[class^='multicolumn'] {
                 padding: 15px 0 0 0;
 
                 li {
-                    padding-left: 15px;
+                    //padding-left: 15px;
 
                     a {
                         background-color: transparent;
@@ -303,7 +314,7 @@ div[class^='multicolumn'] {
 
         #content-tab-body{
             margin-top: 60px;
-            padding: 25px 25px 110px;
+            //padding: 25px 25px 110px;
         }
 
         .content-inner{
@@ -339,18 +350,20 @@ div[class^='multicolumn'] {
 /* Footer */
 
 #footer-spacer{
-    height:100px;
+    height:$footer-height;
 }
 
 #footer {
   background-color: #222222;
   color: #777;
-  //padding: 15px 0 10px 0;
-  text-align: center;
 
+  text-align: center;
+  //height:$footer-height;
+  //padding: 15px 0 10px 0;
   p {
     font-size: 13px;
-    margin-top: 10px;
+    margin: 0 10px;
+    padding: 1em 0.5em
   }
 
   a {
@@ -366,6 +379,7 @@ div[class^='multicolumn'] {
 
   .container {
         height: $footer-height;
+        padding: 0;
     }
 
 
@@ -375,15 +389,18 @@ div[class^='multicolumn'] {
 
     .copyright{
         float:right;
+        height: $footer-height;
     }
 
     .social {
         float:right;
-        padding: 5px 0;
+        //padding: 5px 0;
+        height:50px;
 
         ul{
             list-style: none;
             margin: 0 10px;
+            padding: 0.5em 0.5em;
 
             li {
                 display:inline;

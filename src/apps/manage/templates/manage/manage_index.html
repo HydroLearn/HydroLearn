@@ -4,11 +4,11 @@
 {% block title %}Manage{% endblock title %}
 
 {% block content %}
-    {% addtoblock "css" %}
+    {% addtoblock "template_css" %}
         <link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">
         <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
 
-    {% endaddtoblock "css" %}
+    {% endaddtoblock "template_css" %}
 
 
         <div id="content-wrapper" class="always_full">
@@ -61,7 +61,7 @@
 
     
 
-    {% addtoblock "js" %}
+    {% addtoblock "template_js" %}
         <script type="text/javascript" src="{% static 'js/plugins/jquery.validate.js' %}"></script>
         <!--<script type="text/javascript" src="{% static 'js/plugins/jquery.validate.additional-methods.js' %}"></script>-->
         <script>

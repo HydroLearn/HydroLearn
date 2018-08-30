@@ -4069,21 +4069,21 @@ var INTERACTIVE_DIALOG_MGR = {
 };
 
 // #region Reimplementing Legacy functions from OL2 for compatability of newer modules with existing system
-
-window.uncheckAllLayers = function () {
-    
-    LAYER_MGR.uncheck_all_layers();
-
-    if(typeof CUTPOINT_LAYER_MGR != "undefined") CUTPOINT_LAYER_MGR.CLEAR_LAYERS();
-
-    $("#legpanel.content").html("");
-    $("#legpanel").hide();
-
-}
-
-window.checkLayers = function () {
-    LAYER_MGR.check_layer.apply(LAYER_MGR, arguments);
-}
+//
+//window.uncheckAllLayers = function () {
+//
+//    LAYER_MGR.uncheck_all_layers();
+//
+//    if(typeof CUTPOINT_LAYER_MGR != "undefined") CUTPOINT_LAYER_MGR.CLEAR_LAYERS();
+//
+//    $("#legpanel.content").html("");
+//    $("#legpanel").hide();
+//
+//}
+//
+//window.checkLayers = function () {
+//    LAYER_MGR.check_layer.apply(LAYER_MGR, arguments);
+//}
 
 // #endregion
 
@@ -4100,7 +4100,7 @@ var MAP_MGR = {
     //#region MAP_MGR Properties/Attributes
     is_Initialized: false,
     //_target: null,
-    _LEGACY_MAP: false,
+    _Parent_container_id: "",
     _Loaded_Section: null,
     _Loaded_Region: null,
     _Loaded_Module: null,
@@ -4150,15 +4150,18 @@ var MAP_MGR = {
     //#endregion
 
     // #region INITIALIZATION METHODS
-        init: function (LEGACY, Loaded_Region, Loaded_Module, optional_SubStudy) {
-            // set the target container to use when displaying lesson content
-            //this._target = target_container_selector;
+        init: function (parent_container, Loaded_Region, Loaded_Module, optional_SubStudy) {
+            // set the target container to use when displaying map content
+            this._Parent_container_id = parent_container;
 
             // set the current loaded region/casestudy references
-            this._LEGACY_MAP = LEGACY;
             this._Loaded_Region = Loaded_Region;
             this._Loaded_Module = Loaded_Module;
             this._Loaded_SubStudy = optional_SubStudy;
+
+            $(window).resize(function () {
+                MAP_MGR.Resize();
+            });
 
         },
         
@@ -4177,155 +4180,144 @@ var MAP_MGR = {
         // this should happen after 
         Init_Map: function (wms_url) {
 
-            
-            if (this._LEGACY_MAP) {
-                
-                this._Map = initialize_legacy_map();
-                this.init_child_plugins();
+            var default_base = (typeof (default_base_layer) != "undefined") ? default_base_layer : 'WorldImagery';
 
-                
-                this.is_Initialized = true;
-                ResizeEventHandler();
+            $('.baseMap_tile[val="' + default_base + '"]').addClass('selected_basemap_tile');
 
-            } else {
+            this._Base_layers = [
+                new ol.layer.Tile({
+                    name: 'WorldImagery',
+                    //visible: true,
+                    visible: (typeof (default_base_layer) != "undefined") ? (default_base_layer == "WorldImagery") : true,
+                    source: new ol.source.XYZ({
+                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
 
-                var default_base = (typeof (default_base_layer) != "undefined") ? default_base_layer : 'WorldImagery';
-
-                $('.baseMap_tile[val="' + default_base + '"]').addClass('selected_basemap_tile');
-
-                this._Base_layers = [
-                    new ol.layer.Tile({
-                        name: 'WorldImagery',
-                        //visible: true,
-                        visible: (typeof (default_base_layer) != "undefined") ? (default_base_layer == "WorldImagery") : true,
-                        source: new ol.source.XYZ({
-                            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-
-                            //wrapX: false,
-                            //wrapY: false,
-                        })
-                    }),
-                    new ol.layer.Tile({
-                        name: 'Topo',
-                        //visible: false,
-                        visible: (typeof (default_base_layer) != "undefined") ? (default_base_layer == "Topo") : false,
-                        source: new ol.source.XYZ({
-                            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-                            //wrapX: false,
-                            //wrapY: false,
-                        })
-                    }),
-                    new ol.layer.Tile({
-                        name: 'Street',
-                        //visible: false,
-                        visible: (typeof (default_base_layer) != "undefined") ? (default_base_layer == "Street") : false,
-                        source: new ol.source.XYZ({
-                            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-                            //wrapX: false,
-                            //wrapY: false,
-                        }),
-                    }),
-                ];
-
-                // if there is a wms url store it for later use
-                if (!!wms_url) this._WMS_URL = wms_url,
-
-                this._default_projection = ol.proj.get("EPSG:3857"); 
-                //this._default_projection = ol.proj.get("EPSG:4326");
-
-
-                // create the default controls and add to collection
-                this._default_controls.push(this.Create_Control('Help', '?', this.open_help_popover_event));
-
-                // add zoom in/out buttons
-                this._default_controls.push(new ol.control.Zoom({ title: "Zoom In", target: document.querySelector('#mapPanel') }));
-
-                // add reset view to relocate camera to it's default position as defined by map center/zoom defined in layers.js
-                this._default_controls.push(this.Create_Control("Reset Map Position", '&#8634;', this.reset_view_event));
-
-
-                // TODO: find a way to do this
-                // add export button to download a PNG of the current map state
-                //this._default_controls.push(this.Create_Control("Export View as Image", '<img src="/Content/images/Map_Icons/Image_Icon_White.png" />', this.export_map_event));
-                
-
-                this._popup_container = document.getElementById('popup');
-                this._popup_content = document.getElementById('popup-content');
-                this._popup_closer = document.getElementById('popup-closer');
-                
-                // setup help popover
-                this._help_popup = $("#Map_Help_popover");
-
-                this._help_popup.popover({
-                    html: true,
-                    container: '#mapPanel',
-                    content: function () {
-                        return $("#Map_Help_content").html() + $("#Additional_Map_Help").html();
-                    }
-                });
-
-                this._help_popup.attr("title", this._help_popup.find(".map_popover_title").html());
-                this._help_popup.attr('data-content', this._help_popup.find(".map_popover_content").html());
-                this._help_popup.attr('data-template',
-                    "<div class='map_popover_obj' role='tooltip'>" +
-                        "<div class='popover-title'></div>" +
-                        "<div class='popover-content'></div>" +
-                        "<div class='map_popover_arrow'></div>" +
-                    "</div>");
-
-                this._overlay = new ol.Overlay( /** @type {olx.OverlayOptions} */({
-                    element: this._popup_container,
-                    autoPan: true,
-                    autoPanAnimation: {
-                        duration: 250
-                    }
-                }));
-
-                // create map object and store it's reference in _Map
-                this._Map = new ol.Map({
-                    target: 'map',
-                    controls: MAP_MGR._default_controls,
-                    layers: MAP_MGR._Base_layers,
-                    loadTilesWhileInteracting: true,
-                    view: new ol.View({
-                        center: mapCenter,
-                        zoom: default_zoom,
-                        projection: MAP_MGR._default_projection,
-
-                        // restrict the user from zooming to far or to close to features (some boundaries are a good thing...)
-                        minZoom: this._Min_zoom,
-                        maxZoom: this._Max_zoom,
+                        //wrapX: false,
+                        //wrapY: false,
                     })
-                });
+                }),
+                new ol.layer.Tile({
+                    name: 'Topo',
+                    //visible: false,
+                    visible: (typeof (default_base_layer) != "undefined") ? (default_base_layer == "Topo") : false,
+                    source: new ol.source.XYZ({
+                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+                        //wrapX: false,
+                        //wrapY: false,
+                    })
+                }),
+                new ol.layer.Tile({
+                    name: 'Street',
+                    //visible: false,
+                    visible: (typeof (default_base_layer) != "undefined") ? (default_base_layer == "Street") : false,
+                    source: new ol.source.XYZ({
+                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                        //wrapX: false,
+                        //wrapY: false,
+                    }),
+                }),
+            ];
 
-                this._Map.addOverlay(this._overlay);
+            // if there is a wms url store it for later use
+            if (!!wms_url) this._WMS_URL = wms_url,
 
-                this._popup_closer.onclick = function () {
-
-                    MAP_MGR._overlay.setPosition(undefined);
-                    //this._popup_closer.blur();
-                    return false;
-                };
-
-                // set up the image export functionality
-                
+            this._default_projection = ol.proj.get("EPSG:3857");
+            //this._default_projection = ol.proj.get("EPSG:4326");
 
 
-                // by default hide the legend container
-                $(MAP_MGR._Legend_container_selector).hide();
+            // create the default controls and add to collection
+            this._default_controls.push(this.Create_Control('Help', '?', this.open_help_popover_event));
+
+            // add zoom in/out buttons
+            this._default_controls.push(new ol.control.Zoom({ title: "Zoom In", target: document.querySelector('#mapPanel') }));
+
+            // add reset view to relocate camera to it's default position as defined by map center/zoom defined in layers.js
+            this._default_controls.push(this.Create_Control("Reset Map Position", '&#8634;', this.reset_view_event));
+
+
+            // TODO: find a way to do this
+            // add export button to download a PNG of the current map state
+            //this._default_controls.push(this.Create_Control("Export View as Image", '<img src="/Content/images/Map_Icons/Image_Icon_White.png" />', this.export_map_event));
+
+
+            this._popup_container = document.getElementById('popup');
+            this._popup_content = document.getElementById('popup-content');
+            this._popup_closer = document.getElementById('popup-closer');
+
+            // setup help popover
+            this._help_popup = $("#Map_Help_popover");
+
+            this._help_popup.popover({
+                html: true,
+                container: '#mapPanel',
+                content: function () {
+                    return $("#Map_Help_content").html() + $("#Additional_Map_Help").html();
+                }
+            });
+
+            this._help_popup.attr("title", this._help_popup.find(".map_popover_title").html());
+            this._help_popup.attr('data-content', this._help_popup.find(".map_popover_content").html());
+            this._help_popup.attr('data-template',
+                "<div class='map_popover_obj' role='tooltip'>" +
+                    "<div class='popover-title'></div>" +
+                    "<div class='popover-content'></div>" +
+                    "<div class='map_popover_arrow'></div>" +
+                "</div>");
+
+            this._overlay = new ol.Overlay( /** @type {olx.OverlayOptions} */({
+                element: this._popup_container,
+                autoPan: true,
+                autoPanAnimation: {
+                    duration: 250
+                }
+            }));
+
+            // create map object and store it's reference in _Map
+            this._Map = new ol.Map({
+                target: 'map',
+                controls: MAP_MGR._default_controls,
+                layers: MAP_MGR._Base_layers,
+                loadTilesWhileInteracting: true,
+                view: new ol.View({
+                    center: mapCenter,
+                    zoom: default_zoom,
+                    projection: MAP_MGR._default_projection,
+
+                    // restrict the user from zooming to far or to close to features (some boundaries are a good thing...)
+                    minZoom: this._Min_zoom,
+                    maxZoom: this._Max_zoom,
+                })
+            });
+
+            this._Map.addOverlay(this._overlay);
+
+            this._popup_closer.onclick = function () {
+
+                MAP_MGR._overlay.setPosition(undefined);
+                //this._popup_closer.blur();
+                return false;
+            };
+
+            // set up the image export functionality
 
 
 
-                LAYER_MGR.init($("#layers div.content div.layers_content_wrapper"), layersData);
+            // by default hide the legend container
+            $(MAP_MGR._Legend_container_selector).hide();
 
-                
-                SELECTION_MANAGER.init(this._WMS_URL);
-                
-                this.init_child_plugins();
-                this.is_Initialized = true;
-                
-                ResizeEventHandler();
-            }
+
+
+            LAYER_MGR.init($("#layers div.content div.layers_content_wrapper"), layersData);
+
+
+            SELECTION_MANAGER.init(this._WMS_URL);
+
+            this.init_child_plugins();
+            this.is_Initialized = true;
+
+
+            MAP_MGR.Resize()
+
 
         },
 
@@ -4416,6 +4408,7 @@ var MAP_MGR = {
         
         Get_Current_Zoom: function() {
             return MAP_MGR._Map.getView().getZoom();
+
         },
         
         Get_Current_Center: function() {
@@ -4438,11 +4431,29 @@ var MAP_MGR = {
         // convert point to lon/lat OL3
         Convert_point_to_LonLat: function (point) {
             ol.proj.transform(point, 'EPSG:3857', 'EPSG:4326');
+
         },
 
         Resize: function () {
+
             if (this.is_Initialized) {
-                this._Map.updateSize();
+                if($(this._Parent_container_id).is(':visible')){
+
+                    setTimeout(function(){
+
+                        var window_height = $(window).height()
+                        var map_top = $(MAP_MGR._Parent_container_id).offset().top
+                        var footer_height = $('#footer').height()
+                        var new_height = window_height - map_top - footer_height
+
+                        $(MAP_MGR._Parent_container_id).height(new_height)
+                        $('#' + MAP_MGR._Map.getTarget()).height(new_height)
+
+                        MAP_MGR._Map.updateSize();
+                        console.log('updating map size...')
+                    }, 200);
+                }
+
             }
         
             if (typeof SPINNER_MGR != "undefined") {
@@ -4651,6 +4662,7 @@ var MAP_MGR = {
 
     Hide_popup: function() {
         $('#popup').hide();
+
     },
     // #endregion
 
@@ -4658,9 +4670,9 @@ var MAP_MGR = {
     pre_display: function() {
         
         // Pause any open videos if the youtube player is open
-        if (!!youtube_player) {
-            pauseVideo();
-        }
+//        if (!!youtube_player) {
+//            pauseVideo();
+//        }
 
 
         // activate the map tab
@@ -4670,126 +4682,32 @@ var MAP_MGR = {
     post_display: function() {
         
 
-        if (!MAP_MGR._LEGACY_MAP) {
 
-            // bind the click events for the basemap/Layer tabs  to show/hide containers when clicking the tab
-            $(".collapsible_container .icon").click(collapse_event);
+        // bind the click events for the basemap/Layer tabs  to show/hide containers when clicking the tab
+        $(".collapsible_container .icon").click(collapse_event);
 
-            // enable selection of different base maps from tile selection in the basemap container
-            $('.baseMap_tile').click(function() {
-                var selected_tile = $(this);
+        // enable selection of different base maps from tile selection in the basemap container
+        $('.baseMap_tile').click(function() {
+            var selected_tile = $(this);
 
-                // remove previous selected tile class
-                $('.selected_basemap_tile').removeClass('selected_basemap_tile');
+            // remove previous selected tile class
+            $('.selected_basemap_tile').removeClass('selected_basemap_tile');
 
-                // add selected to selected tile
-                selected_tile.addClass('selected_basemap_tile');
+            // add selected to selected tile
+            selected_tile.addClass('selected_basemap_tile');
 
-                // update the selected basemap in the Map manager
-                MAP_MGR.Change_BaseLayer_byName(selected_tile.attr('val'));
+            // update the selected basemap in the Map manager
+            MAP_MGR.Change_BaseLayer_byName(selected_tile.attr('val'));
 
-            });
+        });
 
-            if (arguments.length > 0) {
-                uncheckAllLayers();
-                checkLayers.apply(null, arguments);
-            }
-
-            
-
-
-        } else {
-            
-            $('.baseMap_tile').click(function () {
-                var selected_tile = $(this);
-
-                // remove previous selected tile class
-                $('.selected_basemap_tile').removeClass('selected_basemap_tile');
-
-                // add selected to selected tile
-                selected_tile.addClass('selected_basemap_tile');
-
-                var layer = map.getLayersByName($(this).attr("val"));
-                map.setBaseLayer(layer[0]);
-            });
-
-
-            $(".collapsible_container .icon").click(collapse_event);
-            
-            //layers dialog
-            $("#layers div.content div.layers_content_wrapper").jstree({
-                "json_data": layersData,
-                "themes": { theme: 'classic' },
-                "plugins": ["json_data", "ui", "themes", "checkbox"]
-            });
-
-            $("#layers div.content div.layers_content_wrapper").bind("check_node.jstree uncheck_node.jstree", function () {
-
-                var checkedLayerIds = [];
-                //loop through each checked 				
-                $(".jstree-checked").each(function (key, value) {
-                    checkedLayerIds.push($(value).attr("id"));
-                });
-                //debugger;
-                $("#legpanel").hide();
-                $("#legpanel .icon").click(function () {
-                    //$('#legImg').toggle();
-
-                    var box = $('#legImg');
-                    if (box.is(':visible')) {
-                        box.fadeOut(200, function () {
-                            $(".content_container").addClass('content_container_collapsed_VERT');
-                            $('#legpanel .icon').removeClass('selectedTab');
-
-                        });
-                    } else {
-                        $(".content_container").removeClass('content_container_collapsed_VERT').ready(function () {
-                            box.delay(300).fadeIn(200);
-                        });
-                        $('#legpanel .icon').addClass('selectedTab');
-                    }
-
-
-                });
-
-                checkMapLayers(checkedLayerIds);
-                
-                
-            });
-
-            // load any specified layers
-            
-            var queued_display_layers = arguments;
-            $("#layers div.content div.layers_content_wrapper").bind("loaded.jstree", function () {
-                uncheckAllLayers();
-                var this_jstree = $(this); // store jstree obj for later use
-
-                // if there are defaulted open layer groups defined in layers.js open them
-                if (typeof (defaultOpen_LayerGroups) != 'undefined') {
-
-                    if (defaultOpen_LayerGroups == 'open_all') {
-                        this_jstree.jstree("open_all");
-                    } else {
-                        expandLayerGroups.apply(this, defaultOpen_LayerGroups);
-
-                    }
-                }
-
-                // if there are any defaulted enabled layers in layers js enable them
-                if (typeof (defaultEnabled_Layers) != 'undefined' && defaultEnabled_Layers.length > 0) {
-                    checkLayers.apply(null, defaultEnabled_Layers);
-
-                }
-                if (queued_display_layers.length > 0) {
-                    uncheckAllLayers();
-                    checkLayers.apply(null, queued_display_layers);
-                }
-            });
-
-            
+        if (arguments.length > 0) {
+            //uncheckAllLayers();
+            //checkLayers.apply(null, arguments);
         }
+
         // give OpenLayers a chance to initalize itself and then run the Resize event handler 
-        setTimeout(ResizeEventHandler, 500);
+        setTimeout(MAP_MGR.Resize(), 500);
     },
 
     on_Hide: function() {
@@ -4820,8 +4738,8 @@ var MAP_MGR = {
 
         // if have any arguments (layer_ids) check the associated layers on the map
         if (arguments.length > 0) {
-            uncheckAllLayers();
-            checkLayers.apply(null, arguments);
+            //uncheckAllLayers();
+            //checkLayers.apply(null, arguments);
         }
 
 
@@ -4834,7 +4752,7 @@ var MAP_MGR = {
 
         }
 
-        ResizeEventHandler();
+        MAP_MGR.Resize()
     },
 
     // expects an anonomous method to be run next time the map is opened 
@@ -4844,10 +4762,16 @@ var MAP_MGR = {
     },
 
     get_content_query_data:function() {
+
+        // theoretically this isn't needed anymore being that
+        //  layer data can be stored in module
+        return null
+
         var query_data = {};
 
-        query_data['url'] = "/map/MapWithCheckedLayers/" + MAP_MGR._Loaded_Region
-        + "/" + MAP_MGR._Loaded_Module
+        query_data['url'] = "/map/MapWithCheckedLayers/"
+        //+ MAP_MGR._Loaded_Region
+        //+ "/" + MAP_MGR._Loaded_Module
         + ((!!MAP_MGR._Loaded_SubStudy) ? "/" + MAP_MGR._Loaded_SubStudy : "");
 
         
@@ -4907,7 +4831,7 @@ var SELECTION_MANAGER = {
 
         //var selection_toggle_nexus_control = MAP_MGR.Create_Control("Toggle Additional Feature Info Selection", '<img id="Selection_Toggle_img" src="/Content/images/icons/infoIcon_white.png" />', this._toggle_info_selection);
         //MAP_MGR.Add_Control(selection_toggle_nexus_control);
-        if (typeof (WMS_URL) != "undefined") this.WMS_URL = WMS_URL,
+        if (typeof (WMS_URL) != "undefined") this.WMS_URL = WMS_URL
         
 
         // create the selection dialog for displaying the feature query result
@@ -6396,6 +6320,7 @@ var COLOR_MGR = {
     // method to convert r,g,b values to a hex representation
     RGB_to_HEX: function (r, g, b) {
         return "#" + this.pad(this.colorBoundsInt(r).toString(16), 2) + this.pad(this.colorBoundsInt(g).toString(16), 2) + this.pad(this.colorBoundsInt(b).toString(16), 2);
+
     },
 
     // method to convert hex value to rgb values
@@ -6544,10 +6469,10 @@ var HIGHCHARTS_MGR = {
 
 $(document).ready(function () {
 
-    MAP_MGR.register_child_plugin(HIGHCHARTS_MGR.init);
+    //MAP_MGR.register_child_plugin(HIGHCHARTS_MGR.init);
     //MAP_MGR.Init_Map();
-    
-    ResizeEventHandler();
+    MAP_MGR.Resize()
+
 });
 
 //#endregion
