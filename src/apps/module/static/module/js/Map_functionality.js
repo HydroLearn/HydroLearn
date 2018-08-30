@@ -4732,9 +4732,8 @@ var MAP_MGR = {
 
         });
 
-
-        
         $('.ui-dialog-content').dialog('close');
+
     },
 
     on_Show: function () {
@@ -4758,6 +4757,8 @@ var MAP_MGR = {
             MAP_MGR._on_reopen_events = [];
 
         }
+
+
 
         MAP_MGR.Resize()
     },

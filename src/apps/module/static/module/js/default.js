@@ -289,7 +289,7 @@ var VIEWPORT_MGR = {
     // swap to a specified registered view. 
     // if it hasn't been initialized yet, initialize it
     Switch_View: function(ViewName, optional_params) {
-        //debugger;
+
         // if the requested view exists in the registered collection
         if (Object.keys(this.Registered_Views).indexOf(ViewName) > -1) {
             

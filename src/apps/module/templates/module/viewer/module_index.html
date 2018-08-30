@@ -110,7 +110,7 @@
                                     {% publication_status_banner object %}
                                 {% endif %}
                             </div>
-                            <div id="lesson-content" class="tab-pane fade" role="tabpanel">
+                            <div id="lesson-content" style="display:none" class="tab-pane fade" role="tabpanel">
                                 <div class='lesson'>
                                     <h2>Welcome to HydroLearn!</h2>
                                     <hr class="headerSpacer">
@@ -135,7 +135,7 @@
                                 </div>
                             </div>
 
-                            <div id="map-content" class="tab-pane fade" role="tabpanel">
+                            <div id="map-content" style="display:none" class="tab-pane fade" role="tabpanel">
                                 {# placeholder Map_Content or #}
                                     <!--<p>Currently In Development. Please check back later</p>-->
                                 {# endplaceholder #}
@@ -216,6 +216,8 @@
                 LESSON_MGR.init('#lesson-content', '{{module.name}}', '{{module.slug}}', '{{section}}');
                 MAP_MGR.init('#map-content','@ViewBag.region', '@ViewBag.caseStudy', '@ViewBag.subStudy');
 
+                // initialize the map
+                MAP_MGR.Init_Map();
 
                 // setup the viewport manager
                 VIEWPORT_MGR.init('#main-content');
@@ -227,18 +229,16 @@
 
 
 
-                // initialize content to the provided section (defaults to module intro if not provided)
-                //VIEWPORT_MGR.Load_View('Lessons', ['{{loaded_section}}']);
-                //$('#lesson-tab').tab('show') // Select lesson tab
-
                 {% if loaded_section %}
-                    VIEWPORT_MGR.Load_View('Lessons', ['{{loaded_section}}']);
+                    VIEWPORT_MGR.Switch_View('Lessons', ['{{loaded_section}}']);
                     $('#lesson-tab').tab('show') // Select lesson tab
+
 
                 {% else %}
 
-                    VIEWPORT_MGR.Load_View('Map');
+                    VIEWPORT_MGR.Switch_View('Map');
                     $('#map-tab').tab('show') // Select map tab
+
 
                 {% endif %}
 
@@ -255,10 +255,10 @@
                 //displayed_layers = checkedLayers.split(',');
 
 
-                MAP_MGR.Init_Map();
 
 
-                ResizeEventHandler();
+
+                //ResizeEventHandler();
 
                 // if screen is larger than 786 pixels (desktop view) expand the sidebar on page load
                 if($( window ).width() >= 768){
