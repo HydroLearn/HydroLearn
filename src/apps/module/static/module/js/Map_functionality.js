@@ -4159,10 +4159,6 @@ var MAP_MGR = {
             this._Loaded_Module = Loaded_Module;
             this._Loaded_SubStudy = optional_SubStudy;
 
-            $(window).resize(function () {
-                MAP_MGR.Resize();
-            });
-
         },
         
         register_child_plugin: function(plugin_init_fn) {
@@ -4315,7 +4311,17 @@ var MAP_MGR = {
             this.init_child_plugins();
             this.is_Initialized = true;
 
+            // set map to resize on window resize
+            $(window).resize(function () {
+                MAP_MGR.Resize();
+            });
 
+            // set map to resize based on custom 'body.sidebar_toggled_evt' event
+            $('body').bind('sidebar_toggled_evt',function () {
+                MAP_MGR.Resize();
+            });
+
+            // resize the map initally to fit area
             MAP_MGR.Resize()
 
 
@@ -4438,7 +4444,8 @@ var MAP_MGR = {
 
             if (this.is_Initialized) {
                 if($(this._Parent_container_id).is(':visible')){
-
+                    // wait a little while before updating the size to allow
+                    // for some animations to finish
                     setTimeout(function(){
 
                         var window_height = $(window).height()
@@ -4450,7 +4457,7 @@ var MAP_MGR = {
                         $('#' + MAP_MGR._Map.getTarget()).height(new_height)
 
                         MAP_MGR._Map.updateSize();
-                        console.log('updating map size...')
+
                     }, 200);
                 }
 

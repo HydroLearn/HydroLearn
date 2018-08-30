@@ -252,6 +252,16 @@
             $('.collapse.in').toggleClass('in');
             $('.overlay').toggleClass('no_show');
 
+            // trigger an event in the body that other items can listen for
+            // when sidebar expands/collapses
+            $('body').trigger('sidebar_toggled_evt')
+
+            // also trigger events based on specific modes
+            if($('#sidebar').hasClass('active')){
+                $('body').trigger('sidebar_collapsed_evt')
+            }else{
+                $('body').trigger('sidebar_expanded_evt')
+            }
         });
 
 

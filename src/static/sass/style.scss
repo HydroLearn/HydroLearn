@@ -281,7 +281,7 @@ div[class^='multicolumn'] {
 
         #content-tab-header {
             position: fixed;
-            top: 50px;
+            top: $header-height;
             background-color: #f1f1f1;
             background-repeat: no-repeat;
             width: 100%;
@@ -395,7 +395,7 @@ div[class^='multicolumn'] {
     .social {
         float:right;
         //padding: 5px 0;
-        height:50px;
+        height: $footer-height;
 
         ul{
             list-style: none;
