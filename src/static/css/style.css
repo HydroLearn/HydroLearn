@@ -98,8 +98,6 @@ div[class^='multicolumn'] .column { flex: 1 0 200px; box-sizing: border-box; col
 #content a:hover { color: #85cfc1; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003261}}
 #content ul { list-style: disc; margin-left: 3em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003265}}
-#content ul:not(.nav) { padding-bottom: 1em; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003271}}
 #content .container { padding-top: 1.5em; padding-bottom: 1em; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003276}}

@@ -184,8 +184,26 @@
         <script src="{% static 'js/Load_Spinner_Manager.js' %}"></script>
 
         <script src="{% static 'module/js/default.js' %}"></script>
+
+        <!--load functionality-->
+        <script src="{% static 'module/js/Viewport_manager.js' %}"></script>
+        <script src="{% static 'module/js/SLD_Templator.js' %}"></script>
         <script src="{% static 'module/js/URL_Utility.js' %}"></script>
-        <script src="{% static 'module/js/Lesson_functionality.js' %}"></script>
+
+        <!--lessons-->
+        <script src="{% static 'module/js/Lesson_manager.js' %}"></script>
+        <script src="{% static 'module/js/TableOfContents_manager.js' %}"></script>
+
+        <!--map-->
+        <script src="{% static 'module/js/Map_manager.js' %}"></script>
+        <script src="{% static 'module/js/Layer_manager.js' %}"></script>
+        <script src="{% static 'module/js/HS_JSON_Interpreter.js' %}"></script>
+
+        <script src="{% static 'module/js/Geoserver_Data_manager.js' %}"></script>
+        <script src="{% static 'module/js/Interactive_Layer_Dialog_manager.js' %}"></script>
+        <script src="{% static 'module/js/Layer_Selection_manager.js' %}"></script>
+        <script src="{% static 'module/js/Color_manager.js' %}"></script>
+        <script src="{% static 'module/js/Highcharts_manager.js' %}"></script>
         <script src="{% static 'module/js/Map_functionality.js' %}"></script>
 
 
@@ -207,28 +225,95 @@
             });
 
 
+            // once the DOM is loaded
+            $(document).ready(function(){
+                // if screen is larger than 786 pixels (desktop view) expand the sidebar on page load
+                if($( window ).width() >= 768){
+                    $('#sidebarCollapse').click()
+                }
+            });
 
 
-            $(document).ready(function () {
+            // once the window/all scripts are loaded perform the following
+            $(window).on('load',function () {
 
                 URL_UTILS.init('{{LANGUAGE_CODE}}')
 
-                LESSON_MGR.init('#lesson-content', '{{module.name}}', '{{module.slug}}', '{{section}}');
-                MAP_MGR.init('#map-content','@ViewBag.region', '@ViewBag.caseStudy', '@ViewBag.subStudy');
-
-                // initialize the map
-                MAP_MGR.Init_Map();
-
-                // setup the viewport manager
-                VIEWPORT_MGR.init('#main-content');
-                VIEWPORT_MGR.Register_View('Lessons', '#lesson-content', '#lesson-tab', LESSON_MGR.get_content_query_data, LESSON_MGR.pre_display, LESSON_MGR.post_display, LESSON_MGR.on_Show, LESSON_MGR.on_Hide);
-                VIEWPORT_MGR.Register_View('Map', '#map-content', '#map-tab', MAP_MGR.get_content_query_data, MAP_MGR.pre_display, MAP_MGR.post_display, MAP_MGR.on_Show, MAP_MGR.on_Hide);
-
-                // initialize the Table of contents to link to the different SubStudies/sections
-                TOC_MGR.init('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
 
 
 
+                /* ---------------------------------
+                    set some basic information used in initialization of managers for consolidation
+                ---------------------------------*/
+                var Map_container = '#map-content';
+                var Layer_container = "#layers div.content div.layers_content_wrapper";
+                var Lesson_container = "#lesson-content";
+
+
+                /* ---------------------------------
+                   create the managers for this module
+                ---------------------------------*/
+                //console.log('Instantiating Managers...')
+
+                /* ---------------------------------
+                   RESOURCE LOADING
+                   (sample loading for when resources are integrated)
+                       it is expected that 'resource_data' context variable will be valid
+                       JSON of the form specified by HydroShare's 'mapProject.json'
+                       configuration files.
+
+                   ---------------------------------
+
+                        var raw_resource_data = JSON.parse('{{ resource_data | escapejs }}')
+                        var layer_data = new HS_Resource(raw_resource_data);
+
+                        // set debug output flag to true in map_manager config
+                        layer_data.map_config['debug_output'] = true;
+
+                        MAP_MGR = new MAP_MANAGER(Map_container, layer_data.map_config);
+                        LAYER_MGR = new LAYER_MANAGER(Layer_container, Map_container, layer_data.layers);
+
+                ---------------------------------*/
+
+
+                MAP_MGR = new MAP_MANAGER(Map_container);
+                LAYER_MGR = new LAYER_MANAGER(Layer_container, Map_container);
+                LESSON_MGR = new LESSON_MANAGER(Lesson_container, '{{module.name}}', '{{module.slug}}', '{{section}}');
+
+                /* ---------------------------------
+                   setup the viewport manager to manipulate the main-content container
+                ---------------------------------*/
+                VIEWPORT_MGR = new VIEWPORT_MANAGER('#main-content');
+
+
+                /* ---------------------------------
+                   create a new Lesson view and register it with the viewport manager
+                ---------------------------------*/
+                //console.log('Creating Lesson View...')
+                var lessonView = new LESSON_VIEW('Lessons', Lesson_container, LESSON_MGR);
+                VIEWPORT_MGR.Register_View(lessonView, '#lesson-tab');
+
+
+                /* ---------------------------------
+                   create a new Map view and register it with the viewport manager
+                ---------------------------------*/
+                //console.log('Creating Map View...')
+                var mapView = new MAP_VIEW('Map', Map_container, MAP_MGR);
+                VIEWPORT_MGR.Register_View(mapView, '#map-tab');
+
+
+
+                /* ---------------------------------
+                   initialize the Table of contents to link to the different SubStudies/sections
+                ---------------------------------*/
+                //TOC_MGR.init('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
+                TOC_MGR = new TABLE_OF_CONTENTS_MANAGER('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
+
+
+                /* ---------------------------------
+                    if a starting section was passed initially load the lesson view
+                    otherwise load the map view.
+                ---------------------------------*/
                 {% if loaded_section %}
                     VIEWPORT_MGR.Switch_View('Lessons', ['{{loaded_section}}']);
                     $('#lesson-tab').tab('show') // Select lesson tab
@@ -243,30 +328,18 @@
                 {% endif %}
 
 
+                // set map to resize on window resize
+                $(window).resize(function () {
+                    MAP_MGR.Resize()
+                });
 
-
-
-                // OLD MAP INITIALIZATION CODE FROM Map/Index.cshtml
-                //
-                //if (!!WMS_WORKSPACE) GEOSERVER_DATA_MGR.init(WMS_WORKSPACE);
-                //MAP_MGR.Init_Map(GEOSERVER_DATA_MGR._WORKSPACE_URL);
-                //
-                //var checkedLayers = "@ViewBag.checkedLayers";
-                //displayed_layers = checkedLayers.split(',');
-
-
-
-
-
-                //ResizeEventHandler();
-
-                // if screen is larger than 786 pixels (desktop view) expand the sidebar on page load
-                if($( window ).width() >= 768){
-                    $('#sidebarCollapse').click()
-                }
-
-
-
+                // set map to resize based on custom 'body.sidebar_toggled_evt' event
+                $('body').bind('sidebar_toggled_evt',function () {
+                    console.log("in sidebar toggle event");
+                    // set timeout to wait for collapse animation to finish
+                    //setTimeout(function(){MAP_MGR.Resize()}, 200);
+                    MAP_MGR.Resize()
+                });
 
 
             });

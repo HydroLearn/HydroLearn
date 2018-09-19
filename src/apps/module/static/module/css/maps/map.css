@@ -438,6 +438,7 @@
 
     #legpanel .selectedTab {
         background: transparent url('../../images/Map_Icons/horiz_tab_selected.png') no-repeat left !important;
+
     }
 
     #legpanel .icon {
@@ -472,6 +473,7 @@
 
     #legpanel .content_container #legImg {
             margin-left: 5px;
+
     }
 
 
@@ -485,16 +487,19 @@
     
         .layer_legend div {
             color: #333;
+
         }
 
         .layer_legend .legend_title {
             font-weight: bold;
             margin-bottom: 4px;
             display: table-caption;
+
         }
 
         .layer_legend .legend_row {
             display: table-row;
+
         }
 
         .legend_row .legend_icon_cell {
@@ -502,6 +507,7 @@
             vertical-align: middle;
             width: 25px;
             padding: 2px 10px 5px 10px;
+
         }
             
             .legend_icon_cell .legend_color_block {
@@ -509,17 +515,20 @@
                 display: block;
                 height: 12px;
                 width: 20px;
+
             }
             .legend_icon_cell .legend_icon_img {
                 display: block;
                 max-height: 12px;
                 max-width: 20px;
                 margin: auto;
+
             }
         
         .legend_desc_cell {
             display: table-cell;
             vertical-align: middle;
+
         }
         
 

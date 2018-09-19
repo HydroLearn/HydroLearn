@@ -442,8 +442,12 @@
         }
 
         div {
-            background: transparent;
+            //background: transparent;
         }
+
+
+
+
     }
 }
 
@@ -561,3 +565,217 @@
     }
 }
 
+#Layer_Listing_wrapper{
+    width: 100%;
+    margin: 0;
+    padding: 5px;
+
+    .Layer_Group_accord {
+        margin-bottom: 5px;
+        border-radius: 5px;
+    }
+
+    .ui-state-highlight{
+        min-height: 30px;
+        border-color: #4474B9;
+        background: #5B9ECF
+    }
+
+    .enabler {
+        height: 30px;
+        width: 30px;
+        background-color: #E1E3E6;
+        background-color: rgba(255,255,255,0.5);
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+
+        border-radius: 5px;
+        border-right: 1px solid #ccc;
+        display: table-cell;
+
+        cursor: pointer;
+
+        &.enabled {
+            background-image: url(/static/module/images/Map_Icons/Layer_Icons/check.png);
+        }
+
+        &.partial {
+            background-image: url(/static/module/images/Map_Icons/Layer_Icons/check-partial.png);
+        }
+
+        &:hover {
+            background-color: rgba(255,255,255,0.8);
+        }
+
+    }
+
+    .group_title {
+        margin: 0;
+        color: #333333;
+
+        background-repeat: no-repeat;
+        background-image: url(../../images/Map_Icons/Layer_Icons/expand_arrow.png);
+        background-position:  98% 50%;
+
+        border: none;
+        border-radius: 5px;
+
+        font-size: 13px;
+        height: 30px;
+
+        display: table;
+        width: 100%;
+
+        &.ui-state-active {
+            background-color: rgba(91, 158, 207, .3);
+            background-image: url(../../images/Map_Icons/Layer_Icons/collapse_arrow.png);
+
+        }
+
+        &.ui-state-hover {
+            background-color: rgba(148, 212, 193,.3);
+        }
+
+        &.ui-state-focus {
+            background-color: rgba(148, 212, 193,.3);
+        }
+    }
+
+    .group_handle {
+        display: table-cell;
+        vertical-align: middle;
+        padding-left: 10px;
+        cursor: pointer;
+
+    }
+
+    .ui-icon { display: none; }
+
+    .ui-accordion-header {
+        a { padding-left: 0; }
+    }
+
+    /* Layer Styling */
+    .Layer_Listing {
+        padding: 0;
+        padding-left: 15px;
+        border: none;
+
+    }
+
+    ul{
+        margin: 0;
+        padding: 1px;
+    }
+
+    li{
+        display: block;
+        height: 30px;
+        margin: 0;
+    }
+
+    .layer_entry{
+        display: table;
+        height: 30px;
+        width: 100%;
+        background: none;
+        background-color: #C5C7CA;
+        background-color: rgba(255,255,255,.3);
+
+        &:hover {
+            background-color: #CFD1D4;
+            background-color: rgba(255, 255, 255, .5);
+        }
+    }
+
+    .layer_handle    {
+        display: table-cell;
+        height: 30px;
+        padding-left: 10px;
+        vertical-align: middle;
+
+        cursor: pointer;
+    }
+
+    .group_handle {
+        .layer_text {}
+    }
+
+    .layer_type_icon{
+        height: 16px;
+        padding: 0 5px;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
+    .layer_text{
+        display: inline-block;
+        padding: 0 5px;
+        vertical-align: middle;
+        width: 130px;
+        font-weight: bold;
+        font-family: Verdana,Arial,Helvetica,sans-serif;
+    }
+
+    .layer_action_btn {
+
+        height: 30px;
+        width: 20px;
+
+        cursor: pointer;
+
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        display: table-cell;
+
+        &:hover:not(.disabled) {
+            background-color: #f2f2f2;
+        }
+
+        &.enabled{
+            background-color: #FF9D00;
+
+            &:hover{
+                background-color: #ffaf38;
+            }
+
+        }
+
+        &.disabled{
+            cursor: not-allowed;
+        }
+
+
+        &.info_selector {
+            background-image: url(/static/module/images/icons/infoIcon.png);
+            cursor: help;
+
+            &.disabled {
+                background-image: url(/static/module/images/icons/infoIcon_gray.png);
+            }
+
+            &.enabled {
+                background-image: url(/static/module/images/icons/infoIcon_white.png);
+            }
+        }
+
+        &.filtering_btn {
+
+            background-image: url(/static/module/images/icons/filterIcon_blue_bordered.png);
+
+            &.disabled {
+                background-image: url(/static/module/images/icons/filterIcon_gray_bordered.png);
+            }
+
+            &.enabled {
+
+                background-image: url(/static/module/images/icons/filterIcon_white_bordered.png);
+
+            }
+
+        }
+
+    }
+
+
+}
