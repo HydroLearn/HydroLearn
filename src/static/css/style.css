@@ -15,144 +15,144 @@ body, html { font-family: "Open Sans", sans-serif; text-rendering: optimizeLegib
 .cms { width: 100vw !important; }
 
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000339}}
-html { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; width: 100vw; max-width: 100%; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000348}}
-html.cms-toolbar-expanded #content { margin-top: 46px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000352}}
+html { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; width: 100vw; max-width: 100%; margin-top: 0 !important; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000349}}
+html.cms-toolbar-expanded body { height: calc(100vh - 46px); }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000353}}
+html.cms-toolbar-expanded #content { margin-top: 46px; min-height: calc(100vh - 46px); }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000358}}
+html.cms-toolbar-expanded #sidebar { margin-top: 46px; height: calc(100vh - 46px); }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000363}}
 html.cms-toolbar-expanded #menu { top: 46px !important; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000356}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000367}}
 html.cms-toolbar-expanded .sidebar_wrapper { margin-top: 46px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000360}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000371}}
 html.cms-toolbar-expanded #content #content-wrapper #content-tab-header { top: 96px; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000370}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000381}}
 body { margin: 0; max-width: 100%; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000376}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000387}}
 .logo { background: url("../img/logo_215x40.png") no-repeat left center; width: 215px; height: 40px; }
-@media (max-width: 400px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000376}}
+@media (max-width: 400px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000387}}
   .logo { background: url("../img/logo_150x28.png") no-repeat left center; width: 150px; height: 28px; } }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000388}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000399}}
 .logo-large { background: url("../img/logo_1280x720.png") no-repeat center center; background-size: 80%; height: 200px; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\0000398}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003109}}
 h1, h2, h3, h4, h5 { font-family: "Lato", sans-serif; color: #232323; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003102}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003113}}
 h1 strong, h2 strong, h3 strong, h4 strong, h5 strong { font-weight: 900; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003107}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003118}}
 h2 { line-height: 32px; font-size: 32px; font-weight: 700; margin: 0; margin-bottom: .5em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003116}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003127}}
 h3 { font-size: 20px; color: #666; font-weight: 700; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003122}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003133}}
 h4 { font-size: 20px; color: #666; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003127}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003138}}
 h5 { text-transform: uppercase; font-weight: 700; line-height: 20px; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003133}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003144}}
 p { font-family: "Open Sans", sans-serif; padding-bottom: 1em; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003140}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003151}}
 .clearfix { display: inline-block; display: block; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003143}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003154}}
 .clearfix:after { visibility: hidden; display: block; font-size: 0; content: " "; clear: both; height: 0; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003157}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003168}}
 * html .clearfix { height: 1%; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003164}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003175}}
 ul, ol { padding: 0; webkit-padding: 0; moz-padding: 0; list-style: none; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003170}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003181}}
 hr { border-top: 1px solid #45a4f3; width: 98%; border-radius: .75em; height: 3px; position: relative; background: #45a4f3; border: 0; margin: .5em auto 1em; text-align: center; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003184}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003195}}
 .darkSection { padding: 2em 3em; background-color: #f6f6f6; width: 100%; }
 
 /* Multicolumn element responsive styling */
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003193}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003204}}
 div[class^='multicolumn'] { display: flex; flex-wrap: wrap; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003198}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003209}}
 div[class^='multicolumn'] .column { flex: 1 0 200px; box-sizing: border-box; color: #232323; padding: 1em 1em; margin-left: 10px; margin-top: 10px; }
 
 /* helios overrides TODO: Phase out origional Helios style sheet entirely with this document
 */
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003213}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003224}}
 #services-section i.fas { font-size: 40px; margin-bottom: 20px; transition: all 0.5s; color: #85cfc1; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003221}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003232}}
 #content { width: 100vw; max-width: 100%; min-height: calc(100vh - 100px); transition: all 0.3s; top: 0; right: 0; }
-@media (min-width: 1000px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003233}}
+@media (min-width: 1000px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003244}}
   #content:not(.always_full) > *:not(#menu):not(#footer):not(.always_full) { padding-left: 5%; padding-right: 5%; } }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003243}}
-#content a { color: #45a4f3; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003245}}
-#content a :hover { color: #85cfc1; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003250}}
-#content ul { list-style: disc; margin-left: 3em; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003254}}
-#content ul:not(.nav) { padding-bottom: 1em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003260}}
-#content .container { padding-top: 1.5em; padding-bottom: 1em; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003265}}
-#content #content-wrapper { width: 100%; height: 100%; min-height: 100%; min-width: 100%; }
+#content a { color: #45a4f3; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003256}}
+#content a:hover { color: #85cfc1; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003261}}
+#content ul { list-style: disc; margin-left: 3em; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003271}}
+#content .container { padding-top: 1.5em; padding-bottom: 1em; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003276}}
+#content #content-wrapper { width: 100%; min-width: 100%; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003282}}
 #content #content-wrapper #content-tab-header { position: fixed; top: 50px; background-color: #f1f1f1; background-repeat: no-repeat; width: 100%; height: 57px; z-index: 100; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003280}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003291}}
 #content #content-wrapper #content-tab-header ul { width: 100%; padding: 15px 0 0 0; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003284}}
-#content #content-wrapper #content-tab-header ul li { padding-left: 15px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003287}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003298}}
 #content #content-wrapper #content-tab-header ul li a { background-color: transparent; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003290}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003301}}
 #content #content-wrapper #content-tab-header ul li a:hover:not(.active) { background-color: rgba(35, 35, 35, 0.2); }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003296}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003307}}
 #content #content-wrapper #content-tab-header ul li.active a, #content #content-wrapper #content-tab-header ul li.active a:hover { background-color: #fff; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003304}}
-#content #content-wrapper #content-tab-body { margin-top: 60px; padding: 25px 25px 110px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003309}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003315}}
+#content #content-wrapper #content-tab-body { margin-top: 60px; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003320}}
 #content #content-wrapper .content-inner { padding: 20px 10px; }
 
 /* Social Section */
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003318}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003329}}
 #social-section { padding: 30px 0; background-color: #45a4f3; text-align: center; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003323}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003334}}
 #social-section .social ul li { display: inline-block; margin: 0 20px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003327}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003338}}
 #social-section .social i.fas { font-size: 24px; padding: 4px 5px; color: #fff; transition: all 0.5s; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003332}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003343}}
 #social-section .social i.fas:hover { color: #666; }
 
 /* Footer */
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003341}}
-#footer-spacer { height: 100px; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003352}}
+#footer-spacer { height: 50px; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003345}}
-#footer { background-color: #222222; color: #777; text-align: center; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003351}}
-#footer p { font-size: 13px; margin-top: 10px; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003356}}
+#footer { background-color: #222222; color: #777; text-align: center; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003363}}
+#footer p { font-size: 13px; margin: 0 10px; padding: 1em 0.5em; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003369}}
 #footer a { color: #999; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003359}}
-#footer a:hover { text-decoration: none; color: #45a4f3; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003367}}
-#footer .container { height: 50px; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003372}}
-#footer .footer-nav { float: left; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003376}}
-#footer .copyright { float: right; }
+#footer a:hover { text-decoration: none; color: #45a4f3; }
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003380}}
-#footer .social { float: right; padding: 5px 0; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003384}}
-#footer .social ul { list-style: none; margin: 0 10px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003388}}
+#footer .container { height: 50px; padding: 0; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003386}}
+#footer .footer-nav { float: left; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003390}}
+#footer .copyright { float: right; height: 50px; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003395}}
+#footer .social { float: right; height: 50px; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003400}}
+#footer .social ul { list-style: none; margin: 0 10px; padding: 0.5em 0.5em; }
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003405}}
 #footer .social ul li { display: inline; font-size: 20px; padding: 0 10px; }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003400}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003417}}
 a:focus { text-decoration: none; color: #3D6BAA; }
 
 /* DEMO STYLE
@@ -244,26 +244,26 @@ a:hover, a:focus { color: inherit; text-decoration: none; transition: all 0.3s; 
 /* --------------------------------------------------- CONTENT STYLE
 ----------------------------------------------------- */
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003320}}
-#content { transition: all 0.3s; position: absolute; top: 0; right: 0; min-height: 100vh; }
+#content { transition: all 0.3s; position: absolute; top: 0; right: 0; height: fit-content; min-height: 100vh; }
 @media (min-width: 768px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003320}}
   #content { width: calc(100% - 250px); } }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003338}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003339}}
 #content.active { width: 100%; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003341}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003342}}
 #content.active #menu { margin-left: 0; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003346}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003347}}
 #content #menu { position: fixed; top: 0; left: 0; border: none; border-radius: 0; margin-bottom: 0px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); transition: all 0.3s; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003360}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003361}}
 #content #menu ul.nav a { color: #45a4f3; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003363}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003364}}
 #content #menu ul.nav a:hover { color: #fff; background: #45a4f3; }
-@media (min-width: 768px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003346}}
+@media (min-width: 768px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003347}}
   #content #menu { margin-left: 250px; } }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003378}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003379}}
 #content #menu-spacer { height: 50px; margin: 0; padding: 0; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003384}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003385}}
 #content .content-inner { padding: 20px 10px; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003388}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/_sidebar-nav\.scss}line{font-family:\00003389}}
 #content #footer { position: absolute; bottom: 0; width: 100%; }
 
 /* TODO: Currently not very pretty in mobile view
@@ -316,13 +316,13 @@ table.responsive_table tr:first-child th:first-child, table.responsive_table tab
 table.responsive_table tr:first-child th:last-child, table.responsive_table table.responsive_table tr:first-child th:last-child { border-top-right-radius: .75em; }
 
 /* Media Styling */
-@media (max-width: 768px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003414}}
+@media (max-width: 768px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003431}}
   .content { padding: 40% 0 0; } }
-@media (max-width: 603px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003424}}
+@media (max-width: 603px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003441}}
   label { float: none !important; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003427}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003444}}
   .hover-bg .hover-text { padding: 12% 10%; } }
-@media (max-width: 360px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003435}}
+@media (max-width: 360px) { @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/static\/sass\/style\.scss}line{font-family:\00003452}}
   .hover-bg .hover-text { padding: 22% 10%; } }
 
 /*# sourceMappingURL=style.css.map */

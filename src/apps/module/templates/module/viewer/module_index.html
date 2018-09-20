@@ -6,67 +6,6 @@
    - {{ module.name }}
 {% endblock subtitle %}
 
-{% block addtl_css %}
-    <link rel="stylesheet" href="{% static 'module/css/Load_Spinner_Manager.css' %}" type="text/css">
-
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">
-
-
-    <link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">
-    <!--<link rel="stylesheet" href="{% static 'module/css/DIV-TableStyle.css' %}" type="text/css">-->
-
-    <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'module/css/map.css' %}" type="text/css">
-{% endblock addtl_css%}
-
-
-{% block head_scripts %}
-
-    <script src="{% static 'module/js/plugins/OpenLayers3.js' %}"></script>
-
-    <script type="text/javascript">
-        //window.CaseStudyRegion = '{{region}}';
-        window.current_module = '{{module.name}}';
-        window.current_module_slug = '{{module.slug}}';
-        //window.SubStudy = '{{subStudy}}';
-
-    </script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        extensions: ["tex2jax.js"],
-        jax: ["input/TeX","output/HTML-CSS"],
-        tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]},
-        showMathMenu: false,
-        displayAlign: "left",
-        menuSettings: {
-            zoom: "None"
-        },
-
-        "HTML-CSS": {
-            styles: {
-                '.MathJax_Display': {
-                    "text-align": "left",
-                    "margin": 0,
-                    "display": "inline",
-                }
-            }
-        },
-
-
-      });
-
-    </script>
-
-<!-- TODO: get this working!
-            @Html.Partial("_googleAnalytics")
-        -->
-
-
-{% endblock head_scripts %}
-
-
 {% block sidebar_nav_links %}
 
     <!--activate this tab in the sidebar by adding active-->
@@ -94,11 +33,57 @@
 
 
 {% block content %}
+    {% addtoblock 'head_js' %}
+
+        <!-- load the mathjax configuration in the head of the page -->
+        <script src="{% static 'module/js/plugins/MathJax/v2.7.1/MathJax.js' %}?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+            tex2jax: {
+                    inlineMath: [["$$","$$"],["\\(","\\)"]],
+                    preview:'none'
+                },
+            showMathMenu: false,
+            displayAlign: "left",
+
+            "HTML-CSS": {
+                imageFont: null,
+                styles: {
+                    '.MathJax_Display': {
+                        "text-align": "left",
+                        "margin": 0,
+                        "display": "inline",
+                    }
+                }
+            },
+
+
+          });
+
+        </script>
+
+        <script type="text/javascript">
+            window.current_module = '{{module.name}} where is this';
+            window.current_module_slug = '{{module.slug}}';
+        </script>
+
+    {% endaddtoblock 'head_js' %}
+
+
+    {% addtoblock 'template_css' %}
+        <link rel="stylesheet" href="{% static 'module/css/Load_Spinner_Manager.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
+        <!--<link rel="stylesheet" href="{% static 'module/css/DIV-TableStyle.css' %}" type="text/css">-->
+        <!--<link rel="stylesheet" href="{% static 'module/css/map.css' %}" type="text/css">-->
+    {% endaddtoblock 'template_css' %}
 
     <div id="content-wrapper">
             <div id="main-content">
                     <div id="content-tab-header">
-
                         <div class="module_navbar_wrapper">
                             <ul id="module_nav" class="nav nav-tabs nav-fill" role="tablist">
 
@@ -112,50 +97,56 @@
                                 </li>
                             </ul>
 
+
                         </div>
                     </div>
 
                     <div id="content-tab-body" class="tab-content">
-                        <div id="pre-content-banner">
-                            {% if user.is_authenticated and object.created_by == user %}
-                                {% publication_status_banner object %}
-                            {% endif %}
-                        </div>
+
 
                         <div id="body-content">
-                        <div id="lesson-content" class="tab-pane fade" role="tabpanel">
-                            <div class='lesson'>
-                                <h2>Welcome to HydroLearn!</h2>
-                                <hr class="headerSpacer">
-                                <p>Please select a lesson from the table of contents to get started.</p>
+                            <div id="pre-content-banner">
+                                {% if user.is_authenticated and object.created_by == user %}
+                                    {% publication_status_banner object %}
+                                {% endif %}
                             </div>
+                            <div id="lesson-content" style="display:none" class="tab-pane fade" role="tabpanel">
+                                <div class='lesson'>
+                                    <h2>Welcome to HydroLearn!</h2>
+                                    <hr class="headerSpacer">
+                                    <p>Please select a lesson from the table of contents to get started.</p>
+                                </div>
+                            </div>
+
+                            <div class="lesson-nav-container">
+                                <button class="prev_lesson_link" ><i class="fas  fa-caret-left"></i> Previous Section</button>
+                                <button class="next_lesson_link" >Next Section <i class="fas  fa-caret-right"></i></button>
+                                <span class="lesson_complete_message">Module Complete!</span>
+
+                                <div id="lesson-nav-warning-dialog" title="Warning!">
+                                    <p>
+                                        If you navigate away from this quiz you will lose your answers.
+                                        Are you sure you would like to continue?
+                                    </p>
+
+                                    <button id="lesson-nav-confirm" title="Leave current quiz">Continue</button>
+                                    <button id="lesson-nav-cancel" title="Stay on current quiz">Cancel</button>
+
+                                </div>
+                            </div>
+
+                            <div id="map-content" style="display:none" class="tab-pane fade" role="tabpanel">
+                                {# placeholder Map_Content or #}
+                                    <!--<p>Currently In Development. Please check back later</p>-->
+                                {# endplaceholder #}
+
+                                {% map_container %}
+
+
+
+                            </div>
+
                         </div>
-
-                        <div class="lesson-nav-container">
-                        <button class="prev_lesson_link" ><i class="fas  fa-caret-left"></i> Previous Section</button>
-                        <button class="next_lesson_link" >Next Section <i class="fas  fa-caret-right"></i></button>
-                        <span class="lesson_complete_message">Module Complete!</span>
-
-                        <div id="lesson-nav-warning-dialog" title="Warning!">
-                            <p>
-                                If you navigate away from this quiz you will lose your answers.
-                                Are you sure you would like to continue?
-                            </p>
-
-                            <button id="lesson-nav-confirm" title="Leave current quiz">Continue</button>
-                            <button id="lesson-nav-cancel" title="Stay on current quiz">Cancel</button>
-
-                        </div>
-                    </div>
-
-                        <div id="map-content" class="tab-pane fade" role="tabpanel">
-                            {% placeholder Map_Content or %}
-                                <p>Currently In Development. Please check back later</p>
-                            {% endplaceholder %}
-
-                        </div>
-
-                    </div>
 
                     </div>
 
@@ -167,110 +158,200 @@
         </div>
 
 
+    {% addtoblock 'template_js' %}
+
+        <script>
+            $('#content').addClass('always_full')
+        </script>
+
+        <script src="{% static 'js/plugins/jquery-ui.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery-ui.multiselect.js' %}"></script>
+        <script src="{% static 'js/plugins/highcharts.js' %}"></script>
+
+
+        <!--
+            TODO: Replace with prettyphoto.js (already loaded in layout.js)
+        -->
+        <script src="{% static 'module/js/plugins/lightbox/ekko-lightbox.js' %}"></script>
+
+
+        <!--<script type="text/javascript" src="{% static 'javascript/knockout-3.3.0.js' %}"/>-->
+        <script src="{% static 'module/js/plugins/History_js/jquery.history.js' %}"></script>
+
+
+        <!--// spinner functionality-->
+        <script src="{% static 'js/plugins/spin-1.2.8.js' %}"></script>
+        <script src="{% static 'js/Load_Spinner_Manager.js' %}"></script>
+
+        <script src="{% static 'module/js/default.js' %}"></script>
+
+        <!--load functionality-->
+        <script src="{% static 'module/js/Viewport_manager.js' %}"></script>
+        <script src="{% static 'module/js/SLD_Templator.js' %}"></script>
+        <script src="{% static 'module/js/URL_Utility.js' %}"></script>
+
+        <!--lessons-->
+        <script src="{% static 'module/js/Lesson_manager.js' %}"></script>
+        <script src="{% static 'module/js/TableOfContents_manager.js' %}"></script>
+
+        <!--map-->
+        <script src="{% static 'module/js/Map_manager.js' %}"></script>
+        <script src="{% static 'module/js/Layer_manager.js' %}"></script>
+        <script src="{% static 'module/js/HS_JSON_Interpreter.js' %}"></script>
+
+        <script src="{% static 'module/js/Geoserver_Data_manager.js' %}"></script>
+        <script src="{% static 'module/js/Interactive_Layer_Dialog_manager.js' %}"></script>
+        <script src="{% static 'module/js/Layer_Selection_manager.js' %}"></script>
+        <script src="{% static 'module/js/Color_manager.js' %}"></script>
+        <script src="{% static 'module/js/Highcharts_manager.js' %}"></script>
+        <script src="{% static 'module/js/Map_functionality.js' %}"></script>
+
+
+
+        <!--//JSLINQ-->
+        <script src="{% static 'module/js/plugins/JSLINQ.js' %}"></script>
+
+        <!--// custom glossary object-->
+        <script src="{% static 'module/js/Glossary_object.js' %}"></script>
+
+        <!--// lesson resource manager-->
+        <script src="{% static 'module/js/Lesson_Resource_Manager.js' %}"></script>
+
+        <script type='text/javascript'>
+
+            $(document).delegate('*[data-toggle="lightbox"]', 'click', function (event) {
+                event.preventDefault();
+                $(this).ekkoLightbox();
+            });
+
+
+            // once the DOM is loaded
+            $(document).ready(function(){
+                // if screen is larger than 786 pixels (desktop view) expand the sidebar on page load
+                if($( window ).width() >= 768){
+                    $('#sidebarCollapse').click()
+                }
+            });
+
+
+            // once the window/all scripts are loaded perform the following
+            $(window).on('load',function () {
+
+                URL_UTILS.init('{{LANGUAGE_CODE}}')
+
+
+
+
+                /* ---------------------------------
+                    set some basic information used in initialization of managers for consolidation
+                ---------------------------------*/
+                var Map_container = '#map-content';
+                var Layer_container = "#layers div.content div.layers_content_wrapper";
+                var Lesson_container = "#lesson-content";
+
+
+                /* ---------------------------------
+                   create the managers for this module
+                ---------------------------------*/
+                //console.log('Instantiating Managers...')
+
+                /* ---------------------------------
+                   RESOURCE LOADING
+                   (sample loading for when resources are integrated)
+                       it is expected that 'resource_data' context variable will be valid
+                       JSON of the form specified by HydroShare's 'mapProject.json'
+                       configuration files.
+
+                   ---------------------------------
+
+                        var raw_resource_data = JSON.parse('{{ resource_data | escapejs }}')
+                        var layer_data = new HS_Resource(raw_resource_data);
+
+                        // set debug output flag to true in map_manager config
+                        layer_data.map_config['debug_output'] = true;
+
+                        MAP_MGR = new MAP_MANAGER(Map_container, layer_data.map_config);
+                        LAYER_MGR = new LAYER_MANAGER(Layer_container, Map_container, layer_data.layers);
+
+                ---------------------------------*/
+
+
+                MAP_MGR = new MAP_MANAGER(Map_container);
+                LAYER_MGR = new LAYER_MANAGER(Layer_container, Map_container);
+                LESSON_MGR = new LESSON_MANAGER(Lesson_container, '{{module.name}}', '{{module.slug}}', '{{section}}');
+
+                /* ---------------------------------
+                   setup the viewport manager to manipulate the main-content container
+                ---------------------------------*/
+                VIEWPORT_MGR = new VIEWPORT_MANAGER('#main-content');
+
+
+                /* ---------------------------------
+                   create a new Lesson view and register it with the viewport manager
+                ---------------------------------*/
+                //console.log('Creating Lesson View...')
+                var lessonView = new LESSON_VIEW('Lessons', Lesson_container, LESSON_MGR);
+                VIEWPORT_MGR.Register_View(lessonView, '#lesson-tab');
+
+
+                /* ---------------------------------
+                   create a new Map view and register it with the viewport manager
+                ---------------------------------*/
+                //console.log('Creating Map View...')
+                var mapView = new MAP_VIEW('Map', Map_container, MAP_MGR);
+                VIEWPORT_MGR.Register_View(mapView, '#map-tab');
+
+
+
+                /* ---------------------------------
+                   initialize the Table of contents to link to the different SubStudies/sections
+                ---------------------------------*/
+                //TOC_MGR.init('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
+                TOC_MGR = new TABLE_OF_CONTENTS_MANAGER('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
+
+
+                /* ---------------------------------
+                    if a starting section was passed initially load the lesson view
+                    otherwise load the map view.
+                ---------------------------------*/
+                {% if loaded_section %}
+                    VIEWPORT_MGR.Switch_View('Lessons', ['{{loaded_section}}']);
+                    $('#lesson-tab').tab('show') // Select lesson tab
+
+
+                {% else %}
+
+                    VIEWPORT_MGR.Switch_View('Map');
+                    $('#map-tab').tab('show') // Select map tab
+
+
+                {% endif %}
+
+
+                // set map to resize on window resize
+                $(window).resize(function () {
+                    MAP_MGR.Resize()
+                });
+
+                // set map to resize based on custom 'body.sidebar_toggled_evt' event
+                $('body').bind('sidebar_toggled_evt',function () {
+                    console.log("in sidebar toggle event");
+                    // set timeout to wait for collapse animation to finish
+                    //setTimeout(function(){MAP_MGR.Resize()}, 200);
+                    MAP_MGR.Resize()
+                });
+
+
+            });
+
+
+        </script>
+
+
+    {% endaddtoblock 'template_js' %}
 {% endblock content %}
 
 
-{% block addtl_js %}
-
-    <script>
-        $('#content').addClass('always_full')
-    </script>
-
-    <script src="{% static 'js/plugins/jquery-ui.js' %}"></script>
-    <script src="{% static 'js/plugins/jquery-ui.multiselect.js' %}"></script>
-    <script src="{% static 'js/plugins/highcharts.js' %}"></script>
-
-
-    <!--
-        TODO: Replace with prettyphoto.js (already loaded in layout.js)
-    -->
-    <script src="{% static 'module/js/plugins/lightbox/ekko-lightbox.js' %}"></script>
-
-
-    <!--<script type="text/javascript" src="{% static 'javascript/knockout-3.3.0.js' %}"/>-->
-    <script src="{% static 'module/js/plugins/History_js/jquery.history.js' %}"></script>
-
-
-    <!--// spinner functionality-->
-    <script src="{% static 'js/plugins/spin-1.2.8.js' %}"></script>
-    <script src="{% static 'js/Load_Spinner_Manager.js' %}"></script>
-
-    <script src="{% static 'module/js/default.js' %}"></script>
-    <script src="{% static 'module/js/URL_Utility.js' %}"></script>
-    <script src="{% static 'module/js/Lesson_functionality.js' %}"></script>
-    <!--<script src="{% static 'javascript/Map_functionality.js' %}"></script>-->
-
-
-
-    <!--//JSLINQ-->
-    <script src="{% static 'module/js/plugins/JSLINQ.js' %}"></script>
-
-    <!--// custom glossary object-->
-    <script src="{% static 'module/js/Glossary_object.js' %}"></script>
-
-    <!--// lesson resource manager-->
-    <script src="{% static 'module/js/Lesson_Resource_Manager.js' %}"></script>
-
-    <!--// mathjax-->
-    <script src="{% static 'module/js/plugins/MathJax/MathJax.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/config/TeX-AMS-MML_HTMLorMML.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/jax/input/TeX/config.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/jax/element/mml/jax.js' %}"></script>
-    <script src="{% static 'module/js/plugins/MathJax/jax/input/TeX/jax.js' %}"></script>
-
-
-
-    <script type='text/javascript'>
-
-        //var legacy_flag = ('@ViewBag.is_Legacy' == 'True');
-
-        $(document).delegate('*[data-toggle="lightbox"]', 'click', function (event) {
-            event.preventDefault();
-            $(this).ekkoLightbox();
-        });
-
-
-
-
-        $(document).ready(function () {
-
-            URL_UTILS.init('{{LANGUAGE_CODE}}')
-
-            LESSON_MGR.init('#lesson-content', '{{module.name}}', '{{module.slug}}', '{{section}}');
-            //MAP_MGR.init(false, '@ViewBag.region', '@ViewBag.caseStudy', '@ViewBag.subStudy');
-
-
-            // setup the viewport manager
-            VIEWPORT_MGR.init('#main-content');
-            VIEWPORT_MGR.Register_View('Lessons', '#lesson-content', '#lesson-tab', LESSON_MGR.get_content_query_data, LESSON_MGR.pre_display, LESSON_MGR.post_display, LESSON_MGR.on_Show, LESSON_MGR.on_Hide);
-            //VIEWPORT_MGR.Register_View('Map', '#map-content', '#map-tab', MAP_MGR.get_content_query_data, MAP_MGR.pre_display, MAP_MGR.post_display, MAP_MGR.on_Show, MAP_MGR.on_Hide);
-
-            // initialize the Table of contents to link to the different SubStudies/sections
-            TOC_MGR.init('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
-
-
-
-            // initialize content to the provided section (defaults to module intro if not provided)
-            VIEWPORT_MGR.Load_View('Lessons', ['{{loaded_section}}']);
-            $('#lesson-tab').tab('show') // Select lesson tab
-
-            //VIEWPORT_MGR.Load_View('Map');
-            //$('#map-tab').tab('show') // Select map tab
-
-
-            ResizeEventHandler();
-
-            // if screen is larger than 786 pixels (desktop view) expand the sidebar on page load
-            if($( window ).width() >= 768){
-                $('#sidebarCollapse').click()
-            }
-        });
-
-
-    </script>
-
-
-{% endblock addtl_js %}
 
 
 

@@ -1,9 +1,5 @@
 {% load core_tags polymorphic_formset_tags static sekizai_tags %}
 
-{% addtoblock "css" %}
-
-{% endaddtoblock %}
-
 <div id="module_form_wrapper">
 
     <h3>Manage Module - {% if object %} {{object.name}} {% else %} New Module {% endif %}</h3>

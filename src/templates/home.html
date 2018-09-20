@@ -1,43 +1,49 @@
 {% extends 'layout.html' %}
 {% load cms_tags menu_tags sekizai_tags static %}
 
-{% block addtl_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}"/>
-{% endblock %}
 
 {% block precontent %}
 
-  <!-- Header -->
-  <header class="text-center" name="home">
-    <div class="intro-text">
-      <!--<p class="intro-small-text">Welcome to</p>-->
-      <div class="logo-large"></div>
+    <header class="text-center" name="home">
+      <div class="intro-text">
+        <!--<p class="intro-small-text">Welcome to</p>-->
+        <div class="logo-large"></div>
 
-      <!--<a href="#services-section" class="btn btn-default btn-lg page-scroll">LEARN MORE</a> -->
+        <!--<a href="#services-section" class="btn btn-default btn-lg page-scroll">LEARN MORE</a> -->
       </div>
-  </header>
+    </header>
 
 {% endblock precontent %}
 
-{% block content %}{% placeholder "content" %}{% endblock content %}
+{% block content %}
+
+    {% addtoblock 'template_css' %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}"/>
+    {% endaddtoblock %}
+
+    {% placeholder "content" %}
+
+    {% addtoblock 'template_js' %}
+        <!-- Header -->
+        <!--<script type="text/javascript" src="{% static 'js/helios_js/menu_animation.js' %}"></script>-->
+
+        <script>
+              $('.navbar-default').removeClass('on')
+          </script>
+
+    {% endaddtoblock 'template_js' %}
+
+{% endblock content %}
 
 {% block postcontent %}
 
-
-
-  <!--adding dummy container for spacing temporary fix-->
-  <!--<div class="container"></div>-->
+    <!--adding dummy container for spacing temporary fix-->
+    <!--<div class="container"></div>-->
 
 {% endblock postcontent %}
 
 
 
 
-{% block "addtl_js" %}
-<script type="text/javascript" src="{% static 'js/helios_js/menu_animation.js' %}"></script>
-<script>
-    $('.navbar-default').removeClass('on')
-</script>
-{% endblock %}
 
 

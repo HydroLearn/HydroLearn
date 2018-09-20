@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 
 register = template.Library()
 
@@ -55,4 +56,15 @@ def content_editor_button(user, editable_obj):
 
     return {
         'edit_link': edit_link,
+    }
+
+
+@register.inclusion_tag('module/tag_templates/_map_container.html', takes_context=True)
+def map_container(context):
+    sezikai_ctx_var = getattr(settings, 'SEKIZAI_VARNAME', 'SEKIZAI_CONTENT_HOLDER')
+    layers = None
+
+    return {
+        'layers': layers,
+        sezikai_ctx_var: context[sezikai_ctx_var],
     }

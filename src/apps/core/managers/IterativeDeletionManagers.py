@@ -28,7 +28,7 @@ class IterativeDeletion_QuerySet(models.QuerySet):
 class PolyIterativeDeletion_QuerySet(PolymorphicQuerySet):
 
     def delete(self, *args, **kwargs):
-        print("in custom poly-queryset delete")
+        #print("in custom poly-queryset delete")
         with transaction.atomic():
             for obj in self:
                 obj.delete()

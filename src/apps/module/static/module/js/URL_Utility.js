@@ -20,6 +20,7 @@ var URL_UTILS = {
     // get the value of a current url parameter 
     getURLParameter: function (ParamName) {
         return decodeURIComponent((new RegExp('[?|&]' + ParamName + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20')) || null;
+
     },
 
 

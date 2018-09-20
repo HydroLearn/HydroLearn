@@ -14,7 +14,7 @@
 
 /* END MATHJAX styling*/
 /* #region Basic Element Styling */
-#lesson-content { overflow-y: auto; overflow-x: hidden; height: 100%; width: 100%; padding-bottom: 50px; }
+#lesson-content { overflow-y: auto; overflow-x: hidden; height: 100%; width: 100%; padding: 25px 25px 110px; }
 #lesson-content h1, #lesson-content h2, #lesson-content h3, #lesson-content h4, #lesson-content h5 { font-weight: bold; line-height: normal; color: #8F8F8F; min-width: 950px; padding: 10px 0 0 0; }
 #lesson-content h1 { font-size: 24px; }
 #lesson-content h2 { font-size: 20px; }

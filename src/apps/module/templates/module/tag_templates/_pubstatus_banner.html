@@ -1,8 +1,10 @@
 <style>
     #PubStatus_banner{
-        //position: fixed;
+        position: absolute;
+        top: 107px;
+        width:100%;
 
-        z-index: 50;
+        z-index: 60;
         padding: 4px 12px;
         margin-bottom: 25px;
 
@@ -59,9 +61,13 @@
         border: 1px solid #f38a45;
     }
 
+    #PubStatus_banner_spacer{
+        height: 35px;
+    }
 
 </style>
 
+<div id="PubStatus_banner_spacer"></div>
 <div id="PubStatus_banner" class="{{banner_class}}">
 {% if draft_copy %}
 

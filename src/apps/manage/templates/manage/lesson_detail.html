@@ -5,12 +5,12 @@
 {% block subtitle%} - Manage Lesson {% endblock subtitle %}
 
 {% block content %}
-    {% addtoblock "css" %}
+    {% addtoblock "template_css" %}
         <link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">
         <link rel="stylesheet" href="{% static 'manage/css/manage_content_styling.css' %}" type="text/css">
         <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
 
-    {% endaddtoblock "css" %}
+    {% endaddtoblock "template_css" %}
     
     <div id="manage-content">
     <div class="lesson">
@@ -68,16 +68,16 @@
         
     </div>
     </div>
+    {% addtoblock 'template_js' %}
+    <script>
+        $('.manage-details-accord').accordion({
+            active: false,
+            collapsible:true,
+            heightStyle: "content",
+        });
+        $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
+
+    </script>
+    {% endaddtoblock 'template_js' %}
 {% endblock content %}
 
-{% block addtl_js %}
-<script>
-    $('.manage-details-accord').accordion({
-        active: false,
-        collapsible:true,
-        heightStyle: "content",
-    });
-    $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
-
-</script>
-{% endblock addtl_js %}
