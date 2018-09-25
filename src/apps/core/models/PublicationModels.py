@@ -72,6 +72,8 @@ class Publication(CreationTrackingBaseModel):
     class Meta:
         app_label = 'core'
         verbose_name_plural = 'Publications'
+
+        # this wont be utilized when converting to multiple past_publications
         unique_together = ('pub_id', 'is_draft')
         abstract = True
         base_manager_name = "objects"

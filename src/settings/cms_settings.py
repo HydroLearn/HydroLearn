@@ -135,3 +135,9 @@ CMS_PLACEHOLDER_CONF = {
 
 }
 
+# some additional settings for the edit toolbar (potentially can set these when loading view)
+#CMS_TOOLBAR_URL__EDIT_ON = True
+# -- or --
+#CMS_TOOLBAR_URL__EDIT_OFF = True
+
+# CMS_TOOLBAR_URL__DISABLE = True

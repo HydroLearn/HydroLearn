@@ -37,8 +37,42 @@ class Module(Publication):
         app_label = 'core'
         ordering = ('name',)
         verbose_name_plural = 'Modules'
+
+        # to be removed at time of multiple past_publications
         unique_together = ('pub_id', 'is_draft', 'name')
 
+    name = models.CharField(u'Module Name',
+                            blank=False,
+                            default='',
+                            help_text=u'Please enter a name for this module',
+                            max_length=250,
+                            # unique=True,
+                            )
+
+    ref_id = RandomCharField(unique=True,
+                             length=8,
+                             include_punctuation=False,
+                             )
+
+    slug = AutoSlugField(u'slug',
+                         blank=False,
+                         default='',
+                         max_length=64,
+                         unique=True,
+                         # populate_from=('name',),
+                         populate_from=('ref_id',),
+                         help_text=u'Please enter a unique slug for this module (can autogenerate from name field)',
+                         )
+
+    # shared_with = models.ManyToManyField(Person, through='ShareMapping')
+
+    tags = TaggableManager(blank=True)
+
+    intro = PlaceholderField('module_intro')
+
+    # layers = models.ManyToManyField(LayerRef)
+    # most likely this will need to expand further to store additional information
+    # for any given module, potentially adding in the map layer links
 
 
     # path to the core module view
@@ -155,40 +189,6 @@ class Module(Publication):
 
         return False
 
-    name = models.CharField(u'Module Name',
-                            blank=False,
-                            default='',
-                            help_text=u'Please enter a name for this module',
-                            max_length=250,
-                            #unique=True,
-                            )
-
-    ref_id = RandomCharField(unique=True,
-                             length=8,
-                             include_punctuation=False,
-                             )
-
-    slug = AutoSlugField(u'slug',
-                         blank=False,
-                         default='',
-                         max_length=64,
-                         unique=True,
-                         # populate_from=('name',),
-                         populate_from=('ref_id',),
-                         help_text=u'Please enter a unique slug for this module (can autogenerate from name field)',
-                         )
-
-    # shared_with = models.ManyToManyField(Person, through='ShareMapping')
-
-    tags = TaggableManager(blank=True)
-
-    intro = PlaceholderField('module_intro')
-
-    # layers = models.ManyToManyField(LayerRef)
-    # most likely this will need to expand further to store additional information
-    # for any given module, potentially adding in the map layer links
-
-
 class Topic(PublicationChild):
     objects = IterativeDeletion_Manager()
     #objects = PublicationManager()
@@ -198,6 +198,56 @@ class Topic(PublicationChild):
         unique_together = ('module', 'name')  # enforce only unique topic names within a module
         ordering = ('position',)
         verbose_name_plural = 'Topics'
+
+    parent = 'module'
+
+    # position = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    position = models.PositiveIntegerField(default=0, blank=False, null=False)
+
+    ref_id = RandomCharField(unique=True,
+                             length=8,
+                             include_punctuation=False,
+                             )
+
+    name = models.CharField(u'Topic Name',
+                            blank=False,
+                            default='',
+                            help_text=u'Please enter a name for this topic',
+                            max_length=250,
+                            unique=False,
+                            )
+
+    short_name = models.CharField(u'Topic Short Name',
+                                  blank=True,
+                                  default='',
+                                  help_text=u'(OPTIONAL) A shortened version of this topic\'s name for use in topic listings',
+                                  max_length=250,
+                                  unique=False,
+                                  )
+
+    slug = AutoSlugField(u'slug',
+                         blank=False,
+                         default='',
+                         max_length=64,
+                         unique=True,
+                         # populate_from=('name',),
+                         populate_from=('ref_id',),
+                         help_text=u'Please enter a unique slug for this Topic (can autogenerate from name field)',
+
+                         )
+
+    module = models.ForeignKey('core.Module',
+                               related_name="topics",
+                               blank=False,
+                               default=None,
+                               help_text=u'Please specify the Module for this Topic.',
+                               null=False,
+                               on_delete=models.CASCADE,
+                               )
+
+    tags = TaggableManager(blank=True)
+
+    summary = PlaceholderField('topic_summary')
 
     def absolute_url(self):
         return reverse('core:topic_detail', kwargs={
@@ -313,10 +363,43 @@ class Topic(PublicationChild):
 
         return False
 
+class Lesson(PublicationChild):
+    objects = IterativeDeletion_Manager()
+    #objects = PublicationManager()
 
 
 
-    parent = 'module'
+    class Meta:
+        app_label = 'core'
+
+        # upon changing to 'Lesson-based structure'
+        # will need to be modified to be: ('parent_lesson', 'name')
+        unique_together = ('topic', 'name')  # enforce only unique topic names within a module
+        ordering = ('position',)
+        verbose_name_plural = 'Lessons'
+
+    # putting sample FK in place for when lessons become recursive
+    # parent_lesson = models.ForeignKey('self', related_name="sub-lesson", on_delete=models.CASCADE)
+
+    # parent_lesson = models.ForeignKey('self',
+    #                   related_name="sub_lesson",
+    #                   blank=True,
+    #                   default=None,
+    #                   help_text=u'Specify a parent Lesson for this Sub-Lesson.',
+    #                   null=True,
+    #                   on_delete=models.CASCADE,
+    #                   )
+
+    topic = models.ForeignKey('core.Topic',
+                              related_name="lessons",
+                              blank=False,
+                              default=None,
+                              help_text=u'Please specify the Topic for this Lesson.',
+                              null=False,
+                              on_delete=models.CASCADE,
+                              )
+
+    parent = 'topic'
 
     # position = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     position = models.PositiveIntegerField(default=0, blank=False, null=False)
@@ -326,18 +409,18 @@ class Topic(PublicationChild):
                              include_punctuation=False,
                              )
 
-    name = models.CharField(u'Topic Name',
+    name = models.CharField(u'Lesson Name',
                             blank=False,
                             default='',
-                            help_text=u'Please enter a name for this topic',
+                            help_text=u'Please enter a name for this Lesson',
                             max_length=250,
                             unique=False,
                             )
 
-    short_name = models.CharField(u'Topic Short Name',
+    short_name = models.CharField(u'Lesson Short Name',
                                   blank=True,
                                   default='',
-                                  help_text=u'(OPTIONAL) A shortened version of this topic\'s name for use in topic listings',
+                                  help_text=u'(OPTIONAL) A shortened version of this lesson\'s name for use in lesson listings',
                                   max_length=250,
                                   unique=False,
                                   )
@@ -349,33 +432,13 @@ class Topic(PublicationChild):
                          unique=True,
                          # populate_from=('name',),
                          populate_from=('ref_id',),
-                         help_text=u'Please enter a unique slug for this Topic (can autogenerate from name field)',
-
+                         help_text=u'Please enter a unique slug for this Lesson (can autogenerate from name field)',
                          )
-
-    module = models.ForeignKey('core.Module',
-                               related_name="topics",
-                               blank=False,
-                               default=None,
-                               help_text=u'Please specify the Module for this Topic.',
-                               null=False,
-                               on_delete=models.CASCADE,
-                               )
 
     tags = TaggableManager(blank=True)
 
-    summary = PlaceholderField('topic_summary')
+    summary = PlaceholderField('lesson_summary')
 
-
-class Lesson(PublicationChild):
-    objects = IterativeDeletion_Manager()
-    #objects = PublicationManager()
-
-    class Meta:
-        app_label = 'core'
-        unique_together = ('topic', 'name')  # enforce only unique topic names within a module
-        ordering = ('position',)
-        verbose_name_plural = 'Lessons'
 
     def absolute_url(self):
         return reverse('core:lesson_detail', kwargs={
@@ -489,55 +552,6 @@ class Lesson(PublicationChild):
         return False
 
 
-    topic = models.ForeignKey('core.Topic',
-                              related_name="lessons",
-                              blank=False,
-                              default=None,
-                              help_text=u'Please specify the Topic for this Lesson.',
-                              null=False,
-                              on_delete=models.CASCADE,
-                              )
-
-    parent = 'topic'
-
-    # position = models.PositiveIntegerField(default=0, editable=False, db_index=True)
-    position = models.PositiveIntegerField(default=0, blank=False, null=False)
-
-    ref_id = RandomCharField(unique=True,
-                             length=8,
-                             include_punctuation=False,
-                             )
-
-    name = models.CharField(u'Lesson Name',
-                            blank=False,
-                            default='',
-                            help_text=u'Please enter a name for this Lesson',
-                            max_length=250,
-                            unique=False,
-                            )
-
-    short_name = models.CharField(u'Lesson Short Name',
-                                  blank=True,
-                                  default='',
-                                  help_text=u'(OPTIONAL) A shortened version of this lesson\'s name for use in lesson listings',
-                                  max_length=250,
-                                  unique=False,
-                                  )
-
-    slug = AutoSlugField(u'slug',
-                         blank=False,
-                         default='',
-                         max_length=64,
-                         unique=True,
-                         # populate_from=('name',),
-                         populate_from=('ref_id',),
-                         help_text=u'Please enter a unique slug for this Lesson (can autogenerate from name field)',
-                         )
-
-    tags = TaggableManager(blank=True)
-
-    summary = PlaceholderField('lesson_summary')
-
 
 #class Section(PolyCreationTrackingBaseModel):
 class Section(PolyPublicationChild):
@@ -553,51 +567,6 @@ class Section(PolyPublicationChild):
         ordering = ('position',)
         verbose_name_plural = 'Sections'
         manager_inheritance_from_future = True
-
-    def absolute_url(self):
-        return reverse('core:section_detail', kwargs={
-            'module_slug': self.lesson.topic.module.slug,
-            'topic_slug': self.lesson.topic.slug,
-            'lesson_slug': self.lesson.slug,
-            'slug': self.slug
-        })
-
-    # path to the manage page for a topic
-    def manage_url(self):
-        return reverse('manage:section_content', kwargs={
-            'module_slug': self.lesson.topic.module.slug,
-            'topic_slug': self.lesson.topic.slug,
-            'lesson_slug': self.lesson.slug,
-            'slug': self.slug
-        })
-
-    # path to the viewer page for a topic
-    def viewer_url(self):
-        return reverse('modules:section_content', kwargs={
-            'module_slug': self.lesson.topic.module.slug,
-            'topic_slug': self.lesson.topic.slug,
-            'lesson_slug': self.lesson.slug,
-            'slug': self.slug
-        })
-
-    def __unicode__(self):
-        return self.name
-
-    # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
-    def __str__(self):
-        return "%s:%s:%s:%s" % (self.lesson.topic.module.name, self.lesson.topic.name, self.lesson.name, self.name)
-
-    def get_Publishable_parent(self):
-        return self.lesson.topic.module
-
-    @property
-    def is_dirty(self):
-
-        # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
-        # edited after the most recent change date.
-        return super(Section, self).is_dirty
-
-
 
     parent = 'lesson'
 
@@ -650,6 +619,49 @@ class Section(PolyPublicationChild):
         default=timedelta(),
         help_text=u'Please specify the Expected Duration of this section. (format: HH:MM:SS)',
     )
+
+    def absolute_url(self):
+        return reverse('core:section_detail', kwargs={
+            'module_slug': self.lesson.topic.module.slug,
+            'topic_slug': self.lesson.topic.slug,
+            'lesson_slug': self.lesson.slug,
+            'slug': self.slug
+        })
+
+    # path to the manage page for a topic
+    def manage_url(self):
+        return reverse('manage:section_content', kwargs={
+            'module_slug': self.lesson.topic.module.slug,
+            'topic_slug': self.lesson.topic.slug,
+            'lesson_slug': self.lesson.slug,
+            'slug': self.slug
+        })
+
+    # path to the viewer page for a topic
+    def viewer_url(self):
+        return reverse('modules:section_content', kwargs={
+            'module_slug': self.lesson.topic.module.slug,
+            'topic_slug': self.lesson.topic.slug,
+            'lesson_slug': self.lesson.slug,
+            'slug': self.slug
+        })
+
+    def __unicode__(self):
+        return self.name
+
+    # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
+    def __str__(self):
+        return "%s:%s:%s:%s" % (self.lesson.topic.module.name, self.lesson.topic.name, self.lesson.name, self.name)
+
+    def get_Publishable_parent(self):
+        return self.lesson.topic.module
+
+    @property
+    def is_dirty(self):
+
+        # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
+        # edited after the most recent change date.
+        return super(Section, self).is_dirty
 
 
 ''' DEPRECIATED (Kept for potential future reference)
