@@ -39,8 +39,6 @@ class Module(Publication):
         verbose_name_plural = 'Modules'
         unique_together = ('pub_id', 'is_draft', 'name')
 
-
-
     # path to the core module view
     def absolute_url(self):
         return reverse('core:module_detail', kwargs={
