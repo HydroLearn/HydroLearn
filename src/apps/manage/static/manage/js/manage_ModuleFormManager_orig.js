@@ -678,19 +678,12 @@ var FormManager = {
     generate_post_data: function(){
 
         // index each input field to copy user input
-        var user_inputs = $(this.form_selector).find('input,textarea,select')//.filter(function(){return !($(this).parent().hasClass('FM_mgmt_form'))});
+        var user_inputs = $(this.form_selector).find('input,textarea,select')
 
         // trim any values avoid storing excess white-space
         $(user_inputs).each(function(){
             $(this).attr('FM-value', $(this).val().trim())
         })
-
-        // get header mgmt form fields indexed by type to be instantiated for new formsets
-//        var mgmt_fields = {}
-//        $.each(FormManager.formset_header_templates, function(type, body){
-//            mgmt_fields[type] = $(body).find('input')
-//        });
-
 
         // clone the current form to work with (and avoid changing any entered values)
         var form_instance = $(this.form_selector).clone(true)
@@ -703,14 +696,14 @@ var FormManager = {
 
 
         // potentially this will work, but may have to return a new element
-        function replace_field_prefix(input_field, formset_prefix){
+        function replace_field_prefix(input_field, new_prefix){
 
             // get the field name
             var field = $(input_field).attr('name').split('-').pop()
 
             // update the id/name fields with the provided prefix
-            $(input_field).attr('id', "id_{0}-{1}".format(formset_prefix, field))
-            $(input_field).attr('name', "{0}-{1}".format(formset_prefix, field))
+            $(input_field).attr('id', "id_{0}-{1}".format(new_prefix, field))
+            $(input_field).attr('name', "{0}-{1}".format(new_prefix, field))
         }
 
 
@@ -794,11 +787,13 @@ var FormManager = {
 
             }
 
-
-
             // manually set the total forms in the management form based on form count for this formset
             //  theoretically this should be the only change in the management form
             mgmt_form.find('input[name$="-TOTAL_FORMS"]').attr('FM-value', forms_count)
+
+            // store the total number of instanced forms, and start a counter for new forms
+            const instanced_forms_total = $(forms_container).children('.FM_form').filter(function(){ return !($(this).hasClass('FM_new_form')) }).length
+            var newform_counter = 0;
 
 
             // for each child form in the forms_container
@@ -808,11 +803,25 @@ var FormManager = {
                 //$(this).html($(this).html().replace(/("[\w-]*?)__prefix__/g, "$1" + form_index))
                 // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx DEPRECIATED METHOD xxxxxxxxxxxxxxxxxxxxx
 
-                // TODO: left off here
-                // need to grab this form's fields specifically (exclude child formsets)
 
-                // perform prefix replacement for each field
+                // if this is a new form, need to update the prefixes
+                if($(this).hasClass('FM_new_form')){
 
+                    // update prefix for each field in this form
+                    var form = $(this)
+                    var fields = form.find('input,textarea,select').filter(function(){
+                        return $(this).closest('.FM_form').is(form);
+                    })
+
+                    $.each(fields, function(){
+                        replace_field_prefix($(this) ,"{0}-{1}".format(formset_prefix, instanced_forms_total + newform_counter))
+                    })
+
+
+                    // increment newform_counter
+                    newform_counter++;
+
+                }
 
                 // get any nested formsets in this form
                 var nested_formsets = $(this).find('.FM_formset.FM_initialized').filter(function(){
