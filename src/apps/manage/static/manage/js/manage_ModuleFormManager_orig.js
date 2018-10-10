@@ -777,14 +777,17 @@ var FormManager = {
             // get this formset's prefix
             var formset_prefix = get_formset_prefix(formset);
 
-            // TODO: issue: this will not have inital values for mgmt fields
+
             // update mgmt form for this formset
 
+            // if no managment form present in this formset, it's new, add from header template
             if(mgmt_form.html().trim() == ""){
 
-                // if this formset's mgmt form is blank, it's new, populate it from the header-template
+                // clone header's management form
                 var cloned_children = FormManager.formset_header_templates[formset_type].children('.FM_mgmt_form').clone().children()
                 mgmt_form.append(cloned_children)
+
+                // update field prefixes to match formset prefix
                 $.each(mgmt_form.children(), function(){
                     replace_field_prefix($(this),formset_prefix);
                 })
@@ -792,30 +795,23 @@ var FormManager = {
             }
 
 
-            // otherwise this formset is already instantiated, just update 'TOTAL-FORMS'
-            debugger;
-            mgmt_form.find('input[name$="-TOTAL_FORMS"]').attr('FM-value',forms_count)
 
-            // update input field name/ids for form fields
-
-
-//            // replace this header's mgmt form prefixes
-//            mgmt_form.html(mgmt_form.html().replace(/([\w-]*?)__prefix__/g, "$1" + level))
-//
-//            // update the total number of forms in container
-//            // mgmt_form.find('input[name$="-TOTAL_FORMS"]').val(forms_count)
-//            mgmt_form.find('input[name$="-TOTAL_FORMS"]').attr('FM-value',forms_count)
-//            // mgmt_form.find('input[name$="-INITIAL_FORMS"]').attr('FM-value',forms_count)
-//            // mgmt_form.find('input[name$="-MAX_NUM_FORMS"]').attr('FM-value',forms_count)
-
-            // update mgmt form with prefix
+            // manually set the total forms in the management form based on form count for this formset
+            //  theoretically this should be the only change in the management form
+            mgmt_form.find('input[name$="-TOTAL_FORMS"]').attr('FM-value', forms_count)
 
 
             // for each child form in the forms_container
             $(forms_container).children('.FM_form').each(function(form_index){
-
+                // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx DEPRECIATED METHOD xxxxxxxxxxxxxxxxxxxxx
                 // update child form prefixes to contain current formset's instance index
-                $(this).html($(this).html().replace(/("[\w-]*?)__prefix__/g, "$1" + form_index))
+                //$(this).html($(this).html().replace(/("[\w-]*?)__prefix__/g, "$1" + form_index))
+                // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx DEPRECIATED METHOD xxxxxxxxxxxxxxxxxxxxx
+
+                // TODO: left off here
+                // need to grab this form's fields specifically (exclude child formsets)
+
+                // perform prefix replacement for each field
 
 
                 // get any nested formsets in this form
