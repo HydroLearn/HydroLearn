@@ -11,8 +11,8 @@ from src.apps.manage.views import (
         manage_ModulePublishIndex,
         manage_ModulePublish,
 
-        manage_ModuleContent,
-        manage_TopicContent,
+        # manage_ModuleContent,
+        # manage_TopicContent,
         manage_LessonContent,
         manage_SectionContent,
 )
@@ -43,10 +43,10 @@ urlpatterns = [
 
 
 
-        url(r'^content/(?P<slug>[^/]+)/$', manage_ModuleContent.as_view(), name="module_content"),
-        url(r'^content/(?P<module_slug>[^/]+)/(?P<slug>[^/]+)/$', manage_TopicContent.as_view(), name="topic_content"),
-        url(r'^content/(?P<module_slug>[^/]+)/(?P<topic_slug>[^/]+)/(?P<slug>[^/]+)/$', manage_LessonContent.as_view(), name="lesson_content"),
-        url(r'^content/(?P<module_slug>[^/]+)/(?P<topic_slug>[^/]+)/(?P<lesson_slug>[^/]+)/(?P<slug>[^/]+)/$', manage_SectionContent.as_view(), name="section_content"),
+        # url(r'^content/(?P<slug>[^/]+)/$', manage_ModuleContent.as_view(), name="module_content"),
+        # url(r'^content/(?P<module_slug>[^/]+)/(?P<slug>[^/]+)/$', manage_TopicContent.as_view(), name="topic_content"),
+        url(r'^content/(?P<slug>[^/]+)/$', manage_LessonContent.as_view(), name="lesson_content"),
+        url(r'^content/(?P<lesson_slug>[^/]+)/(?P<slug>[^/]+)/$', manage_SectionContent.as_view(), name="section_content"),
 
         # # module detail view
         #url(r'^(?P<slug>[^/]+)/$', manage_ModuleDetailView.as_view(), name="module_detail"),

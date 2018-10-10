@@ -32,33 +32,30 @@ label.form-error { color: #ff5555; font-style: italic; padding: 0 10px; }
 #modules-content #crumb_trail a.crumb_entry:hover { color: #85cfc1; }
 #modules-content #crumb_trail a.crumb_entry.current_view { cursor: default; color: #666; }
 #modules-content input[name$='-DELETE'], #modules-content label[for$='-DELETE'] { display: none; }
+#modules-content #post-new-module h3.ui-accordion-header { margin: 2px 0; padding: 5px 5px; background: #F5F5F5; color: #666; border: 1px solid #ccc; font-size: 17px; transition: background .2s; box-shadow: #dcdcdc 2px 2px 5px 1px; }
+#modules-content #post-new-module div.ui-accordion-content { margin: -1px 0 8px 0; padding: 1em; border: 1px solid #F5F5F5; box-shadow: #dcdcdc 2px 2px 5px 1px; background: #fff; }
 #modules-content #post-new-module table tr td { padding: 10px; }
 #modules-content #post-new-module .helptext { font-style: italic; font-size: .9em; }
 #modules-content #post-new-module .Add_button { background: #85cfc1; color: white; margin: 0 10px; }
 #modules-content #post-new-module .Add_button:hover { background: #45a4f3; }
 #modules-content #post-new-module .Remove_button { background: #b1213c; color: white; margin: 0 10px 10px; }
 #modules-content #post-new-module .Remove_button:hover { background: red; }
-#modules-content #post-new-module .topic_listing_header { display: inline-block; }
 #modules-content #post-new-module .topic_actions_btn_group { float: right; }
 #modules-content #post-new-module .topic_actions_btn_group i { font-size: 1.2em; vertical-align: middle; }
-#modules-content #post-new-module .Topic-Accord .ui-state-focus { outline: none; }
-#modules-content #post-new-module .Topic-Accord h3.ui-accordion-header { margin: 2px 0; padding: 0.3em 1em; background: #45a4f3; color: #fff; transition: background .2s; box-shadow: #dcdcdc 2px 2px 5px 1px; }
-#modules-content #post-new-module .Topic-Accord h3.ui-accordion-header:hover { background: #3D6BAA; }
-#modules-content #post-new-module .Topic-Accord div.ui-accordion-content { margin: -1px 0 8px 0; padding: 1em; border: 1px solid #F5F5F5; box-shadow: #dcdcdc 2px 2px 5px 1px; background: #fff; }
-#modules-content #post-new-module .Topic-Accord .section_listing_header { display: inline-block; }
-#modules-content #post-new-module .Topic-Accord .add_new_sections_btn_group { float: right; }
-#modules-content #post-new-module .Topic-Accord .add_new_sections_btn_group i { font-size: 1.2em; vertical-align: middle; }
-#modules-content #post-new-module .lesson_listing_header { display: inline-block; }
-#modules-content #post-new-module .lesson_actions_btn_group { float: right; }
-#modules-content #post-new-module .lesson_actions_btn_group i { font-size: 1.2em; vertical-align: middle; }
+#modules-content #post-new-module .lesson_listing_header, #modules-content #post-new-module .section_listing_header { display: inline-block; }
+#modules-content #post-new-module .lesson_actions_btn_group, #modules-content #post-new-module .add_new_sections_btn_group { float: right; }
+#modules-content #post-new-module .lesson_actions_btn_group i, #modules-content #post-new-module .add_new_sections_btn_group i { font-size: 1.2em; vertical-align: middle; }
 #modules-content #post-new-module .Lesson-Accord .ui-state-focus { outline: none; }
-#modules-content #post-new-module .Lesson-Accord h3.ui-accordion-header { margin: 2px 0; padding: 5px 5px; background: #9cc4f7; color: #333; border: 1px solid #ccc; font-size: 17px; }
-#modules-content #post-new-module .Lesson-Accord h3.ui-accordion-header:hover { background: #83aadc; }
-#modules-content #post-new-module .Lesson-Accord div.ui-accordion-content { padding: 1em; margin: -2px 1px 8px 0; }
+#modules-content #post-new-module .Lesson-Accord h3.ui-accordion-header { background: #45a4f3; color: #fff; }
+#modules-content #post-new-module .Lesson-Accord h3.ui-accordion-header:hover { background: #3D6BAA; }
+#modules-content #post-new-module .Lesson-Accord div.ui-accordion-content { margin: -1px 0 8px 0; padding: 1em; border: 1px solid #F5F5F5; box-shadow: #dcdcdc 2px 2px 5px 1px; background: #fff; }
+#modules-content #post-new-module .Lesson-Accord .section_listing_header { display: inline-block; }
+#modules-content #post-new-module .Lesson-Accord .add_new_sections_btn_group { float: right; }
+#modules-content #post-new-module .Lesson-Accord .add_new_sections_btn_group i { font-size: 1.2em; vertical-align: middle; }
 #modules-content #post-new-module .Section-Accord .ui-state-focus { outline: none; }
-#modules-content #post-new-module .Section-Accord h3.ui-accordion-header { margin: 2px 0; padding: 5px 5px; background: #F5F5F5; color: #666; border: 1px solid #ccc; font-size: 17px; }
+#modules-content #post-new-module .Section-Accord h3.ui-accordion-header { background: #F5F5F5; color: #666; }
 #modules-content #post-new-module .Section-Accord h3.ui-accordion-header:hover { background: #e1e1e3; }
-#modules-content #post-new-module .Section-Accord div.ui-accordion-content { padding: 1em; margin: -2px 1px 8px 0; }
+#modules-content #post-new-module .Section-Accord div.ui-accordion-content { margin: -1px 0 8px 0; padding: 1em; border: 1px solid #F5F5F5; box-shadow: #dcdcdc 2px 2px 5px 1px; background: #fff; }
 
 .glyph-button { color: #45a4f3; }
 .glyph-button:hover { color: #85cfc1; background-color: #eee; }

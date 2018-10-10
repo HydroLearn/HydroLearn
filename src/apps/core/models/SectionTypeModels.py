@@ -14,8 +14,6 @@ class ReadingSection(Section):
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
-            'module_slug': self.lesson.topic.module.slug,
-            'topic_slug': self.lesson.topic.slug,
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })
@@ -86,8 +84,6 @@ class ActivitySection(Section):
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
-            'module_slug': self.lesson.topic.module.slug,
-            'topic_slug': self.lesson.topic.slug,
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })
@@ -155,8 +151,6 @@ class QuizSection(Section):
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
-            'module_slug': self.lesson.topic.module.slug,
-            'topic_slug': self.lesson.topic.slug,
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })

@@ -94,7 +94,7 @@ VIEWPORT_MANAGER.prototype.Load_View = function (ViewName, content_load_args) {
                             error: function(xhr, textStatus, errorThrown) {
                                 $(this.current_view().target).html("<div class='lesson'><h2>We're sorry!</h2><hr class='headerSpacer'><p>We couldn't find what you were looking for! Please, double-check the URL.<p>");
 
-                            },
+                            }.bind(this),
                         }),
                         this.content_loaded_event.bind(this),
                         [content_load_args],

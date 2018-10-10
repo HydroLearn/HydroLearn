@@ -39,8 +39,8 @@ from django.views.generic.edit import FormMixin
 from djangocms_installer.compat import unicode
 
 from src.apps.core.models.ModuleModels import (
-    Module,
-    Topic,
+    # Module,
+    # Topic,
     Lesson,
     Section,
 )
@@ -213,10 +213,11 @@ class Index(LoginRequiredMixin, TemplateView):
         return super(Index, self).render_to_response(context, **kwargs)
 
 class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
-    model = Module
-    context_object_name = "Module"
+    model = Lesson
+    context_object_name = "Lesson"
 
-    form_class = manage_ModuleForm
+    # form_class = manage_ModuleForm
+    form_class = manage_LessonForm
     template_name = 'manage/forms/module_form.html'
 
     success_url = '/manage/success/'
@@ -232,10 +233,12 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        Topic_formset = inlineTopicFormset()
+        subLesson_formset = inlineLessonFormset()
+        section_formset = inlineSectionFormset()
         return self.render_to_response(
             self.get_context_data(form=form,
-                                  Topics=Topic_formset,
+                                  sub_lessons=subLesson_formset,
+                                  sections=section_formset,
                                   )
         )
 
@@ -248,13 +251,15 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        Topic_formset = inlineTopicFormset(self.request.POST)
-        if form.is_valid() and Topic_formset.is_valid():
-            return self.form_valid(form, Topic_formset)
-        else:
-            return self.form_invalid(form, Topic_formset)
+        sections_formset = inlineSectionFormset(self.request.POST)
+        subLesson_formset = inlineLessonFormset(self.request.POST)
 
-    def form_invalid(self, form, topics, *args, **kwargs):
+        if form.is_valid() and subLesson_formset.is_valid():
+            return self.form_valid(form, sections_formset, subLesson_formset)
+        else:
+            return self.form_invalid(form, sections_formset, subLesson_formset)
+
+    def form_invalid(self, form, sections, subLessons, *args, **kwargs):
 
         # trigger a full clean on the topics/child sections to populate form errors
         #topics.errors
@@ -276,7 +281,7 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 } for sectionForm in lessonForm.child_sections.forms]
             } for lessonForm in topicForm.child_lessons.forms]
 
-        } for topicForm in topics.forms]
+        } for topicForm in subLessons.forms]
 
         self.ajax_error_dict = {
             "errors": form.errors.as_json(),
@@ -285,7 +290,7 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
         return super(manage_ModuleCreateView, self).form_invalid(form)
 
-    def form_valid(self, form, topics, *args, **kwargs):
+    def form_valid(self, form, sections, subLessons, *args, **kwargs):
         '''
         if the Module form itself is valid, perform tests to ensure the topic formset
             in context is valid and if they are,
@@ -294,7 +299,7 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 return form_invalid
 
         :param form: the module form
-        :param topics: the inline topics formset
+        :param subLessons: the inline lesson formset
         :param args:
         :param kwargs:
         :return:
@@ -304,81 +309,102 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
             with transaction.atomic():
 
                 # instance the module and set the created-by and updated-by fields
-                new_module = form.save(commit=False)
-                new_module.created_by = self.request.user
-                new_module.changed_by = self.request.user
+                new_lesson = form.save(commit=False)
+                new_lesson.created_by = self.request.user
+                new_lesson.changed_by = self.request.user
 
                 # save the module
-                new_module.save()
+                new_lesson.save()
 
-                # for each topic in the topics formset
-                #print('adding topics (num): ', len(topics.forms))
-                for topic_index, topic in enumerate(topics):
+                # print('adding sections (num): ', len(lesson.child_sections.forms))
 
-                    # instance the topic, set its module, created_by, and changed_by fields
-                    new_topic = topic.save(commit=False)
+                # TODO: theoretically at this point, i should be able to
+                #       have access to a child formset from
+                #       new_lesson.sublessons/new_lesson.sections as opposed to
+                #       handling these in the post method...
+                #       the main drawback being that request.post was
+                #       used in the generation of the 'formset' instance
 
-                    #print("creating topic: ", new_topic.name)
-                    new_topic.module = new_module
-                    new_topic.created_by = self.request.user
-                    new_topic.changed_by = self.request.user
-                    new_topic.position = topic_index
+                # for each section in the current topic
+                for section_index, section in enumerate(sections):
+                    # instance the section and set its parent topic, created_by, and changed_by fields
+                    new_section = section.save(commit=False)
+
+                    new_section.lesson = new_lesson
+                    new_section.created_by = self.request.user
+                    new_section.changed_by = self.request.user
+                    new_section.position = section_index
+
+                    # save the section and it's many-to-many fields (tags)
+                    new_section.save()
+                    section.save_m2m()
+
+                # for each subLesson in the subLessons formset
+                #print('adding subLessons (num): ', len(subLessons.forms))
+                for subLesson_index, subLesson in enumerate(subLessons):
+
+                    # instance the subLesson, set its module, created_by, and changed_by fields
+                    new_subLesson = subLesson.save(commit=False)
+
+                    #print("creating subLesson: ", new_subLesson.name)
+                    new_subLesson.module = new_lesson
+                    new_subLesson.created_by = self.request.user
+                    new_subLesson.changed_by = self.request.user
+                    new_subLesson.position = subLesson_index
 
                     # save the topic and it's many-to-many relationships (tags)
-                    new_topic.save()
-                    topic.save_m2m() # needed to save the tags
+                    new_subLesson.save()
+                    subLesson.save_m2m() # needed to save the tags
 
-                    #print('adding lessons (num): ', len(topic.child_lessons.forms))
+                    #print('adding lessons (num): ', len(subLesson.child_lessons.forms))
+
+                    # for each section in the current subLesson
+                    # for lesson_index, lesson in enumerate(topic.child_lessons):
+                    #     # instance the section and set its parent topic, created_by, and changed_by fields
+                    #     new_lesson = lesson.save(commit=False)
+                    #
+                    #     new_lesson.topic = new_topic
+                    #     new_lesson.created_by = self.request.user
+                    #     new_lesson.changed_by = self.request.user
+                    #     new_lesson.position = lesson_index
+                    #
+                    #     # save the section and it's many-to-many fields (tags)
+                    #     new_lesson.save()
+                    #     lesson.save_m2m()
+                    # print('adding sections (num): ', len(lesson.child_sections.forms))
 
                     # for each section in the current topic
-                    for lesson_index, lesson in enumerate(topic.child_lessons):
-                        # instance the section and set its parent topic, created_by, and changed_by fields
-                        new_lesson = lesson.save(commit=False)
-
-                        new_lesson.topic = new_topic
-                        new_lesson.created_by = self.request.user
-                        new_lesson.changed_by = self.request.user
-                        new_lesson.position = lesson_index
-
-                        # save the section and it's many-to-many fields (tags)
-                        new_lesson.save()
-                        lesson.save_m2m()
-
-                        #print('adding sections (num): ', len(lesson.child_sections.forms))
-
-                        # for each section in the current topic
-                        for section_index, section in enumerate(lesson.child_sections):
-                            # instance the section and set its parent topic, created_by, and changed_by fields
-                            new_section = section.save(commit=False)
-
-                            new_section.lesson = new_lesson
-                            new_section.created_by = self.request.user
-                            new_section.changed_by = self.request.user
-                            new_section.position = section_index
-
-                            # save the section and it's many-to-many fields (tags)
-                            new_section.save()
-                            section.save_m2m()
-
-
+                    # for section_index, section in enumerate(lesson.child_sections):
+                    #     # instance the section and set its parent topic, created_by, and changed_by fields
+                    #     new_section = section.save(commit=False)
+                    #
+                    #     new_section.lesson = new_lesson
+                    #     new_section.created_by = self.request.user
+                    #     new_section.changed_by = self.request.user
+                    #     new_section.position = section_index
+                    #
+                    #     # save the section and it's many-to-many fields (tags)
+                    #     new_section.save()
+                    #     section.save_m2m()
 
             #print("returning success")
-            messages.success(self.request, _("Successfully created Module:'%s'" % new_module.name))
+            messages.success(self.request, _("Successfully created Lesson:'%s'" % new_lesson.name))
 
         except ValidationError as err:
             # if there was an error at any point while saving the module or its child formset
             form.add_error(_('The submitted form is invalid'))
             #print("...returning invalid")
 
-            return self.form_invalid(form, topics)
+            return self.form_invalid(form, subLessons)
 
 
         return super(manage_ModuleCreateView, self).form_valid(form)
 
 class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
-    model = Module
+    model = Lesson
     template_name = 'manage/forms/module_form.html'
-    form_class = manage_ModuleForm
+    #form_class = manage_ModuleForm
+    form_class = manage_LessonForm
     success_url = '/manage/success/'
 
     # ajax response mixin parameter
@@ -400,10 +426,12 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
 
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        Topic_formset = inlineTopicFormset(instance=self.object)
+        subLesson_formset = inlineLessonFormset(instance=self.object)
+        section_formset = inlineSectionFormset(instance=self.object)
         return self.render_to_response(
             self.get_context_data(form=form,
-                                  Topics=Topic_formset,
+                                  sub_lessons=subLesson_formset,
+                                  sections=section_formset,
                                   )
         )
 
@@ -423,11 +451,12 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
 
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        Topic_formset = inlineTopicFormset(self.request.POST, instance=self.object)
-        if form.is_valid() and Topic_formset.is_valid():
-            return self.form_valid(form, Topic_formset)
+        #Topic_formset = inlineTopicFormset(self.request.POST, instance=self.object)
+        #if form.is_valid() and Topic_formset.is_valid():
+        if form.is_valid() :
+            return self.form_valid(form, None)
         else:
-            return self.form_invalid(form, Topic_formset)
+            return self.form_invalid(form, None)
 
 
     def form_invalid(self, form, topics, *args, **kwargs):
@@ -566,7 +595,7 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
 class manage_ModulePublishIndex(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DetailView):
     template_name = 'manage/forms/module_publication_index.html'
     success_url = '/manage/'
-    model = Module
+    model = Lesson
 
     def get_object(self, queryset=None):
         # get the default object based on the slug
@@ -581,7 +610,7 @@ class manage_ModulePublishIndex(LoginRequiredMixin, PublicationViewMixin, Owners
             else:
                 return None
 
-
+# TODO: FIXIT
 class manage_ModulePublish(LoginRequiredMixin, FormView):
     template_name = 'manage/forms/module_publish_form.html'
     form_class = Module_ActionConfirmationForm
@@ -591,18 +620,18 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
 
         if 'publish' in self.request.POST:
 
-            draft_instance = get_object_or_404(Module, slug=self.kwargs['slug'])
+            draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
             draft_instance.publish()
 
 
         if 'unpublish' in self.request.POST:
 
-            draft_instance = get_object_or_404(Module, slug=self.kwargs['slug'])
+            draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
             draft_instance.unpublish()
 
         if 'revert' in self.request.POST:
 
-            draft_instance = get_object_or_404(Module, slug=self.kwargs['slug'])
+            draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
             draft_instance.revert_to_live()
 
         return super(manage_ModulePublish, self).form_valid(form)
@@ -612,7 +641,7 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
 
 
 class manage_ModuleDeleteView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DeleteView):
-    model = Module
+    model = Lesson
     template_name = 'manage/forms/module_delete.html'
     success_url = '/manage/'
 
@@ -635,24 +664,24 @@ class manage_ModuleShareView(LoginRequiredMixin, PublicationViewMixin, Ownership
 ###############################################################################
 ###                 CONTENT EDITING VIEWS                                   ###
 ###############################################################################
-class manage_ModuleContent(OwnershipRequiredMixin, PublicationViewMixin, DetailView):
-    model = Module
-    template_name = "manage/module_detail.html"
+# class manage_ModuleContent(OwnershipRequiredMixin, PublicationViewMixin, DetailView):
+#     model = Module
+#     template_name = "manage/module_detail.html"
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(manage_ModuleContent, self).get_context_data(**kwargs)
+#         context['edit'] = True
+#         return context
 
-    def get_context_data(self, **kwargs):
-        context = super(manage_ModuleContent, self).get_context_data(**kwargs)
-        context['edit'] = True
-        return context
 
-
-class manage_TopicContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
-    model = Topic
-    template_name = "manage/topic_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(manage_TopicContent, self).get_context_data(**kwargs)
-        context['edit'] = True
-        return context
+# class manage_TopicContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
+#     model = Topic
+#     template_name = "manage/topic_detail.html"
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(manage_TopicContent, self).get_context_data(**kwargs)
+#         context['edit'] = True
+#         return context
 
 class manage_LessonContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
     model = Lesson

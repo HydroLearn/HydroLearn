@@ -11,9 +11,9 @@ from cms.admin.placeholderadmin import PlaceholderAdminMixin
 #from src.apps.core.admin_actions import *
 
 from src.apps.core.forms import (
-    ModuleForm,
-    add_TopicForm,
-    Edit_TopicForm,
+    # ModuleForm,
+    # add_TopicForm,
+    # Edit_TopicForm,
     add_LessonForm,
     Edit_LessonForm,
     #SectionForm,
@@ -23,8 +23,8 @@ from src.apps.core.forms import (
 
 
 from src.apps.core.models.ModuleModels import (
-    Module,
-    Topic,
+    # Module,
+    # Topic,
     Lesson,
     Section,
 
@@ -145,44 +145,71 @@ class SectionInline(SortableInlineAdminMixin, admin.TabularInline):
     model = Section
     base_model  = Section
     #form = SectionForm
+    #fk_name = 'parent_lesson'
     extra = 0
     sortable_field_name = "position"
     show_change_link = True
-    
+
+    # fields = (
+    #     'position',
+    #     'name',
+    #     'short_name',
+    #     'duration',
+    #     'tags',
+    # )
+
+    # must overwrite this method as polymorphic models aren't handled appropriately
     def has_add_permission(self, request):
         return False
 
 
 class LessonInline(SortableInlineAdminMixin, admin.TabularInline):
     model = Lesson
-    # form = TopicForm
+    fk_name = "parent_lesson"
+
+    verbose_name = "Sub-Lesson"
+    verbose_name_plural = "Sub-Lessons"
+    # form = Lesson_form
     extra = 0  # number of extra empty fields to generate (makes things confusing, so ZERO)
     show_change_link = True
     sortable_field_name = "position"
 
-    pass
-
-    
-#class TopicInline(SortableTabularInline, PolymorphicInlineSupportMixin, admin.TabularInline ):
-class TopicInline(SortableInlineAdminMixin, admin.TabularInline ):
-    model = Topic
-    #form = TopicForm
-    extra = 0 #number of extra empty fields to generate (makes things confusing, so ZERO)
-    show_change_link = True
-    #inlines = [SectionInline,]
-    
-    #inline_classes = ("collapse", "open", "grp-collapse", "grp-open",)
-    #classes = ['collapse']
-    sortable_field_name = "position"
-    
-    # list_display = ('name', 'changed_date','creation_date',)
+    fields = (
+        'position',
+        'name',
+        'short_name',
+        'tags',
+    )
+    # exclude = [
+    #      'depth',
+    #      'depth_label',
+    #      'created_by',
+    #      'changed_by',
+    # #     'position',
+    #  ]
 
 
 
-    #readonly_fields = ('position',)
     
-    
-    pass
+# class TopicInline(SortableInlineAdminMixin, admin.TabularInline ):
+#     model = Topic
+#     #form = TopicForm
+#     extra = 0 #number of extra empty fields to generate (makes things confusing, so ZERO)
+#     show_change_link = True
+#     #inlines = [SectionInline,]
+#
+#     #inline_classes = ("collapse", "open", "grp-collapse", "grp-open",)
+#     #classes = ['collapse']
+#     sortable_field_name = "position"
+#
+#     # list_display = ('name', 'changed_date','creation_date',)
+#
+#
+#
+#     #readonly_fields = ('position',)
+#
+#
+#     pass
     
     
 # ============================================================
@@ -207,8 +234,6 @@ class SectionChildAdmin(PublicationChangeTrackingMixin, PolymorphicChildModelAdm
     list_select_related = (
         'lesson',
     )
-
-
 
 class ReadingSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
     model = ReadingSection
@@ -236,8 +261,6 @@ class ReadingSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
 
-
-
 class ActivitySectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
     model = ActivitySection
     base_model  = ActivitySection
@@ -262,7 +285,6 @@ class ActivitySectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
 
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
-    
 
 class QuizSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin, SortableAdminMixin):
     base_model = QuizSection
@@ -327,11 +349,9 @@ class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
     
-
 class QuizQuestionChildAdmin(PublicationChangeTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin, PlaceholderAdminMixin):
     base_model = QuizQuestion
     exclude = ["position", 'created_by', 'changed_by']
-
 
 class MultiChoice_QuestionAdmin(QuizQuestionChildAdmin, SortableAdminMixin):
     model = MultiChoice_question
@@ -358,7 +378,6 @@ class QuizQuestionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin
         MultiSelect_question,
     )
 
-
 class MultiChoice_AnswerAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
     model = MultiChoice_answer
 
@@ -371,15 +390,14 @@ class MultiSelect_AnswerAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMi
     sortable_field_name = "position"
     exclude = ['position', 'created_by', 'changed_by']
 
-
 class LessonAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
     model = Lesson
     form = Edit_LessonForm
-    ordering = ('topic', 'name',)
-
+    # ordering = ('topic', 'name',)
+    ordering = ('name',)
     # sortable_field_name = "position"
     list_display = [
-        'topic',
+        'parent_lesson',
         'name',
         'creation_date',
         'changed_date',
@@ -387,7 +405,7 @@ class LessonAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin,
     ]
 
     list_select_related = (
-        'topic',
+        'parent_lesson',
     )
 
     list_display_links = ['name']
@@ -395,7 +413,7 @@ class LessonAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin,
     search_fields = ['name', 'short_name']
     list_filter = ('creation_date',)
 
-    inlines = [SectionInline,]
+    inlines = [SectionInline, LessonInline]
 
 
     # override 'get_form' to have a separate form for adding a new topic
@@ -406,142 +424,138 @@ class LessonAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin,
         # if this is a new lesson
         if obj is None:
             # check for a passed module id
-            curr_module_id = request.GET.get('topic', '')
+            curr_module_id = request.GET.get('parent_lesson', '')
 
             # otherwise return the full add topic form
             return add_LessonForm
         else:
             return super(LessonAdmin, self).get_form(request, obj, **kwargs)
 
-#class TopicAdmin(NonSortableParentAdmin, PolymorphicInlineSupportMixin, admin.ModelAdmin):
-class TopicAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
-    model = Topic
-    form = Edit_TopicForm
-    ordering = ('module','name',)
-
-    #sortable_field_name = "position"
-    list_display = [
-            'module',
-            'name',
-            'creation_date',
-            'changed_date',
-
-        ]
-
-    list_select_related = (
-        'module',
-    )
-
-    list_display_links = ['name']
-
-    search_fields = ['name', 'short_name']
-    list_filter = ('creation_date', )
-
-    # inlines = [SectionInline,]
-    inlines = [LessonInline, ]
-
-    # override 'get_form' to have a separate form for adding a new topic
-    #       additionally, this may be editable to be contextually aware and
-    #       provide different forms between 'Admin' and 'Wizard' views etc.
-    def get_form(self, request, obj=None, **kwargs):
-
-        # if this is a new topic
-        if obj is None:
-            # check for a passed module id
-            curr_module_id = request.GET.get('module', '')
-
-            # if there is a module id passed use it as the module_id fk and return the simplified add form
-
-            # otherwise return the full add topic form
-            return add_TopicForm
-        else:
-            return super(TopicAdmin, self).get_form(request, obj, **kwargs)
-
-    # # custom actions for this admin
-    # actions = ['delete_with_placeholders']
-    #
-    # def delete_with_placeholders(self, request, queryset):
-    #     print("in delete with placeholders.")
-    #     queryset.clear_placeholders()
-    #     deleted, deleted_count = queryset.delete()
-    #
-    #     if deleted_count == 1:
-    #         message_bit = "1 story was"
-    #     else:
-    #         message_bit = "%s stories were" % deleted_count
-    #     self.message_user(request, "%s successfully marked as published." % message_bit)
-    #
-    # # remove the default delete action as it does not account for placeholder clearing
-    # # in children
-    # def get_actions(self, request):
-    #     actions = super(TopicAdmin, self).get_actions(request)
-    #
-    #     if 'delete_selected' in actions:
-    #         del actions['delete_selected']
-    #
-    #     return actions
-    
-
-
-#class ModuleAdmin(PolymorphicInlineSupportMixin, NonSortableParentAdmin, admin.ModelAdmin):
-class ModuleAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
-    model = Module
-    form = ModuleForm
-    
-    # fields to show in the admin interface when viewing all modules list    
-    list_display = [
-        'name',
-        'creation_date',
-        'changed_date',
-    ]
-    
-    # filtering functionality on the date fields in admin
-    list_filter = [
-        'creation_date',
-        'changed_date',
-        'publish_status'
-    ]
-    
-    # search modules by name in admin
-    search_fields = ['name']
-    
-    inlines = [
-            TopicInline,            
-        ]
-
-
-    # # custom actions for this admin
-    # actions = ['delete_with_placeholders']
-    #
-    # def delete_with_placeholders(self, request, queryset):
-    #     print("in delete with placeholders.")
-    #     #queryset.clear_placeholders()
-    #     deleted, deleted_count = queryset.delete()
-    #
-    #     if deleted_count == 1:
-    #         message_bit = "1 story was"
-    #     else:
-    #         message_bit = "%s stories were" % deleted_count
-    #     self.message_user(request, "%s successfully marked as published." % message_bit)
-
-
-
-    # # remove the default delete action as it does not account for placeholder clearing
-    # # in children
-    # def get_actions(self, request):
-    #     actions = super(ModuleAdmin, self).get_actions(request)
-    #
-    #     if 'delete_selected' in actions:
-    #         del actions['delete_selected']
-    #
-    #     return actions
-
+# class TopicAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
+#     model = Topic
+#     form = Edit_TopicForm
+#     ordering = ('module','name',)
+#
+#     #sortable_field_name = "position"
+#     list_display = [
+#             'module',
+#             'name',
+#             'creation_date',
+#             'changed_date',
+#
+#         ]
+#
+#     list_select_related = (
+#         'module',
+#     )
+#
+#     list_display_links = ['name']
+#
+#     search_fields = ['name', 'short_name']
+#     list_filter = ('creation_date', )
+#
+#     # inlines = [SectionInline,]
+#     inlines = [LessonInline, ]
+#
+#     # override 'get_form' to have a separate form for adding a new topic
+#     #       additionally, this may be editable to be contextually aware and
+#     #       provide different forms between 'Admin' and 'Wizard' views etc.
+#     def get_form(self, request, obj=None, **kwargs):
+#
+#         # if this is a new topic
+#         if obj is None:
+#             # check for a passed module id
+#             curr_module_id = request.GET.get('module', '')
+#
+#             # if there is a module id passed use it as the module_id fk and return the simplified add form
+#
+#             # otherwise return the full add topic form
+#             return add_TopicForm
+#         else:
+#             return super(TopicAdmin, self).get_form(request, obj, **kwargs)
+#
+#     # # custom actions for this admin
+#     # actions = ['delete_with_placeholders']
+#     #
+#     # def delete_with_placeholders(self, request, queryset):
+#     #     print("in delete with placeholders.")
+#     #     queryset.clear_placeholders()
+#     #     deleted, deleted_count = queryset.delete()
+#     #
+#     #     if deleted_count == 1:
+#     #         message_bit = "1 story was"
+#     #     else:
+#     #         message_bit = "%s stories were" % deleted_count
+#     #     self.message_user(request, "%s successfully marked as published." % message_bit)
+#     #
+#     # # remove the default delete action as it does not account for placeholder clearing
+#     # # in children
+#     # def get_actions(self, request):
+#     #     actions = super(TopicAdmin, self).get_actions(request)
+#     #
+#     #     if 'delete_selected' in actions:
+#     #         del actions['delete_selected']
+#     #
+#     #     return actions
+#
+# class ModuleAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
+#     model = Module
+#     form = ModuleForm
+#
+#     # fields to show in the admin interface when viewing all modules list
+#     list_display = [
+#         'name',
+#         'creation_date',
+#         'changed_date',
+#     ]
+#
+#     # filtering functionality on the date fields in admin
+#     list_filter = [
+#         'creation_date',
+#         'changed_date',
+#         'publish_status'
+#     ]
+#
+#     # search modules by name in admin
+#     search_fields = ['name']
+#
+#     inlines = [
+#             TopicInline,
+#         ]
+#
+#
+#     # # custom actions for this admin
+#     # actions = ['delete_with_placeholders']
+#     #
+#     # def delete_with_placeholders(self, request, queryset):
+#     #     print("in delete with placeholders.")
+#     #     #queryset.clear_placeholders()
+#     #     deleted, deleted_count = queryset.delete()
+#     #
+#     #     if deleted_count == 1:
+#     #         message_bit = "1 story was"
+#     #     else:
+#     #         message_bit = "%s stories were" % deleted_count
+#     #     self.message_user(request, "%s successfully marked as published." % message_bit)
+#
+#
+#
+#     # # remove the default delete action as it does not account for placeholder clearing
+#     # # in children
+#     # def get_actions(self, request):
+#     #     actions = super(ModuleAdmin, self).get_actions(request)
+#     #
+#     #     if 'delete_selected' in actions:
+#     #         del actions['delete_selected']
+#     #
+#     #     return actions
+#
 
 
 
 
 # REGISTER THE ABOVE DEFINED ADMIN OBJECTS
-admin.site.register(Topic, TopicAdmin)
+#admin.site.register(Topic, TopicAdmin)
 admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Section, SectionParentAdmin)
 admin.site.register(ReadingSection, ReadingSectionAdmin)
@@ -549,7 +563,7 @@ admin.site.register(ActivitySection, ActivitySectionAdmin)
 admin.site.register(QuizSection, QuizSectionAdmin)
 
 #admin.site.register(LayerRef, LayerRefAdmin)
-admin.site.register(Module, ModuleAdmin)
+#admin.site.register(Module, ModuleAdmin)
 
 
 admin.site.register(QuizQuestion, QuizQuestionParentAdmin)

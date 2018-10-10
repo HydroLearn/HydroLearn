@@ -160,6 +160,29 @@ label.form-error {
 
     #post-new-module{
 
+        h3.ui-accordion-header{
+                margin:2px 0;
+                padding: 5px 5px;
+                background: $light_gray;
+
+                color: #666;
+                border: 1px solid #ccc;
+
+                font-size: 17px;
+                transition: background .2s;
+                box-shadow:#dcdcdc 2px 2px 5px 1px;
+
+            }
+
+        div.ui-accordion-content{
+            margin: -1px 0 8px 0;
+            padding: 1em;
+            border: 1px solid $light_gray;
+
+            box-shadow: #dcdcdc 2px 2px 5px 1px;
+            background: #fff;
+        }
+
         table{
             tr{
                 td{
@@ -193,9 +216,9 @@ label.form-error {
             }
         }
 
-        .topic_listing_header{
-            display:inline-block
-        }
+        //.topic_listing_header{
+        //    display:inline-block
+        //}
 
         .topic_actions_btn_group{
             float: right;
@@ -205,21 +228,33 @@ label.form-error {
             }
         }
 
-        .Topic-Accord {
+        .lesson_listing_header, .section_listing_header{
+            display:inline-block
+        }
+
+        .lesson_actions_btn_group, .add_new_sections_btn_group {
+            float: right;
+            i{
+                font-size: 1.2em;
+                vertical-align: middle;
+            }
+        }
+
+        .Lesson-Accord {
             .ui-state-focus { outline: none; }
             h3.ui-accordion-header{
-                margin:2px 0;
-                padding: 0.3em 1em;
                 background: $HL_blue;
                 color: #fff;
-                //border: 1px solid #fff;
-                transition: background .2s;
-                box-shadow:#dcdcdc 2px 2px 5px 1px;
 
                 &:hover{
                     background: $HL_darkBlue;
                 }
             }
+
+            //div.ui-accordion-content{
+                //padding: 1em;
+                //margin: -2px 1px 8px 0;
+            //}
 
             div.ui-accordion-content{
                 margin: -1px 0 8px 0;
@@ -244,61 +279,31 @@ label.form-error {
             }
         }
 
-        .lesson_listing_header{
-            display:inline-block
-        }
-
-        .lesson_actions_btn_group{
-            float: right;
-            i{
-                font-size: 1.2em;
-                vertical-align: middle;
-            }
-        }
-
-        .Lesson-Accord {
-            .ui-state-focus { outline: none; }
-
-
-            h3.ui-accordion-header{
-                margin:2px 0;
-                padding: 5px 5px;
-                background: #9cc4f7;
-                color: #333;
-                border: 1px solid #ccc;
-                font-size: 17px;
-
-                &:hover{
-                    background: #83aadc;
-                }
-            }
-
-            div.ui-accordion-content{
-                padding: 1em;
-                margin: -2px 1px 8px 0;
-            }
-        }
-
         .Section-Accord {
             .ui-state-focus { outline: none; }
 
 
             h3.ui-accordion-header{
-                margin:2px 0;
-                padding: 5px 5px;
+
                 background: $light_gray;
                 color: #666;
-                border: 1px solid #ccc;
-                font-size: 17px;
 
                 &:hover{
                     background: #e1e1e3;
                 }
             }
 
+            //div.ui-accordion-content{
+            //    padding: 1em;
+            //    margin: -2px 1px 8px 0;
+            //}
             div.ui-accordion-content{
+                margin: -1px 0 8px 0;
                 padding: 1em;
-                margin: -2px 1px 8px 0;
+                border: 1px solid $light_gray;
+
+                box-shadow: #dcdcdc 2px 2px 5px 1px;
+                background: #fff;
             }
         }
     }

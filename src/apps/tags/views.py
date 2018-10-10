@@ -6,8 +6,8 @@ from django.shortcuts import redirect
 from django.contrib.contenttypes.models import ContentType
 
 from src.apps.core.models.ModuleModels import (
-    Module,
-    Topic,
+    # Module,
+    # Topic,
     Lesson,
     Section,
 )
@@ -52,8 +52,8 @@ class TagDetailView(TagMixin, TemplateView):
         context =  super(TagDetailView,self).get_context_data(**kwargs)
         
         #context['requested_tag'] = Tag.objects.filter()
-        context['tagged_modules'] = Module.objects.filter(tags__slug=self.kwargs.get('slug'))
-        context['tagged_topics'] = Topic.objects.filter(tags__slug=self.kwargs.get('slug'))
+        # context['tagged_modules'] = Module.objects.filter(tags__slug=self.kwargs.get('slug'))
+        # context['tagged_topics'] = Topic.objects.filter(tags__slug=self.kwargs.get('slug'))
         context['tagged_lessons'] = Lesson.objects.filter(tags__slug=self.kwargs.get('slug'))
         context['tagged_sections'] = Section.objects.filter(tags__slug=self.kwargs.get('slug'))
         

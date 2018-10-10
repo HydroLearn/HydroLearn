@@ -1,0 +1,11 @@
+{% load manage_template_tags static sekizai_tags %}
+<table>
+    {{ form.as_table }}
+</table>
+
+<!--show child sections formset for this lesson-->
+{% show_section_formset "SECTIONS" sections %}
+
+<!--show child lesson formset for this lesson-->
+{% show_lesson_formset "LESSONS" sub_lessons %}
+

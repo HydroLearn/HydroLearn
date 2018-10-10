@@ -1,3 +1,4 @@
+import datetime
 import uuid
 import copy
 from enum import Enum
@@ -114,14 +115,8 @@ class Publication(CreationTrackingBaseModel):
         editable=False,
     )
 
-    # last_publish = models.OneToOneField(
-    #     'self',
-    #     # on_delete=models.CASCADE,
-    #     on_delete=models.SET_NULL,
-    #     related_name='next_publish',
-    #     null=True,
-    #     editable=False,
-    # )
+    # potentially add in manually maintained published date
+    published_date = models.DateTimeField(blank=True,null=True,default=None)
 
     objects = PublicationManager()
 
@@ -237,6 +232,7 @@ class Publication(CreationTrackingBaseModel):
             public_page.is_draft = False
             public_page.publish_status = self.PUBLICATION_OBJECT
 
+            public_page.published_date = datetime.datetime.now()
 
             # save publication to generate instance
             public_page.save()
