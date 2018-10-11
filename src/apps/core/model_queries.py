@@ -64,8 +64,10 @@ def get_lesson_JSON_RAW(lesson_slug):
     sub_lessons = [get_lesson_JSON_RAW(l.slug) for l in lesson.sub_lessons.all()]
     sections = [get_section_JSON_RAW(s.slug) for s in lesson.sections.all()]
 
-    children = sub_lessons + sections
-    children.sort(key=lambda x: x['position'])
+    sub_lessons.sort(key=lambda x: x['position'])
+    sections.sort(key=lambda x: x['position'])
+    children = sections + sub_lessons
+    #children.sort(key=lambda x: x['position'])
 
     return {
         'obj_type': 'lesson',
