@@ -798,11 +798,6 @@ var FormManager = {
 
             // for each child form in the forms_container
             $(forms_container).children('.FM_form').each(function(form_index){
-                // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx DEPRECIATED METHOD xxxxxxxxxxxxxxxxxxxxx
-                // update child form prefixes to contain current formset's instance index
-                //$(this).html($(this).html().replace(/("[\w-]*?)__prefix__/g, "$1" + form_index))
-                // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx DEPRECIATED METHOD xxxxxxxxxxxxxxxxxxxxx
-
 
                 // if this is a new form, need to update the prefixes
                 if($(this).hasClass('FM_new_form')){

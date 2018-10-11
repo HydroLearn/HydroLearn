@@ -259,6 +259,21 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         else:
             return self.form_invalid(form, sections_formset, subLesson_formset)
 
+    def get_lesson_formset_errors(self, lessons_formset):
+        return [{
+            'errors': lessonForm.errors.as_json(),
+            'sublessons': self.get_lesson_formset_errors(lessonForm.sub_lessons),
+            'sections': self.get_section_formset_errors(lessonForm.child_sections),
+        } for lessonForm in lessons_formset.forms]
+
+    def get_section_formset_errors(self, sections_formset):
+        return [{
+            'errors': sectionForm.errors.as_json(),
+            # 'sublessons': self.get_lesson_errors(sectionForm.sub_lessons),
+            # 'sections': self.get_section_errors(sectionForm.child_sections),
+        } for sectionForm in sections_formset.forms]
+
+
     def form_invalid(self, form, sections, subLessons, *args, **kwargs):
 
         # trigger a full clean on the topics/child sections to populate form errors
@@ -271,21 +286,37 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         #     ]
         #  ]
 
-        error_collection = [{
-            "errors": topicForm.errors.as_json(),
+        # sublesson_errors = [{
+        #     "errors": sublesson.errors.as_json(),
+        #
+        #     "sublessons": [{
+        #         "errors": lessonForm.errors.as_json(),
+        #         "formset": [{
+        #             "errors": sectionForm.errors.as_json(),
+        #         } for sectionForm in lessonForm.child_sections.forms]
+        #
+        #     } for lessonForm in topicForm.child_lessons.forms]
+        #
+        # } for sublesson in subLessons.forms]
 
-            "formset": [{
-                "errors": lessonForm.errors.as_json(),
-                "formset": [{
-                    "errors": sectionForm.errors.as_json(),
-                } for sectionForm in lessonForm.child_sections.forms]
-            } for lessonForm in topicForm.child_lessons.forms]
-
-        } for topicForm in subLessons.forms]
+        # error_collection = [{
+        #     "errors": topicForm.errors.as_json(),
+        #
+        #     "formset": [{
+        #         "errors": lessonForm.errors.as_json(),
+        #         "formset": [{
+        #             "errors": sectionForm.errors.as_json(),
+        #         } for sectionForm in lessonForm.child_sections.forms]
+        #
+        #     } for lessonForm in topicForm.child_lessons.forms]
+        #
+        # } for topicForm in subLessons.forms]
 
         self.ajax_error_dict = {
             "errors": form.errors.as_json(),
-            "formset": error_collection,
+            'sublessons': self.get_lesson_formset_errors(subLessons),
+            "sections": self.get_section_formset_errors(sections),
+            # "formset": error_collection,
         }
 
         return super(manage_ModuleCreateView, self).form_invalid(form)
