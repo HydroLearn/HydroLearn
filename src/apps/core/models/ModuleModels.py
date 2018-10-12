@@ -28,368 +28,6 @@ from src.apps.core.models.PublicationModels import (
 from cms.utils.copy_plugins import copy_plugins_to
 
 
-# checking plugin dates (module.intro.cmsplugin_set.filter(changed_date__gt=module.creation_date))
-
-# TODO: Module will be gutted from the system, Replaced by Lesson
-#       comb through to ensure nothing important is being left behind
-#
-# class Module(CreationTrackingBaseModel):
-# class Module(Publication):
-#
-#     class Meta:
-#         app_label = 'core'
-#         ordering = ('name',)
-#         verbose_name_plural = 'Modules'
-#         unique_together = ('pub_id', 'is_draft', 'name')
-#
-#     ########################################
-#     #   Fields
-#     ########################################
-#
-#     name = models.CharField(u'Module Name',
-#                             blank=False,
-#                             default='',
-#                             help_text=u'Please enter a name for this module',
-#                             max_length=250,
-#                             # unique=True,
-#                             )
-#
-#     # ref_id = RandomCharField(unique=True,
-#     #                          length=8,
-#     #                          include_punctuation=False,
-#     #                          )
-#
-#     slug = AutoSlugField(u'slug',
-#                          blank=False,
-#                          default='',
-#                          max_length=64,
-#                          unique=True,
-#                          # populate_from=('name',),
-#                          populate_from=('ref_id',),
-#                          help_text=u'Please enter a unique slug for this module (can autogenerate from name field)',
-#                          )
-#
-#     # shared_with = models.ManyToManyField(Person, through='ShareMapping')
-#
-#     tags = TaggableManager(blank=True)
-#
-#     intro = PlaceholderField('module_intro')
-#
-#     #   most likely this will need to expand further to store additional information
-#     #   for any given module, potentially adding in the map layer links
-#     # layers = models.ManyToManyField(LayerRef)
-#
-#
-#
-#     ########################################
-#     #   Methods
-#     ########################################
-#
-#     # path to the core module view
-#     def absolute_url(self):
-#         return reverse('core:module_detail', kwargs={
-#             'slug': self.slug,
-#         })
-#
-#     # path to the manage page for a module
-#     def manage_url(self):
-#         return reverse('manage:module_content', kwargs={
-#             'slug': self.slug,
-#         })
-#
-#     # path to the viewer 'module' page for a module
-#     def viewer_url(self):
-#         return reverse('modules:module_detail', kwargs={
-#             'slug': self.slug,
-#         })
-#
-#     # path to the viewer 'module' page for a module
-#     def reference_url(self):
-#         return reverse('modules:module_ref', kwargs={
-#             'ref_id': self.ref_id,
-#         })
-#
-#     # added for wizard support. potentially this can be used to redirect between core/manage/module
-#     def get_absolute_url(self):
-#         return self.absolute_url()
-#
-#     def __unicode__(self):
-#         return self.name
-#
-#     # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
-#     def __str__(self):
-#         return self.name
-#
-#     ########################################
-#     #   Publication Method overrides
-#     ########################################
-#
-#     def copy(self):
-#
-#         new_instance = deepcopy(self)
-#         new_instance.pk = None
-#
-#         return new_instance
-#
-#     def copy_relations(self, from_instance):
-#
-#         # copy over the content
-#         self.copy_content(from_instance)
-#
-#         # add any tags from the 'from_instance'
-#         self.tags.add(*list(from_instance.tags.names()))
-#
-#         # Before copying related objects from the old instance, the ones
-#         # on the current one need to be deleted. Otherwise, duplicates may
-#         # appear on the public version of the page
-#         self.topics.delete()
-#
-#         # for each topic in the 'from_instance'
-#         for topic_item in from_instance.topics.all():
-#
-#             # copy the topic item and set its linked module
-#             new_topic = topic_item.copy()
-#             new_topic.module = self
-#
-#             # save the new topic instance
-#             new_topic.save()
-#
-#             new_topic.copy_relations(topic_item)
-#
-#     def copy_content(self, from_instance):
-#         # get the list of plugins in the 'from_instance's intro
-#         plugins = from_instance.intro.get_plugins_list()
-#
-#         # copy 'from_instance's intro plugins to this object's intro
-#         copy_plugins_to(plugins, self.intro, no_signals=True)
-#
-#     def validate_unique(self, exclude=None):
-#         # add a conditional unique constraint to prevent
-#         #   creation of multiple drafts with the same name
-#         if self.is_draft and Module.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
-#             raise ValidationError('A Draft-Module with this name already exists')
-#
-#         return super(Module, self).validate_unique(exclude)
-#
-#     def delete(self, *args, **kwargs):
-#         #print("----- in module overridden delete")
-#
-#         placeholders = [self.intro]
-#
-#         self.topics.delete()
-#
-#         super(Module, self).delete(*args, **kwargs)
-#
-#         for ph in placeholders:
-#             ph.clear()
-#             ph.delete()
-#
-#     @property
-#     def is_dirty(self):
-#
-#         # a module is considered dirty if there are non published changes
-#         if self.published_copy is None: return True
-#
-#         result = any([
-#             super(Module, self).is_dirty,
-#             self.intro.cmsplugin_set.filter(
-#                 changed_date__gt=self.published_copy.creation_date).exists(),
-#         ])
-#
-#         if result: return result
-#
-#         for t in self.topics.all():
-#             if t.is_dirty: return True
-#
-#         return False
-
-
-# TODO: TOPICS will be gutted
-# class Topic(PublicationChild):
-#     objects = IterativeDeletion_Manager()
-#     #objects = PublicationManager()
-#
-#     class Meta:
-#         app_label = 'core'
-#         unique_together = ('module', 'name')  # enforce only unique topic names within a module
-#         ordering = ('position',)
-#         verbose_name_plural = 'Topics'
-#
-#     ########################################
-#     #   Fields
-#     ########################################
-#
-#     parent = 'module'
-#
-#     # position = models.PositiveIntegerField(default=0, editable=False, db_index=True)
-#     position = models.PositiveIntegerField(default=0, blank=False, null=False)
-#
-#     ref_id = RandomCharField(unique=True,
-#                              length=8,
-#                              include_punctuation=False,
-#                              )
-#
-#     name = models.CharField(u'Topic Name',
-#                             blank=False,
-#                             default='',
-#                             help_text=u'Please enter a name for this topic',
-#                             max_length=250,
-#                             unique=False,
-#                             )
-#
-#     short_name = models.CharField(u'Topic Short Name',
-#                                   blank=True,
-#                                   default='',
-#                                   help_text=u'(OPTIONAL) A shortened version of this topic\'s name for use in topic listings',
-#                                   max_length=250,
-#                                   unique=False,
-#                                   )
-#
-#     slug = AutoSlugField(u'slug',
-#                          blank=False,
-#                          default='',
-#                          max_length=64,
-#                          unique=True,
-#                          # populate_from=('name',),
-#                          populate_from=('ref_id',),
-#                          help_text=u'Please enter a unique slug for this Topic (can autogenerate from name field)',
-#
-#                          )
-#
-#     module = models.ForeignKey('core.Module',
-#                                related_name="topics",
-#                                blank=False,
-#                                default=None,
-#                                help_text=u'Please specify the Module for this Topic.',
-#                                null=False,
-#                                on_delete=models.CASCADE,
-#                                )
-#
-#     tags = TaggableManager(blank=True)
-#
-#     summary = PlaceholderField('topic_summary')
-#
-#
-#
-#     ########################################
-#     #   Methods
-#     ########################################
-#
-#     def absolute_url(self):
-#         return reverse('core:topic_detail', kwargs={
-#             'module_slug': self.module.slug,
-#             'slug': self.slug
-#         })
-#
-#     # path to the manage page for a topic
-#     def manage_url(self):
-#         return reverse('manage:topic_content', kwargs={
-#             'module_slug': self.module.slug,
-#             'slug': self.slug
-#         })
-#
-#     # path to the viewer page for a topic
-#     def viewer_url(self):
-#         return reverse('modules:topic_detail', kwargs={
-#             'module_slug': self.module.slug,
-#             'slug': self.slug
-#         })
-#
-#     def __unicode__(self):
-#         return self.name
-#
-#     # needed to show the name in the admin interface (otherwise will show 'Topic Object' for all entries)
-#     def __str__(self):
-#         # return self.name
-#         return "%s:%s" % (self.module.name, self.name)
-#
-#     def copy(self):
-#
-#         new_instance = deepcopy(self)
-#         new_instance.pk = None
-#
-#         # new_instance.copy_relations(self)
-#
-#         return new_instance
-#
-#     def copy_relations(self, from_instance):
-#
-#         # copy over the content
-#         self.copy_content(from_instance)
-#
-#         # add any tags from the 'from_instance'
-#         self.tags.add(*list(from_instance.tags.names()))
-#
-#         # Before copying related objects from the old instance, the ones
-#         # on the current one need to be deleted. Otherwise, duplicates may
-#         # appear on the public version of the page
-#         self.lessons.delete()
-#
-#         for lesson_item in from_instance.lessons.all():
-#             # copy the lesson item and set its linked topic
-#             new_lesson = lesson_item.copy()
-#             new_lesson.topic = self
-#
-#             # save the new topic instance
-#             new_lesson.save()
-#
-#             new_lesson.copy_relations(lesson_item)
-#
-#
-#         # get the list of plugins in the 'from_instance'
-#         #plugins = from_instance.summary.get_plugins_list()
-#
-#         # copy 'from_instance's intro plugins to this object's intro
-#         #copy_plugins_to(plugins, self.summary, no_signals=True)
-#
-#     def copy_content(self, from_instance):
-#         # get the list of plugins in the 'from_instance's intro
-#         plugins = from_instance.summary.get_plugins_list()
-#
-#         # copy 'from_instance's intro plugins to this object's intro
-#         copy_plugins_to(plugins, self.summary, no_signals=True)
-#
-#     def delete(self, *args, **kwargs):
-#         #print("----- in topic overridden delete")
-#         # self.cleanup_placeholders()
-#
-#         placeholders = [self.summary]
-#
-#         # Before copying related objects from the old instance, the ones
-#         # on the current one need to be deleted. Otherwise, duplicates may
-#         # appear on the public version of the page
-#         self.lessons.delete()
-#
-#
-#         super(Topic, self).delete(*args, **kwargs)
-#
-#         for ph in placeholders:
-#             ph.clear()
-#             ph.delete()
-#
-#     def get_Publishable_parent(self):
-#         return self.module
-#
-#     @property
-#     def is_dirty(self):
-#
-#         # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
-#         # edited after the most recent change date.
-#
-#         result = any([
-#             super(Topic, self).is_dirty,
-#             self.summary.cmsplugin_set.filter(
-#                 changed_date__gt=self.get_Publishable_parent().published_copy.creation_date).exists(),
-#         ])
-#
-#         if result: return result
-#
-#         for t in self.lessons.all():
-#             if t.is_dirty: return True
-#
-#         return False
-
-
 class Lesson(Publication):
     # class Lesson(PublicationChild):
     # objects = IterativeDeletion_Manager()
@@ -548,8 +186,8 @@ class Lesson(Publication):
 
         new_instance = deepcopy(self)
         new_instance.pk = None
+        # new_instance.ref_id = None
 
-        # new_instance.copy_relations(self)
 
         return new_instance
 
@@ -577,7 +215,7 @@ class Lesson(Publication):
 
             new_section.copy_relations(section_item)
 
-        for sub_lesson in from_instance.sub_lessons:
+        for sub_lesson in from_instance.sub_lessons.all():
             # copy the sub-lesson items and set their linked parent_lesson to this new instance
             new_lesson = sub_lesson.copy()
             new_lesson.parent_lesson = self
@@ -596,11 +234,13 @@ class Lesson(Publication):
 
     # TODO: Watch for this, as formsets may not access this with update
     def save(self, **kwargs):
-        print('---- in custom lesson save')
+        # print('---- in custom lesson save')
         # set depth level on save
         if self.parent_lesson:
             self.depth = self.parent_lesson.depth + 1
 
+
+        # TODO: this needs to be flipped
         # based on depth level set the depth label
         self.depth_label = {
             0:'Module',
@@ -610,6 +250,7 @@ class Lesson(Publication):
 
 
         super(Lesson, self).save(**kwargs)
+
     # def save_base(self, raw=False, force_insert=False, force_update=False, using=None, update_fields=None):
     #     super().save_base(raw, force_insert, force_update, using, update_fields)
 
@@ -630,7 +271,9 @@ class Lesson(Publication):
     def validate_unique(self, exclude=None):
         # add a conditional unique constraint to prevent
         #   creation of multiple drafts with the same name
-        if self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
+        #   this is only valid if a base lesson so check that it's not a root lesson too
+        #   TODO: watch this, it could be inadequate when 'lesson-copy' becomes enabled later in development
+        if not self.parent_lesson and self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
             raise ValidationError('A Draft-Lesson with this name already exists')
 
         return super(Lesson, self).validate_unique(exclude)
@@ -651,47 +294,83 @@ class Lesson(Publication):
         if not self.parent_lesson:
 
             # if this root lesson is not published, return dirty
-            if not self.is_published(): return True
+            #if not self.is_published(): return True
 
-            # otherwise check that no plugin in this lesson
-            # was saved after last publish's creation date
+            # TODO: need to check if this is the draft copy or not
+
+
+            # if this is the draft instance, and not published return true
+            if self.publish_status == Publication.DRAFT_ONLY:
+                return True
+
+            # get the publication date to check against
+
+            pub_date = None
+
+
+            if self.publish_status == Publication.PUBLISHED:
+                # if this is a published draft-copy
+                pub_date = self.published_copy.published_date
+            else:
+                # if this is the current publication
+                pub_date = self.published_date
+
+            # if this is a published copy
             result = any([
                 super(Lesson, self).is_dirty,
                 self.summary.cmsplugin_set.filter(
-                    changed_date__gt=self.published_copy.creation_date).exists(),
+                    changed_date__gt=pub_date).exists(),
             ])
 
-            if result: return result
-
+            if result:
+                return result
 
             # if this lesson is clean, check it's children
             for t in self.sub_lessons.all():
-                if t.is_dirty: return True
+                if t.is_dirty:
+                    return True
 
             for t in self.sections.all():
-                if t.is_dirty: return True
+                if t.is_dirty:
+                    return True
+
 
         else:
             # if this lesson is a child lesson, check if it's root lesson has
             # a published copy, if not mark dirty
-            if not self.get_Publishable_parent().is_published(): return True
+            parent_publication = self.get_Publishable_parent()
+
+            if parent_publication.publish_status == Publication.DRAFT_ONLY: return True
+
+            pub_date = None
+            if parent_publication.publish_status == Publication.PUBLISHED:
+                # if this is a published draft-copy
+                pub_date = parent_publication.published_copy.published_date
+            else:
+                # if this is the current publication
+                pub_date = parent_publication.published_date
+
 
             # otherwise, check that this lesson has no plugins saved
             #   after the publication date
             result = any([
-                super(Lesson, self).is_dirty,
+                #super(Lesson, self).is_dirty,
+                self.changed_date > pub_date,
                 self.summary.cmsplugin_set.filter(
-                    changed_date__gt=self.get_Publishable_parent().published_copy.creation_date).exists(),
+                    changed_date__gt=pub_date).exists(),
             ])
 
-            if result: return result
+            if result:
+                return result
 
             # if not check children
             for t in self.sub_lessons.all():
-                if t.is_dirty: return True
+                if t.is_dirty:
+                    return True
 
             for t in self.sections.all():
-                if t.is_dirty: return True
+                if t.is_dirty:
+                    return True
 
         return False
 
@@ -710,7 +389,7 @@ class Lesson(Publication):
         result = any([
             super(Lesson, self).is_dirty,
             self.summary.cmsplugin_set.filter(
-                changed_date__gt=self.published_copy.creation_date).exists(),
+                changed_date__gt=self.published_copy.published_date).exists(),
         ])
 
         if result: return result

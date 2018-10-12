@@ -85,12 +85,12 @@ class Publication(CreationTrackingBaseModel):
 
     # define the status states
     DRAFT_ONLY = "draft_only"
-    #PENDING = "pending_changes"
     PUBLISHED = "draft_published"
 
     # published states
     PUBLICATION_OBJECT = "current_publication"
     PAST_PUBLICATION = "past_publication"
+    #PUB_CHILD = "pub_child"
 
     STATUS = (
         # draft States
@@ -101,6 +101,7 @@ class Publication(CreationTrackingBaseModel):
         # Published Copy states
         (PUBLICATION_OBJECT, "Current Publication"),
         (PAST_PUBLICATION, "Previously Published Copy"),
+        #(PUB_CHILD, "Publication Child"),
     )
 
     publish_status = models.CharField(max_length=25, choices=STATUS, default=DRAFT_ONLY, editable=False)
@@ -232,7 +233,7 @@ class Publication(CreationTrackingBaseModel):
             public_page.is_draft = False
             public_page.publish_status = self.PUBLICATION_OBJECT
 
-            public_page.published_date = datetime.datetime.now()
+            #public_page.published_date = datetime.datetime.now()
 
             # save publication to generate instance
             public_page.save()
@@ -244,11 +245,12 @@ class Publication(CreationTrackingBaseModel):
             #self.publish_status = self.PUBLISHED
             self.published_copy = public_page
 
-
-
-
             # save the draft with the new reference to the public copy
             self.save()
+
+            # only way to ensure published time is correct is to save it after the draft
+            public_page.published_date = datetime.datetime.now()
+            public_page.save()
 
         # save the new published copy
         #public_page.save()
@@ -379,7 +381,7 @@ class PublicationChild(CreationTrackingBaseModel):
 
         # theoretically this cant be right either...
         # publish draft (sets changed) -> edit child -> edit draft (sets changed) -> boom... wrong
-        return self.changed_date > self.get_Publishable_parent().published_copy.changed_date
+        return self.changed_date > self.get_Publishable_parent().published_copy.published_date
 
     def has_draft_access(self, user):
         '''
@@ -547,6 +549,8 @@ class PolyPublication(PolyCreationTrackingBaseModel):
             # save the draft with the new reference to the public copy
             self.save()
 
+
+
         # save the new published copy
         # public_page.save()
 
@@ -660,7 +664,7 @@ class PolyPublicationChild(PolyCreationTrackingBaseModel):
 
         # theoretically this cant be right either...
         # publish draft (sets changed) -> edit child -> edit draft (sets changed) -> boom... wrong
-        return self.changed_date > self.get_Publishable_parent().published_copy.changed_date
+        return self.changed_date > self.get_Publishable_parent().published_copy.published_date
 
     def has_draft_access(self, user):
         '''
