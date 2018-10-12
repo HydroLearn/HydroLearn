@@ -390,7 +390,7 @@ class BaseLessonFormset(BaseInlineFormSet):
             #marked_delete = lesson.cleaned_data.get('DELETE')
 
             if curr_name in encountered_name:
-                lesson.add_error("name","Each Lesson name must be unique within a Topic.")
+                lesson.add_error("name","Each Lesson name must be unique within it's parent.")
 
             #if not marked_delete:
             encountered_name.append(curr_name)
@@ -469,7 +469,7 @@ class BaseSectionFormset(BasePolymorphicInlineFormSet):
 
             if curr_name in encountered_name:
                 #raise forms.ValidationError("Each Section Name must be unique within a Topic!")
-                section.add_error('name', "Each Section Name must be unique within a Topic!")
+                section.add_error('name', "Each Section Name must be unique within a Lesson!")
 
             #if not marked_delete:
             encountered_name.append(curr_name)

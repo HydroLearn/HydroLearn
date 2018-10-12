@@ -603,16 +603,19 @@ var FormManager = {
             var error_list = this.generate_error_list(errors)
 
             $('#module_form_error_message').html('There was an error processing your submitted form!')
-
             $('#module_form_error_message').append(error_list)
-
             $('#module_form_error_message').show()
 
             //will need to find FM_forms based on hierarchy
             // grab FM_form_errors container
+            debugger;
+            sections_formset = $(this.form_selector).find('.FM_formset.FM_initialized[FM-Type="SECTIONS"]').first()
+            sublessons_formset = $(this.form_selector).find('.FM_formset.FM_initialized[FM-Type="LESSONS"]').first()
 
-            child_formset = $(this.form_selector).find('.FM_formset.FM_initialized').first()
-            this._populate_formset_errors(child_formset, error_collection.formset)
+
+            this._populate_formset_errors(sections_formset, error_collection.sections)
+            this._populate_formset_errors(sublessons_formset, error_collection.sublessons)
+
 
         }
 
@@ -645,6 +648,7 @@ var FormManager = {
 
     _populate_formset_errors: function(formset_object, formset_errors){
 
+        // this is too broad, needs to be filtered by forms
         var forms = formset_object.find('.FM_form').filter(function(){
             return ($(this).closest('.FM_formset.FM_initialized').is(formset_object))
         })
@@ -654,17 +658,27 @@ var FormManager = {
                 return $(this).closest('.FM_form').is(forms[index])
             })
 
-            var error_list_obj = FormManager.generate_error_list(JSON.parse(formset_errors[index].errors))
+            debugger;
+            if(formset_errors.length){
 
-            if(error_list_obj != ""){
-                error_container.html(error_list_obj)
-                error_container.show()
+                var error_list_obj = FormManager.generate_error_list(JSON.parse(formset_errors[index].errors))
+
+                if(error_list_obj != ""){
+                    error_container.html(error_list_obj)
+                    error_container.show()
+
+                    if(!!formset_errors[index].sections){
+                        section_formset = $(forms[index]).find('.FM_formset.FM_initialized[FM-Type="SECTIONS"]').first()
+                        FormManager._populate_formset_errors(section_formset, formset_errors[index].sections)
+                    }
+
+                    if(!!formset_errors[index].sublessons){
+                        sublessons_formset = $(forms[index]).find('.FM_formset.FM_initialized[FM-Type="LESSONS"]').first()
+                        FormManager._populate_formset_errors(sublessons_formset, formset_errors[index].sublessons)
+                    }
+                }
             }
 
-            if(!!formset_errors[index].formset){
-                child_formset = $(forms[index]).find('.FM_formset.FM_initialized').first()
-                FormManager._populate_formset_errors(child_formset, formset_errors[index].formset)
-            }
 
         })
 
