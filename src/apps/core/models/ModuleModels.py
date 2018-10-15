@@ -208,6 +208,7 @@ class Lesson(Publication):
         for section_item in from_instance.sections.all():
             # copy the section items and set their linked lesson to this new instance
             new_section = section_item.copy()
+            new_section.ref_id = section_item.ref_id
             new_section.lesson = self
 
             # save the copied section instance
@@ -218,6 +219,8 @@ class Lesson(Publication):
         for sub_lesson in from_instance.sub_lessons.all():
             # copy the sub-lesson items and set their linked parent_lesson to this new instance
             new_lesson = sub_lesson.copy()
+
+            new_lesson.ref_id = sub_lesson.ref_id
             new_lesson.parent_lesson = self
 
             # save the copied sub-lesson instance
@@ -418,10 +421,8 @@ class Section(PolyPublicationChild):
 
     parent = 'lesson'
 
-    ref_id = RandomCharField(unique=True,
-                             length=8,
-                             include_punctuation=False,
-                             )
+    #ref_id = RandomCharField(unique=True,length=8,include_punctuation=False,)
+    ref_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
     #ref_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
@@ -447,9 +448,8 @@ class Section(PolyPublicationChild):
     slug = AutoSlugField(u'slug',
                          blank=False,
                          default='',
-                         max_length=64,
+                         max_length=8,
                          unique=True,
-                         # populate_from=('name',),
                          populate_from=('ref_id',),
                          help_text=u'Please enter a unique slug for this Section (can autogenerate from name field)',
                          )
