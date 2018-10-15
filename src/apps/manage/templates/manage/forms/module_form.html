@@ -34,8 +34,8 @@
     FORMSET HEADERS
 -->
 
-<!--<div class="FM_formset_header" FM-Type="LESSONS" FM-Base-Prefix="{{ sub_lessons.prefix }}" FM-Prefix="{{ sub_lessons.prefix }}">-->
-<div class="FM_formset_header" FM-Type="LESSONS" FM-Base-Prefix="{{ sub_lessons.prefix }}">
+
+<div class="FM_formset_header" FM-Max-Depth=2 FM-Type="LESSONS" FM-Base-Prefix="{{ sub_lessons.prefix }}">
         <div class="FM_formset_errors">{{ sub_lessons.non_form_errors }}</div>
         <div class="FM_mgmt_form">{{ sub_lessons.management_form }}</div>
 
@@ -58,7 +58,7 @@
 </div>
 
 
-<!--<div class="FM_formset_header" FM-Type="SECTIONS" FM-Base-Prefix="{{ sections.prefix }}" FM-Prefix="{{ sections.prefix }}">-->
+
 <div class="FM_formset_header" FM-Type="SECTIONS" FM-Base-Prefix="{{ sections.prefix }}">
 
     <div class="FM_formset_errors">{{ sections.non_form_errors }}</div>

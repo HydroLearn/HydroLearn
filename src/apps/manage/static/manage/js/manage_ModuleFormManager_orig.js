@@ -41,6 +41,8 @@
 
             - FM-poly-type- the polymorphic type of a form
 
+            - FM-Max-Depth -    for nested formsets, set a maximum nesting level
+                                for the formset's type, set this on the formset header
 
         CSS classes:
 
@@ -178,18 +180,9 @@ var FormManager = {
         var formset_errors = formset_element.children('.FM_formset_errors')
 
 
-        //$(empty_form).find('.FM_formset_errors') replaceWith(formset_errors)
         // collect any provided formset_forms
         var formset_forms = formset_element.children('.FM_formset_forms[FM-type='+ formset_type+']')
 
-        // determine if this formset has a parent
-        // TODO: this needs to be deterministic (i.e. look for this header,
-        //var has_parent = (!!formset_element.attr('FM-parent'))
-
-
-        // potentially DEPRECIATED
-        // update the new header's prefix to the declared formset prefix
-        //formset_header.attr('FM-prefix', formset_prefix)
 
         // replace header's empty mgmt form with instantiation
         if(formset_mgmt_form.length){
@@ -260,12 +253,26 @@ var FormManager = {
 
         // now that the formset forms have been processed, remove from DOM
         formset_forms.remove();
-
         formset_header.append(forms_container)
-
         formset_header.prependTo(formset_element)
 
-        formset_header.show()
+
+
+        // check depth level of this formset
+        var depth_limit = FormManager.get_depth_limit(formset_type)
+        var depth = FormManager.get_formset_depth(formset_element)
+
+        // if at the specified depth limit hide this header
+        if(typeof(depth_limit) != 'undefined' && depth >= depth_limit){
+            formset_header.hide()
+
+        }else {
+            formset_header.show()
+
+        }
+
+
+
 
         // set click events for each 'polymorphic' add button declared for this object
         //debugger
@@ -381,6 +388,14 @@ var FormManager = {
 //        return $('.FM_formset_forms[FM-Prefix="'+ formset_prefix +'"]').find('.FM_form[FM-Type="'+ formset_type +'"]').length
 //    },
 
+    get_formset_depth: function(formset){
+        return $(formset).parents('.FM_formset').length
+    },
+
+    get_depth_limit: function(formset_type){
+        return this.formset_header_templates[formset_type].attr('FM-Max-depth')
+    },
+
     move_form_up: function(form){
         var prev_form = $(form).prev('.FM_form[fm-type="'+form.attr('fm-type') +'"]')
 
@@ -408,6 +423,7 @@ var FormManager = {
         }
 
     },
+
 
     // set the values for 'position' for each form of a passed formset, based on current position
     update_positions: function(formset){
@@ -487,7 +503,30 @@ var FormManager = {
 
             // for each nested formset of the new form, initialize the formset header
             new_form.find('.FM_formset').each(function() {
+
+
+                // check if at the depth limit for this type
+                /* TODO : not the right place to do this... (should happen in init_formset
+                var type = $(this).attr('FM-type')
+                var depth_limit = FormManager.get_depth_limit(type)
+                var depth = FormManager.get_formset_depth($(this))
+
+
+                if(typeof(depth_limit) == 'undefined' || depth < depth_limit){
+                    // if within depth specifications, or no specifications set initialize child
+                    FormManager.initialize_formset($(this))
+
+                }else{
+                    // TODO: cant do this, still need header definition
+                    // otherwise remove this formset from the form
+
+                    $(this).remove();
+                }
+
+                */
+
                 FormManager.initialize_formset($(this))
+
             });
 
 
@@ -608,7 +647,7 @@ var FormManager = {
 
             //will need to find FM_forms based on hierarchy
             // grab FM_form_errors container
-            debugger;
+            //debugger;
             sections_formset = $(this.form_selector).find('.FM_formset.FM_initialized[FM-Type="SECTIONS"]').first()
             sublessons_formset = $(this.form_selector).find('.FM_formset.FM_initialized[FM-Type="LESSONS"]').first()
 
@@ -658,7 +697,7 @@ var FormManager = {
                 return $(this).closest('.FM_form').is(forms[index])
             })
 
-            debugger;
+            //debugger;
             if(formset_errors.length){
 
                 var error_list_obj = FormManager.generate_error_list(JSON.parse(formset_errors[index].errors))

@@ -46,9 +46,13 @@ class Lesson(Publication):
     #   Fields
     ########################################
 
+    # boolean field representing if a lesson is (soft) deleted
+    #   TODO: this has not been factored into the system yet, implementation will require revision of delete method
+    is_deleted = models.BooleanField(default=False)
+
     # the reference id for a lesson (used in slug generation)
+    #   this reference id will be maintained for all copies of this lesson
     ref_id = models.UUIDField(default=uuid.uuid4, editable=False)
-    # ref_id = RandomCharField(unique=True,length=8,include_punctuation=False,)
 
     # marks the parent lesson for a lesson
     #       this field will be auto-populated by the generated forms
@@ -424,7 +428,9 @@ class Section(PolyPublicationChild):
     #   Fields
     ########################################
 
-    parent = 'lesson'
+    # boolean field representing if a lesson is (soft) deleted
+    #   TODO: this has not been factored into the system yet, implementation will require revision of delete method
+    is_deleted = models.BooleanField(default=False)
 
     #ref_id = RandomCharField(unique=True,length=8,include_punctuation=False,)
     ref_id = models.UUIDField(default=uuid.uuid4, editable=False)
