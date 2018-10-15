@@ -191,7 +191,7 @@ class Lesson(Publication):
 
         return new_instance
 
-    def copy_relations(self, from_instance):
+    def copy_relations(self, from_instance, preserve_child_ref_id=True):
 
         # copy over the content
         self.copy_content(from_instance)
@@ -208,7 +208,10 @@ class Lesson(Publication):
         for section_item in from_instance.sections.all():
             # copy the section items and set their linked lesson to this new instance
             new_section = section_item.copy()
-            new_section.ref_id = section_item.ref_id
+
+            if preserve_child_ref_id:
+                new_section.ref_id = section_item.ref_id
+
             new_section.lesson = self
 
             # save the copied section instance
@@ -220,7 +223,9 @@ class Lesson(Publication):
             # copy the sub-lesson items and set their linked parent_lesson to this new instance
             new_lesson = sub_lesson.copy()
 
-            new_lesson.ref_id = sub_lesson.ref_id
+            if preserve_child_ref_id:
+                new_lesson.ref_id = sub_lesson.ref_id
+
             new_lesson.parent_lesson = self
 
             # save the copied sub-lesson instance
