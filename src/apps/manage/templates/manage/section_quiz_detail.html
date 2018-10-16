@@ -28,19 +28,13 @@
                 <!-- Output any related tags -->
                 <h4>Tags</h4>
                 <ul>
-                    <li><span style="font-weight: bold; font-style: italic">Module Tags: </span>{{ object.lesson.topic.module.tags.names | join:", " }}</li>
-                    <li><span style="font-weight: bold; font-style: italic">Topic Tags: </span>{{ object.lesson.topic.tags.names | join:", " }}</li>
-                    <li><span style="font-weight: bold; font-style: italic">Lesson Tags: </span>{{ object.lesson.tags.names | join:", " }}</li>
+                    <li><span style="font-weight: bold; font-style: italic">Inherited Tags: </span>{{ object.lesson.tags.names | join:", " }}</li>
                     <li><span style="font-weight: bold; font-style: italic">Tags: </span>{{ object.tags.names | join:", " }}</li>
                 </ul>
+
                 <h4>Parent Objects</h4>
                 <ul>
-                    <li><span style="font-weight: bold; font-style: italic">Module: </span><a href="{{object.lesson.topic.module.manage_url}}">{{ object.lesson.topic.module.name}}</a></li>
-                    <ul>
-                        <li><span style="font-weight: bold; font-style: italic">Topic: </span><a href="{{object.lesson.topic.manage_url}}">{{ object.lesson.topic.name}}</a></li>
-                        <ul><li><span style="font-weight: bold; font-style: italic">Lesson: </span><a href="{{object.lesson.manage_url}}">{{ object.lesson.name}}</a></li></ul>
-                    </ul>
-
+                    <li><a href="{{object.lesson.manage_url}}">{{ object.lesson.name}}</a></li>
                 </ul>
             </div>
         </div>

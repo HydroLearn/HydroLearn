@@ -39,8 +39,8 @@ from django.views.generic.edit import FormMixin
 from djangocms_installer.compat import unicode
 
 from src.apps.core.models.ModuleModels import (
-    Module,
-    Topic,
+    # Module,
+    # Topic,
     Lesson,
     Section,
 )
@@ -213,10 +213,11 @@ class Index(LoginRequiredMixin, TemplateView):
         return super(Index, self).render_to_response(context, **kwargs)
 
 class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
-    model = Module
-    context_object_name = "Module"
+    model = Lesson
+    context_object_name = "Lesson"
 
-    form_class = manage_ModuleForm
+    # form_class = manage_ModuleForm
+    form_class = manage_LessonForm
     template_name = 'manage/forms/module_form.html'
 
     success_url = '/manage/success/'
@@ -232,10 +233,12 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        Topic_formset = inlineTopicFormset()
+        subLesson_formset = inlineLessonFormset()
+        section_formset = inlineSectionFormset()
         return self.render_to_response(
             self.get_context_data(form=form,
-                                  Topics=Topic_formset,
+                                  sub_lessons=subLesson_formset,
+                                  sections=section_formset,
                                   )
         )
 
@@ -248,44 +251,111 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        Topic_formset = inlineTopicFormset(self.request.POST)
-        if form.is_valid() and Topic_formset.is_valid():
-            return self.form_valid(form, Topic_formset)
+        sections_formset = inlineSectionFormset(self.request.POST)
+        subLesson_formset = inlineLessonFormset(self.request.POST)
+
+        if form.is_valid() and subLesson_formset.is_valid() and sections_formset.is_valid():
+            return self.form_valid(form, sections_formset, subLesson_formset)
         else:
-            return self.form_invalid(form, Topic_formset)
+            return self.form_invalid(form, sections_formset, subLesson_formset)
 
-    def form_invalid(self, form, topics, *args, **kwargs):
+    def get_lesson_formset_errors(self, lessons_formset):
+        return [{
+            'errors': lessonForm.errors.as_json(),
+            'sublessons': self.get_lesson_formset_errors(lessonForm.sub_lessons),
+            'sections': self.get_section_formset_errors(lessonForm.child_sections),
+        } for lessonForm in lessons_formset.forms]
 
-        # trigger a full clean on the topics/child sections to populate form errors
-        #topics.errors
-        #[section_fs.errors for section_fs in [form.child_sections for form in topics.forms]]
+    def get_section_formset_errors(self, sections_formset):
+        return [{
+            'errors': sectionForm.errors.as_json(),
+        } for sectionForm in sections_formset.forms]
 
-        #populate form errors for each child lesson, and it's child sections
-        # [lesson_fs.errors for lesson_fs in [
-        #         form.child_lessons for form in topics.forms
-        #     ]
-        #  ]
 
-        error_collection = [{
-            "errors": topicForm.errors.as_json(),
+    def form_invalid(self, form, sections, subLessons, *args, **kwargs):
 
-            "formset": [{
-                "errors": lessonForm.errors.as_json(),
-                "formset": [{
-                    "errors": sectionForm.errors.as_json(),
-                } for sectionForm in lessonForm.child_sections.forms]
-            } for lessonForm in topicForm.child_lessons.forms]
-
-        } for topicForm in topics.forms]
+        # error_collection = [{
+        #     "errors": topicForm.errors.as_json(),
+        #
+        #     "formset": [{
+        #         "errors": lessonForm.errors.as_json(),
+        #         "formset": [{
+        #             "errors": sectionForm.errors.as_json(),
+        #         } for sectionForm in lessonForm.child_sections.forms]
+        #
+        #     } for lessonForm in topicForm.child_lessons.forms]
+        #
+        # } for topicForm in subLessons.forms]
 
         self.ajax_error_dict = {
             "errors": form.errors.as_json(),
-            "formset": error_collection,
+            'sublessons': self.get_lesson_formset_errors(subLessons),
+            "sections": self.get_section_formset_errors(sections),
+            # "formset": error_collection,
         }
 
         return super(manage_ModuleCreateView, self).form_invalid(form)
 
-    def form_valid(self, form, topics, *args, **kwargs):
+    def process_lesson_formset(self, lesson_fs, parent_lesson=None):
+        '''
+        save individual lesson forms of provided formset, set their parent
+        lesson if provided, and process any child sub-lessons and sections
+
+        :param lesson_fs: inline lesson formset
+        :param parent_lesson: parent lesson for formset
+        :return: none
+        '''
+        if lesson_fs:
+            for subLesson_index, subLesson in enumerate(lesson_fs):
+                # instance the subLesson, set its module, created_by, and changed_by fields
+                new_subLesson = subLesson.save(commit=False)
+
+                # print("creating subLesson: ", new_subLesson.name)
+                if parent_lesson:
+                    new_subLesson.parent_lesson = parent_lesson
+
+                new_subLesson.created_by = self.request.user
+                new_subLesson.changed_by = self.request.user
+
+                # potentially this is already provided
+                #new_subLesson.position = subLesson_index
+
+                # save the topic and it's many-to-many relationships (tags)
+                new_subLesson.save()
+                subLesson.save_m2m()
+
+                self.process_section_formset(subLesson.child_sections, new_subLesson)
+                self.process_lesson_formset(subLesson.sub_lessons, new_subLesson)
+
+
+    def process_section_formset(self, section_fs, parent_lesson):
+        '''
+        save individual section forms of a provided formset and set their parent lesson
+
+        :param section_fs: inline section formset
+        :param parent_lesson: parent lesson
+        :return: none
+        '''
+
+        if section_fs:
+            for section_index, section in enumerate(section_fs):
+                # instance the section and set its parent topic, created_by, and changed_by fields
+                new_section = section.save(commit=False)
+
+                new_section.lesson = parent_lesson
+                new_section.created_by = self.request.user
+                new_section.changed_by = self.request.user
+                new_section.position = section_index
+
+                # save the section and it's many-to-many fields (tags)
+                new_section.save()
+                section.save_m2m()
+
+
+
+
+    def form_valid(self, form, sections, subLessons, *args, **kwargs):
+
         '''
         if the Module form itself is valid, perform tests to ensure the topic formset
             in context is valid and if they are,
@@ -294,7 +364,8 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 return form_invalid
 
         :param form: the module form
-        :param topics: the inline topics formset
+        :param sections: the inline section formset
+        :param subLessons: the inline lesson formset
         :param args:
         :param kwargs:
         :return:
@@ -304,81 +375,34 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
             with transaction.atomic():
 
                 # instance the module and set the created-by and updated-by fields
-                new_module = form.save(commit=False)
-                new_module.created_by = self.request.user
-                new_module.changed_by = self.request.user
+                new_lesson = form.save(commit=False)
+                new_lesson.created_by = self.request.user
+                new_lesson.changed_by = self.request.user
 
                 # save the module
-                new_module.save()
+                new_lesson.save()
 
-                # for each topic in the topics formset
-                #print('adding topics (num): ', len(topics.forms))
-                for topic_index, topic in enumerate(topics):
-
-                    # instance the topic, set its module, created_by, and changed_by fields
-                    new_topic = topic.save(commit=False)
-
-                    #print("creating topic: ", new_topic.name)
-                    new_topic.module = new_module
-                    new_topic.created_by = self.request.user
-                    new_topic.changed_by = self.request.user
-                    new_topic.position = topic_index
-
-                    # save the topic and it's many-to-many relationships (tags)
-                    new_topic.save()
-                    topic.save_m2m() # needed to save the tags
-
-                    #print('adding lessons (num): ', len(topic.child_lessons.forms))
-
-                    # for each section in the current topic
-                    for lesson_index, lesson in enumerate(topic.child_lessons):
-                        # instance the section and set its parent topic, created_by, and changed_by fields
-                        new_lesson = lesson.save(commit=False)
-
-                        new_lesson.topic = new_topic
-                        new_lesson.created_by = self.request.user
-                        new_lesson.changed_by = self.request.user
-                        new_lesson.position = lesson_index
-
-                        # save the section and it's many-to-many fields (tags)
-                        new_lesson.save()
-                        lesson.save_m2m()
-
-                        #print('adding sections (num): ', len(lesson.child_sections.forms))
-
-                        # for each section in the current topic
-                        for section_index, section in enumerate(lesson.child_sections):
-                            # instance the section and set its parent topic, created_by, and changed_by fields
-                            new_section = section.save(commit=False)
-
-                            new_section.lesson = new_lesson
-                            new_section.created_by = self.request.user
-                            new_section.changed_by = self.request.user
-                            new_section.position = section_index
-
-                            # save the section and it's many-to-many fields (tags)
-                            new_section.save()
-                            section.save_m2m()
-
-
+                self.process_section_formset(sections, new_lesson)
+                self.process_lesson_formset(subLessons, new_lesson)
 
             #print("returning success")
-            messages.success(self.request, _("Successfully created Module:'%s'" % new_module.name))
+            messages.success(self.request, _("Successfully created Lesson:'%s'" % new_lesson.name))
 
         except ValidationError as err:
             # if there was an error at any point while saving the module or its child formset
             form.add_error(_('The submitted form is invalid'))
             #print("...returning invalid")
 
-            return self.form_invalid(form, topics)
+            return self.form_invalid(form, subLessons)
 
 
         return super(manage_ModuleCreateView, self).form_valid(form)
 
 class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
-    model = Module
+    model = Lesson
     template_name = 'manage/forms/module_form.html'
-    form_class = manage_ModuleForm
+    #form_class = manage_ModuleForm
+    form_class = manage_LessonForm
     success_url = '/manage/success/'
 
     # ajax response mixin parameter
@@ -400,10 +424,12 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
 
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        Topic_formset = inlineTopicFormset(instance=self.object)
+        subLesson_formset = inlineLessonFormset(instance=self.object)
+        section_formset = inlineSectionFormset(instance=self.object)
         return self.render_to_response(
             self.get_context_data(form=form,
-                                  Topics=Topic_formset,
+                                  sub_lessons=subLesson_formset,
+                                  sections=section_formset,
                                   )
         )
 
@@ -423,136 +449,154 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
 
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        Topic_formset = inlineTopicFormset(self.request.POST, instance=self.object)
-        if form.is_valid() and Topic_formset.is_valid():
-            return self.form_valid(form, Topic_formset)
+        subLesson_formset = inlineLessonFormset(self.request.POST, instance=self.object)
+        section_formset = inlineSectionFormset(self.request.POST, instance=self.object)
+
+        #Topic_formset = inlineTopicFormset(self.request.POST, instance=self.object)
+        #if form.is_valid() and Topic_formset.is_valid():
+        if form.is_valid() and subLesson_formset.is_valid() and section_formset.is_valid():
+            return self.form_valid(form, section_formset, subLesson_formset)
         else:
-            return self.form_invalid(form, Topic_formset)
+            return self.form_invalid(form, section_formset, subLesson_formset)
 
 
-    def form_invalid(self, form, topics, *args, **kwargs):
-        #print("xxxxxxxx in custom edit form_invalid xxxxxxxx")
+    def get_lesson_formset_errors(self, lessons_formset):
+        return [{
+            'errors': lessonForm.errors.as_json(),
+            'sublessons': self.get_lesson_formset_errors(lessonForm.sub_lessons),
+            'sections': self.get_section_formset_errors(lessonForm.child_sections),
+        } for lessonForm in lessons_formset.forms]
 
-        # trigger a full clean on the topics/child sections to populate form errors
+    def get_section_formset_errors(self, sections_formset):
+        return [{
+            'errors': sectionForm.errors.as_json(),
+        } for sectionForm in sections_formset.forms]
 
-        #[section_fs.errors for section_fs in [form.child_sections for form in topics.forms]]
-        #[lesson_fs.errors for lesson_fs in [form.child_lessons for form in topics.forms]]
 
-        error_collection = [{
-            "errors": topicForm.errors.as_json(),
-
-            "formset": [{
-                "errors": lessonForm.errors.as_json(),
-                "formset": [{
-                    "errors": sectionForm.errors.as_json(),
-                } for sectionForm in lessonForm.child_sections.forms]
-            } for lessonForm in topicForm.child_lessons.forms]
-
-        } for topicForm in topics.forms]
+    # def form_invalid(self, form, topics, *args, **kwargs):
+    def form_invalid(self, form, sections, subLessons, *args, **kwargs):
+        # error_collection = [{
+        #     "errors": topicForm.errors.as_json(),
+        #
+        #     "formset": [{
+        #         "errors": lessonForm.errors.as_json(),
+        #         "formset": [{
+        #             "errors": sectionForm.errors.as_json(),
+        #         } for sectionForm in lessonForm.child_sections.forms]
+        #     } for lessonForm in topicForm.child_lessons.forms]
+        #
+        # } for topicForm in topics.forms]
+        #
+        # self.ajax_error_dict = {
+        #     "errors": form.errors.as_json(),
+        #     "formset": error_collection,
+        # }
 
         self.ajax_error_dict = {
             "errors": form.errors.as_json(),
-            "formset": error_collection,
+            'sublessons': self.get_lesson_formset_errors(subLessons),
+            "sections": self.get_section_formset_errors(sections),
+            # "formset": error_collection,
         }
 
         return super(manage_ModuleEditView, self).form_invalid(form)
 
-    def form_valid(self, form, topics):
 
+    def process_lesson_formset(self, lesson_fs, parent_lesson=None):
+        '''
+        save individual lesson forms of provided formset, set their parent
+        lesson if provided, and process any child sub-lessons and sections
+
+        :param lesson_fs: inline lesson formset
+        :param parent_lesson: parent lesson for formset
+        :return: none
+        '''
+
+        if lesson_fs:
+            # instantiate the lesson instances (contains both edited/new topics)
+            lesson_fs.save(commit=False)
+
+            # set the created_by and parent for any new lessons
+            for new_lesson in lesson_fs.new_objects:
+                new_lesson.created_by = self.request.user
+                new_lesson.parent_lesson = parent_lesson
+
+            # delete any lessons marked for deletion
+            for deleted_lesson in lesson_fs.deleted_objects:
+                deleted_lesson.delete()
+
+            # process formset
+            for changed_lesson in lesson_fs:
+
+                # if not marked for deletion
+                if not changed_lesson.cleaned_data.get(DELETION_FIELD_NAME):
+                    # get the current lesson instance
+                    curr_lesson = changed_lesson.save(commit=False)
+
+                    # set who has just updated this lesson
+                    curr_lesson.changed_by = self.request.user
+
+                    # save the instance and it's m2m relationships (tags)
+                    curr_lesson.save()
+                    changed_lesson.save_m2m()
+
+                    # process any child formsets of this lesson
+                    self.process_section_formset(changed_lesson.child_sections, curr_lesson)
+                    self.process_lesson_formset(changed_lesson.sub_lessons, curr_lesson)
+
+
+    def process_section_formset(self, section_fs, parent_lesson):
+        '''
+        save individual section forms of a provided formset and set their parent lesson
+
+        :param section_fs: inline section formset
+        :param parent_lesson: parent lesson
+        :return: none
+        '''
+
+        if section_fs:
+            # instantiate the section instances
+            section_fs.save(commit=False)
+
+            # if there are any new sections, add in the created_by value
+            for new_section in section_fs.new_objects:
+                new_section.created_by = self.request.user
+                new_section.topic = parent_lesson
+
+            # delete any sections marked for deletion
+            for deleted_section in section_fs.deleted_objects:
+                deleted_section.delete()
+
+            # process formset
+            for changed_section in section_fs:
+
+                # if not marked for deletion
+                if not changed_section.cleaned_data.get(DELETION_FIELD_NAME):
+                    # instantiate the edited section
+                    curr_section = changed_section.save(commit=False)
+
+                    # set changed_by
+                    curr_section.changed_by = self.request.user
+
+                    # save the section
+                    curr_section.save()
+                    changed_section.save_m2m()
+
+    # def form_valid(self, form, topics):
+    def form_valid(self, form, sections, subLessons, *args, **kwargs):
         try:
             with transaction.atomic():
 
                 # instantiate the module and set it's changed_by field
-                new_module = form.save(commit=False)
-                new_module.changed_by = self.request.user
+                new_lesson = form.save(commit=False)
+                new_lesson.changed_by = self.request.user
 
                 # save the module and its many-to-many relations (tags)
-                new_module.save()
+                new_lesson.save()
                 form.save_m2m()
 
-
-                # instantiate the topic instances (contains both edited/new topics)
-                topics.save(commit=False)
-
-                # if any of the submitted topics are new, add in the 'created_by' value
-                #   and set module to current
-                for new_topic in topics.new_objects:
-                    new_topic.created_by = self.request.user
-
-                # delete any topics marked for deletion
-                for deleted_topic in topics.deleted_objects:
-                    deleted_topic.delete()
-
-                #for changed_topic in topic_instances: # changed topic is a topic instance
-                for changed_topic in topics: # changed topic is a topic form
-
-                    if not changed_topic.cleaned_data.get(DELETION_FIELD_NAME):
-                        # get the current topic instance
-                        curr_topic = changed_topic.save(commit=False)
-
-                        # set who has just updated this topic
-                        curr_topic.changed_by = self.request.user
-
-
-                        # save the instance and it's m2m relationships (tags)
-                        curr_topic.save()
-                        changed_topic.save_m2m()  # needed to save the tags
-
-                        # if there are child sections in this topic process them as well
-                        if changed_topic.child_lessons.forms:
-
-                            # instantiate the child section
-                            changed_topic.child_lessons.save(commit=False)
-
-                            # if there are any new sections, add in the created_by value
-                            for new_lesson in changed_topic.child_lessons.new_objects:
-                                new_lesson.created_by = self.request.user
-                                new_lesson.topic = curr_topic
-
-                            for deleted_lesson in changed_topic.child_lessons.deleted_objects:
-                                deleted_lesson.delete()
-
-                            for changed_lesson in changed_topic.child_lessons:
-
-                                if not changed_lesson.cleaned_data.get(DELETION_FIELD_NAME):
-                                    # instantiate the edited section
-                                    curr_lesson = changed_lesson.save(commit=False)
-
-                                    # set changed_by
-                                    curr_lesson.changed_by = self.request.user
-
-                                    # save the section
-                                    curr_lesson.save()
-                                    changed_lesson.save_m2m()
-
-                                    # if there are child sections in this topic process them as well
-                                    if changed_lesson.child_sections.forms:
-
-                                        # instantiate the child section
-                                        changed_lesson.child_sections.save(commit=False)
-
-                                        # if there are any new sections, add in the created_by value
-                                        for new_section in changed_lesson.child_sections.new_objects:
-                                            new_section.created_by = self.request.user
-                                            new_section.topic = curr_topic
-
-                                        for deleted_section in changed_lesson.child_sections.deleted_objects:
-                                            deleted_section.delete()
-
-                                        for changed_section in changed_lesson.child_sections:
-
-                                            if not changed_section.cleaned_data.get(DELETION_FIELD_NAME):
-                                                # instantiate the edited section
-                                                curr_section = changed_section.save(commit=False)
-
-                                                # set changed_by
-                                                curr_section.changed_by = self.request.user
-
-                                                # save the section
-                                                curr_section.save()
-                                                changed_section.save_m2m()
-
-
+                self.process_section_formset(sections, new_lesson)
+                self.process_lesson_formset(subLessons, new_lesson)
 
         except ValidationError as err:
             # if there was an error at any point during save of module or topic formset
@@ -560,13 +604,13 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
             form.add_error(None, _(err))
             return self.form_invalid(form)
 
-        messages.success(self.request, _("Successfully edited Module:'%s'" % new_module.name))
+        messages.success(self.request, _("Successfully edited Module:'%s'" % new_lesson.name))
         return super(manage_ModuleEditView,self).form_valid(form)
 
 class manage_ModulePublishIndex(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DetailView):
     template_name = 'manage/forms/module_publication_index.html'
     success_url = '/manage/'
-    model = Module
+    model = Lesson
 
     def get_object(self, queryset=None):
         # get the default object based on the slug
@@ -581,7 +625,7 @@ class manage_ModulePublishIndex(LoginRequiredMixin, PublicationViewMixin, Owners
             else:
                 return None
 
-
+# TODO: FIXIT
 class manage_ModulePublish(LoginRequiredMixin, FormView):
     template_name = 'manage/forms/module_publish_form.html'
     form_class = Module_ActionConfirmationForm
@@ -591,18 +635,18 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
 
         if 'publish' in self.request.POST:
 
-            draft_instance = get_object_or_404(Module, slug=self.kwargs['slug'])
+            draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
             draft_instance.publish()
 
 
         if 'unpublish' in self.request.POST:
 
-            draft_instance = get_object_or_404(Module, slug=self.kwargs['slug'])
+            draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
             draft_instance.unpublish()
 
         if 'revert' in self.request.POST:
 
-            draft_instance = get_object_or_404(Module, slug=self.kwargs['slug'])
+            draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
             draft_instance.revert_to_live()
 
         return super(manage_ModulePublish, self).form_valid(form)
@@ -612,7 +656,7 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
 
 
 class manage_ModuleDeleteView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DeleteView):
-    model = Module
+    model = Lesson
     template_name = 'manage/forms/module_delete.html'
     success_url = '/manage/'
 
@@ -635,24 +679,24 @@ class manage_ModuleShareView(LoginRequiredMixin, PublicationViewMixin, Ownership
 ###############################################################################
 ###                 CONTENT EDITING VIEWS                                   ###
 ###############################################################################
-class manage_ModuleContent(OwnershipRequiredMixin, PublicationViewMixin, DetailView):
-    model = Module
-    template_name = "manage/module_detail.html"
+# class manage_ModuleContent(OwnershipRequiredMixin, PublicationViewMixin, DetailView):
+#     model = Module
+#     template_name = "manage/module_detail.html"
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(manage_ModuleContent, self).get_context_data(**kwargs)
+#         context['edit'] = True
+#         return context
 
-    def get_context_data(self, **kwargs):
-        context = super(manage_ModuleContent, self).get_context_data(**kwargs)
-        context['edit'] = True
-        return context
 
-
-class manage_TopicContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
-    model = Topic
-    template_name = "manage/topic_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(manage_TopicContent, self).get_context_data(**kwargs)
-        context['edit'] = True
-        return context
+# class manage_TopicContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
+#     model = Topic
+#     template_name = "manage/topic_detail.html"
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(manage_TopicContent, self).get_context_data(**kwargs)
+#         context['edit'] = True
+#         return context
 
 class manage_LessonContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
     model = Lesson

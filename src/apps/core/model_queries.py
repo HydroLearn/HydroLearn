@@ -7,7 +7,10 @@
 from django.urls import reverse
 
 from src.apps.core.models.ModuleModels import (
-    Module,Topic,Lesson,Section
+    # Module,
+    # Topic,
+    Lesson,
+    Section
 )
 import json
 
@@ -15,32 +18,22 @@ import json
 #   (used for determining the type of polymorphic children)
 from django.contrib.contenttypes.models import ContentType
 
-def get_all_modules():
-    return Module.objects.all()
-
-def get_my_modules(user):
-    # if a superuser get all of the modules
-    if user.is_superuser:        
-        return get_all_modules()
-    else:
-        # otherwise only grab models created by this user (expand to check for shared)
-        my_modules = Module.objects.filter(created_by=user)    
-        return my_modules
-
-def get_all_topics():
-    return Topic.objects.all()
-
-#get the child topics of a specified model (determined by it's slug)
-def get_child_topics(module_slug):
-    child_topics = Topic.objects.filter(module__slug=module_slug)
-    return child_topics
 
 def get_all_lessons():
     return Lesson.objects.all()
 
-def get_child_lessons(topic_slug):
-    child_lessons = Lesson.objects.filter(topic__slug=topic_slug)
+def get_child_lessons(lesson_slug):
+    child_lessons = Lesson.objects.filter(parent_lesson__slug=lesson_slug)
     return child_lessons
+
+def get_my_lessons(user):
+    # if a superuser get all of the modules
+    if user.is_superuser:
+        return Lesson.objects.all()
+    else:
+        # otherwise only grab models created by this user (expand to check for shared)
+        my_lessons = Lesson.objects.filter(created_by=user)
+        return my_lessons
 
 def get_all_sections():
     return Section.objects.all()
@@ -49,81 +42,76 @@ def get_child_sections(lesson_slug):
     child_sections = Section.objects.filter(lesson__slug=lesson_slug)
     return child_sections
 
-# def get_module_layers(module_slug):
-#     layers = LayerRef.objects.filter(module__slug=module_slug)
+# def get_module_layers(lesson_slug):
+#     layers = LayerRef.objects.filter(lesson__slug=lesson_slug)
 #     return layers
 
-def get_module_TOC_obj(module_slug):
-    
-    module = Module.objects.get(slug=module_slug)
+def get_lesson_JSON_RAW(lesson_slug):
+    '''
+        generate a Lesson JSON representation containing children
 
-    if not module:
-        return {
-                'module_name': 'Not Found!',
-            }
+    :param lesson_slug: slug for a lesson
+    :return: a json object with various needed information for referencing a lesson in
+            the module interface.
+    '''
 
-    topic_objs = get_child_topics(module_slug)
-    topics = [{'title': topic.name,
-               'short_title': topic.short_name,
-               'slug': topic.slug,
-               'slug_trail': topic.slug,
-               'intro_url': reverse('modules:topic_content', kwargs={
-                                'module_slug': topic.module.slug,
-                                'slug': topic.slug,
-                            }),
+    lesson = Lesson.objects.get(slug=lesson_slug)
 
-        } for topic in topic_objs]
-        
-    for topic in topics:
+    if not lesson: return None
 
-        lesson_objs = get_child_lessons(topic['slug'])
-        topic['child_lessons'] = [{
-            'title': lesson.name,
-            'short_title': lesson.short_name,
-            'slug': lesson.slug,
-            'slug_trail': "%s/%s" % (topic['slug_trail'], lesson.slug),
-            'intro_url': reverse('modules:lesson_content', kwargs={
-                            'module_slug': lesson.topic.module.slug,
-                            'topic_slug': lesson.topic.slug,
-                            'slug': lesson.slug,
-                        }),
+    # TODO: verify that having filter object in list constructors does not trigger
+    #       multiple queryset hits
+    sub_lessons = [get_lesson_JSON_RAW(l.slug) for l in lesson.sub_lessons.all()]
+    sections = [get_section_JSON_RAW(s.slug) for s in lesson.sections.all()]
 
-        } for lesson in lesson_objs]
+    sub_lessons.sort(key=lambda x: x['position'])
+    sections.sort(key=lambda x: x['position'])
+    children = sections + sub_lessons
+    #children.sort(key=lambda x: x['position'])
 
-        for lesson in topic['child_lessons']:
-
-            section_objs = get_child_sections(lesson['slug'])
-
-
-            lesson['child_sections'] = [{
-                'title': section.name,
-                'short_title': section.short_name,
-                'sectionType': str(ContentType.objects.get_for_id(section.polymorphic_ctype_id)),
-                'slug': section.slug,
-                'slug_trail': "%s/%s" % (lesson['slug_trail'], section.slug),
-
-                'href': reverse('modules:section_content', kwargs={
-                                'module_slug': section.lesson.topic.module.slug,
-                                'topic_slug': section.lesson.topic.slug,
-                                'lesson_slug': section.lesson.slug,
-                                'slug': section.slug,
-                            }),
-
-            } for section in section_objs]
-        
-        
-    
-    return_obj = {
-        'module_name': module.name,
-        'slug': module.slug,
-        'content_url': reverse('modules:module_content', kwargs={'slug': module.slug,}),
-
-        'topics': topics
+    return {
+        'obj_type': 'lesson',
+        'slug': lesson.slug,
+        'name': lesson.name,
+        'short_name': lesson.short_name,
+        'position': lesson.position,
+        'content_url': reverse('modules:lesson_content', kwargs={'slug': lesson.slug,}),
+        'children': children,
     }
-    
 
-    
-        
+def get_section_JSON_RAW(section_slug):
+    '''
+    generate a Lesson JSON representation containing children
+
+    :param section_slug: slug for a lesson
+    :return: a json object with various needed information for referencing a lesson in
+            the module interface.
+
+
+    '''
+
+    section = Section.objects.get(slug=section_slug)
+
+    if not Section: return None
+
+    return {
+        'obj_type': 'section',
+        'slug': section.slug,
+        'slug_trail': "%s/%s" % (section.lesson.slug, section.slug),
+        'name': section.name,
+        'short_name': section.short_name,
+        'position': section.position,
+        'sectionType': str(ContentType.objects.get_for_id(section.polymorphic_ctype_id)),
+        'content_url': reverse('modules:section_content', kwargs={'lesson_slug': section.lesson.slug, 'slug': section.slug,}),
+
+    }
+
+def get_module_TOC_obj(lesson_slug):
+    '''
+    return a json representation for a lesson identified by the passed lesson_slug
+
+    :param lesson_slug: slug for a lesson
+    :return: a json string representation of the lesson structure to be passed to a view.
+    '''
+    return_obj = get_lesson_JSON_RAW(lesson_slug)
     return json.dumps(return_obj)
-    
-    

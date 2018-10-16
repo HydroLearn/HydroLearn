@@ -29,23 +29,29 @@
                 <!-- Output any related tags -->
                 <h4>Tags</h4>
                 <ul>
-                    <li><span style="font-weight: bold; font-style: italic">Module Tags: </span>{{ object.topic.module.tags.names | join:", " }}</li>
-                    <li><span style="font-weight: bold; font-style: italic">Topic Tags: </span>{{ object.topic.tags.names | join:", " }}</li>
+
+                    {# TODO: this should technically be a loop over 'parent_lesson's #}
+                    {% if object.parent_lesson %}
+
+                        <li><span style="font-weight: bold; font-style: italic">Inherited Tags: </span>{{ object.parent_lesson.tags.names | join:", " }}</li>
+                    {% endif%}
+
                     <li><span style="font-weight: bold; font-style: italic">Tags: </span>{{ object.tags.names | join:", " }}</li>
                 </ul>
 
-                <h4>Parent Objects</h4>
-                <ul>
-                    <li><span style="font-weight: bold; font-style: italic">Module: </span><a href="{{object.topic.module.manage_url}}">{{ object.topic.module.name}}</a></li>
-                    <ul><li><span style="font-weight: bold; font-style: italic">Topic: </span><a href="{{object.topic.manage_url}}">{{ object.topic.name}}</a></li></ul>
-                </ul>
+                {% if object.parent_lesson %}
+                    <h4>Parent Objects</h4>
+                    <ul>
+                        <li><a href="{{object.parent_lesson.manage_url}}">{{ object.parent_lesson.name}}</a></li>
+                    </ul>
 
+                {% endif %}
 
                 <h4>Sections:</h4>
                 <ul>
                     {% for section in object.sections.all %}
                         <li>
-                            <a href='{% url "manage:section_content" module_slug=lesson.topic.module.slug  topic_slug=lesson.topic.slug  lesson_slug=lesson.slug slug=section.slug %}'>{{section.name}}</a>
+                            <a href='{% url "manage:section_content" lesson_slug=object.slug slug=section.slug %}'>{{section.name}}</a>
                         </li>
                     {% empty %}
                         <p>no sections for this lesson yet, add some to view them here.</p>
@@ -58,7 +64,7 @@
         <div id="lesson-content">
             <div class="lesson">
                 <h2>{% render_model lesson 'name' %}</h2>
-                <h3>Intro (Summary) Content</h3>
+                <h3>Summary Content</h3>
                 <hr>
                 <div>
                     {% render_placeholder object.summary%}

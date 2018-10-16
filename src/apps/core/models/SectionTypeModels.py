@@ -5,6 +5,8 @@ from cms.utils.copy_plugins import copy_plugins_to
 from django.urls import reverse
 
 from src.apps.core.models.ModuleModels import Section
+from src.apps.core.models.PublicationModels import Publication
+
 
 class ReadingSection(Section):
     class Meta:
@@ -14,8 +16,6 @@ class ReadingSection(Section):
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
-            'module_slug': self.lesson.topic.module.slug,
-            'topic_slug': self.lesson.topic.slug,
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })
@@ -67,9 +67,22 @@ class ReadingSection(Section):
         # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
         # edited after the most recent change date.
 
+        # get parent publication object
+        parent_publication = self.get_Publishable_parent()
+
+        if parent_publication.publish_status == Publication.DRAFT_ONLY: return True
+
+        pub_date = None
+        if parent_publication.publish_status == Publication.PUBLISHED:
+            # if this is a published draft-copy
+            pub_date = parent_publication.published_copy.published_date
+        else:
+            # if this is the current publication
+            pub_date = parent_publication.published_date
+
         result = any([
             super(ReadingSection, self).is_dirty,
-            self.content.cmsplugin_set.filter(changed_date__gt=self.get_Publishable_parent().published_copy.creation_date).exists()
+            self.content.cmsplugin_set.filter(changed_date__gt=pub_date).exists()
         ])
 
         return result
@@ -86,8 +99,6 @@ class ActivitySection(Section):
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
-            'module_slug': self.lesson.topic.module.slug,
-            'topic_slug': self.lesson.topic.slug,
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })
@@ -155,8 +166,6 @@ class QuizSection(Section):
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
-            'module_slug': self.lesson.topic.module.slug,
-            'topic_slug': self.lesson.topic.slug,
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })

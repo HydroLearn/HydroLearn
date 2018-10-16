@@ -27,7 +27,11 @@ LESSON_VIEW.prototype = Object.create(View.prototype)
 
                 var query_data = {};
 
-                query_data['url'] = TOC_MGR._content_url + passed_section
+                // TOC_MGR._content_url was previously '/module/content/[slug] (this has been depreciated)
+                //query_data['url'] = TOC_MGR._content_url + passed_section
+
+                query_data['url'] = '/module/content/' + passed_section
+
 
                 return query_data;
 
@@ -471,7 +475,7 @@ function LESSON_MANAGER(target_container_selector, Module_name, Loaded_Module, L
     ---------------------------------*/
 
         LESSON_MANAGER.prototype.Show_Section = function(sectionID) {
-            //debugger;
+
             // if the section being shown is the currently loaded section,
             //  just trigger the viewport swap to the lessson tab
             if (this.get_Loaded_Section() == sectionID){
@@ -591,10 +595,12 @@ function LESSON_MANAGER(target_container_selector, Module_name, Loaded_Module, L
 
         LESSON_MANAGER.prototype.section_changed_event_listener = function(new_section){
 
+
         }
 
         /* ---------------------------------
             Lesson Manager event reactions
                 - methods that react to events from other components
+                - will need to implement for TABLE_OF_CONTENTS_MANAGER and potentially VIEWPORT_MANAGER
         ---------------------------------*/
 

@@ -17,52 +17,52 @@ from django.utils.translation import gettext as _
 Model Forms 
 ********************************************************** '''
 
-class manage_ModuleForm(forms.ModelForm):
-    class Meta:
-        model = Module
-        fields = ['name', 'tags']
-        exclude = ['created_by']
+# class manage_ModuleForm(forms.ModelForm):
+#     class Meta:
+#         model = Module
+#         fields = ['name', 'tags']
+#         exclude = ['created_by']
+#
+#         widgets = {
+#             'name': forms.TextInput(attrs={
+#                     'required': 'true',
+#                     'class': 'object_name'
+#                 }),
+#             'tags': TagWidget(attrs={
+#                     'class': 'tag_input',
+#                     'data-role': "tagsinput",
+#                     'placeholder':'Add Tags',
+#
+#                 }),
+#
+#         }
 
-        widgets = {
-            'name': forms.TextInput(attrs={
-                    'required': 'true',
-                    'class': 'object_name'
-                }),
-            'tags': TagWidget(attrs={
-                    'class': 'tag_input',
-                    'data-role': "tagsinput",
-                    'placeholder':'Add Tags',
 
-                }),
-
-        }
-
-
-class manage_TopicForm(forms.ModelForm):
-    class Meta:
-        model = Topic
-        fields = [
-            'name',
-            'short_name',
-            'tags',
-            'position',
-        ]
-
-        widgets = {
-            'position': forms.HiddenInput(),
-            'name': forms.TextInput(attrs={
-                    'required': 'true',
-                    'class':'object_name'
-                }),
-            #'module': apply_select2(forms.Select),
-            'tags': TagWidget(attrs={
-                    'class': 'tag_input',
-                    'data-role': "tagsinput",
-                    'placeholder': 'Add Tags',
-
-                }),
-
-        }
+# class manage_TopicForm(forms.ModelForm):
+#     class Meta:
+#         model = Topic
+#         fields = [
+#             'name',
+#             'short_name',
+#             'tags',
+#             'position',
+#         ]
+#
+#         widgets = {
+#             'position': forms.HiddenInput(),
+#             'name': forms.TextInput(attrs={
+#                     'required': 'true',
+#                     'class':'object_name'
+#                 }),
+#             #'module': apply_select2(forms.Select),
+#             'tags': TagWidget(attrs={
+#                     'class': 'tag_input',
+#                     'data-role': "tagsinput",
+#                     'placeholder': 'Add Tags',
+#
+#                 }),
+#
+#         }
 
 class manage_LessonForm(forms.ModelForm):
     class Meta:
@@ -72,6 +72,8 @@ class manage_LessonForm(forms.ModelForm):
             'short_name',
             'tags',
             'position',
+
+
         ]
 
         widgets = {
@@ -80,7 +82,6 @@ class manage_LessonForm(forms.ModelForm):
                     'required': 'true',
                     'class':'object_name'
                 }),
-            #'module': apply_select2(forms.Select),
             'tags': TagWidget(attrs={
                     'class': 'tag_input',
                     'data-role': "tagsinput",
@@ -97,15 +98,15 @@ class manage_SectionForm(forms.ModelForm):
             'short_name',
             'duration',
             'tags',
-            # 'topic',
             'position',
         ]
+
         widgets = {
+            'position': forms.HiddenInput(),
             'name': forms.TextInput(attrs={
                     'required': 'true',
                     'class': 'object_name'
                 }),
-            'position': forms.HiddenInput(),
             'tags': TagWidget(attrs={
                 'class': 'tag_input',
                 'data-role': "tagsinput",
@@ -220,99 +221,99 @@ class manage_QuizSectionForm(forms.ModelForm):
     Inline Formsets
 ********************************************************** '''
 
-class BaseTopicFormset(BaseInlineFormSet):
-
-    def __init__(self, *args, **kwargs):
-        super(BaseTopicFormset, self).__init__(*args, **kwargs)
-
-        #self.prefix = "TOPIC"
-        for form in self.forms:
-            form.empty_permitted = False
-
-    def add_fields(self, form, index):
-        super(BaseTopicFormset, self).add_fields(form, index)
-
-        if self.can_delete:
-            form.fields['DELETE'] = forms.BooleanField(
-                label=_('Delete'),
-                required=False,
-                widget=forms.HiddenInput
-            )
-
-        #add the inline formset for child_sections in each topic
-        # form.child_sections = inlineSectionFormset(
-        form.child_lessons = inlineLessonFormset(
-                    instance=form.instance,
-                    data=form.data if self.is_bound else None,
-                    #data=form.data if form.is_bound else None,
-                    #files=form.files if form.is_bound else None,
-                    prefix='%s-%s-lesson' % (
-                        form.prefix,
-                        inlineTopicFormset.get_default_prefix()
-                    ),
-                )
-
-
-
-    def is_valid(self):
-        result = super(BaseTopicFormset, self).is_valid()
-
-        if(self.is_bound):
-            # look at any nested formsets as well
-            for form in self.forms:
-                result = result and form.child_lessons.is_valid()
-
-
-        return result
-
-    def clean(self):
-
-        # if any forms already have errors return
-        if any(self.errors):
-            return
-
-        # check for any additional potential errors
-
-        #   check that each topic name is unique
-        encountered_name = []
-        for topic in self.forms:
-            if self.can_delete:
-                if self._should_delete_form(topic):
-                    # This form is going to be deleted so any of its errors
-                    # should not cause the entire formset to be invalid.
-                    continue
-
-
-            curr_name = topic.cleaned_data.get('name')
-            #marked_delete = topic.cleaned_data.get('DELETE')
-
-            if curr_name in encountered_name:
-                topic.add_error("name","Each Topic name must be unique within a Module.")
-
-            #if not marked_delete:
-            encountered_name.append(curr_name)
-
-
-            # for lesson in topic.child_lessons:
-            #     lesson.clean()
-
-        # perform the standard clean
-        super(BaseTopicFormset, self).clean()
-
-    def save(self, commit=True):
-        # get the result of saving the base topics
-        result = super(BaseTopicFormset, self).save(commit=commit)
-
-        # POTENTIALLY NEED TO ITERATE OVER 'result' NOT SELF.FORMS
-
-        # for each form in this formset
-        if commit:
-            for form in self.forms:
-                # save child sections if form isn't marked for deletion
-                if not self._should_delete_form(form):
-                    form.child_lessons.save(commit=commit)
-
-        return result
+# class BaseTopicFormset(BaseInlineFormSet):
+#
+#     def __init__(self, *args, **kwargs):
+#         super(BaseTopicFormset, self).__init__(*args, **kwargs)
+#
+#         #self.prefix = "TOPIC"
+#         for form in self.forms:
+#             form.empty_permitted = False
+#
+#     def add_fields(self, form, index):
+#         super(BaseTopicFormset, self).add_fields(form, index)
+#
+#         if self.can_delete:
+#             form.fields['DELETE'] = forms.BooleanField(
+#                 label=_('Delete'),
+#                 required=False,
+#                 widget=forms.HiddenInput
+#             )
+#
+#         #add the inline formset for child_sections in each topic
+#         # form.child_sections = inlineSectionFormset(
+#         form.child_lessons = inlineLessonFormset(
+#                     instance=form.instance,
+#                     data=form.data if self.is_bound else None,
+#                     #data=form.data if form.is_bound else None,
+#                     #files=form.files if form.is_bound else None,
+#                     prefix='%s-%s-lesson' % (
+#                         form.prefix,
+#                         inlineTopicFormset.get_default_prefix()
+#                     ),
+#                 )
+#
+#
+#
+#     def is_valid(self):
+#         result = super(BaseTopicFormset, self).is_valid()
+#
+#         if(self.is_bound):
+#             # look at any nested formsets as well
+#             for form in self.forms:
+#                 result = result and form.child_lessons.is_valid()
+#
+#
+#         return result
+#
+#     def clean(self):
+#
+#         # if any forms already have errors return
+#         if any(self.errors):
+#             return
+#
+#         # check for any additional potential errors
+#
+#         #   check that each topic name is unique
+#         encountered_name = []
+#         for topic in self.forms:
+#             if self.can_delete:
+#                 if self._should_delete_form(topic):
+#                     # This form is going to be deleted so any of its errors
+#                     # should not cause the entire formset to be invalid.
+#                     continue
+#
+#
+#             curr_name = topic.cleaned_data.get('name')
+#             #marked_delete = topic.cleaned_data.get('DELETE')
+#
+#             if curr_name in encountered_name:
+#                 topic.add_error("name","Each Topic name must be unique within a Module.")
+#
+#             #if not marked_delete:
+#             encountered_name.append(curr_name)
+#
+#
+#             # for lesson in topic.child_lessons:
+#             #     lesson.clean()
+#
+#         # perform the standard clean
+#         super(BaseTopicFormset, self).clean()
+#
+#     def save(self, commit=True):
+#         # get the result of saving the base topics
+#         result = super(BaseTopicFormset, self).save(commit=commit)
+#
+#         # POTENTIALLY NEED TO ITERATE OVER 'result' NOT SELF.FORMS
+#
+#         # for each form in this formset
+#         if commit:
+#             for form in self.forms:
+#                 # save child sections if form isn't marked for deletion
+#                 if not self._should_delete_form(form):
+#                     form.child_lessons.save(commit=commit)
+#
+#         return result
 
 class BaseLessonFormset(BaseInlineFormSet):
 
@@ -333,16 +334,27 @@ class BaseLessonFormset(BaseInlineFormSet):
                 widget=forms.HiddenInput
             )
 
+        # add the inline formset for sub_lessons in each lesson
+        form.sub_lessons = inlineLessonFormset(
+                instance=form.instance,
+                data=form.data if self.is_bound else None,
+                # data=form.data if form.is_bound else None,
+                # files=form.files if form.is_bound else None,
+                prefix='%s-%s' % (
+                    form.prefix,
+                    inlineLessonFormset.get_default_prefix()
+                ),
+            )
+
         #add the inline formset for child_sections in each topic
-        # form.child_sections = inlineSectionFormset(
         form.child_sections = inlineSectionFormset(
                     instance=form.instance,
                     data=form.data if self.is_bound else None,
                     #data=form.data if form.is_bound else None,
                     #files=form.files if form.is_bound else None,
-                    prefix='%s-%s-section' % (
+                    prefix='%s-%s' % (
                         form.prefix,
-                        inlineLessonFormset.get_default_prefix()
+                        inlineSectionFormset.get_default_prefix()
                     ),
                 )
 
@@ -352,6 +364,7 @@ class BaseLessonFormset(BaseInlineFormSet):
         if(self.is_bound):
             # look at any nested formsets as well
             for form in self.forms:
+                result = result and form.sub_lessons.is_valid()
                 result = result and form.child_sections.is_valid()
 
 
@@ -377,7 +390,7 @@ class BaseLessonFormset(BaseInlineFormSet):
             #marked_delete = lesson.cleaned_data.get('DELETE')
 
             if curr_name in encountered_name:
-                lesson.add_error("name","Each Lesson name must be unique within a Topic.")
+                lesson.add_error("name","Each Lesson name must be unique within it's parent.")
 
             #if not marked_delete:
             encountered_name.append(curr_name)
@@ -402,6 +415,7 @@ class BaseLessonFormset(BaseInlineFormSet):
             for form in self.forms:
                 # save child sections if form isn't marked for deletion
                 if not self._should_delete_form(form):
+                    form.sub_lessons.save(commit=commit)
                     form.child_sections.save(commit=commit)
 
         return result
@@ -455,7 +469,7 @@ class BaseSectionFormset(BasePolymorphicInlineFormSet):
 
             if curr_name in encountered_name:
                 #raise forms.ValidationError("Each Section Name must be unique within a Topic!")
-                section.add_error('name', "Each Section Name must be unique within a Topic!")
+                section.add_error('name', "Each Section Name must be unique within a Lesson!")
 
             #if not marked_delete:
             encountered_name.append(curr_name)
@@ -468,20 +482,22 @@ class BaseSectionFormset(BasePolymorphicInlineFormSet):
 Formset Factories
 ********************************************************** '''
 # define custom formsets for use in the above forms *******************************
-inlineTopicFormset = inlineformset_factory(
-        Module,
-        Topic,
-        exclude=['created_by', 'changed_by','creation_date', 'changed_date'],
-        extra=0,
-        form=manage_TopicForm,
-        formset=BaseTopicFormset,
+# inlineTopicFormset = inlineformset_factory(
+#         Module,
+#         Topic,
+#         exclude=['created_by', 'changed_by','creation_date', 'changed_date'],
+#         extra=0,
+#         form=manage_TopicForm,
+#         formset=BaseTopicFormset,
+#
+#     )
 
-    )
-
+# TODO: work this out...
 inlineLessonFormset = inlineformset_factory(
-        Topic,
         Lesson,
-        exclude=['created_by', 'changed_by','creation_date', 'changed_date'],
+        Lesson,
+        fk_name='parent_lesson', #need to specify the field linking to parent lesson
+        exclude=['published_copy','created_by', 'changed_by','creation_date', 'changed_date'],
         extra=0,
         form=manage_LessonForm,
         formset=BaseLessonFormset,

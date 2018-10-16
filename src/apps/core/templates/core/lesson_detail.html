@@ -21,15 +21,12 @@
         <!-- Output any related tags -->
         <h4>Tags</h4>
         <ul>
-            <li><span style="font-weight: bold; font-style: italic">Module Tags: </span>{{ object.topic.module.tags.names | join:", " }}</li>
-            <li><span style="font-weight: bold; font-style: italic">Topic Tags: </span>{{ object.topic.tags.names | join:", " }}</li>
             <li><span style="font-weight: bold; font-style: italic">Tags: </span>{{ object.tags.names | join:", " }}</li>
         </ul>
 
         <h4>Parent Objects</h4>
         <ul>
-            <li><span style="font-weight: bold; font-style: italic">Module: </span><a href="{{object.topic.module.absolute_url}}">{{ object.topic.module.name}}</a></li>
-            <ul><li><span style="font-weight: bold; font-style: italic">Topic: </span><a href="{{object.topic.absolute_url}}">{{ object.topic.name}}</a></li></ul>
+            <li><a href="{{object.parent_lesson.absolute_url}}">{{ object.parent_lesson.name}}</a></li>
         </ul>
 
 
@@ -44,7 +41,18 @@
             {% endfor %}
             
         </ul>
-        
+
+        <h4>Child Sections</h4>
+        <ul>
+            {% for sublesson in object.sub_lessons.all %}
+                <li>
+                    <a href='{{sublesson.absolute_url}}'>{{sublesson.name}}</a>
+                </li>
+            {% empty %}
+                <p>no Sub-lessons for this lesson yet, add some to view them here.</p>
+            {% endfor %}
+
+        </ul>
         
         
         
