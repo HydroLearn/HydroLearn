@@ -352,8 +352,6 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 section.save_m2m()
 
 
-
-
     def form_valid(self, form, sections, subLessons, *args, **kwargs):
 
         '''
@@ -653,7 +651,6 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
 
     def form_invalid(self, form, **kwargs):
         return super(manage_ModulePublish, self).form_invalid(form)
-
 
 class manage_ModuleDeleteView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DeleteView):
     model = Lesson
