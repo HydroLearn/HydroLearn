@@ -508,37 +508,6 @@ function LESSON_MANAGER(target_container_selector, Module_name, Loaded_Module, L
 
             return;
 
-
-
-            //$('.lesson').hide();
-
-
-
-            //if (sectionID != undefined ) {
-            //    var selected_section_container = $('#' + sectionID);
-            //
-            //    if (selected_section_container.length > 0) {
-            //        selected_section_container.show();
-            //
-            //        HighlightActiveSection_TOC();
-            //        this.set_Loaded_Section(sectionID);
-            //    } else {
-            //        $("#lesson_404").show();
-            //
-            //    }
-            //
-            //
-            //}
-
-
-            //if (typeof(youtube_player) != "undefined" && !!youtube_player) {
-            //    hidePlayer();
-            //    Init_YoutubePlayer();
-            //}
-
-            //LESSON_MGR.Update_URL(sectionID);
-            //LESSON_MGR.init_lesson_nav();
-
             if (!!TOC_MGR) {
 
                 TOC_MGR.update_lesson_nav();

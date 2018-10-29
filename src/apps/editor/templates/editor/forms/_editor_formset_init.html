@@ -1,0 +1,86 @@
+{% load editor_template_tags polymorphic_formset_tags core_tags static sekizai_tags %}
+
+<div id="editor_formset_init">
+
+    <!--
+        FORMSET HEADERS
+    -->
+    <div class="FM_formset_header" FM-Max-Depth=2 FM-Type="LESSONS" FM-Base-Prefix="{{ sub_lessons.prefix }}">
+            <div class="FM_formset_errors">{{ sub_lessons.non_form_errors }}</div>
+            <div class="FM_mgmt_form">{{ sub_lessons.management_form }}</div>
+    </div>
+
+
+    <div class="FM_formset_header" FM-Type="SECTIONS" FM-Base-Prefix="{{ sections.prefix }}">
+        <div class="FM_formset_errors">{{ sections.non_form_errors }}</div>
+        <div class="FM_mgmt_form">{{ sections.management_form }}</div>
+
+        <div class="add_new_sections_btn_group btn-group" role="group">
+            {# add a seperate add-button for each polymorphic type #}
+
+            <!-- TODO: this should be added to the editor somehow to specify section type to add -->
+            {# for model in sections.child_forms #}
+                <!-- Keep this for reference
+
+                <a class="FM_add_form btn btn-default Add_button" type="button" FM-Type="SECTIONS" FM-poly-type="{# {{ model|as_model_name }} #}" style="margin:0;" >
+                    <i class="fas fa-plus-circle"></i>
+                    {# {{ model|verbose_name }} #}
+                </a>
+
+                -->
+            {# endfor #}
+
+        </div>
+        <hr>
+    </div>
+
+
+    <!--
+        FORMSET Empty forms
+    -->
+
+    <div class="FM_empty_form" FM-Type="LESSONS">
+
+
+        <!-- TODO: this should be integrated into the TOC display -->
+        <!--<span class="FM_linked_label" FM-linked-selector="input.object_name" FM-label-default="New Lesson"></span>-->
+
+        {% if sub_lessons.can_delete %}
+        <a class="FM_remove_form Remove_button btn btn-default" type="button" style="float:right;">
+            <i class="fas fa-minus-circle"></i> Remove Lesson
+        </a>
+        {% endif %}
+
+        <div class="FM_form_content">
+            <div class="FM_form_errors form_error_container"></div>
+
+            {# add in placeholder for nested sections formset #}
+            {% show_lesson_form sub_lessons.empty_form %}
+
+        </div>
+    </div>
+
+
+    {% for empty_form in sections.empty_forms %}
+        <div class="FM_empty_form" FM-Type="SECTIONS" FM-poly-type="{{ empty_form|as_form_type }}">
+
+                <!--TODO: integrate this linked label into the TOC display -->
+                <!--<span class="FM_linked_label" FM-linked-selector="input.object_name" FM-label-default="New {{ empty_form|form_model_verbose_name }}"></span>-->
+
+                <div>
+                    {% if sections.can_delete %}
+                    <a class="FM_remove_form Remove_button btn btn-default" type="button" style="float:right;">
+                        <i class="fas fa-minus-circle"></i> Remove this form
+                    </a>
+                    {% endif %}
+
+                    <div class="FM_form_content">
+                        <div class="FM_form_errors form_error_container"></div>
+                        {% show_section_form empty_form %}
+                    </div>
+                </div>
+
+        </div>
+    {% endfor %}
+
+</div>

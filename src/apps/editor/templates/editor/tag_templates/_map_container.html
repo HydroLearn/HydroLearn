@@ -1,0 +1,158 @@
+{% load cms_tags  sekizai_tags static %}
+
+{% addtoblock 'template_css' %}
+    <!--map container styling-->
+    <link rel="stylesheet" href="{% static '/module/js/plugins/OpenLayers/v5.1.3-dist/ol.css' %}" type="text/css">
+    <!--<link rel="stylesheet" href="{% static '/editor/css/maps/map.css' %}" type="text/css">-->
+    <link rel="stylesheet" href="{% static '/module/css/map.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static '/module/css/maps/geostats.css' %}" type="text/css">
+{% endaddtoblock %}
+
+<!--<div id="map_content_placeholder" style="display:block;width:500px;height:500px;"></div>-->
+<div id="map" class="map" >
+
+    <div id="mapPanel"></div>
+    <!--<div id="Map_Help_popover" data-toggle="popover" title="Help" data-placement="right"></div>-->
+
+    <div id="Map_Help_content">
+        <!--<div class="help_entry_title">-->
+            <!--Basic Map Interaction:-->
+        <!--</div>-->
+
+        <div class="help_entry_container">
+            <div class="help_entry">
+                <div class="help_entry_item">
+                    <div class="control-sample">+</div>
+                </div>
+                <div class="help_entry_description">
+                    Zoom In
+                </div>
+            </div>
+
+            <div class="help_entry">
+                <div class="help_entry_item">
+                    <div class="control-sample">-</div>
+                </div>
+                <div class="help_entry_description">
+                    Zoom out
+                </div>
+            </div>
+
+            <div class="help_entry">
+                <div class="help_entry_item">
+                    <div class="control-sample">&#8634;</div>
+                </div>
+                <div class="help_entry_description">
+                    Reset map view to initial position
+                </div>
+            </div>
+
+            <div class="help_entry">
+                <div class="help_entry_item">
+                    <span style="font-weight: bold;font-size: .75em; display: inline-block;">Shift + Drag Mouse</span>
+                </div>
+                <div class="help_entry_description">
+                    Box zoom to region on map
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <section id="basemap" class="collapsible_container HORIZ collapsed">
+        <div class="content_container collapsed" >
+            <div class="content">
+                <h3>Select A Base Map</h3>
+                <div>
+                    <a class="baseMap_tile" val="WorldImagery" id="satimg"><img src="{% static '/module/images/Map_Icons/satimg.png' %}" alt="Satelite Thumbnail"></a>
+                    <a class="baseMap_tile" val="Topo" id="topo"><img src="{% static '/module/images/Map_Icons/topo.png' %}" alt="Topography Thumbnail"></a>
+                    <a class="baseMap_tile" val="Street" id="street"><img src="{% static '/module/images/Map_Icons/streets.png' %}" alt="Street Thumbnail"></a>
+                </div>
+                <div>
+
+                    <!--<a class="baseMap_tile" val="ShadedRelief" id="shaded"><img src="/Content/images/Map_Icons/relief.png" alt="Relief Thumbnail"></a>-->
+                </div>
+            </div>
+        </div>
+        <div class="icon"><div class="text">Basemap</div></div>
+    </section>
+
+    <section id="layers" class="collapsible_container HORIZ">
+        <div class="content_container">
+            <div class="content">
+                <!--<div class="layers_content_toolbox"><a href="https://www.youtube.com/playlist?list=PLx0deSpJYi8MicmKHpJo6wd2zqyIOeuO3" target="_blank"><span style="font-weight: bold;">Need Help?</span> Watch our Site Demos!</a></div>-->
+                <!--@*<div class="layers_content_title">Click Layers to Display / Hide</div>*@-->
+                <div class="layers_content_wrapper"></div>
+            </div>
+        </div>
+        <div class="icon flipY selectedTab"><div class="text">Layers</div></div>
+    </section>
+
+    <div id="legpanel" class="collapsible_container VERT">
+        <div class="icon selectedTab"><div class="text">Legend</div></div>
+        <div class="content_container">
+            <div id="legImg" class="content"></div>
+        </div>
+    </div>
+
+    <div id="popup" class="ol-popup">
+      <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+      <div id="popup-content"></div>
+    </div>
+
+</div>
+
+<div id='Selection_Info_Dialog' style='z-index: 2000;' title='Feature Details' >
+    <div class="content"></div>
+</div>
+
+<div id="Map_Help_popover" data-toggle="popover" title="Help" data-placement="right"></div>
+
+<div id="Additional_Map_Help" style="display:none;">
+
+    <div class="help_entry_container">
+        <div class="help_entry">
+            <div class="help_entry_item">
+                <img src="{% static '/module/images/icons/filterIcon_blue_bordered.png' %}"/>
+            </div>
+            <div class="help_entry_description">
+                Open Layer Interaction dialog. <br/>
+                Activate on layer for feature filtering/classification functionality.
+            </div>
+        </div>
+        <div class="help_entry">
+            <div class="help_entry_item">
+                <img src="{% static '/module/images/icons/infoIcon.png' %}"/>
+            </div>
+            <div class="help_entry_description">
+                Layer Feature Selection. <br/>
+                Activate on layer to select it's features and view data associated with it.
+            </div>
+        </div>
+
+
+    </div>
+    <span style="font-size: 12px;"><a href="https://www.youtube.com/playlist?list=PLx0deSpJYi8MicmKHpJo6wd2zqyIOeuO3" target="_blank"><span style="font-weight: bold;">Need Additional Help?</span> Watch our Site Demos!</a></span>
+</div>
+
+{% addtoblock 'template_js' %}
+<script src="{% static 'module/js/plugins/OpenLayers/v5.1.3-dist/ol.js' %}"></script>
+
+<script>
+    //if (!!WMS_WORKSPACE) GEOSERVER_DATA_MGR.init(WMS_WORKSPACE);
+    //MAP_MGR.Init_Map(GEOSERVER_DATA_MGR._WORKSPACE_URL);
+
+
+    //var checkedLayers = "@ViewBag.checkedLayers";
+    //displayed_layers = checkedLayers.split(',');
+
+    //layersData = {{ layers }}
+    //layersData = []
+
+    //mapCenter = ol.proj.fromLonLat([-95.1416015625, 38.01347623104195]);
+    //default_zoom = 4;
+
+
+</script>
+{% endaddtoblock 'template_js' %}

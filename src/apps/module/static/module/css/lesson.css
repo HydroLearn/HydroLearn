@@ -1,60 +1,191 @@
 @charset "UTF-8";
-/* COLORS Number: #fbb040 Check your understanding: #48AA89 Lesson Content: #5b9ecf Learning Activities: #e55330
+/*
+    COLORS
+    Number: #fbb040
+    Check your understanding: #48AA89
+    Lesson Content: #5b9ecf
+    Learning Activities: #e55330
 
 */
-/*  TODO: ideally ekko will be replaced by 'prettyPhoto' plugin so this styling will be removed restricting size of lightbox contents
+/*  TODO: ideally ekko will be replaced by 'prettyPhoto' plugin so this styling will be removed
+    restricting size of lightbox contents
 */
 /* END TODO: ideally remove ekko... */
-/*  MATHJAX Styling fixing issue where chrome was placing a vertical line after all equations */
-.math > span { border-left-color: transparent !important; }
+/*  MATHJAX Styling
+    fixing issue where chrome was placing a vertical line after all equations
+    */
+.math > span {
+  border-left-color: transparent !important; }
 
-.fa-inverse { font-weight: bolder; }
+.fa-inverse {
+  font-weight: bolder; }
 
-#MathJax_Message { position: fixed; left: unset !important; right: 0 !important; bottom: 0 !important; background-color: #E6E6E6; border: none !important; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap; }
+#MathJax_Message {
+  position: fixed;
+  left: unset !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: #E6E6E6;
+  border: none !important;
+  margin: 0px;
+  padding: 2px 8px;
+  z-index: 102;
+  color: black;
+  font-size: 80%;
+  width: auto;
+  white-space: nowrap; }
 
 /* END MATHJAX styling*/
 /* #region Basic Element Styling */
-#lesson-content { overflow-y: auto; overflow-x: hidden; height: 100%; width: 100%; padding: 25px 25px 110px; }
-#lesson-content h1, #lesson-content h2, #lesson-content h3, #lesson-content h4, #lesson-content h5 { font-weight: bold; line-height: normal; color: #8F8F8F; min-width: 950px; padding: 10px 0 0 0; }
-#lesson-content h1 { font-size: 24px; }
-#lesson-content h2 { font-size: 20px; }
-#lesson-content h3 { font-size: 18px; }
-#lesson-content h4 { font-size: 16px; }
-#lesson-content .lesson { /*width: 900px;*/ }
-#lesson-content .lesson > h2 { font-size: 20px; }
-#lesson-content .lesson a { color: #45a4f3; text-decoration: underline; }
-#lesson-content .lesson a:visited { color: #00ba97; }
-#lesson-content .lesson a:hover { color: #3D6BAA; }
-#lesson-content hr.subheaderSpacer { border-top: 3px solid #71b9f3; width: 80%; border-radius: .75em; }
-#lesson-content .embedded-image { margin: 10px auto 15px auto; display: block; max-width: 70%; }
-#lesson-content .thumbnail_img { margin: auto; display: block; max-width: 300px; max-height: 200px; padding: 3px; }
-#lesson-content .thumbnail_text { text-align: center; font-size: 10px; }
-#lesson-content .lesson blockquote, #lesson-content .lesson q { margin-left: 40px; font-style: italic; padding: 4px 0px; background-color: #e8f5ff; border-left: #76A2DB 3px solid; quotes: "“" "”" "‘" "’"; }
-#lesson-content .lesson blockquote p, #lesson-content .lesson q p { padding-left: 2em; }
-#lesson-content .lesson blockquote:before, #lesson-content .lesson q:before { content: open-quote; color: #76a2db; font-size: 4em; line-height: 0.1em; margin-right: 0.25em; vertical-align: -0.4em; }
-#lesson-content .lesson blockquote:after, #lesson-content .lesson q:after { content: close-quote; color: #76a2db; font-size: 4em; position: relative; float: right; line-height: 0.1em; bottom: -13px; margin-right: 0.5em; }
-#lesson-content ol { counter-reset: li; margin-top: 10px; margin-left: 0; padding-left: 1.5em; }
-#lesson-content ol > li { position: relative; margin: 0 0 6px 2em; padding: 4px 8px; list-style: none; }
-#lesson-content ol > li > p { margin: 0 0 10px 0; }
-#lesson-content ol > li:before { content: counter(li); /* Use the counter as content */ counter-increment: li; /* Increment the counter by 1 */ /* Position and style the number */ position: absolute; top: -2px; left: -2em; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; width: 1.6em; line-height: 1.4em; /* Some space between the number and the content in browsers that support generated content but not positioning it (Camino 2 is one example) */ padding: 2px; color: #fff; background: #1E90FF; font-weight: bold; font-family: "Open Sans", sans-serif; text-align: center; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; }
-#lesson-content ol ol > li:before { content: counter(li,lower-alpha); }
-#lesson-content ol ol ol > li:before { content: counter(li,lower-roman); }
-#lesson-content ol ol ol ol > li:before { content: counter(li); }
-#lesson-content ol.orange > li:before { background: #EF8C08; }
-#lesson-content ol.light_green > li:before { background: #83AF94; }
-#lesson-content ol.dark_green > li:before { background: #01933E; }
-#lesson-content ul li { list-style-image: url("../images/Lesson_Icons/bullet.png"); margin-left: 3em; }
-#lesson-content ul ul li { list-style-image: url("../images/Lesson_Icons/bullet_blue.png"); }
-#lesson-content ul ul ul li { list-style-image: url("../images/Lesson_Icons/bullet_orange.png"); }
-#lesson-content ul > li.nested_list:before { content: none; /* Use the counter as content */ }
-#lesson-content div.help-body > ul > li.excel-resource { list-style-image: url("../images/Lesson_Icons/excel_icon.png"); }
-#lesson-content div.help-body > ul > li.word-resource { list-style-image: url("../images/Lesson_Icons/word_icon.png"); }
-#lesson-content div.help-body > ul > li.rubric-resource { list-style-image: url("../images/Lesson_Icons/rubric_icon.png"); }
-#lesson-content div.help-body > ul > li.ppt-resource { list-style-image: url("../images/Lesson_Icons/ppt_icon.png"); }
-#lesson-content div.help-body > ul > li.pdf-resource { list-style-image: url("../images/Lesson_Icons/PDF_icon.png"); }
+#lesson-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
+  padding: 25px 25px 110px; }
+  #lesson-content h1, #lesson-content h2, #lesson-content h3, #lesson-content h4, #lesson-content h5 {
+    font-weight: bold;
+    line-height: normal;
+    color: #8F8F8F;
+    min-width: 950px;
+    padding: 10px 0 0 0; }
+  #lesson-content h1 {
+    font-size: 24px; }
+  #lesson-content h2 {
+    font-size: 20px; }
+  #lesson-content h3 {
+    font-size: 18px; }
+  #lesson-content h4 {
+    font-size: 16px; }
+  #lesson-content .lesson {
+    /*width: 900px;*/ }
+    #lesson-content .lesson > h2 {
+      font-size: 20px; }
+  #lesson-content .lesson a {
+    color: #45a4f3;
+    text-decoration: underline; }
+    #lesson-content .lesson a:visited {
+      color: #00ba97; }
+    #lesson-content .lesson a:hover {
+      color: #3D6BAA; }
+  #lesson-content hr.subheaderSpacer {
+    border-top: 3px solid #71b9f3;
+    width: 80%;
+    border-radius: .75em; }
+  #lesson-content .embedded-image {
+    margin: 10px auto 15px auto;
+    display: block;
+    max-width: 70%; }
+  #lesson-content .thumbnail_img {
+    margin: auto;
+    display: block;
+    max-width: 300px;
+    max-height: 200px;
+    padding: 3px; }
+  #lesson-content .thumbnail_text {
+    text-align: center;
+    font-size: 10px; }
+  #lesson-content .lesson blockquote, #lesson-content .lesson q {
+    margin-left: 40px;
+    font-style: italic;
+    padding: 4px 0px;
+    background-color: #e8f5ff;
+    border-left: #76A2DB 3px solid;
+    quotes: "“" "”" "‘" "’"; }
+  #lesson-content .lesson blockquote p, #lesson-content .lesson q p {
+    padding-left: 2em; }
+  #lesson-content .lesson blockquote:before, #lesson-content .lesson q:before {
+    content: open-quote;
+    color: #76a2db;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em; }
+  #lesson-content .lesson blockquote:after, #lesson-content .lesson q:after {
+    content: close-quote;
+    color: #76a2db;
+    font-size: 4em;
+    position: relative;
+    float: right;
+    line-height: 0.1em;
+    bottom: -13px;
+    margin-right: 0.5em; }
+  #lesson-content ol {
+    counter-reset: li;
+    margin-top: 10px;
+    margin-left: 0;
+    padding-left: 1.5em; }
+    #lesson-content ol > li {
+      position: relative;
+      margin: 0 0 6px 2em;
+      padding: 4px 8px;
+      list-style: none; }
+      #lesson-content ol > li > p {
+        margin: 0 0 10px 0; }
+      #lesson-content ol > li:before {
+        content: counter(li);
+        /* Use the counter as content */
+        counter-increment: li;
+        /* Increment the counter by 1 */
+        /* Position and style the number */
+        position: absolute;
+        top: -2px;
+        left: -2em;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 1.6em;
+        line-height: 1.4em;
+        /* Some space between the number and the content in browsers that support
+           generated content but not positioning it (Camino 2 is one example) */
+        padding: 2px;
+        color: #fff;
+        background: #1E90FF;
+        font-weight: bold;
+        font-family: "Open Sans", sans-serif;
+        text-align: center;
+        border-radius: 50%;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%; }
+    #lesson-content ol ol > li:before {
+      content: counter(li,lower-alpha); }
+    #lesson-content ol ol ol > li:before {
+      content: counter(li,lower-roman); }
+    #lesson-content ol ol ol ol > li:before {
+      content: counter(li); }
+    #lesson-content ol.orange > li:before {
+      background: #EF8C08; }
+    #lesson-content ol.light_green > li:before {
+      background: #83AF94; }
+    #lesson-content ol.dark_green > li:before {
+      background: #01933E; }
+  #lesson-content ul li {
+    list-style-image: url("../images/Lesson_Icons/bullet.png");
+    margin-left: 3em; }
+  #lesson-content ul ul li {
+    list-style-image: url("../images/Lesson_Icons/bullet_blue.png"); }
+  #lesson-content ul ul ul li {
+    list-style-image: url("../images/Lesson_Icons/bullet_orange.png"); }
+  #lesson-content ul > li.nested_list:before {
+    content: none;
+    /* Use the counter as content */ }
+  #lesson-content div.help-body > ul > li.excel-resource {
+    list-style-image: url("../images/Lesson_Icons/excel_icon.png"); }
+  #lesson-content div.help-body > ul > li.word-resource {
+    list-style-image: url("../images/Lesson_Icons/word_icon.png"); }
+  #lesson-content div.help-body > ul > li.rubric-resource {
+    list-style-image: url("../images/Lesson_Icons/rubric_icon.png"); }
+  #lesson-content div.help-body > ul > li.ppt-resource {
+    list-style-image: url("../images/Lesson_Icons/ppt_icon.png"); }
+  #lesson-content div.help-body > ul > li.pdf-resource {
+    list-style-image: url("../images/Lesson_Icons/PDF_icon.png"); }
 
 /*#lesson-content .lesson > h3,
-#lesson-content .lesson .Content_with_sidebar > h3 { font-size: 16px; font-weight:bold; color:#00B8E6; padding: 10px 0 0 0;
+#lesson-content .lesson .Content_with_sidebar > h3 {
+    font-size: 16px;
+    font-weight:bold;
+    color:#00B8E6;
+    padding: 10px 0 0 0;
 
 
 }*/
@@ -69,120 +200,386 @@
 /*sub listing 2*/
 /* #endregion Unordered list*/
 /* #region OLD list  TODO: DELETE THIS WHEN YOU CAN (verify both styled_ol and ul are implemented first)*/
-.inline-content-header { font-size: 14px; font-weight: bold; height: 20px; color: #00B8E6; padding-bottom: 5px; }
+.inline-content-header {
+  font-size: 14px;
+  font-weight: bold;
+  height: 20px;
+  color: #00B8E6;
+  padding-bottom: 5px; }
 
-.quiz-wrapper { display: block; overflow-x: hidden; width: 100%; min-width: 950px; padding-top: 5px; }
-.quiz-wrapper > h2 { font-size: 20px; font-weight: bold; color: #8F8F8F; min-width: 950px; }
+.quiz-wrapper {
+  display: block;
+  overflow-x: hidden;
+  width: 100%;
+  min-width: 950px;
+  padding-top: 5px; }
+  .quiz-wrapper > h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #8F8F8F;
+    min-width: 950px; }
 
-.CYU_title_summary { font-family: "Lato", sans-serif; font-size: 20px; font-weight: bold; color: #FBAF40; display: inline; }
+.CYU_title_summary {
+  font-family: "Lato", sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  color: #FBAF40;
+  display: inline; }
 
-.question_eval_container { font-size: 16px; font-weight: bold; color: #8F8F8F; }
+.question_eval_container {
+  font-size: 16px;
+  font-weight: bold;
+  color: #8F8F8F; }
 
-.CYU_title_summary_legend { color: white; padding: 5px 8px; background: #FBAF40; border-radius: .5em; float: right; cursor: pointer; }
+.CYU_title_summary_legend {
+  color: white;
+  padding: 5px 8px;
+  background: #FBAF40;
+  border-radius: .5em;
+  float: right;
+  cursor: pointer; }
 
-.userAnswer_table { float: left; }
+.userAnswer_table {
+  float: left; }
 
-.incorrect { font-weight: bold; color: #E4522F; }
+.incorrect {
+  font-weight: bold;
+  color: #E4522F; }
 
-.correct { font-weight: bold; color: #64B58A; }
+.correct {
+  font-weight: bold;
+  color: #64B58A; }
 
-.verify { /*margin-top: 30px;*/ float: left; display: none; /*max-width: 40%;*/ }
+.verify {
+  /*margin-top: 30px;*/
+  float: left;
+  display: none;
+  /*max-width: 40%;*/ }
 
-.Quiz-AdditionalInfo { display: none; float: left; clear: both; }
+.Quiz-AdditionalInfo {
+  display: none;
+  float: left;
+  clear: both; }
 
-.help-inline-container { float: right; width: 300px; margin-left: 10px; margin-bottom: 10px; clear: both; position: relative; z-index: 10; }
+.help-inline-container {
+  float: right;
+  width: 300px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  clear: both;
+  position: relative;
+  z-index: 10; }
 
-.help-header { background: transparent url("../static/images/Lesson_Icons/helpHeader_tab.png") no-repeat top left; width: 300px; height: 37px; padding: 14px 10px; }
+.help-header {
+  background: transparent url("../static/images/Lesson_Icons/helpHeader_tab.png") no-repeat top left;
+  width: 300px;
+  height: 37px;
+  padding: 14px 10px; }
 
-.help-header-text { /*color: #8C8C8C;*/ color: #333; font-weight: bolder; margin-top: 10px; font-size: 20px; }
+.help-header-text {
+  /*color: #8C8C8C;*/
+  color: #333;
+  font-weight: bolder;
+  margin-top: 10px;
+  font-size: 20px; }
 
-.help-body { background-color: #D2D3D5; padding: 10px; border-bottom-left-radius: .75em; border-bottom-right-radius: .75em; }
-.help-body ul { padding-left: 0; }
-.help-body > h4 { padding: 5px 0 5px 0; margin: 0; font-weight: bold; color: white; font-size: 16px; }
-.help-body > span { color: #000000; }
-.help-body > a:hover { color: #333333; text-decoration: underline; }
+.help-body {
+  background-color: #D2D3D5;
+  padding: 10px;
+  border-bottom-left-radius: .75em;
+  border-bottom-right-radius: .75em; }
+  .help-body ul {
+    padding-left: 0; }
+  .help-body > h4 {
+    padding: 5px 0 5px 0;
+    margin: 0;
+    font-weight: bold;
+    color: white;
+    font-size: 16px; }
+  .help-body > span {
+    color: #000000; }
+  .help-body > a:hover {
+    color: #333333;
+    text-decoration: underline; }
 
-.quiz-contents { float: left; min-width: 570px; max-width: 60%; }
+.quiz-contents {
+  float: left;
+  min-width: 570px;
+  max-width: 60%; }
 
-.quiz-question-container { position: relative; display: inline-block; width: 100%; }
+.quiz-question-container {
+  position: relative;
+  display: inline-block;
+  width: 100%; }
 
-.quiz-answers-container { position: relative; padding-left: 3em; }
+.quiz-answers-container {
+  position: relative;
+  padding-left: 3em; }
 
-.quiz-buttons-container { position: relative; display: block; padding-bottom: 10px; }
+.quiz-buttons-container {
+  position: relative;
+  display: block;
+  padding-bottom: 10px; }
 
-.quiz-question-container img { width: 500px; }
+.quiz-question-container img {
+  width: 500px; }
 
-.quiz_helpLink { color: black; text-decoration: none; }
-.quiz_helpLink:hover { color: #383838; text-decoration: underline; cursor: pointer; }
+.quiz_helpLink {
+  color: black;
+  text-decoration: none; }
+  .quiz_helpLink:hover {
+    color: #383838;
+    text-decoration: underline;
+    cursor: pointer; }
 
-.button-row > button { outline: none; background: none; border: none; box-shadow: none; font-weight: bolder; font-size: 18px; color: #69CD85; }
-.button-row > button:disabled { background: none; color: #8f8f8f !important; }
-.button-row > button:hover { background: #EAEAEA; }
+.button-row > button {
+  outline: none;
+  background: none;
+  border: none;
+  box-shadow: none;
+  font-weight: bolder;
+  font-size: 18px;
+  color: #69CD85; }
+  .button-row > button:disabled {
+    background: none;
+    color: #8f8f8f !important; }
+  .button-row > button:hover {
+    background: #EAEAEA; }
 
 /*Map Link Styling*/
-.map_link { color: #D35147; cursor: pointer; text-decoration: none; }
-.map_link:hover { color: #550B0B; text-decoration: underline; }
+.map_link {
+  color: #D35147;
+  cursor: pointer;
+  text-decoration: none; }
+  .map_link:hover {
+    color: #550B0B;
+    text-decoration: underline; }
 
 /*glossary popover styling*/
-.glossary_link { color: #36A149; cursor: pointer; text-decoration: none; }
-.glossary_link:hover { color: #084408; text-decoration: underline; }
+.glossary_link {
+  color: #36A149;
+  cursor: pointer;
+  text-decoration: none; }
+  .glossary_link:hover {
+    color: #084408;
+    text-decoration: underline; }
 
-.glossary_popover { position: fixed !important; top: 0; left: 0; z-index: 1060; display: none; width: 300px !important; padding: 1px; text-align: left; white-space: normal; background-color: #2a4254 !important; -webkit-background-clip: padding-box; background-clip: padding-box; border: 1px solid #ccc; border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 0px !important; -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); color: white; }
-.glossary_popover.left { margin-left: -10px; }
-.glossary_popover.left > .arrow { top: 50%; right: -11px; margin-top: -11px; border-right-width: 0; border-left-color: #999; border-left-color: rgba(0, 0, 0, 0.25); }
-.glossary_popover.left > .arrow:after { right: 1px; bottom: -10px; content: " "; border-right-width: 0; border-left-color: #2a4254; }
-.glossary_popover > .arrow { position: absolute; display: block; width: 0; height: 0; border-color: transparent; border-style: solid; border-width: 11px; }
-.glossary_popover > .arrow:after { position: absolute; display: block; width: 0; height: 0; border-color: transparent; border-style: solid; content: ""; border-width: 10px; }
-.glossary_popover a { color: #79C3F6; }
-.glossary_popover a:hover { color: #62A0C9; }
+.glossary_popover {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  z-index: 1060;
+  display: none;
+  width: 300px !important;
+  padding: 1px;
+  text-align: left;
+  white-space: normal;
+  background-color: #2a4254 !important;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0px !important;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  color: white; }
+  .glossary_popover.left {
+    margin-left: -10px; }
+    .glossary_popover.left > .arrow {
+      top: 50%;
+      right: -11px;
+      margin-top: -11px;
+      border-right-width: 0;
+      border-left-color: #999;
+      border-left-color: rgba(0, 0, 0, 0.25); }
+      .glossary_popover.left > .arrow:after {
+        right: 1px;
+        bottom: -10px;
+        content: " ";
+        border-right-width: 0;
+        border-left-color: #2a4254; }
+  .glossary_popover > .arrow {
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 11px; }
+    .glossary_popover > .arrow:after {
+      position: absolute;
+      display: block;
+      width: 0;
+      height: 0;
+      border-color: transparent;
+      border-style: solid;
+      content: "";
+      border-width: 10px; }
+  .glossary_popover a {
+    color: #79C3F6; }
+    .glossary_popover a:hover {
+      color: #62A0C9; }
 
 /*end glossary popover styling*/
-.help-inline-container a { color: #1b1b1b; cursor: pointer; text-decoration: none; }
-.help-inline-container a:hover { text-decoration: underline; }
-.help-inline-container .video_link { color: #1b1b1b; cursor: pointer; }
+.help-inline-container a {
+  color: #1b1b1b;
+  cursor: pointer;
+  text-decoration: none; }
+  .help-inline-container a:hover {
+    text-decoration: underline; }
+.help-inline-container .video_link {
+  color: #1b1b1b;
+  cursor: pointer; }
 
-.video_link { color: #337ab7; cursor: pointer; }
-.video_link:hover { text-decoration: underline; }
+.video_link {
+  color: #337ab7;
+  cursor: pointer; }
+  .video_link:hover {
+    text-decoration: underline; }
 
-.disabled_vid_link { color: #383838 !important; text-decoration: none !important; }
+.disabled_vid_link {
+  color: #383838 !important;
+  text-decoration: none !important; }
 
-.document_link { color: #1b1b1b; cursor: pointer; }
-.document_link:hover { text-decoration: underline; }
+.document_link {
+  color: #1b1b1b;
+  cursor: pointer; }
+  .document_link:hover {
+    text-decoration: underline; }
 
-.checking_in_box { width: 660px; margin: 10px auto; }
+.checking_in_box {
+  width: 660px;
+  margin: 10px auto; }
 
-.checkIn_submit_button { border-radius: .75em; background-color: #C6FFED; color: #062531; font-weight: bold; border: none; padding: 0 10px; float: right; margin: 0 5px; }
-.checkIn_submit_button:hover { background-color: white; }
+.checkIn_submit_button {
+  border-radius: .75em;
+  background-color: #C6FFED;
+  color: #062531;
+  font-weight: bold;
+  border: none;
+  padding: 0 10px;
+  float: right;
+  margin: 0 5px; }
+  .checkIn_submit_button:hover {
+    background-color: white; }
 
-.checkIn_hint_button { border-radius: .75em; background-color: #FFC184; color: #062531; font-weight: bold; border: none; padding: 0 10px; float: right; margin: 0 5px; }
-.checkIn_hint_button:hover { background-color: white; }
+.checkIn_hint_button {
+  border-radius: .75em;
+  background-color: #FFC184;
+  color: #062531;
+  font-weight: bold;
+  border: none;
+  padding: 0 10px;
+  float: right;
+  margin: 0 5px; }
+  .checkIn_hint_button:hover {
+    background-color: white; }
 
-.checkingIn_answer { border-radius: .75em; background-color: #C6FFED; padding: 10px; transition: all .4s; width: 640px; margin: 5px; }
+.checkingIn_answer {
+  border-radius: .75em;
+  background-color: #C6FFED;
+  padding: 10px;
+  transition: all .4s;
+  width: 640px;
+  margin: 5px; }
 
-.checkingIn_hint { border-radius: .75em; background-color: #FFC184; padding: 10px; transition: all .4s; width: 640px; margin: 5px; }
+.checkingIn_hint {
+  border-radius: .75em;
+  background-color: #FFC184;
+  padding: 10px;
+  transition: all .4s;
+  width: 640px;
+  margin: 5px; }
 
-.checkingIn_answer_collapsed { height: 0; transition: all .4s; }
+.checkingIn_answer_collapsed {
+  height: 0;
+  transition: all .4s; }
 
-.checkIn_completion_warning { font-weight: bold; font-style: italic; color: #E55330; }
+.checkIn_completion_warning {
+  font-weight: bold;
+  font-style: italic;
+  color: #E55330; }
 
-.quiz_completion_warning { font-weight: bold; font-style: italic; color: #E55330; display: none; }
+.quiz_completion_warning {
+  font-weight: bold;
+  font-style: italic;
+  color: #E55330;
+  display: none; }
 
-.equation-box { border-radius: .75em; margin: 10px; margin-left: 50px; width: 85%; display: block; padding: 20px 5px; text-indent: 0; clear: both; }
-.equation-box.orange { background-color: #F9B143; }
-.equation-box.blue { background-color: #B6EDFF; }
+.equation-box {
+  border-radius: .75em;
+  margin: 10px;
+  margin-left: 50px;
+  width: 85%;
+  display: block;
+  padding: 20px 5px;
+  text-indent: 0;
+  clear: both; }
+  .equation-box.orange {
+    background-color: #F9B143; }
+  .equation-box.blue {
+    background-color: #B6EDFF; }
 
-.embedded-table { display: table; margin: 10px auto; }
+.embedded-table {
+  display: table;
+  margin: 10px auto; }
 
-.keyCheck { display: none; }
+.keyCheck {
+  display: none; }
 
-.lesson #no_lesson_selected { display: block !important; }
+.lesson #no_lesson_selected {
+  display: block !important; }
 
 /*------------------------------embedded table styling------------------------------*/
-#lesson-content {     /* .lesson table tr { &:first-child { td:first-child, th:first-child { border-top-left-radius: 0.75em; } td:last-child, th:last-child { border-top-right-radius: 0.75em; } } &:last-child td { &:first-child { border-bottom-left-radius: 0.75em; } &:last-child { border-bottom-right-radius: 0.75em; } } th { vertical-align: middle; background-color: #4E9CDB; color: #fff; font-weight: bold;
- } td { vertical-align: middle; background-color: #ddf0ff;
- } }
- */ }
-#lesson-content .embedded_video_wrapper { width: 100%; height: 355px; text-align: center; padding: 0 5px; margin: 20px 0; background: #ccc; background: -webkit-radial-gradient(#fff, #ccc); background: -o-radial-gradient(#fff, #ccc); background: radial-gradient(#fff, #ccc); border-radius: 1em; }
-#lesson-content .embedded_video_wrapper iframe { width: 100%; height: 100%; max-width: 560px; max-height: 349px; }
+#lesson-content {
+    /*
+  .lesson table tr {
+    &:first-child {
+      td:first-child, th:first-child {
+        border-top-left-radius: 0.75em;
+      }
+      td:last-child, th:last-child {
+        border-top-right-radius: 0.75em;
+      }
+    }
+    &:last-child td {
+      &:first-child {
+        border-bottom-left-radius: 0.75em;
+      }
+      &:last-child {
+        border-bottom-right-radius: 0.75em;
+      }
+    }
+    th {
+      vertical-align: middle;
+      background-color: #4E9CDB;
+      color: #fff;
+      font-weight: bold;
+
+    }
+    td {
+      vertical-align: middle;
+      background-color: #ddf0ff;
+
+    }
+  }
+
+  */ }
+  #lesson-content .embedded_video_wrapper {
+    width: 100%;
+    height: 355px;
+    text-align: center;
+    padding: 0 5px;
+    margin: 20px 0;
+    background: #ccc;
+    background: -webkit-radial-gradient(#fff, #ccc);
+    background: -o-radial-gradient(#fff, #ccc);
+    background: radial-gradient(#fff, #ccc);
+    border-radius: 1em; }
+    #lesson-content .embedded_video_wrapper iframe {
+      width: 100%;
+      height: 100%;
+      max-width: 560px;
+      max-height: 349px; }
 
 /*# sourceMappingURL=lesson.css.map */

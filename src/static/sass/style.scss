@@ -46,6 +46,10 @@ html{
 
 	&.cms-toolbar-expanded{
 
+        #cms-toolbar-container{
+            //display:none;
+        }
+
         body{
             height: calc(100vh - 46px);
         }
@@ -61,7 +65,6 @@ html{
 	    }
 
 	    #menu {
-	        //margin-top:46px;
 	        top:46px !important;
 	    }
 	    .sidebar_wrapper{
@@ -71,9 +74,9 @@ html{
 	    #content #content-wrapper #content-tab-header{
 	        top:96px;
 	    }
-	    #content #content-wrapper #content-tab-body{
-            //margin-top:106px;
-	    }
+
+
+
 
 	}
 }
@@ -388,7 +391,8 @@ div[class^='multicolumn'] {
     }
 
     .copyright{
-        float:right;
+        //float:right;
+        float:left;
         height: $footer-height;
     }
 

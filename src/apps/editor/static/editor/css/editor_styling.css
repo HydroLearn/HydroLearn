@@ -1,0 +1,141 @@
+#editor_formset_init {
+  display: none; }
+
+#TOC_content .TOC_Add_Section_wrapper {
+  background: #00000033;
+  margin: 0;
+  padding: 3px;
+  text-align: center; }
+  #TOC_content .TOC_Add_Section_wrapper .TOC_Add_Section_button {
+    cursor: pointer;
+    color: white;
+    display: inline-block;
+    background: #ffffff33;
+    padding: 3px 6px;
+    border-radius: 7px;
+    margin: 0 2px 5px 2px;
+    transition: all .2s;
+    font-size: .85em; }
+    #TOC_content .TOC_Add_Section_wrapper .TOC_Add_Section_button:hover {
+      background: #31c55f; }
+    #TOC_content .TOC_Add_Section_wrapper .TOC_Add_Section_button i {
+      padding-right: 3px; }
+#TOC_content .TOC_Add_Lesson_wrapper {
+  background: #00000033;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  margin: 0;
+  padding: 3px;
+  text-align: center; }
+  #TOC_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button {
+    cursor: pointer;
+    color: white;
+    display: inline-block;
+    background: #ffffff33;
+    padding: 3px 6px;
+    border-radius: 7px;
+    margin: 0 2px 5px 2px;
+    transition: all .2s;
+    font-size: .85em; }
+    #TOC_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button:hover {
+      background: #31c55f; }
+    #TOC_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button i {
+      padding-right: 3px; }
+#TOC_content .TOC_Toolbox {
+  font-family: "Lato", sans-serif;
+  font-size: 15px;
+  background: #ffffff44;
+  float: right;
+  padding: 1px 5px;
+  border-radius: 7px;
+  transition: all .2s; }
+  #TOC_content .TOC_Toolbox i {
+    transition: all .2s;
+    padding: 1px 3px;
+    color: #fff; }
+    #TOC_content .TOC_Toolbox i:hover {
+      color: #F98600; }
+#TOC_content .TOC_Title {
+  padding: 4px 10px 4px 25px; }
+#TOC_content .TOC_listing .accord-title {
+  padding-right: 10px; }
+#TOC_content .TOC_NEW_OBJ {
+  background: #85cfa399;
+  font-weight: bold;
+  border-left: 3px solid #00ff00; }
+  #TOC_content .TOC_NEW_OBJ .accord-title {
+    font-weight: bold; }
+  #TOC_content .TOC_NEW_OBJ .TOC_NEW_OBJ {
+    border-left: none; }
+#TOC_content .TOC_EDITED_OBJ {
+  background: #cfb585bf;
+  font-weight: bold;
+  border-left: 3px solid #ffbc00; }
+  #TOC_content .TOC_EDITED_OBJ .accord-title {
+    font-weight: bold; }
+
+.form_block {
+  display: none; }
+
+.Toggle_edit_btn {
+  float: right; }
+
+#content_form #content_form_controls {
+  background: #ececec;
+  width: 100%;
+  height: 50px;
+  padding: 8px;
+  margin-top: 15px;
+  border-radius: 7px; }
+#content_form .Submit_button {
+  float: left;
+  background: #85cfc1;
+  color: white;
+  font-weight: bold;
+  transition: all .2s; }
+  #content_form .Submit_button:hover {
+    background: #31c55f; }
+#content_form .Cancel_button {
+  float: left;
+  margin: 0 10px;
+  background: #eaeaea;
+  font-weight: bold;
+  transition: all .2s; }
+  #content_form .Cancel_button:hover {
+    background: #d2d2d2; }
+#content_form .Delete_button {
+  float: right;
+  margin: 0 10px;
+  background: #b1213c;
+  color: white;
+  font-weight: bold;
+  transition: all .2s; }
+  #content_form .Delete_button:hover {
+    background: red; }
+
+.form_messages {
+  display: none;
+  width: 90%;
+  background-color: #eaeaea;
+  border-left: 3px solid #b1b1b1;
+  padding: 10px;
+  margin: 10px 0;
+  text-align: center;
+  color: #676767;
+  font-style: italic;
+  font-weight: bold; }
+  .form_messages ul {
+    list-style: none !important;
+    list-style-type: none !important; }
+
+#content_form_errors {
+  background-color: #ffe5e5;
+  border-left: 3px solid red;
+  color: red; }
+
+#content_form_success {
+  background-color: #a6ffce;
+  border-left: 3px solid #069212;
+  color: #069212; }
+
+/*# sourceMappingURL=editor_styling.css.map */

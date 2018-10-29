@@ -1,0 +1,418 @@
+{% extends CMS_TEMPLATE %}
+
+{% load cms_tags editor_template_tags module_template_tags menu_tags sekizai_tags static %}
+
+{% block subtitle %}
+   - EDIT {{ Lesson.name }}
+{% endblock subtitle %}
+
+{% block sidebar_nav_links %}
+
+    <!--activate this tab in the sidebar by adding active-->
+    <li class="nav-item active">
+        <a class="nav-link" id="TOC_tab" data-toggle="tab" href="#TOC_content_container" role="tab" aria-controls="TOC_content_container" aria-selected="false">Table of Contents</a>
+    </li>
+
+{% endblock sidebar_nav_links %}
+
+{% block sidebar_nav_content %}
+
+    <!--start off in this container by adding active and in classes-->
+    <div class="tab-pane fade active in" id="TOC_content_container" role="tabpanel" aria-labelledby="TOC_tab">
+        <div id="TOC_content"></div>
+    </div>
+
+{% endblock sidebar_nav_content %}
+
+
+{% block content %}
+    {% addtoblock 'head_js' %}
+
+        <!-- load the mathjax configuration in the head of the page -->
+        <script src="{% static 'module/js/plugins/MathJax/v2.7.1/MathJax.js' %}?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+            tex2jax: {
+                    inlineMath: [["$$","$$"],["\\(","\\)"]],
+                    preview:'none'
+                },
+            showMathMenu: false,
+            displayAlign: "left",
+
+            "HTML-CSS": {
+                imageFont: null,
+                styles: {
+                    '.MathJax_Display': {
+                        "text-align": "left",
+                        "margin": 0,
+                        "display": "inline",
+                    }
+                }
+            },
+
+
+          });
+
+        </script>
+
+        <script type="text/javascript">
+            window.current_module = '{{Lesson.name}} where is this';
+            window.current_module_slug = '{{Lesson.slug}}';
+        </script>
+
+    {% endaddtoblock 'head_js' %}
+
+
+    {% addtoblock 'template_css' %}
+        <link rel="stylesheet" href="{% static 'module/css/Load_Spinner_Manager.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'editor/css/editor_styling.css' %}" type="text/css">
+        <!--<link rel="stylesheet" href="{% static 'editor/css/editor_validation_styling.css' %}" type="text/css">-->
+        <!--<link rel="stylesheet" href="{% static 'editor/css/DIV-TableStyle.css' %}" type="text/css">-->
+        <!--<link rel="stylesheet" href="{% static 'editor/css/map.css' %}" type="text/css">-->
+    {% endaddtoblock 'template_css' %}
+
+    <div id="content-wrapper">
+            <div id="main-content">
+                    <div id="content-tab-header">
+                        <div class="module_navbar_wrapper">
+                            <ul id="module_nav" class="nav nav-tabs nav-fill" role="tablist">
+
+                                <li onclick="VIEWPORT_MGR.Switch_View('Lessons');" class="nav-item">
+                                <!--<li class="nav-item">-->
+                                    <a class="nav-link" id="lesson-tab" data-toggle="tab" href="#lesson-content" role="tab" >Lessons</a>
+                                </li>
+                                <li onclick="VIEWPORT_MGR.Switch_View('Map');" class="nav-item">
+                                <!--<li class="nav-item">-->
+                                    <a class="nav-link" id="map-tab" data-toggle="tab" href="#map-content" role="tab" >Map</a>
+                                </li>
+                            </ul>
+
+
+                        </div>
+                    </div>
+
+                    <div id="content-tab-body" class="tab-content">
+                        <div id="body-content">
+
+                            <!--<div id="pre-content-banner">-->
+                                <!--{% if user.is_authenticated and object.created_by == user %}-->
+                                    <!--{% publication_status_banner object %}-->
+                                <!--{% endif %}-->
+                            <!--</div>-->
+
+                            <div id="lesson-content" style="display:none" class="tab-pane fade" role="tabpanel">
+                                <div class='lesson'>
+
+                                    <h2>Welcome to the Editor!</h2>
+                                    <hr class="headerSpacer">
+                                    <p>
+                                        From here, you can generate lessons for publication in HydroLearn.
+                                        Using the Table of Contents to the left, you can add sections to your
+                                        lesson.
+                                    </p>
+                                    <p>
+                                        Alternatively, if you're working on something a little more complex, you can convert
+                                        this lesson to a Topic containing a collection of lessons either generated by you,
+                                        or collected from other Publications.
+
+                                    </p>
+
+                                </div>
+
+
+
+
+                            </div>
+
+                            <div class="lesson-nav-container">
+                                <button class="prev_lesson_link" ><i class="fas  fa-caret-left"></i> Previous Section</button>
+                                <button class="next_lesson_link" >Next Section <i class="fas  fa-caret-right"></i></button>
+                                <span class="lesson_complete_message">Module Complete!</span>
+
+                                <div id="lesson-nav-warning-dialog" title="Warning!">
+                                    <p>
+                                        If you navigate away from this form you will lose any unsaved changes.
+                                        Are you sure you would like to continue?
+                                    </p>
+
+                                    <button id="lesson-nav-confirm" title="Leave current Form">Yes, Navigate Away</button>
+                                    <button id="lesson-nav-cancel" title="Stay on current Form">No, Continue Editing</button>
+                                </div>
+
+                                <div id="lesson-nav-denied-dialog" title="Warning!">
+                                    <p>
+                                        You must finish or cancel editing the current form before adding another!
+                                    </p>
+
+                                    <button id="lesson-nav-denied-confirm" title="Leave current quiz">Ok</button>
+                                </div>
+
+                                <div id="delete-confirmation-dialog" title="Warning!">
+
+                                    <div id="delete-confirmation-content">
+
+                                    </div>
+
+                                    <button id="delete-confirmation-confirm" title="Delete">Delete</button>
+                                    <button id="delete-confirmation-cancel" title="Cancel">Cancel</button>
+                                </div>
+
+                            </div>
+
+                            <div id="map-content" style="display:none" class="tab-pane fade" role="tabpanel">
+                                {# placeholder Map_Content or #}
+                                    <!--<p>Currently In Development. Please check back later</p>-->
+                                {# endplaceholder #}
+
+                                {% map_container %}
+
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+        </div>
+
+        {# initalize_editor_formsets sections sub_lessons #}
+
+
+    {% addtoblock 'template_js' %}
+
+        <script>
+            $('#content').addClass('always_full')
+        </script>
+
+        <script src="{% static 'js/plugins/jquery-ui.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery-ui.multiselect.js' %}"></script>
+        <script src="{% static 'js/plugins/highcharts.js' %}"></script>
+
+
+        <!--
+            TODO: Replace with prettyphoto.js (already loaded in layout.js)
+        -->
+        <script src="{% static 'module/js/plugins/lightbox/ekko-lightbox.js' %}"></script>
+
+
+        <!--<script type="text/javascript" src="{% static 'javascript/knockout-3.3.0.js' %}"/>-->
+        <script src="{% static 'module/js/plugins/History_js/jquery.history.js' %}"></script>
+
+
+        <!--// spinner functionality-->
+        <script src="{% static 'js/plugins/spin-1.2.8.js' %}"></script>
+        <script src="{% static 'js/Load_Spinner_Manager.js' %}"></script>
+
+        <script src="{% static 'module/js/default.js' %}"></script>
+        <script src="{% static 'editor/js/editor_default.js' %}"></script>
+
+        <!--load functionality-->
+        <script src="{% static 'module/js/Viewport_manager.js' %}"></script>
+        <script src="{% static 'module/js/SLD_Templator.js' %}"></script>
+        <script src="{% static 'module/js/URL_Utility.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery.validate.js' %}"></script>
+
+
+        <!--lessons-->
+        <script src="{% static 'module/js/Lesson_manager.js' %}"></script>
+        <script src="{% static 'module/js/TableOfContents_manager.js' %}"></script>
+        <script src="{% static 'editor/js/Lesson_manager_EditExtension.js' %}"></script>
+        <script src="{% static 'editor/js/TOC_manager_EditExtension.js' %}"></script>
+
+        <!--map-->
+        <script src="{% static 'module/js/Map_manager.js' %}"></script>
+        <script src="{% static 'module/js/Layer_manager.js' %}"></script>
+        <script src="{% static 'module/js/HS_JSON_Interpreter.js' %}"></script>
+
+        <script src="{% static 'module/js/Geoserver_Data_manager.js' %}"></script>
+        <script src="{% static 'module/js/Interactive_Layer_Dialog_manager.js' %}"></script>
+        <script src="{% static 'module/js/Layer_Selection_manager.js' %}"></script>
+        <script src="{% static 'module/js/Color_manager.js' %}"></script>
+        <script src="{% static 'module/js/Highcharts_manager.js' %}"></script>
+        <script src="{% static 'module/js/Map_functionality.js' %}"></script>
+
+
+
+
+        <!--//JSLINQ-->
+        <script src="{% static 'module/js/plugins/JSLINQ.js' %}"></script>
+
+        <!--// custom glossary object-->
+        <script src="{% static 'module/js/Glossary_object.js' %}"></script>
+
+        <!--// lesson resource manager-->
+        <script src="{% static 'module/js/Lesson_Resource_Manager.js' %}"></script>
+
+        <script type='text/javascript'>
+
+            $(document).delegate('*[data-toggle="lightbox"]', 'click', function (event) {
+                event.preventDefault();
+                $(this).ekkoLightbox();
+            });
+
+
+            // once the DOM is loaded
+            $(document).ready(function(){
+                // if screen is larger than 786 pixels (desktop view) expand the sidebar on page load
+                if($( window ).width() >= 768){
+                    $('#sidebarCollapse').click()
+                }
+            });
+
+
+            // once the window/all scripts are loaded perform the following
+            $(window).on('load',function () {
+
+                URL_UTILS.init('{{LANGUAGE_CODE}}')
+
+
+
+
+                /* ---------------------------------
+                    set some basic information used in initialization of managers for consolidation
+                ---------------------------------*/
+                var Map_container = '#map-content';
+                var Layer_container = "#layers div.content div.layers_content_wrapper";
+                var Lesson_container = "#lesson-content";
+
+
+                /* ---------------------------------
+                   create the managers for this module
+                ---------------------------------*/
+                //console.log('Instantiating Managers...')
+
+                /* ---------------------------------
+                   RESOURCE LOADING
+                   (sample loading for when resources are integrated)
+                       it is expected that 'resource_data' context variable will be valid
+                       JSON of the form specified by HydroShare's 'mapProject.json'
+                       configuration files.
+
+                   ---------------------------------
+
+                        var raw_resource_data = JSON.parse('{{ resource_data | escapejs }}')
+                        var layer_data = new HS_Resource(raw_resource_data);
+
+                        // set debug output flag to true in map_manager config
+                        layer_data.map_config['debug_output'] = true;
+
+                        MAP_MGR = new MAP_MANAGER(Map_container, layer_data.map_config);
+                        LAYER_MGR = new LAYER_MANAGER(Layer_container, Map_container, layer_data.layers);
+
+                ---------------------------------*/
+
+
+                MAP_MGR = new MAP_MANAGER(Map_container);
+                LAYER_MGR = new LAYER_MANAGER(Layer_container, Map_container);
+                LESSON_MGR = new EDITOR_LESSON_MANAGER(Lesson_container, '{{Lesson.name}}', '{{Lesson.slug}}', '{{section}}');
+
+                /* ---------------------------------
+                   setup the viewport manager to manipulate the main-content container
+                ---------------------------------*/
+                VIEWPORT_MGR = new VIEWPORT_MANAGER('#main-content');
+
+
+                /* ---------------------------------
+                   create a new Lesson view and register it with the viewport manager
+                ---------------------------------*/
+                //console.log('Creating Lesson View...')
+                var lessonView = new EDIT_LESSON_VIEW('Lessons', Lesson_container, LESSON_MGR);
+                VIEWPORT_MGR.Register_View(lessonView, '#lesson-tab');
+
+
+                /* ---------------------------------
+                   create a new Map view and register it with the viewport manager
+                ---------------------------------*/
+                //console.log('Creating Map View...')
+                var mapView = new MAP_VIEW('Map', Map_container, MAP_MGR);
+                VIEWPORT_MGR.Register_View(mapView, '#map-tab');
+
+
+
+                /* ---------------------------------
+                   initialize the Table of contents to link to the different SubStudies/sections
+                ---------------------------------*/
+                TOC_MGR = new EDITOR_TOC('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
+
+
+                /* ---------------------------------
+                    start on the lessons tab
+                ---------------------------------*/
+                VIEWPORT_MGR.Switch_View('Lessons');
+                $('#lesson-tab').tab('show') // Select lesson tab
+
+
+                /* ---------------------------------
+                    form manager initialization
+                ---------------------------------*/
+                // hide all section/lesson forms
+                //$('.View_form').hide()
+
+
+
+                //var FormManager = new Form_Manager('#post-new-module', '#editor_formset_init');
+                //initialize_existing_validation()
+
+                // add an ALL post add event to initialize the form accordions and set events for sorting
+                //FormManager.add_post_add_event("ALL", function(){
+                //    // get all uninitialized accordions
+                //    $('.accordion-form:not(.ui-accordion)').each(function(){
+                //        $(this).accordion({
+                //            active: 0,
+                //            collapsible:true,
+                //            heightStyle: "content",
+                //        });
+                //
+                //        // add validation rules to newly generated fields
+                //        $(this).find('input[name$="-name"]').each(function(){
+                //            $(this).rules('add',custom_validator_rules['name']);
+                //        });
+                //
+                //        $(this).find('input[name$="-duration"]').each(function(){
+                //            $(this).rules('add', custom_validator_rules['duration']);
+                //        });
+                //
+                //    });
+                //});
+
+
+
+                // set map to resize on window resize
+                $(window).resize(function () {
+                    MAP_MGR.Resize()
+                });
+
+                // set map to resize based on custom 'body.sidebar_toggled_evt' event
+                $('body').bind('sidebar_toggled_evt',function () {
+                    console.log("in sidebar toggle event");
+                    // set timeout to wait for collapse animation to finish
+                    //setTimeout(function(){MAP_MGR.Resize()}, 200);
+                    MAP_MGR.Resize()
+                });
+
+
+            });
+
+
+        </script>
+
+
+    {% endaddtoblock 'template_js' %}
+{% endblock content %}
+
+
+
+
+
+    <iframe id="hFrame" name="hFrame" style="display:none"></iframe>
