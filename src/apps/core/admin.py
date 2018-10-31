@@ -1,4 +1,4 @@
-#from django import forms
+from django.forms import ModelChoiceField
 from django.contrib import admin
 #from django.utils.translation import ugettext as _
 
@@ -9,6 +9,8 @@ from cms.admin.placeholderadmin import PlaceholderAdminMixin
 #from djangocms_text_ckeditor.widgets import TextEditorWidget
 
 #from src.apps.core.admin_actions import *
+
+from .models.LearningObjModels import Learning_Level, Learning_Verb, Learning_Outcome
 
 from src.apps.core.forms import (
     # ModuleForm,
@@ -431,6 +433,24 @@ class LessonAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin,
         else:
             return super(LessonAdmin, self).get_form(request, obj, **kwargs)
 
+class Learning_OutcomeAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
+    model = Learning_Outcome
+
+    sortable_field_name = "outcome"
+    list_display = ['outcome']
+
+class Learning_LevelAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
+    model = Learning_Level
+
+    sortable_field_name = "label"
+    list_display = ['label']
+
+class Learning_VerbAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
+    model = Learning_Verb
+
+    sortable_field_name = "verb"
+    list_display = ['verb']
+
 # class TopicAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
 #     model = Topic
 #     form = Edit_TopicForm
@@ -570,4 +590,7 @@ admin.site.register(QuizQuestion, QuizQuestionParentAdmin)
 admin.site.register(MultiChoice_answer, MultiChoice_AnswerAdmin)
 admin.site.register(MultiSelect_answer, MultiSelect_AnswerAdmin)
 
+admin.site.register(Learning_Outcome, Learning_OutcomeAdmin)
+admin.site.register(Learning_Level, Learning_LevelAdmin)
+admin.site.register(Learning_Verb, Learning_VerbAdmin)
 # admin.site.register(QuizAnswer, QuizAnswerParentAdmin)
