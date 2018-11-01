@@ -1,5 +1,6 @@
 from django.forms import ModelChoiceField
 from django.contrib import admin
+from django.forms import ModelForm, ModelChoiceField
 #from django.utils.translation import ugettext as _
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
@@ -445,8 +446,18 @@ class Learning_LevelAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin,
     sortable_field_name = "label"
     list_display = ['label']
 
+class Learning_LevelChoiceField(ModelChoiceField):
+     def label_from_instance(self, obj):
+         return "%s" % (obj.label)
+
+class Learning_VerbAdminForm(ModelForm):
+    level = Learning_LevelChoiceField(queryset=Learning_Level.objects.all())
+    class Meta:
+        model = Learning_Verb
+        fields = ['verb', 'level']
+
 class Learning_VerbAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
-    model = Learning_Verb
+    form = Learning_VerbAdminForm
 
     sortable_field_name = "verb"
     list_display = ['verb']
