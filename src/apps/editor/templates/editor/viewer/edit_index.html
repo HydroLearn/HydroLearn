@@ -2,6 +2,10 @@
 
 {% load cms_tags editor_template_tags module_template_tags menu_tags sekizai_tags static %}
 
+{% block cms_loader %}
+    {% include 'shared/cms_toolbar.html' %}
+{% endblock cms_loader %}
+
 {% block subtitle %}
    - EDIT {{ Lesson.name }}
 {% endblock subtitle %}

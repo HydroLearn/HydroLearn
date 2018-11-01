@@ -5,6 +5,16 @@
 #TOC_content {
 
     .TOC_add_menu{
+        .TOC_add_menu_trigger_btn{
+            cursor: pointer;
+            border-radius: 7px;
+
+            &:hover{
+                background: #ffffff22;
+            }
+        }
+
+
         color: white;
         padding: 10px;
         border-radius: 7px;

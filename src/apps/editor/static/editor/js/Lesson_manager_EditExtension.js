@@ -50,22 +50,22 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
         }
 */
         // initialize the cms plugin tree to enable double-click edit functionality
-        if(typeof(CMS) != 'undefined' && typeof(CMS.$) != 'undefined'){
-            // CMS.Plugin._initializeTree();
-
-            CMS.$(function () {
-                CMS.settings = CMS.API.Helpers.getSettings();
-
-                // extends API
-                CMS.API.Clipboard = new CMS.Clipboard();
-                CMS.API.StructureBoard = new CMS.StructureBoard();
-                CMS.API.Messages = new CMS.Messages();
-                CMS.API.Tooltip = new CMS.Tooltip();
-                CMS.API.Toolbar = new CMS.Toolbar();
-
-                CMS.Plugin._initializeTree();
-            });
-        }
+//        if(typeof(CMS) != 'undefined' && typeof(CMS.$) != 'undefined'){
+//            // CMS.Plugin._initializeTree();
+//
+//            CMS.$(function () {
+//                CMS.settings = CMS.API.Helpers.getSettings();
+//
+//                // extends API
+//                CMS.API.Clipboard = new CMS.Clipboard();
+//                CMS.API.StructureBoard = new CMS.StructureBoard();
+//                CMS.API.Messages = new CMS.Messages();
+//                CMS.API.Tooltip = new CMS.Tooltip();
+//                CMS.API.Toolbar = new CMS.Toolbar();
+//
+//                CMS.Plugin._initializeTree();
+//            });
+//        }
 
 
         // setup edit button functionality

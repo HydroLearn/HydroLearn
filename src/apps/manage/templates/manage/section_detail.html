@@ -1,63 +1,35 @@
 <!--extend this to provide a detail view for a module-->
-{% extends CMS_TEMPLATE %}
+{% extends 'content.html' %}
 {% load cms_tags sekizai_tags static thumbnail %}
 
+{% block subtitle%} - Manage Lesson {% endblock subtitle %}
+
 {% block content %}
-    {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
-    
-    <h1>*UNCATAGORIZED* manage SECTION DETAIL VIEW</h1>
-    
-    <div id="manage-content">
-        
+    {% addtoblock "template_css" %}
+        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">-->
+        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_content_styling.css' %}" type="text/css">-->
+        <!--<link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">-->
+    {% endaddtoblock "template_css" %}
+
+    <!--<div id="manage-content">-->
 
 
-        <div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ object.slug }}</div>
-        <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>
+    <div class="lesson">
+        <h2>
+            Editing: {{ object.name }}
+        </h2>
+        <hr>
+        <div>
+            This is a non-typed section, if this is being displayed, there is an error in
+            the system that allowed a section to be created without a type.
 
-        <div><span style="font-weight: bold; font-style: italic">Created by: </span>{{ object.created_by }}</div>
-        <div><span style="font-weight: bold; font-style: italic">Date Created: </span>{{ object.creation_date }}</div><br>
-
-        <div><span style="font-weight: bold; font-style: italic">Last Modified by: </span>{{ object.changed_by }}</div>
-        <div><span style="font-weight: bold; font-style: italic">Date Modified: </span>{{ object.changed_date }}</div><br/>
-        <!-- Output any related tags -->
-        <div><span style="font-weight: bold; font-style: italic">(Module) Inherited Tags: </span>{{ object.lesson.topic.module.tags.names | join:", " }}</div>
-        <div><span style="font-weight: bold; font-style: italic">(Topic) Inherited Tags: </span>{{ object.lesson.topic.tags.names | join:", " }}</div>
-        <div><span style="font-weight: bold; font-style: italic">(Lesson) Inherited Tags: </span>{{ object.lesson.tags.names | join:", " }}</div>
-        <div><span style="font-weight: bold; font-style: italic">Tags: </span>{{ object.tags.names | join:", " }}</div>
-
-        <h4>Parent Objects</h4>
-        <ul>
-            <li><a href="{{object.lesson.manage_url}}">{{ object.lesson.name}}</a></li>
-        </ul>
-
-        waht?
-        <!--<div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ Section.slug }}</div>-->
-        <!--<div><span style="font-weight: bold; font-style: italic">Type: </span>{{ Section.section_type }}</div>-->
-        <!--<div><span style="font-weight: bold; font-style: italic">Parent Module: </span><a href="{{Section.topic.module.absolute_url}}">{{ Section.topic.module.name}}</a></div>-->
-        <!--<div><span style="font-weight: bold; font-style: italic">Parent Topic: </span><a href="{{Section.topic.absolute_url}}">{{ Section.topic.name}}</a></div>-->
-        <!--<div><span style="font-weight: bold; font-style: italic">Created: </span>{{ Section.creation_date }}</div>-->
-        <!--<div><span style="font-weight: bold; font-style: italic">Last Modified: </span>{{ Section.changed_date }}</div>-->
-        <!--<div><span style="font-weight: bold; font-style: italic">url: </span>{{ request.path_info }}</div>-->
-        <div id="lesson-content">
-            <div class="lesson">
-                <h2>{% render_model Section 'name' %}</h2>
-                <div>
-                    {% if object.content %}
-                        {% render_placeholder object.content %}
-
-                    {% else %}
-                        <p>there is no content please add some</p>
-                    {% endif %}
-                </div>
-            </div>
+            Please, contact an administrator if this occurs.
         </div>
-        
-        
     </div>
-    {% addtoblock 'template_js' %}
-        <script>
-            $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
-        </script>
-    {% endaddtoblock 'template_js' %}
+
+
+    <!--</div>-->
+    {% addtoblock 'template_js' %}{% endaddtoblock 'template_js' %}
+
 {% endblock content %}
 

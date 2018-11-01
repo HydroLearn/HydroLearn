@@ -202,7 +202,7 @@ class editor_LessonUpdateView(OwnershipRequiredMixin, AjaxableResponseMixin, Upd
         # add context variable for if this form is instanced
         context['is_instance'] = True
 
-        # context['manage_view'] = self.object.manage_url
+        context['manage_view'] = self.object.manage_url
 
         return context
 
@@ -234,6 +234,9 @@ class editor_SectionUpdateView(OwnershipRequiredMixin, AjaxableResponseMixin, Up
 
         # add context variable for if this form is instanced
         context['is_instance'] = True
+
+        context['manage_view'] = self.object.manage_url
+
         return context
 
     def get_success_return_data(self,form):

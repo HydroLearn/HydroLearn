@@ -1,89 +1,32 @@
 <!--extend this to provide a detail view for a module-->
-{% extends CMS_TEMPLATE %}
+{% extends 'content.html' %}
 {% load cms_tags sekizai_tags static thumbnail %}
 
 {% block subtitle%} - Manage Lesson {% endblock subtitle %}
 
 {% block content %}
     {% addtoblock "template_css" %}
-        <link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'manage/css/manage_content_styling.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
-
+        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">-->
+        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_content_styling.css' %}" type="text/css">-->
+        <!--<link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">-->
     {% endaddtoblock "template_css" %}
     
-    <div id="manage-content">
+    <!--<div id="manage-content">-->
+
+
     <div class="lesson">
-        <h3>Manage Lesson</h3>
-        <div class="manage-details-accord lesson-accord">
-            <h3>Additional Information</h3>
-            <div id="meta_box">
-                <div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ object.slug }}</div>
-                <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>
-
-                <div><span style="font-weight: bold; font-style: italic">Created by: </span>{{ object.created_by }}</div>
-                <div><span style="font-weight: bold; font-style: italic">Date Created: </span>{{ object.creation_date }}</div><br>
-
-                <div><span style="font-weight: bold; font-style: italic">Last Modified by: </span>{{ object.changed_by }}</div>
-                <div><span style="font-weight: bold; font-style: italic">Date Modified: </span>{{ object.changed_date }}</div><br/>
-                <!-- Output any related tags -->
-                <h4>Tags</h4>
-                <ul>
-
-                    {# TODO: this should technically be a loop over 'parent_lesson's #}
-                    {% if object.parent_lesson %}
-
-                        <li><span style="font-weight: bold; font-style: italic">Inherited Tags: </span>{{ object.parent_lesson.tags.names | join:", " }}</li>
-                    {% endif%}
-
-                    <li><span style="font-weight: bold; font-style: italic">Tags: </span>{{ object.tags.names | join:", " }}</li>
-                </ul>
-
-                {% if object.parent_lesson %}
-                    <h4>Parent Objects</h4>
-                    <ul>
-                        <li><a href="{{object.parent_lesson.manage_url}}">{{ object.parent_lesson.name}}</a></li>
-                    </ul>
-
-                {% endif %}
-
-                <h4>Sections:</h4>
-                <ul>
-                    {% for section in object.sections.all %}
-                        <li>
-                            <a href='{% url "manage:section_content" lesson_slug=object.slug slug=section.slug %}'>{{section.name}}</a>
-                        </li>
-                    {% empty %}
-                        <p>no sections for this lesson yet, add some to view them here.</p>
-                    {% endfor %}
-
-                </ul>
-            </div>
+        <h2>
+            Editing: {{ lesson.name }}
+        </h2>
+        <hr>
+        <div>
+            {% render_placeholder object.summary %}
         </div>
-
-        <div id="lesson-content">
-            <div class="lesson">
-                <h2>{% render_model lesson 'name' %}</h2>
-                <h3>Summary Content</h3>
-                <hr>
-                <div>
-                    {% render_placeholder object.summary %}
-                </div>
-            </div>
-        </div>
-        
     </div>
-    </div>
-    {% addtoblock 'template_js' %}
-    <script>
-        $('.manage-details-accord').accordion({
-            active: false,
-            collapsible:true,
-            heightStyle: "content",
-        });
-        $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
 
-    </script>
-    {% endaddtoblock 'template_js' %}
+
+    <!--</div>-->
+    {% addtoblock 'template_js' %}{% endaddtoblock 'template_js' %}
+
 {% endblock content %}
 

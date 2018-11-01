@@ -23,6 +23,7 @@ CMS_TEMPLATES = (
     ## Customize this
     ('layout.html', 'HYDROLEARN_TEMPLATE'),
     ('home.html', 'HOME_TEMPLATE'),
+    ('content.html', 'TOOLBAR_ENABLED_TEMPLATE'),
 )
 
 CMS_PERMISSION = True

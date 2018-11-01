@@ -1,0 +1,32 @@
+{% load cms_tags menu_tags sekizai_tags static %}
+
+{% render_block 'head_js'%}
+
+<!--needed for cms_toolbar-->
+{% render_block 'css'%}
+{% render_block 'template_css' %}
+
+<!--TODO: ideally shift this into the content container-->
+<div id="base-cms-toolbar-container" class="noshow">
+    {% cms_toolbar %}
+    {# block cms_loader #}{# endblock cms_loader #}
+</div>
+
+{% block precontent %}{% endblock precontent %}
+
+{% block content %}{% endblock content %}
+
+{% block postcontent %}{% endblock postcontent %}
+
+
+<!-- Javascripts
+    ================================================== -->
+<!--<script type="text/javascript" src="{% static 'js/helios_js/main.js' %}"></script>-->
+
+{% render_block "js" %}
+
+
+<!-- final javascript javascript settings intended to be done after loading of any partial view content -->
+
+{% render_block "template_js"%}
+

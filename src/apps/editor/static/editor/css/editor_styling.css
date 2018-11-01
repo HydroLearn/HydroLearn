@@ -6,6 +6,11 @@
   padding: 10px;
   border-radius: 7px;
   text-align: center; }
+  #TOC_content .TOC_add_menu .TOC_add_menu_trigger_btn {
+    cursor: pointer;
+    border-radius: 7px; }
+    #TOC_content .TOC_add_menu .TOC_add_menu_trigger_btn:hover {
+      background: #ffffff22; }
   #TOC_content .TOC_add_menu .TOC_add_menu_content {
     background: #60c785a1;
     border-radius: 7px;

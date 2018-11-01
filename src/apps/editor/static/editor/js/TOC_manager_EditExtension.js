@@ -99,6 +99,7 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                 add_menu_content.addClass('TOC_add_menu_content')
 
                 var collapse_button = $(document.createElement('div'));
+                collapse_button.addClass('TOC_add_menu_trigger_btn')
 
                 var plus = $(document.createElement('i'));
                 plus.addClass('fas')

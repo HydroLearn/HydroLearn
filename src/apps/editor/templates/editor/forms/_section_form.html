@@ -1,4 +1,4 @@
-{% load cms_tags module_template_tags sekizai_tags static thumbnail menu_tags editor_template_tags %}
+{% load module_template_tags sekizai_tags static thumbnail menu_tags editor_template_tags %}
 
 <div class='lesson'>
 
@@ -6,18 +6,14 @@
         {# if there's a form instance display it's content as it would be in the viewer #}
         <button class="Toggle_edit_btn btn btn-default">Edit</button>
         <div class="content_block">
+
             {# content_editor_button request.user object #}
+            <div id="manage_form" style="width:100%; border:none;"></div>
 
-            <h2 class="lesson-header">{{form.instance.name}}</h2>
-            <h3>Summary</h3>
-            <hr class="headerSpacer">
-
-            {% render_placeholder form.instance.content %}
         </div>
-
     {% endif %}
 
-    <div class="form_block" data-existing-instance={{ is_instance }}>
+    <div class="form_block" data-existing-instance="{{ is_instance }}">
         <div id="content_form_success" class="form_messages"></div>
         <div id="content_form_errors" class="form_messages"></div>
 
@@ -26,7 +22,7 @@
             {% if is_instance %}
                 {{form.instance.name}}
             {% else %}
-                New Section
+                New Un-Typed Section
             {% endif %}
         </h2>
         <hr class="headerSpacer">
@@ -48,3 +44,8 @@
         </form>
     </div>
 </div>
+
+
+<script>
+    $('#manage_form').load('{{ manage_view }}')
+</script>
