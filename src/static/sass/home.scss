@@ -2,6 +2,21 @@
 
 /* Home Style */
 
+#base-cms-toolbar-container{
+            //display:none;
+            #cms-top{
+                .cms-tooltip{}
+                .cms-tooltip-touch{}
+                .cms-toolbar{ display:block; }
+                .cms-messages{}
+                .cms-sideframe{  }
+                .cms-structure{ display:block;}
+                .cms-clipboard{}
+                .cms-modal{}
+
+            }
+        }
+
 header {
     //background-color: url(../img/header-bg.jpg) no-repeat bottom right;
     background: url(../img/HomePageImagry/HomeImage.jpg) no-repeat bottom right;

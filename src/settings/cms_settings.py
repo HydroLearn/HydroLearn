@@ -28,36 +28,6 @@ CMS_TEMPLATES = (
 CMS_PERMISSION = True
 
 CMS_PLACEHOLDER_CONF = {
-    'module_intro': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This module\'s introduction doesn\'t appear to have any content.',
-                }
-            }
-        ]
-    },
-
-    'topic_summary': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This topic\'s summary doesn\'t appear to have any content.',
-                }
-            }
-        ]
-    },
-
     'lesson_summary': {
         'plugins': ['TextPlugin', ],
         'limits': {

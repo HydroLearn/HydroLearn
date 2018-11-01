@@ -36,6 +36,21 @@ body, html {
 }
 
 
+#base-cms-toolbar-container.noshow{
+            //display:none;
+            #cms-top{
+                .cms-tooltip{}
+                .cms-tooltip-touch{}
+                .cms-toolbar{ display:none; }
+                .cms-messages{}
+                .cms-sideframe{ display:none; }
+                .cms-structure{ display:none !important; }
+                .cms-clipboard{}
+                .cms-modal{}
+
+            }
+        }
+
 html{
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
@@ -44,12 +59,7 @@ html{
 	max-width: 100%;
     margin-top: 0 !important;
 
-	&.cms-toolbar-expanded{
-
-        #cms-toolbar-container{
-            //display:none;
-        }
-
+	&.cms-content-shift{
         body{
             height: calc(100vh - 46px);
         }
@@ -74,10 +84,6 @@ html{
 	    #content #content-wrapper #content-tab-header{
 	        top:96px;
 	    }
-
-
-
-
 	}
 }
 

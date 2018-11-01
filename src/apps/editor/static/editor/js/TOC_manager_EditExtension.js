@@ -90,16 +90,53 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
             if(!!lesson.is_instanced){
 
                 // grab the content container and add the 'Add New' buttons
-                var content = lesson_obj.find('.accord-content').first()
+                var accord_content = lesson_obj.find('.accord-content').first()
+
+                var add_menu = $(document.createElement('div'));
+                add_menu.addClass('TOC_add_menu')
+
+                var add_menu_content = $(document.createElement('div'));
+                add_menu_content.addClass('TOC_add_menu_content')
+
+                var collapse_button = $(document.createElement('div'));
+
+                var plus = $(document.createElement('i'));
+                plus.addClass('fas')
+                plus.addClass('fa-plus')
+                collapse_button.append(plus)
+                collapse_button.append("Add Child")
+
+                collapse_button.click(function(event){
+                    event.stopPropagation();
+
+                    // get current content block
+                    var current_content_block =$(this).parent('.TOC_add_menu').find('.TOC_add_menu_content').first();
+
+                    // hide all other 'add menu' content blocks
+                    $('.TOC_add_menu_content').not(current_content_block).hide()
+
+                    // toggle visibility of this content block
+                    $(this).parent('.TOC_add_menu').find('.TOC_add_menu_content').first().toggle(200);
+
+                });
+
+                add_menu_content.append("Add To, {0}:".format(lesson.short_name || lesson.name))
 
                 var new_section_btn = this.generate_add_section_btn(lesson.slug);
-                content.append(new_section_btn);
+                add_menu_content.append(new_section_btn);
 
                 // if this lesson depth is less than 2 allow child lessons
                 if(lesson.depth < 2){
                     var new_lesson_btn = this.generate_add_lesson_btn(lesson.slug);
-                    content.append(new_lesson_btn);
+                    add_menu_content.append(new_lesson_btn);
                 }
+
+                add_menu.append(collapse_button);
+                add_menu_content.hide();
+                add_menu.append(add_menu_content);
+
+
+                accord_content.append(add_menu);
             }
 
             // return the updated lesson object

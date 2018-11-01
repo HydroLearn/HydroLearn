@@ -4,6 +4,22 @@
 
 #TOC_content {
 
+    .TOC_add_menu{
+        color: white;
+        padding: 10px;
+        border-radius: 7px;
+        text-align: center;
+
+        .TOC_add_menu_content{
+            background: #60c785a1;
+            border-radius: 7px;
+            padding: 3px 0px;
+            margin: 7px 0;
+
+        }
+
+    }
+
     .TOC_Add_Section_wrapper {
         background: #00000033;
         //border-bottom-left-radius: 7px;
@@ -34,6 +50,8 @@
 
 
     }
+
+
 
     .TOC_Add_Lesson_wrapper {
         background: #00000033;

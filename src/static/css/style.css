@@ -21,25 +21,32 @@ body, html {
 .cms {
   width: 100vw !important; }
 
+#base-cms-toolbar-container.noshow #cms-top .cms-toolbar {
+  display: none; }
+#base-cms-toolbar-container.noshow #cms-top .cms-sideframe {
+  display: none; }
+#base-cms-toolbar-container.noshow #cms-top .cms-structure {
+  display: none !important; }
+
 html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   width: 100vw;
   max-width: 100%;
   margin-top: 0 !important; }
-  html.cms-toolbar-expanded body {
+  html.cms-content-shift body {
     height: calc(100vh - 46px); }
-  html.cms-toolbar-expanded #content {
+  html.cms-content-shift #content {
     margin-top: 46px;
     min-height: calc(100vh - 46px); }
-  html.cms-toolbar-expanded #sidebar {
+  html.cms-content-shift #sidebar {
     margin-top: 46px;
     height: calc(100vh - 46px); }
-  html.cms-toolbar-expanded #menu {
+  html.cms-content-shift #menu {
     top: 46px !important; }
-  html.cms-toolbar-expanded .sidebar_wrapper {
+  html.cms-content-shift .sidebar_wrapper {
     margin-top: 46px; }
-  html.cms-toolbar-expanded #content #content-wrapper #content-tab-header {
+  html.cms-content-shift #content #content-wrapper #content-tab-header {
     top: 96px; }
 
 body {

@@ -63,8 +63,9 @@
 </head>
 <body>
     <!--TODO: ideally shift this into the content container-->
-    <div id="cms-toolbar-container">
+    <div id="base-cms-toolbar-container" class="noshow">
         {% cms_toolbar %}
+        {# block cms_loader #}{# endblock cms_loader #}
     </div>
 
 
@@ -136,15 +137,6 @@
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                           <ul class="nav navbar-nav navbar-right">
                             {% show_menu 0 100 100 100 %}
-
-                              <!--replaced by redirect pages in menu itself-->
-                          {# if not request.user.is_authenticated #}
-                            <!--<li><a href="/accounts/login">Login</a></li>-->
-                            <!--<li><a href="/accounts/register">Register</a></li>-->
-                          {# else #}
-                            <!--<li><a href="/accounts/logout">Logout</a></li>-->
-                          {# endif #}
-                            <!--<li><a href="#home" class="page-scroll">Home</a></li>-->
                           </ul>
                         </div>
 
