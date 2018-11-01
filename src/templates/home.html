@@ -1,6 +1,9 @@
 {% extends 'layout.html' %}
 {% load cms_tags menu_tags sekizai_tags static %}
 
+{% block load_cms_toolbar %}
+    {% include 'shared/cms_toolbar.html' %}
+{% endblock load_cms_toolbar %}
 
 {% block precontent %}
 
