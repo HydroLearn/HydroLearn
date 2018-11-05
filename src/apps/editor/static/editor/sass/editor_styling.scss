@@ -178,6 +178,16 @@
 
 #content_form{
 
+    .has_error{
+        border: 1px dashed red;
+        background: #ffeeee;
+    }
+
+    .form-error{
+        color: red;
+        padding: 0px 12px;
+    }
+
     #content_form_controls{
         background: #ececec;
         width: 100%;
