@@ -13,12 +13,16 @@
         
         {% for question in object.quiz_question_item.all %}
 
-        <div>question: {% render_placeholder question.question_text %}</div>
+        {# Load content into non editable context variable  #}
+        {% render_placeholder question.question_text as question_text%}
+        <div>question: {{ question_text }}</div>
 
 
             {% for answer in question.answer_item.all %}
 
-                <p>Answer: {% render_placeholder answer.answer_text %}</p>
+                {# Load content into non editable context variable  #}
+                {% render_placeholder answer.answer_text as answer_text%}
+                <p>Answer: {{ answer_text }} </p>
 
             {% empty %}
                 <p>There don't appear to be answers for this question... paradoxical </p>

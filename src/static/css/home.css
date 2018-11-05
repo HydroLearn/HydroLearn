@@ -1,9 +1,4 @@
 /* Home Style */
-#base-cms-toolbar-container #cms-top .cms-toolbar {
-  display: block; }
-#base-cms-toolbar-container #cms-top .cms-structure {
-  display: block; }
-
 header {
   background: url(../img/HomePageImagry/HomeImage.jpg) no-repeat bottom right;
   background-color: #45a4f3;

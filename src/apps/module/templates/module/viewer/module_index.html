@@ -1,6 +1,6 @@
 {% extends CMS_TEMPLATE %}
 
-{% load cms_tags module_template_tags menu_tags sekizai_tags static %}
+{% load module_template_tags menu_tags sekizai_tags static %}
 
 {% block subtitle %}
    - {{ module.name }}
@@ -129,14 +129,7 @@
                             </div>
 
                             <div id="map-content" style="display:none" class="tab-pane fade" role="tabpanel">
-                                {# placeholder Map_Content or #}
-                                    <!--<p>Currently In Development. Please check back later</p>-->
-                                {# endplaceholder #}
-
                                 {% map_container %}
-
-
-
                             </div>
 
                         </div>
@@ -340,8 +333,8 @@
 
         </script>
 
-
     {% endaddtoblock 'template_js' %}
+
 {% endblock content %}
 
 

@@ -21,6 +21,9 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
         Perform Initialization steps for new TABLE_OF_CONTENTS instances
     ---------------------------------*/
         this.parse_listing(TOC_Listing);
+
+        // auto expand to loaded section
+        //this.expand_to_section();
 }
 
 /* ---------------------------------
@@ -79,9 +82,8 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
                 base_lesson.accordion("option", "active", 0);
                 base_lesson.accordion("option", "collapsible", false);
 
-
+                // add the generated lesson object to the target container
                 $(this._target).html(base_lesson);
-                return
 
             }
 
@@ -330,7 +332,48 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
                 $(".TOC_Title").removeClass('current_selected_section');
                 $(".TOC_Title[value='" + section_slug +"']").addClass('current_selected_section');
 
+                setTimeout(function(){ this.expand_to_section() }.bind(this), 500);
             }
+
+        TABLE_OF_CONTENTS_MANAGER.prototype.expand_to_section = function(value) {
+            // method to expand the table of contents to the section specified by 'value' parameter,
+            //   or the current_selected_section by default
+            var toc_title =(typeof(value) != 'undefined') ?
+                    $('.TOC_Title[data-value="{0}"]'.format(value)) :
+                    $('.current_selected_section')
+
+            // collect a list of parents for expansion
+            var parent_list = [];
+
+            // get the parent accordion to the currently selected/specified element
+            var parent_accord = toc_title.closest('.JUIaccordion')
+
+            //debugger;
+
+            // traverse up parent tree grabbing parent accordions
+            while($(parent_accord).length){
+                // activate the accordion
+                parent_list.unshift(parent_accord);
+
+                // grab next parent
+                parent_accord = $(parent_accord).parent().closest('.JUIaccordion');
+            }
+
+            // iterate the parent list activating the accordions
+            $.each(parent_list, function(index, accordion){
+                // activate the accordions in sequence after a
+                // delay
+                setTimeout(function(){
+                    $(accordion).accordion('option', 'active', 0);
+                }, index * 500)
+
+            })
+
+
+
+        }
+
+
 
 
     /* ---------------------------------

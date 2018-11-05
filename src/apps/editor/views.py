@@ -311,12 +311,37 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
     context_object_name = 'Lesson'
     template_name = 'editor/viewer/edit_index.html'
 
+
+    def get(self, request, *args, **kwargs):
+
+        # TODO: THIS IS HACKY, FIND A BETTER WAY
+        #   when submitting through the content edit iframe
+        #   the edit flag is passed, if this happens
+        #   the toolbar throws an error
+        if self.request.GET.get('edit', None) is not None:
+            # DESCRIPTION :
+            #   if this exception is raised, the editor just submitted
+            #   a form and is attempting to refresh, but since there
+            #   is an extra 'edit' parameter, the CMS toolbar fails to initialize correctly
+            #   resulting in a non initialized page being presented to the user
+            #
+            #   to prevent breaking workflow, raise an error here which
+            #   triggers the default behavior of reloading the page
+            #       (without the parameter)
+            raise Exception('KNOWN ERROR (editor_LessonView): Error Triggers necessary reloading of an edited lesson/section in frontend.')
+
+
+
+        return super(editor_LessonView, self).get(request,*args,**kwargs)
     #form_class = editor_LessonForm
     # ajax response mixin parameter
     #ajax_success_redirect = reverse_lazy("manage:manage_index")
 
     def get_context_data(self, **kwargs):
         context = super(editor_LessonView, self).get_context_data(**kwargs)
+
+        # self.request.toolbar.edit_mode = False
+        # self.request.toolbar.edit_mode_active = False
 
         # get the current editor's child topics based on editor slug
         # layers = get_module_layers(self.kwargs.get('slug'))

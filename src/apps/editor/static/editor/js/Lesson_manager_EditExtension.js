@@ -38,37 +38,17 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
         // perform the default operations
         LESSON_VIEW.prototype.post_display.call(this, passed_section)
 
-/*
 
-        debugger;
-        // if there's a provided content toolbar replace the loaded cms_toolbar instance
-        var toolbar = $('#content_toolbar')
-        if(toolbar.length){
-            var toolbar_container = toolbar.find('.cms-toolbar-container')
+        // TODO: need to tie an event to this once it's generated
+        //      but it's not being generated until the iframe
+        //      is generated after double-clicking the text
+        //
+        //$('a.cms-btn.cms-btn-action.default')
 
-            $('#base-cms-toolbar-container').html(toolbar_container)
-        }
-*/
-        // initialize the cms plugin tree to enable double-click edit functionality
-//        if(typeof(CMS) != 'undefined' && typeof(CMS.$) != 'undefined'){
-//            // CMS.Plugin._initializeTree();
-//
-//            CMS.$(function () {
-//                CMS.settings = CMS.API.Helpers.getSettings();
-//
-//                // extends API
-//                CMS.API.Clipboard = new CMS.Clipboard();
-//                CMS.API.StructureBoard = new CMS.StructureBoard();
-//                CMS.API.Messages = new CMS.Messages();
-//                CMS.API.Tooltip = new CMS.Tooltip();
-//                CMS.API.Toolbar = new CMS.Toolbar();
-//
-//                CMS.Plugin._initializeTree();
-//            });
-//        }
 
 
         // setup edit button functionality
+        $('.Toggle_edit_btn').unbind('click');
         $('.Toggle_edit_btn').click(function(){
 
             if($('.form_block').is(":visible")){
@@ -123,6 +103,7 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
         }
 
+        $('.Delete_button').unbind('click');
         $('.Delete_button').click(function(event){
             event.preventDefault()
 
@@ -143,6 +124,7 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
                 $('#delete-confirmation-cancel').show()
 
                 // map the confirm button's click action to submit form
+                $('#delete-confirmation-confirm').unbind('click');
                 $('#delete-confirmation-confirm').click(function(){
 
                     // serialize the loaded form
@@ -164,6 +146,7 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
                     // if error
                     //      display error
+                    debugger;
                     $.ajax({
                         url: form_action,
                         type: form_method,
@@ -171,7 +154,7 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
                         data: form_data,
 
                         success: function(response){
-
+                            debugger;
                             $('#delete-confirmation-content').html(response)
                             $('#delete-confirmation-content').append('<p>You may now close this dialog</p>');
 
@@ -217,6 +200,8 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
         });
 
+
+        $('.Cancel_button').unbind('click');
         $('.Cancel_button').click(function(event){
             /*
               TODO: need to check if new lesson

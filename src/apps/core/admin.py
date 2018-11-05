@@ -11,9 +11,6 @@ from cms.admin.placeholderadmin import PlaceholderAdminMixin
 #from src.apps.core.admin_actions import *
 
 from src.apps.core.forms import (
-    # ModuleForm,
-    # add_TopicForm,
-    # Edit_TopicForm,
     add_LessonForm,
     Edit_LessonForm,
     #SectionForm,
@@ -65,24 +62,13 @@ from polymorphic.admin import PolymorphicParentModelAdmin,PolymorphicChildModelA
 
 
 class CreationTrackingMixin(object):
-    def save_model(self, request, obj, form, change):
-        #print('***************** IN CUSTOM SAVE MODEL')
-        # if this is the first save of the model set 'created_by' to the current user
-        if not obj.pk:
-            #print("*** changing created by for '{obj.name}'")
-            obj.created_by = request.user
-            obj.updated_by = request.user
+    '''
+        mixin to automate the updating of 'CreationTrackingModel's
+        created_by and changed by fields for forms saved in the admin
 
-        # if the object exists and there are changes
-        #   store the current user as the most recent updator
-        if obj.pk and change:
-            #print("*** updating 'last updator' for '{obj.name}'")
-            obj.updated_by = request.user
-
-        obj.save()
-
-
-class PublicationChangeTrackingMixin(object):
+        stores references to the current user based on if the
+        submitted form is a new instance or a changed existing instance
+    '''
     def save_model(self, request, obj, form, change):
         #print('***************** IN CUSTOM PUBLICATION SAVE MODEL')
         # if this is the first save of the model set 'created_by' to the current user
@@ -122,10 +108,8 @@ class QuizInline(admin.TabularInline):
     fk_name = 'quizsection'
     readonly_fields = ['section_ptr']
     
-
 class QuizQuestionInline(SortableInlineAdminMixin, admin.TabularInline):
-#class SectionInline(StackedPolymorphicInline):
-#class SectionInline(SortableTabularInline, StackedPolymorphicInline):
+
     
     model = QuizQuestion
     base_model = QuizQuestion
@@ -137,11 +121,8 @@ class QuizQuestionInline(SortableInlineAdminMixin, admin.TabularInline):
     def has_add_permission(self, request):
         return False
 
-
 class SectionInline(SortableInlineAdminMixin, admin.TabularInline):
-#class SectionInline(StackedPolymorphicInline):
-#class SectionInline(SortableTabularInline, StackedPolymorphicInline):
-    
+
     model = Section
     base_model  = Section
     #form = SectionForm
@@ -161,7 +142,6 @@ class SectionInline(SortableInlineAdminMixin, admin.TabularInline):
     # must overwrite this method as polymorphic models aren't handled appropriately
     def has_add_permission(self, request):
         return False
-
 
 class LessonInline(SortableInlineAdminMixin, admin.TabularInline):
     model = Lesson
@@ -194,7 +174,7 @@ class LessonInline(SortableInlineAdminMixin, admin.TabularInline):
 #   Regular Admin interfaces
 # ============================================================   
 
-class SectionChildAdmin(PublicationChangeTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin):
+class SectionChildAdmin(CreationTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin):
     #model = Section
     base_model  = Section
     show_in_index = False
@@ -288,7 +268,6 @@ class QuizSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin, SortableAdminMi
     
     inlines = [QuizQuestionInline,]
 
-#@admin.register(Section)
 class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
     """ The parent model admin """
     base_model = Section
@@ -327,7 +306,7 @@ class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
     
-class QuizQuestionChildAdmin(PublicationChangeTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin, PlaceholderAdminMixin):
+class QuizQuestionChildAdmin(CreationTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin, PlaceholderAdminMixin):
     base_model = QuizQuestion
     exclude = ["position", 'created_by', 'changed_by']
 
@@ -356,19 +335,19 @@ class QuizQuestionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin
         MultiSelect_question,
     )
 
-class MultiChoice_AnswerAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
+class MultiChoice_AnswerAdmin(PlaceholderAdminMixin, CreationTrackingMixin, admin.ModelAdmin):
     model = MultiChoice_answer
 
     sortable_field_name = "position"
     exclude = ['position', 'created_by', 'changed_by']
 
-class MultiSelect_AnswerAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
+class MultiSelect_AnswerAdmin(PlaceholderAdminMixin, CreationTrackingMixin, admin.ModelAdmin):
     model = MultiSelect_answer
 
     sortable_field_name = "position"
     exclude = ['position', 'created_by', 'changed_by']
 
-class LessonAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
+class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
     model = Lesson
     form = Edit_LessonForm
     # ordering = ('topic', 'name',)
@@ -412,7 +391,6 @@ class LessonAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin,
 
 
 # REGISTER THE ABOVE DEFINED ADMIN OBJECTS
-#admin.site.register(Topic, TopicAdmin)
 admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Section, SectionParentAdmin)
 admin.site.register(ReadingSection, ReadingSectionAdmin)
@@ -420,7 +398,6 @@ admin.site.register(ActivitySection, ActivitySectionAdmin)
 admin.site.register(QuizSection, QuizSectionAdmin)
 
 #admin.site.register(LayerRef, LayerRefAdmin)
-#admin.site.register(Module, ModuleAdmin)
 
 
 admin.site.register(QuizQuestion, QuizQuestionParentAdmin)

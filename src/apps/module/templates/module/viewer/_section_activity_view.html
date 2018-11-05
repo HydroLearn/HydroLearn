@@ -4,14 +4,15 @@
 {% block content %}
     {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
 
+    {# Load content into non editable context variable  #}
+    {% render_placeholder object.content as content %}
+
     <div class='lesson'>
         {# content_editor_button request.user object #}
         
         <h2 class="lesson-header">{{object.name}}</h2>
         <hr class="headerSpacer">
-        
-        
-        {% render_placeholder object.content %}
+        {{ content }}
     </div>
 
     {% addtoblock 'template_js' %}

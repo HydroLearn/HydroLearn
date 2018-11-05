@@ -292,8 +292,8 @@ class Lesson(Publication):
         #   creation of multiple drafts with the same name
         #   this is only valid if a base lesson so check that it's not a root lesson too
         #   TODO: watch this, it could be inadequate when 'lesson-copy' becomes enabled later in development
-        if not self.parent_lesson and self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
-            raise ValidationError('A Draft-Lesson with this name already exists')
+        # if not self.parent_lesson and self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
+        #     raise ValidationError('A Draft-Lesson with this name already exists')
 
         return super(Lesson, self).validate_unique(exclude)
 

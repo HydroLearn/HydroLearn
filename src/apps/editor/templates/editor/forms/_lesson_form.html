@@ -46,5 +46,25 @@
 </div>
 
 <script>
-    $('#manage_form').load('{{ manage_view }}')
+
+    // load the management form for this lesson into 'manage_form' block
+    $('#manage_form').load('{{ manage_view }}', function(){
+
+        // potential starting point for tying into the placeholder dialog's save button
+        //      the action buttons are created after the modal is opened,
+        //      but this method was not functional as implemented
+
+        //  debugger;
+        //  CMS.Modal.options.onClose = 'REFRESH_PAGE'
+        //  //  after loading the content add event to modal
+        //  //  so when opened an event can be bound to the save button
+        //  $('.cms-modal').on('focus', function(event){
+        //      console.log('modal opened')
+        //      // buttons are added after opening, so need to wait a bit
+        //      $('a.cms-btn.cms-btn-action.default').click(function(event){
+        //      event.stopPropagation()
+        //      })
+        //  })
+
+    });
 </script>
