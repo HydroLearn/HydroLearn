@@ -1,6 +1,9 @@
 #editor_formset_init {
   display: none; }
 
+.cms-modal-item-buttons a {
+  color: white; }
+
 #TOC_content .TOC_add_menu {
   color: white;
   padding: 10px;

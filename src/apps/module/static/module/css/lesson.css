@@ -61,12 +61,12 @@
     /*width: 900px;*/ }
     #lesson-content .lesson > h2 {
       font-size: 20px; }
-  #lesson-content .lesson a {
+  #lesson-content .lesson a:not(.cms-btn) {
     color: #45a4f3;
     text-decoration: underline; }
-    #lesson-content .lesson a:visited {
+    #lesson-content .lesson a:not(.cms-btn):visited {
       color: #00ba97; }
-    #lesson-content .lesson a:hover {
+    #lesson-content .lesson a:not(.cms-btn):hover {
       color: #3D6BAA; }
   #lesson-content hr.subheaderSpacer {
     border-top: 3px solid #71b9f3;

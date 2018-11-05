@@ -160,104 +160,29 @@ function submit_content_form_evt(){
 
 $(function(){
 
-    // modify the checkForm method of jquery validate to handle same name elements
-    //      ensures that each element with same name is checked in validation
-    //
-    //    $.validator.prototype.checkForm = function(){
-    //
-    //        this.prepareForm();
-    //        for (var i = 0, elements = (this.currentElements = this.elements()); elements[i]; i++) {
-    //            if (this.findByName(elements[i].name).length !== undefined && this.findByName(elements[i].name).length > 1) {
-    //                for (var cnt = 0; cnt < this.findByName(elements[i].name).length; cnt++) {
-    //                    this.check(this.findByName(elements[i].name)[cnt]);
-    //                }
-    //            } else {
-    //                this.check(elements[i]);
-    //            }
-    //        }
-    //        return this.valid();
-    //    }
-
     // ADD custom validator methods ****************************
     $.validator.addMethod('validDuration', function(value, element){
         return this.optional(element) || /^[\d]{1,2}:[\d]{1,2}:[\d]{1,2}$/.test(value)
     }, 'Your specified Duration is invalid.')
 
-
-    // END custom validator methods ****************************
-
-
     // set any defaults
     $.validator.setDefaults({
         //debug: true,
+
+        // add class to error labels
         errorClass: 'form-error',
+
+        // add class to error'd input fields
         highlight: function(element){
             $(element).addClass('has_error')
         },
 
+        // remove highlight class from editor fields
         unhighlight: function(element){
             $(element).removeClass('has_error')
         },
 
-        // doesn't keep the correct number of invalid fields, due to same-name problem
-//        invalidHandler: function(event, validator) {
-//
-//            var errors = validator.numberOfInvalids();
-//            if (errors) {
-//              $("#module_form_error_message").html('Submission failed! Please correct the highlighted errors below!');
-//              $("#module_form_error_message").show();
-//            } else {
-//              $("#module_form_error_message").hide();
-//            }
-//        },
-
-        // due to the construction of the form
-        //  there are duplicate names/id's marking the field until submissions
-        //  are processed by the FormManager
-        //      -   to ensure that each validation field has it's own label
-        //          showErrors must be overwritten to process highlighting/unhighlighting
-        //          and adding of error messages
-//        showErrors: function(errorMap, errorList) {
-//
-//            // errorlist is an array of currently validated elements
-//            // each object contains element and message
-//
-//            // for each error element call highlight, and add/update-text of the error label
-//           for(var i=0; i < errorList.length; i++){
-//
-//                this.settings.highlight.call( this, errorList[i].element );
-//                var current_error_label = $(errorList[i].element).parent().find('label.'+ this.settings.errorClass)
-//
-//                if(current_error_label.length){
-//                    $(current_error_label).html(errorList[i].message)
-//                }else{
-//                    var new_message_element = $('<label>', {'class': this.settings.errorClass}).html(errorList[i].message)
-//                    $(errorList[i].element).parent().append(new_message_element)
-//                }
-//           }
-//
-//            // for each valid element, remove any existing error label, and call unhighlight
-//            for (var i = 0, elements = this.validElements(); elements[i]; ++i) {
-//                var current_error_label = $(elements[i]).parent().find('label.'+ this.settings.errorClass)
-//
-//                if(current_error_label.length){
-//                    $(current_error_label).remove()
-//                }
-//
-//                // call unhighlight for each valid element
-//                this.settings.unhighlight.call(this, elements[i], this.settings.errorClass, this.settings.validClass);
-//            }
-//
-//        },
-
     });
-
-
-
-
-
-
-
 
 
 });

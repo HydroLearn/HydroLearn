@@ -167,9 +167,9 @@ div[class^='multicolumn'] {
     #content:not(.always_full) > *:not(#menu):not(#footer):not(.always_full) {
       padding-left: 5%;
       padding-right: 5%; } }
-  #content a {
+  #content a:not(.cms-btn) {
     color: #45a4f3; }
-    #content a:hover {
+    #content a:not(.cms-btn):hover {
       color: #85cfc1; }
   #content ul {
     list-style: disc;
@@ -254,6 +254,11 @@ div[class^='multicolumn'] {
         display: inline;
         font-size: 20px;
         padding: 0 10px; }
+    #footer .social a {
+      color: #999; }
+      #footer .social a:hover {
+        text-decoration: none;
+        color: #45a4f3; }
 
 a:focus {
   text-decoration: none;

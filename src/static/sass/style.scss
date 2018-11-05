@@ -260,7 +260,7 @@ div[class^='multicolumn'] {
 
     }
 
-    a {
+    a:not(.cms-btn) {
         color: $HL_blue;
         &:hover{
             color: $HL_seafoam;
@@ -420,6 +420,17 @@ div[class^='multicolumn'] {
 
             }
         }
+
+        a {
+            color: #999;
+
+            &:hover {
+              text-decoration: none;
+              color: $HL_blue;
+
+            }
+
+          }
     }
 
 }
