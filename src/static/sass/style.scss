@@ -36,6 +36,21 @@ body, html {
 }
 
 
+#base-cms-toolbar-container.noshow{
+            //display:none;
+            #cms-top{
+                .cms-tooltip{}
+                .cms-tooltip-touch{}
+                .cms-toolbar{ display:none; }
+                .cms-messages{}
+                .cms-sideframe{ display:none; }
+                .cms-structure{ display:none !important; }
+                .cms-clipboard{}
+                .cms-modal{}
+
+            }
+        }
+
 html{
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
@@ -44,8 +59,7 @@ html{
 	max-width: 100%;
     margin-top: 0 !important;
 
-	&.cms-toolbar-expanded{
-
+	&.cms-content-shift{
         body{
             height: calc(100vh - 46px);
         }
@@ -61,7 +75,6 @@ html{
 	    }
 
 	    #menu {
-	        //margin-top:46px;
 	        top:46px !important;
 	    }
 	    .sidebar_wrapper{
@@ -71,10 +84,6 @@ html{
 	    #content #content-wrapper #content-tab-header{
 	        top:96px;
 	    }
-	    #content #content-wrapper #content-tab-body{
-            //margin-top:106px;
-	    }
-
 	}
 }
 
@@ -251,7 +260,7 @@ div[class^='multicolumn'] {
 
     }
 
-    a {
+    a:not(.cms-btn) {
         color: $HL_blue;
         &:hover{
             color: $HL_seafoam;
@@ -388,7 +397,8 @@ div[class^='multicolumn'] {
     }
 
     .copyright{
-        float:right;
+        //float:right;
+        float:left;
         height: $footer-height;
     }
 
@@ -410,6 +420,17 @@ div[class^='multicolumn'] {
 
             }
         }
+
+        a {
+            color: #999;
+
+            &:hover {
+              text-decoration: none;
+              color: $HL_blue;
+
+            }
+
+          }
     }
 
 }

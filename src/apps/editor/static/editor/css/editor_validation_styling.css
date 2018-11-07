@@ -1,0 +1,25 @@
+input.has_error {
+  border: 1px dashed red; }
+
+label.form-error {
+  color: #ff5555;
+  font-style: italic;
+  padding: 0 10px; }
+
+.form_error_container {
+  width: 100%;
+  background-color: #ffe5e5;
+  border-left: 3px solid red;
+  padding: 10px;
+  margin: 10px 0;
+  clear: both;
+  text-align: center;
+  color: red;
+  font-style: italic;
+  font-weight: bold;
+  display: none; }
+  .form_error_container ul {
+    list-style: none !important;
+    list-style-type: none !important; }
+
+/*# sourceMappingURL=editor_validation_styling.css.map */

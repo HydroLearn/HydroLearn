@@ -68,9 +68,6 @@ You will need to ensure that the environment variable linking to this file is ma
 
 depending on how you've installed the environment you will have to determine the best way to define this environment variable so that is accessible by the project settings.
 
-
-
-
 ## Installation
 
 Generate a directory where you would like the project to be placed on your machine, and perform a checkout of the source code.
@@ -116,20 +113,90 @@ this can be accomplished by opening the command prompt/terminal and running the 
     - `python manage.py runserver`
     - this will spin up the server and display the URL to the project. by default it should be 'http://localhost:8000',
     
-    BUT this will not work until we create the pages in the `admin` interface.
+    BUT this will not work until we set up some local settings and create the pages in the `admin` interface.
       
+
+## Create a Test Settings Directory
+
+In order to test new configuration settings and override some of the production defaults that will differ within your local development environment, you will need to set up a test settings directory to house settings that either differ from the production environment or are still in testing before migrating to production settings.
+
+**This will need to be generated before you can login to the site!**
+
+The settings-directory's initialization procedure is set to first check for the existence of a child `test_settings` directory (*which is ignored by the repository*) before loading the default production settings. if this directory exists, it will attempt to load these settings instead of the settings provided by the repository.  to add your `test_settings` directory you will need to do the following:
+
+  1. Within your project navigate to the settings directory located at `src/settings/` and create a child directory named `test_settings`
+  2. within the `test_settings` directory you will create two new files.
+     - `__init__.py`
+     - `local.py`
+  3. Open `.../test_settings/__init__.py` and add the following code to the file:
+  
+     ```      
+      # this print output should displayed when running the server
+      # this is a quick way to tell you've loaded the correct settings for your local development environment
+      print("//Loading TEST settings...")
       
-## Not quite done.. 
+      # import test directory settings
+      from src.settings.test_settings.local import *
+      
+      # if you have created any other experimental setting files you can import them here
+      
+      # import some settings from the root project settings
+      from src.settings.hydroshare import *
+      from src.settings.cms_settings import *
+      from src.settings.ckeditor import *
+     ```
+     
+  4. save `__init__.py`
+  5. open `.../test_settings/local.py` and add the following code:
+  
+     ```
+      from src.settings.config_reader import get_config_setting
+
+      # ************************SECURITY SETTINGS************************************
+      # SECURITY WARNING: don't run with debug turned on in production!
+      DEBUG = True
+    
+      # get secret key from config
+      SECRET_KEY = get_config_setting("SECRET_KEY")
+    
+      
+      # Dev settings      
+      ALLOWED_HOSTS = ['HydroLearn.org', 'localhost', '127.0.0.1', '[::1]']
+      CSRF_COOKIE_SECURE = False
+
+     ```
+   
+  6. save `local.py`
+  
+To check if your settings are loading properly for you dev environment, navigate to the projects root folder containing `manage.py` and attempt to run the server using `python manage.py runserver`, and you should be greeted with the following output:
+
+```
+//Loading Base settings...
+//Loading TEST settings...
+Performing system checks...
+
+System check identified no issues (0 silenced).
+November 07, 2018 - 08:53:57
+Django version 1.11.7, using settings 'src.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+
+```
+
+_The important part being the `//Loading TEST settings...` output._
+
+If the everything looks good, we need to now generate the pages within site, and link them to our applications. 
+
+## Creating Front-end Pages and attaching Applications
 though the project has been installed, there is still some configurations that need to take place in the application itself before becoming usable. ensure the server is running and do the following
 Once the project is running you will need to connect some pages to the installed apphooks included in the `src/apps/` directory
     
-  1. With the server running. access the admin interface by navigating to the following:
-  
-  http://localhost:8000/admin
+  1. With the server running. access the admin interface by navigating to the following address:  
+     - `http://localhost:8000/admin`
 
   2. Login using the credentials you provided in the `createsuperuser` prompts in the previous section. 
     
-  3. once in the admin interface, You should see a section titled 'DJANGOCMS'
+  3. Once in the admin interface, You should see a section titled 'DJANGOCMS'
       - find this section and click the `Pages` link.
     
   4. First things first, we need to generate the Home page. Select the "New Page" button on the top right and in the form that appears add the following:
@@ -142,7 +209,7 @@ Once the project is running you will need to connect some pages to the installed
       - you will be redirected to the Page Tree and you will now see the 'Home' page listed. 
       - click on the Blue dot on the page and select 'Publish'
       
-  5. Next, we will need to add the application pages to the project. There are currently 4, and the process to add each is similar so I will detail this once and you can substitute the names of the pages. Using the 'Core' page as the example:
+  5. Next, we will need to add the application pages to the project. There are currently 5, and the process to add each is similar so I will detail this once and you can substitute the names of the pages. Using the 'Core' page as the example:
       1. Click the 'New Page' button to the top right of the Page Tree listing.
       2. Once the form loads, enter 'Core' as the title, and the slug field should auto-generate.
       3. Scroll to the bottom of the form and click, 'Save and continue editing'
@@ -150,12 +217,15 @@ Once the project is running you will need to connect some pages to the installed
       5. Scroll down until you see the 'APPLICATION' dropdown box, and select the 'Core' option. an additional field will appear showing the auto-generated application namespace
       6. Save the page.
       7. When the Page Tree Listing loads, Publish the newly created page.      
-      8. Repeat this process for the 'Module', 'Manage', and 'Tags' applications. substituting the names where appropriate.
-      
-      
-6. For the above generated application pages, we don't want each to be visible in the Navigation of the site. so from the Page Tree listing, uncheck the 'Menu' checkbox on the `Core`, `Tags`, and `Module` pages. and re-publish them.
+          8. Repeat this process for the following applications, substituting the names where appropriate: 
+             - `Module` - the frontend viewer 
+             - `Manage` - the module management page
+             - `Editor` - the module creator interface
+             - `Tags` - the tagging application
+            
+  6. For the above generated application pages, we don't want each to be visible in the Navigation of the site. so from the Page Tree listing, uncheck the 'Menu' checkbox on the `Core`, `Tags`, and `Module` pages. and re-publish them.
 
-7. Finally, we need to add the Login/Logout pages to the site navigation. Return to the Page Tree Listing and we need to make two more pages. Which will redirect to the account Login and Logout pages respectively. The process is similar for both so, similarly to the above section, just replace the names where needed.
+  7. Finally, we need to add the Login/Logout pages to the site navigation. Return to the Page Tree Listing and we need to make two more pages. Which will redirect to the account Login and Logout pages respectively. The process is similar for both so, similarly to the above section, just replace the names where needed.
       1. Click the 'New Page' Button on the top right of the page.
       2. Set the Title to "Login"
       3. Click 'Save and continue editing'
@@ -164,7 +234,7 @@ Once the project is running you will need to connect some pages to the installed
       6. Save the page.
       7. Repeat this process for the "Logout" page, substuting `/accounts/logout` for the Redirect path.
       
-8. Now we need to set permissions to view the above generated pages in the menu.
+  8. Now we need to set permissions to view the above generated pages in the menu.
       - to set permissions on a page: 
         - Navigate to the Page tree listing in the Admin interface
         - Click on the menu-icon (three bars) to the far right of the page you wish to set permissions on.
@@ -175,11 +245,12 @@ Once the project is running you will need to connect some pages to the installed
         - `Logout` - Check the 'Login Required' checkbox, and under 'Menu Visibility' select the `for logged in users only` option
         - `Login` - under 'Menu Visibility' select the `for anonomous users only` option
         
-9. PUBLISH each of the generated pages. (click on the blue dot on each page item and click 'Publish')
+  9. PUBLISH each of the generated pages. (click on the blue dot on each page item and click 'Publish')
 
 
-10. If logged in (which you should be), you should now be able to access the `Manage` interface and begin developing learning modules.
-http://localhost:8000/en/manage/
+  10. If logged in (which you should be), you should now be able to access the `Manage` interface and begin developing learning modules.
+  
+      - `http://localhost:8000/en/manage/`
 
 
   

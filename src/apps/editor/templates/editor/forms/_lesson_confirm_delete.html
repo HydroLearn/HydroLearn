@@ -1,0 +1,11 @@
+<h3>Confirm Deletion</h3>
+
+<form method="post" action="{% url 'editor:lesson_delete' object.slug %}">
+    {% csrf_token %}
+    <p>Are you sure you want to delete: "{{ object.name }}" and all of it's child objects? </p>
+
+    <p> This action is non-reversible!</p>
+    <!--<input type="submit" value="Confirm" class="btn Remove_button">-->
+    <!--<a href="/manage" class="btn btn-default">Cancel</a>-->
+
+</form>

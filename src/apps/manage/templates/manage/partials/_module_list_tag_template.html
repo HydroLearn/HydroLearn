@@ -7,9 +7,13 @@
 {% endif %}
 
 <h3 id="my_modules_header">Manage My Modules</h3>
-<button id="create_module" type="button" class="btn btn-primary" onclick="Manage_View_Stack.push_view('CreateModule', 'Create Module', '{% url 'manage:module_create' %}' )" >
-    <i class="fas fa-plus-circle"></i> Create Module</button>
 
+<a target="_blank" href="{% url 'editor:lesson_create' %}">
+    <!--<button id="create_module" type="button" class="btn btn-primary" onclick="Manage_View_Stack.push_view('CreateModule', 'Create Module', '{% url 'manage:module_create' %}' )" >-->
+    <button id="create_module" type="button" class="btn btn-primary">
+        <i class="fas fa-plus-circle"></i> Create Module
+    </button>
+</a>
 
 
 
@@ -61,7 +65,9 @@
             <td >
                 <div class="module-action-container">
                     <a title="View Module" target="_blank" href="{{module.viewer_url}}"><i class="fas fa-eye glyph-button"></i></a>
-                    <a title="Edit Module" onclick="Manage_View_Stack.push_view('Manage-{{ module.ref_id }}', 'Manage - {{ module.name }}', '{% url 'manage:module_update' slug=module.slug %}'  )"><i class="fas fa-edit glyph-button"></i></a>
+
+                    <!--<a title="Edit Module" onclick="Manage_View_Stack.push_view('Manage-{{ module.ref_id }}', 'Manage - {{ module.name }}', '{% url 'manage:module_update' slug=module.slug %}'  )"><i class="fas fa-edit glyph-button"></i></a>-->
+                    <a title="Edit Module" target="_blank" href="{{module.edit_url}}" ><i class="fas fa-edit glyph-button"></i></a>
 
                     <!--placeholder links for future functionality-->
                     <a class="disabled_action" title="Share Module" target="_blank" ><i class="fas fa-share-alt glyph-button"></i></a>

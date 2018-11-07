@@ -55,6 +55,17 @@ def get_lesson_JSON_RAW(lesson_slug):
             the module interface.
     '''
 
+    # if no slug provided return the 'new_lesson' representation
+    if not lesson_slug: return {
+        'obj_type': 'lesson',
+        'slug': "",
+        'name': "New Lesson",
+        'short_name': "New Lesson",
+        'position': 0,
+        'content_url': "",
+        'children': [],
+    }
+
     lesson = Lesson.objects.get(slug=lesson_slug)
 
     if not lesson: return None
@@ -64,10 +75,10 @@ def get_lesson_JSON_RAW(lesson_slug):
     sub_lessons = [get_lesson_JSON_RAW(l.slug) for l in lesson.sub_lessons.all()]
     sections = [get_section_JSON_RAW(s.slug) for s in lesson.sections.all()]
 
-    sub_lessons.sort(key=lambda x: x['position'])
-    sections.sort(key=lambda x: x['position'])
+    # sub_lessons.sort(key=lambda x: x['position'])
+    # sections.sort(key=lambda x: x['position'])
     children = sections + sub_lessons
-    #children.sort(key=lambda x: x['position'])
+    children.sort(key=lambda x: x['position'])
 
     return {
         'obj_type': 'lesson',
@@ -114,4 +125,5 @@ def get_module_TOC_obj(lesson_slug):
     :return: a json string representation of the lesson structure to be passed to a view.
     '''
     return_obj = get_lesson_JSON_RAW(lesson_slug)
+
     return json.dumps(return_obj)

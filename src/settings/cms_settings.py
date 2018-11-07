@@ -23,41 +23,12 @@ CMS_TEMPLATES = (
     ## Customize this
     ('layout.html', 'HYDROLEARN_TEMPLATE'),
     ('home.html', 'HOME_TEMPLATE'),
+    ('content.html', 'TOOLBAR_ENABLED_TEMPLATE'),
 )
 
 CMS_PERMISSION = True
 
 CMS_PLACEHOLDER_CONF = {
-    'module_intro': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This module\'s introduction doesn\'t appear to have any content.',
-                }
-            }
-        ]
-    },
-
-    'topic_summary': {
-        'plugins': ['TextPlugin', ],
-        'limits': {
-            'TextPlugin': 1,
-        },
-        'default_plugins': [
-            {
-                'plugin_type': 'TextPlugin',
-                'values': {
-                    'body': 'This topic\'s summary doesn\'t appear to have any content.',
-                }
-            }
-        ]
-    },
-
     'lesson_summary': {
         'plugins': ['TextPlugin', ],
         'limits': {
@@ -135,3 +106,12 @@ CMS_PLACEHOLDER_CONF = {
 
 }
 
+# CMS_TOOLBAR_HIDE = True
+# CMS_PAGE_CACHE = False
+# CMS_PLACEHOLDER_CACHE = False
+# CMS_PLUGIN_CACHE = False
+# CMS_MEDIA_PATH = 'cms/'
+
+# ?edit_off (CMS_TOOLBAR_URL__EDIT_OFF)
+# ?build (CMS_TOOLBAR_URL__BUILD)
+# ?toolbar_off (CMS_TOOLBAR_URL__DISABLE)

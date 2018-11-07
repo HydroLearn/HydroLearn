@@ -44,25 +44,9 @@ from src.apps.core.model_queries import *
 # class core_PublicationDetailView(ListView):
 #     model = Publication
 #     context_object_name = 'publication'
+
 from src.apps.core.views.PublicationViews import PublicationViewMixin, PublicationChildViewMixin
 
-
-# class core_ModuleListView(ListView):
-#     model = Module
-#     queryset = Module.objects.all() #select all of the modules, add in published filter later
-#
-# class core_ModuleDetailView(PublicationViewMixin, DetailView):
-#     model = Module
-#     context_object_name = 'module'
-#
-#
-# class core_TopicListView(ListView):
-#     model = Topic
-#     queryset = Topic.objects.all() #select all of the modules, add in published filter later
-#
-# class core_TopicDetailView(PublicationChildViewMixin, DetailView):
-#     model = Topic
-#     context_object_name = 'topic'
 
 class core_LessonListView(ListView):
     model = Lesson

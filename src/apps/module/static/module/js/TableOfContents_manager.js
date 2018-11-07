@@ -21,6 +21,9 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
         Perform Initialization steps for new TABLE_OF_CONTENTS instances
     ---------------------------------*/
         this.parse_listing(TOC_Listing);
+
+        // auto expand to loaded section
+        //this.expand_to_section();
 }
 
 /* ---------------------------------
@@ -68,69 +71,79 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
     ---------------------------------*/
         TABLE_OF_CONTENTS_MANAGER.prototype.parse_listing = function(listing) {
 
-                // set the header text for the table of contents
-                var TOC_Title = (!!listing.short_name) ? listing.short_name : listing.name;
-                $('#TableOfContents_header').html(TOC_Title);
+                var base_lesson = this.generate_lesson_obj(listing)
 
+                base_lesson.attr('id','Base_Lesson_obj')
 
-                // add section link for module intro
-                if(!!listing.content_url){
-                    this._content_url = listing.content_url
+                // replace base lesson's summary link to read 'Introduction
+                base_lesson.find('.Lesson_Link').first().html('Introduction')
 
-                    var module_intro = this.generate_toc_link('Introduction', listing.slug)
-                    $(this._target).append(module_intro);
-                }
+                // set accordion to be non-collapsible and active
+                base_lesson.accordion("option", "active", 0);
+                base_lesson.accordion("option", "collapsible", false);
 
-                // if there are chapters specified for this case study listing generate their accordion objects
-                if (!!listing.children) {
-                    var children_obj = this.parse_children(listing.children);
-                    $(this._target).append(children_obj);
-                }
-
+                // add the generated lesson object to the target container
+                $(this._target).html(base_lesson);
 
             }
 
-        TABLE_OF_CONTENTS_MANAGER.prototype.parse_children = function(children) {
+
+
+        TABLE_OF_CONTENTS_MANAGER.prototype.parse_children = function(parent_slug, children) {
 
                 var children_container = $(document.createElement('div'));
                 children_container.addClass('TOC_listing');
+                children_container.attr('data-lesson-slug', parent_slug);
 
-                // TODO: need to add section link for topic summary
+
+                // TODO: need to add empty link if no children
+
+                if(!!children && children.length){
+                    $.each(children, function(index, child){
+
+                        // create the child object representation for each of the children
+                        //      these can be lessons or sections
+                        var child_obj;
+
+                        switch(child.obj_type){
+                            case "lesson":
+                                    child_obj = this.generate_lesson_obj(child);
+                                break;
+
+                            case "section":
+                                    child_obj = this.generate_section_obj(child);
+                                break;
+
+                            default: break;
+
+                        }
+
+                        children_container.append(child_obj);
+
+                    }.bind(this))
+                }else{
+//                    var section_obj = $(document.createElement('div'));
+//                    var empty_link = this.generate_toc_link('No Content Added!', null)
+//                    section_obj.append(empty_link);
+//                    children_container.append(section_obj);
+                }
 
 
-                $.each(children, function(index, child){
-
-                    // create the child object representation for each of the children
-                    //      these can be lessons or sections
-                    var child_obj;
-
-                    switch(child.obj_type){
-                        case "lesson":
-                            child_obj = this.generate_lesson_obj(child);
-                            break;
-
-                        case "section":
-                            child_obj = this.generate_section_obj(child);
-                            break;
-
-                        default: break;
-
-                    }
-
-                    children_container.append(child_obj);
-
-                }.bind(this))
 
                 return children_container;
             }
 
-        TABLE_OF_CONTENTS_MANAGER.prototype.generate_lesson_obj = function(lesson){
+        TABLE_OF_CONTENTS_MANAGER.prototype.generate_lesson_obj = function(lesson, start_expanded){
+
+            //debugger;
 
             // generate html for a lesson representation in the table of contents
             var Lesson_accord = $(document.createElement('div'));
 
+
             Lesson_accord.addClass('JUIaccordion');
-            Lesson_accord.addClass('Topic_Accord');
+            Lesson_accord.addClass('Lesson_obj');
+            Lesson_accord.attr('data-value', lesson.slug)
 
             var Lesson_title = $(document.createElement('h3'));
             Lesson_title.addClass('accord-title');
@@ -143,28 +156,30 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
 
             if(!!lesson.slug){
                 var Lesson_intro = this.generate_toc_link('Summary', lesson.slug)
+                Lesson_intro.addClass("Lesson_Link")
+
                 $(Lesson_content).append(Lesson_intro);
             }
+//
 
-            var has_children = (!!lesson.children && lesson.children.length > 0)
+            // pass the 'children' list to the parse_children method to generate the TOC_listing
+            var children_obj = this.parse_children(lesson.slug, lesson.children);
+            $(Lesson_content).append(children_obj);
 
-            if(has_children){
-                var children_obj = this.parse_children(lesson.children);
-                $(Lesson_content).append(children_obj);
-
-            }else {
-                // if there are no child sections add a placeholder message for the user
-                var section_obj = $(document.createElement('div'));
-                var empty_link = this.generate_toc_link('No Content Added!', null)
-                section_obj.append(empty_link);
-                Lesson_content.append(section_obj);
-            }
 
             Lesson_accord.append(Lesson_content);
 
+            if(typeof(start_expanded) == 'undefined'){
+                start_expanded = false
+
+            }else if(start_expanded == true){
+                // expects index of active element or false, since 1 lesson per accordion, always 0 on true
+                start_expanded = 0
+            }
+
             Lesson_accord.accordion({
                 collapsible: true,
-                active: false,
+                active: start_expanded,
                 heightStyle: 'content',
             });
 
@@ -183,6 +198,9 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
                         (!!section.short_name)? section.short_name: section.name,
                         section.slug_trail
                     )
+
+                section_link.addClass('Section_obj')
+                section_link.attr('data-value', section.slug_trail)
 
                 // add an icon for each of the section types for visual identification
 
@@ -216,12 +234,19 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
                 TOC_link.addClass('TOC_Title');
                 TOC_link.addClass('Section_Link');
 
+                //debugger;
 
                 TOC_link.append(title);
-                TOC_link.attr('value', link);
-                TOC_link.click(this.section_link_click_evt.bind(this));
 
-                //TOC_MGR._section_listing.push(section.slug);
+                if(!!link){
+                    TOC_link.attr('value', link);
+                    TOC_link.attr('data-value', link)
+                }else{
+                    TOC_link.addClass('TOC_EmptyLink')
+
+                }
+
+                TOC_link.click(this.section_link_click_evt.bind(this));
 
                 return TOC_link
 
@@ -260,7 +285,6 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
         TABLE_OF_CONTENTS_MANAGER.prototype.update_lesson_nav = function () {
 
                 // if the loaded section is not in the list of excluded sections and loaded section is not a quiz show container
-                //debugger;
                 var excludes_bottom_nav = false; //$('#' + this.get_Loaded_Section()).hasClass('quiz_section');
 
                 for (var i = 0; i < LESSON_MGR._bottom_nav_excluded.length; i++) {
@@ -308,7 +332,48 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
                 $(".TOC_Title").removeClass('current_selected_section');
                 $(".TOC_Title[value='" + section_slug +"']").addClass('current_selected_section');
 
+                setTimeout(function(){ this.expand_to_section() }.bind(this), 500);
             }
+
+        TABLE_OF_CONTENTS_MANAGER.prototype.expand_to_section = function(value) {
+            // method to expand the table of contents to the section specified by 'value' parameter,
+            //   or the current_selected_section by default
+            var toc_title =(typeof(value) != 'undefined') ?
+                    $('.TOC_Title[data-value="{0}"]'.format(value)) :
+                    $('.current_selected_section')
+
+            // collect a list of parents for expansion
+            var parent_list = [];
+
+            // get the parent accordion to the currently selected/specified element
+            var parent_accord = toc_title.closest('.JUIaccordion')
+
+            //debugger;
+
+            // traverse up parent tree grabbing parent accordions
+            while($(parent_accord).length){
+                // activate the accordion
+                parent_list.unshift(parent_accord);
+
+                // grab next parent
+                parent_accord = $(parent_accord).parent().closest('.JUIaccordion');
+            }
+
+            // iterate the parent list activating the accordions
+            $.each(parent_list, function(index, accordion){
+                // activate the accordions in sequence after a
+                // delay
+                setTimeout(function(){
+                    $(accordion).accordion('option', 'active', 0);
+                }, index * 500)
+
+            })
+
+
+
+        }
+
+
 
 
     /* ---------------------------------

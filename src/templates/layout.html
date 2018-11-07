@@ -1,4 +1,4 @@
-{% load cms_tags menu_tags sekizai_tags static %}
+{% load menu_tags sekizai_tags static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,18 +53,13 @@
       <script src="{% static 'js/plugins/respond.min.js' %}"></script>
 <![endif]-->
 
-    <!-- rendered css, needed for cms toolbar-->
-    {% render_block 'css'%}
-    <!-- end rendered css-->
-
     <!--template css-->
     {% render_block 'template_css' %}
     <!--end template css-->
 </head>
 <body>
-
-    <div id="cms-toolbar-container">
-    {% cms_toolbar %}
+    <div id="base-cms-toolbar-container" class="noshow">
+        {% block load_cms_toolbar %}{% endblock load_cms_toolbar %}
     </div>
 
 
@@ -136,15 +131,6 @@
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                           <ul class="nav navbar-nav navbar-right">
                             {% show_menu 0 100 100 100 %}
-
-                              <!--replaced by redirect pages in menu itself-->
-                          {# if not request.user.is_authenticated #}
-                            <!--<li><a href="/accounts/login">Login</a></li>-->
-                            <!--<li><a href="/accounts/register">Register</a></li>-->
-                          {# else #}
-                            <!--<li><a href="/accounts/logout">Logout</a></li>-->
-                          {# endif #}
-                            <!--<li><a href="#home" class="page-scroll">Home</a></li>-->
                           </ul>
                         </div>
 
@@ -167,12 +153,12 @@
                     <div id="footer-spacer"></div>
                     <div id="footer">
                         <div class="container">
-                            <div class="footer-nav collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                                <ul class="nav navbar-nav navbar-right">
-                                    {% show_menu 0 100 100 100 %}
-                                    <!--<li><a href="#home" class="page-scroll">Home</a></li>-->
-                                </ul>
-                            </div>
+                            <!--<div class="footer-nav collapse navbar-collapse" id="bs-example-navbar-collapse-1">-->
+                                <!--<ul class="nav navbar-nav navbar-right">-->
+                                    <!--{% show_menu 0 100 100 100 %}-->
+                                    <!--&lt;!&ndash;<li><a href="#home" class="page-scroll">Home</a></li>&ndash;&gt;-->
+                                <!--</ul>-->
+                            <!--</div>-->
 
                             <div class="copyright">
                                 <p>Copyright &copy; HydroLearn.</p>
@@ -180,9 +166,9 @@
 
                             <div class="social">
                               <ul>
-                                <li><a href="#"><i class="fab fa-facebook"></i></a></li>
-                                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                                <li><a href="#"><i class="fab fa-github"></i></a></li>
+                                <!--<li><a href="/"><i class="fab fa-facebook"></i></a></li>-->
+                                <!--<li><a href="/"><i class="fab fa-twitter"></i></a></li>-->
+                                <li><a href="https://github.com/HydroLearn/HydroLearn"><i class="fab fa-github"></i></a></li>
                               </ul>
                             </div>
 
@@ -226,10 +212,8 @@
 <!--<script type="text/javascript" src="js/contact_me.js"></script> -->
 
 <!-- Javascripts
-    ================================================== --> 
+    ================================================== -->
 <script type="text/javascript" src="{% static 'js/helios_js/main.js' %}"></script>
-
-{% render_block "js" %}
 
 <script>
     $(document).ready(function () {
