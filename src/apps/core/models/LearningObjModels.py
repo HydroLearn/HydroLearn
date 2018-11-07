@@ -1,5 +1,6 @@
 from django.db import models
 from django.forms import ModelForm
+from src.apps.core.models.CreationTrackingModels import CreationTrackingBaseModel
 
 class Learning_Level(models.Model):
     label = models.CharField(max_length=64)
@@ -27,14 +28,14 @@ class Learing_OutcomeForm(ModelForm):
         model = Learning_Outcome
         fields = ['outcome']
 
-class Learning_Objective(models.Model):
-    condition = models.CharField(max_length=64)
-    task = models.CharField(max_length=64)
-    degree = models.CharField(max_length=64)
+class Learning_Objective(CreationTrackingBaseModel):
+    condition = models.TextField()
+    task = models.TextField()
+    degree = models.TextField()
     verb = models.ForeignKey(Learning_Verb)
     outcomes = models.ManyToManyField(Learning_Outcome)
 
-class Learing_ObjectiveForm(ModelForm):
+class Learning_ObjectiveForm(ModelForm):
     class Meta:
         model = Learning_Objective
         fields = ['condition', 'task', 'degree', 'verb', 'outcomes']

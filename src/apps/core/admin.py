@@ -434,13 +434,13 @@ class LessonAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin,
         else:
             return super(LessonAdmin, self).get_form(request, obj, **kwargs)
 
-class Learning_OutcomeAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
+class Learning_OutcomeAdmin(PublicationChangeTrackingMixin, admin.ModelAdmin):
     model = Learning_Outcome
 
     sortable_field_name = "outcome"
     list_display = ['outcome']
 
-class Learning_LevelAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
+class Learning_LevelAdmin(PublicationChangeTrackingMixin, admin.ModelAdmin):
     model = Learning_Level
 
     sortable_field_name = "label"
@@ -456,7 +456,7 @@ class Learning_VerbAdminForm(ModelForm):
         model = Learning_Verb
         fields = ['verb', 'level']
 
-class Learning_VerbAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin, admin.ModelAdmin):
+class Learning_VerbAdmin(PublicationChangeTrackingMixin, admin.ModelAdmin):
     form = Learning_VerbAdminForm
 
     sortable_field_name = "verb"
