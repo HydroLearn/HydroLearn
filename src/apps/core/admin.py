@@ -1,6 +1,6 @@
 from django.forms import ModelChoiceField
 from django.contrib import admin
-from django.forms import ModelForm, ModelChoiceField
+from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
 #from django.utils.translation import ugettext as _
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
@@ -11,7 +11,8 @@ from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
 #from src.apps.core.admin_actions import *
 
-from .models.LearningObjModels import Learning_Level, Learning_Verb, Learning_Outcome
+from .models.LearningObjModels import Learning_Level, Learning_Verb, Learning_Outcome, \
+    Learning_Objective
 
 from src.apps.core.forms import (
     # ModuleForm,
@@ -462,6 +463,28 @@ class Learning_VerbAdmin(PublicationChangeTrackingMixin, admin.ModelAdmin):
     sortable_field_name = "verb"
     list_display = ['verb']
 
+class Learning_VerbChoiceField(ModelChoiceField):
+     def label_from_instance(self, obj):
+         return "%s" % (obj.verb)
+
+class Learning_OutcomeChoiceField(ModelMultipleChoiceField):
+     def label_from_instance(self, obj):
+         return "%s" % (obj.outcome)
+
+class Learning_ObjectiveAdminForm(ModelForm):
+    verb = Learning_VerbChoiceField(queryset=Learning_Verb.objects.all())
+    outcomes = Learning_OutcomeChoiceField(queryset=Learning_Outcome.objects.all())
+    class Meta:
+        model = Learning_Objective
+        fields = ['condition', 'task', 'degree', 'verb', 'outcomes']
+
+class Learning_ObjectiveAdmin(PlaceholderAdminMixin, PublicationChangeTrackingMixin,
+                            admin.ModelAdmin):
+    form = Learning_ObjectiveAdminForm
+
+    sortable_field_name = "position"
+    exclude = ['position', 'created_by', 'changed_by']
+
 # class TopicAdmin(PolymorphicInlineSupportMixin, PublicationChangeTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
 #     model = Topic
 #     form = Edit_TopicForm
@@ -604,4 +627,5 @@ admin.site.register(MultiSelect_answer, MultiSelect_AnswerAdmin)
 admin.site.register(Learning_Outcome, Learning_OutcomeAdmin)
 admin.site.register(Learning_Level, Learning_LevelAdmin)
 admin.site.register(Learning_Verb, Learning_VerbAdmin)
+admin.site.register(Learning_Objective, Learning_ObjectiveAdmin)
 # admin.site.register(QuizAnswer, QuizAnswerParentAdmin)
