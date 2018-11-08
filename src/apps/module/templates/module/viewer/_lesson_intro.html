@@ -4,18 +4,24 @@
 {% block content %}
     {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
 
+    {# Load content into non editable context variable  #}
+    {% render_placeholder object.summary as content %}
+
     <div class='lesson'>
-        {% content_editor_button request.user object %}
+        {# content_editor_button request.user object #}
 
         <h2 class="lesson-header">{{object.name}}</h2>
         <h3>Summary</h3>
         <hr class="headerSpacer">
 
-        {% render_placeholder object.summary %}
+
+
+        {{ content }}
+
     </div>
 
     {% addtoblock 'template_js' %}
-    <script>
+        <script>
             $('table:not(.responsive_table):not(.stacktable)').addClass('responsive_table')
         </script>
     {% endaddtoblock 'template_js' %}

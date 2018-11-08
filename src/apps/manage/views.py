@@ -36,7 +36,7 @@ from django.http import (
 #from taggit.models import Tag
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.edit import FormMixin
-from djangocms_installer.compat import unicode
+
 
 from src.apps.core.models.ModuleModels import (
     # Module,
@@ -56,147 +56,25 @@ from src.apps.core.model_queries import *
 #from src.apps.core.forms import *
 from src.apps.core.views.PublicationViews import (
     PublicationChildViewMixin,
-    PublicationViewMixin
+    PublicationViewMixin,
+    DraftOnlyViewMixin)
+
+from src.apps.core.views.mixins import (
+    AjaxableResponseMixin,
+    OwnershipRequiredMixin,
 )
+
 from src.apps.manage.forms import *
 
 #from src.apps.tags.query_utils import *
 #from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
-    UserPassesTestMixin,
+
 )
 from django.utils.translation import gettext as _
 
-###############################################################################
-###                 CUSTOM MIXINS
-###############################################################################
-class OwnershipRequiredMixin(UserPassesTestMixin):
-    """
-        Mixin to adds in test function that checks that the user has permission
-        to view the requested object,
-            - Users can only access the manage view if they are the owner of the object (created_by)
-                or if it has been shared with them
 
-        if the tests defined in test_func are not passed, return a 403 error (permission exception)
-    """
-    raise_exception = True  # raise 403 exception if user fails permission test
-
-    def test_func(self):
-        object = self.get_object()
-        has_permission = self.request.user.is_admin or (object and object.created_by == self.request.user)
-        return has_permission
-
-class AjaxableResponseMixin(object):
-    """
-        Custom View Mixin for processing forms via ajax
-        No form processing is handled in this mixin, only creation of json responses to be
-        passed to the success method of an Ajax post to a FormView
-
-        supplies additional view settings:
-            - (var) ajax_error_dict         - a dictionary containing any errors encountered during processing of the form
-            - (var) ajax_success_redirect   - the success url to redirect to if submitted form was valid and processed
-            - (method) get_ajax_success_url - method to return the 'ajax_success_redirect' modeled after default FormView's 'get_success_url' method
-
-        provides a super methods to return 'response.success' response if the form was processed as expected
-            -   if processed form had errors a response is returned flagging 'response.success'
-                as false and provides supplied  'ajax_error_dict' in 'response.data'
-
-            -   if the processed form was valid, returns response with 'response.success'
-                flagged as true, and provides the result of 'get_ajax_success_url' method in
-                'response.data'
-
-        Notes:
-            -   No actual redirection is triggered in this mixin, it only supplies the redirection url
-                back to the view. redirection is expected to be handled in the 'Ajax.success' method
-
-            -   Assuming processing went as expected (whether valid or invalid),
-                'Ajax.success' will be triggered and the appropriate json response will be supplied
-
-            -   the only time 'Ajax.error' will be returned is if there is a server side error,
-                or if the supplied 'ajax_error_dict' or 'ajax_success_redirect' are invalid.
-
-    """
-
-    ajax_error_dict = {}
-    ajax_success_redirect = None
-
-    def get_ajax_success_url(self):
-        """
-            method modeled after FormView's 'get_success_url' method, but to return
-            the ajax redirect url
-
-            :return: url for view to redirect to on successful form submission
-        """
-        if self.ajax_success_redirect:
-            # Forcing possible reverse_lazy evaluation
-            url = force_text(self.ajax_success_redirect)
-        else:
-            raise ImproperlyConfigured(
-                "No URL to redirect to. Provide a ajax_success_redirect.")
-        return url
-
-
-    """
-    Mixin to add AJAX support to a form.
-    Must be used with an object-based FormView (e.g. CreateView, UpdateView)
-    """
-    def form_invalid(self, form, *args, **kwargs):
-        """
-        :param form: the posted invalid form
-        :return: an HttpResponse containing a json object flagging success as false, provide a message,
-                    and return the 'ajax_error_dict' under the 'data' attribute
-        """
-
-        response = super(AjaxableResponseMixin, self).form_invalid(form, *args, **kwargs)
-        if self.request.is_ajax():
-
-            payload = {
-                'success': False,
-                'message': _("Validation failed! Form was not saved."),
-                'data': self.ajax_error_dict
-            }
-
-            return HttpResponse(json.dumps(payload), content_type='application/json')
-
-        else:
-            return response
-
-    def form_valid(self, form, *args, **kwargs):
-        """
-        :param form: the posted valid form
-        :return: an HttpResponse containing a json object flagging success as true, provide a message,
-                    and return the 'ajax_error_dict' under the 'data' attribute
-        """
-        # We make sure to call the parent's form_valid() method because
-        # it might do some processing (in the case of CreateView, it will
-        # call form.save() for example).
-        response = super(AjaxableResponseMixin, self).form_valid(form, *args, **kwargs)
-        if self.request.is_ajax():
-
-            self.message = _("Validation passed! The Form has been Saved.")
-
-            return_data = { "redirect_url": self.get_ajax_success_url(), }
-
-            payload = {
-                'success': True,
-                'message': _("Validation passed. Form Saved."),
-                'data': return_data,
-            }
-
-            return HttpResponse(json.dumps(payload), content_type='application/json')
-
-        else:
-            return response
-
-def errors_to_json(errors):
-    """
-    Convert a Form error list to JSON::
-    """
-    return dict(
-            (k, list(map(unicode, v)))
-            for (k,v) in errors.items()
-        )
 
 
 # ====================================== Standard views =======================================
@@ -259,43 +137,6 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         else:
             return self.form_invalid(form, sections_formset, subLesson_formset)
 
-    def get_lesson_formset_errors(self, lessons_formset):
-        return [{
-            'errors': lessonForm.errors.as_json(),
-            'sublessons': self.get_lesson_formset_errors(lessonForm.sub_lessons),
-            'sections': self.get_section_formset_errors(lessonForm.child_sections),
-        } for lessonForm in lessons_formset.forms]
-
-    def get_section_formset_errors(self, sections_formset):
-        return [{
-            'errors': sectionForm.errors.as_json(),
-        } for sectionForm in sections_formset.forms]
-
-
-    def form_invalid(self, form, sections, subLessons, *args, **kwargs):
-
-        # error_collection = [{
-        #     "errors": topicForm.errors.as_json(),
-        #
-        #     "formset": [{
-        #         "errors": lessonForm.errors.as_json(),
-        #         "formset": [{
-        #             "errors": sectionForm.errors.as_json(),
-        #         } for sectionForm in lessonForm.child_sections.forms]
-        #
-        #     } for lessonForm in topicForm.child_lessons.forms]
-        #
-        # } for topicForm in subLessons.forms]
-
-        self.ajax_error_dict = {
-            "errors": form.errors.as_json(),
-            'sublessons': self.get_lesson_formset_errors(subLessons),
-            "sections": self.get_section_formset_errors(sections),
-            # "formset": error_collection,
-        }
-
-        return super(manage_ModuleCreateView, self).form_invalid(form)
-
     def process_lesson_formset(self, lesson_fs, parent_lesson=None):
         '''
         save individual lesson forms of provided formset, set their parent
@@ -327,7 +168,6 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 self.process_section_formset(subLesson.child_sections, new_subLesson)
                 self.process_lesson_formset(subLesson.sub_lessons, new_subLesson)
 
-
     def process_section_formset(self, section_fs, parent_lesson):
         '''
         save individual section forms of a provided formset and set their parent lesson
@@ -350,9 +190,6 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 # save the section and it's many-to-many fields (tags)
                 new_section.save()
                 section.save_m2m()
-
-
-
 
     def form_valid(self, form, sections, subLessons, *args, **kwargs):
 
@@ -398,7 +235,54 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
         return super(manage_ModuleCreateView, self).form_valid(form)
 
-class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
+
+    # def get_failed_return_data(self, form):
+    #     return {
+    #         "errors": form.errors.as_json(),
+    #         #'sublessons': self.get_lesson_formset_errors(subLessons),
+    #         #"sections": self.get_section_formset_errors(sections),
+    #         # "formset": error_collection,
+    #     }
+
+    def form_invalid(self, form, sections, subLessons, *args, **kwargs):
+
+        # error_collection = [{
+        #     "errors": topicForm.errors.as_json(),
+        #
+        #     "formset": [{
+        #         "errors": lessonForm.errors.as_json(),
+        #         "formset": [{
+        #             "errors": sectionForm.errors.as_json(),
+        #         } for sectionForm in lessonForm.child_sections.forms]
+        #
+        #     } for lessonForm in topicForm.child_lessons.forms]
+        #
+        # } for topicForm in subLessons.forms]
+
+        # self.ajax_return_data = {
+        #     "errors": form.errors.as_json(),
+        #     'sublessons': self.get_lesson_formset_errors(subLessons),
+        #     "sections": self.get_section_formset_errors(sections),
+        #     # "formset": error_collection,
+        # }
+
+        return super(manage_ModuleCreateView, self).form_invalid(form)
+
+    def get_lesson_formset_errors(self, lessons_formset):
+        return [{
+            'errors': lessonForm.errors.as_json(),
+            'sublessons': self.get_lesson_formset_errors(lessonForm.sub_lessons),
+            'sections': self.get_section_formset_errors(lessonForm.child_sections),
+        } for lessonForm in lessons_formset.forms]
+
+    def get_section_formset_errors(self, sections_formset):
+        return [{
+            'errors': sectionForm.errors.as_json(),
+        } for sectionForm in sections_formset.forms]
+
+
+#class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
+class manage_ModuleEditView(PublicationViewMixin, OwnershipRequiredMixin, DraftOnlyViewMixin, AjaxableResponseMixin, UpdateView):
     model = Lesson
     template_name = 'manage/forms/module_form.html'
     #form_class = manage_ModuleForm
@@ -459,49 +343,6 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
         else:
             return self.form_invalid(form, section_formset, subLesson_formset)
 
-
-    def get_lesson_formset_errors(self, lessons_formset):
-        return [{
-            'errors': lessonForm.errors.as_json(),
-            'sublessons': self.get_lesson_formset_errors(lessonForm.sub_lessons),
-            'sections': self.get_section_formset_errors(lessonForm.child_sections),
-        } for lessonForm in lessons_formset.forms]
-
-    def get_section_formset_errors(self, sections_formset):
-        return [{
-            'errors': sectionForm.errors.as_json(),
-        } for sectionForm in sections_formset.forms]
-
-
-    # def form_invalid(self, form, topics, *args, **kwargs):
-    def form_invalid(self, form, sections, subLessons, *args, **kwargs):
-        # error_collection = [{
-        #     "errors": topicForm.errors.as_json(),
-        #
-        #     "formset": [{
-        #         "errors": lessonForm.errors.as_json(),
-        #         "formset": [{
-        #             "errors": sectionForm.errors.as_json(),
-        #         } for sectionForm in lessonForm.child_sections.forms]
-        #     } for lessonForm in topicForm.child_lessons.forms]
-        #
-        # } for topicForm in topics.forms]
-        #
-        # self.ajax_error_dict = {
-        #     "errors": form.errors.as_json(),
-        #     "formset": error_collection,
-        # }
-
-        self.ajax_error_dict = {
-            "errors": form.errors.as_json(),
-            'sublessons': self.get_lesson_formset_errors(subLessons),
-            "sections": self.get_section_formset_errors(sections),
-            # "formset": error_collection,
-        }
-
-        return super(manage_ModuleEditView, self).form_invalid(form)
-
-
     def process_lesson_formset(self, lesson_fs, parent_lesson=None):
         '''
         save individual lesson forms of provided formset, set their parent
@@ -543,7 +384,6 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
                     # process any child formsets of this lesson
                     self.process_section_formset(changed_lesson.child_sections, curr_lesson)
                     self.process_lesson_formset(changed_lesson.sub_lessons, curr_lesson)
-
 
     def process_section_formset(self, section_fs, parent_lesson):
         '''
@@ -607,7 +447,50 @@ class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipR
         messages.success(self.request, _("Successfully edited Module:'%s'" % new_lesson.name))
         return super(manage_ModuleEditView,self).form_valid(form)
 
-class manage_ModulePublishIndex(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DetailView):
+    def form_invalid(self, form, sections, subLessons, *args, **kwargs):
+        # error_collection = [{
+        #     "errors": topicForm.errors.as_json(),
+        #
+        #     "formset": [{
+        #         "errors": lessonForm.errors.as_json(),
+        #         "formset": [{
+        #             "errors": sectionForm.errors.as_json(),
+        #         } for sectionForm in lessonForm.child_sections.forms]
+        #     } for lessonForm in topicForm.child_lessons.forms]
+        #
+        # } for topicForm in topics.forms]
+        #
+        # self.ajax_return_data = {
+        #     "errors": form.errors.as_json(),
+        #     "formset": error_collection,
+        # }
+
+        self.ajax_return_data = {
+            "errors": form.errors.as_json(),
+            'sublessons': self.get_lesson_formset_errors(subLessons),
+            "sections": self.get_section_formset_errors(sections),
+            # "formset": error_collection,
+        }
+
+        return super(manage_ModuleEditView, self).form_invalid(form)
+
+    def get_lesson_formset_errors(self, lessons_formset):
+        return [{
+            'errors': lessonForm.errors.as_json(),
+            'sublessons': self.get_lesson_formset_errors(lessonForm.sub_lessons),
+            'sections': self.get_section_formset_errors(lessonForm.child_sections),
+        } for lessonForm in lessons_formset.forms]
+
+    def get_section_formset_errors(self, sections_formset):
+        return [{
+            'errors': sectionForm.errors.as_json(),
+        } for sectionForm in sections_formset.forms]
+
+
+
+
+#class manage_ModulePublishIndex(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DetailView):
+class manage_ModulePublishIndex(PublicationViewMixin, OwnershipRequiredMixin, DetailView):
     template_name = 'manage/forms/module_publication_index.html'
     success_url = '/manage/'
     model = Lesson
@@ -654,8 +537,8 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
     def form_invalid(self, form, **kwargs):
         return super(manage_ModulePublish, self).form_invalid(form)
 
-
-class manage_ModuleDeleteView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DeleteView):
+# class manage_ModuleDeleteView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DeleteView):
+class manage_ModuleDeleteView(PublicationViewMixin, OwnershipRequiredMixin, DeleteView):
     model = Lesson
     template_name = 'manage/forms/module_delete.html'
     success_url = '/manage/'
@@ -673,7 +556,8 @@ class manage_ModuleDeleteView(LoginRequiredMixin, PublicationViewMixin, Ownershi
 
         raise Http404
 
-class manage_ModuleShareView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, TemplateView):
+# class manage_ModuleShareView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, TemplateView):
+class manage_ModuleShareView(PublicationViewMixin, OwnershipRequiredMixin, TemplateView):
     template_name = 'manage/partials/_module_shared_list.html'
 
 ###############################################################################

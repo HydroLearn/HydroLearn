@@ -174,6 +174,7 @@ INSTALLED_APPS = (
     'src.apps.core',
     'src.apps.manage',
     'src.apps.module',
+    'src.apps.editor',
     'src.apps.tags',
 
 )

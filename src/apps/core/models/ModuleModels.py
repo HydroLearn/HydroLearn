@@ -151,6 +151,11 @@ class Lesson(Publication):
     #   Methods
     ########################################
 
+    # define for use by FormMixin
+    # (calls this method specifically, but isn't defined by default... right...)
+    def get_absolute_url(self):
+        return self.absolute_url()
+
     def absolute_url(self):
         return reverse('core:lesson_detail', kwargs={
             'slug': self.slug
@@ -159,6 +164,12 @@ class Lesson(Publication):
     # path to the manage page for a topic
     def manage_url(self):
         return reverse('manage:lesson_content', kwargs={
+            'slug': self.slug
+        })
+
+    # path to the edit page for a topic
+    def edit_url(self):
+        return reverse('editor:lesson_edit', kwargs={
             'slug': self.slug
         })
 
@@ -173,10 +184,6 @@ class Lesson(Publication):
         return reverse('modules:module_ref', kwargs={
             'ref_id': self.ref_id,
         })
-
-    # added for wizard support. potentially this can be used to redirect between core/manage/module
-    def get_absolute_url(self):
-        return self.absolute_url()
 
     # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
     def __str__(self):
@@ -285,8 +292,8 @@ class Lesson(Publication):
         #   creation of multiple drafts with the same name
         #   this is only valid if a base lesson so check that it's not a root lesson too
         #   TODO: watch this, it could be inadequate when 'lesson-copy' becomes enabled later in development
-        if not self.parent_lesson and self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
-            raise ValidationError('A Draft-Lesson with this name already exists')
+        # if not self.parent_lesson and self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
+        #     raise ValidationError('A Draft-Lesson with this name already exists')
 
         return super(Lesson, self).validate_unique(exclude)
 
@@ -493,6 +500,11 @@ class Section(PolyPublicationChild):
     ########################################
     #   Methods
     ########################################
+    # define for use by FormMixin
+    # (calls this method specifically, but isn't defined by default... right...)
+    def get_absolute_url(self):
+        return self.absolute_url()
+
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={

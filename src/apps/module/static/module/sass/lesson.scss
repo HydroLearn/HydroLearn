@@ -109,7 +109,7 @@
 
   .lesson {
 
-    a{
+    a:not(.cms-btn) {
         color: $HL_blue;
         text-decoration: underline;
 

@@ -1,0 +1,281 @@
+@import 'branding';
+
+#editor_formset_init{ display:none }
+.cms-modal-item-buttons{
+    a {
+        color: white;
+    }
+}
+
+
+#TOC_content {
+
+    .TOC_add_menu{
+        .TOC_add_menu_trigger_btn{
+            cursor: pointer;
+            border-radius: 7px;
+
+            &:hover{
+                background: #ffffff22;
+            }
+        }
+
+
+        color: white;
+        padding: 10px;
+        border-radius: 7px;
+        text-align: center;
+
+        .TOC_add_menu_content{
+            background: #60c785a1;
+            border-radius: 7px;
+            padding: 3px 0px;
+            margin: 7px 0;
+
+        }
+
+    }
+
+    .TOC_Add_Section_wrapper {
+        background: #00000033;
+        //border-bottom-left-radius: 7px;
+        //border-bottom-right-radius: 7px;
+        margin: 0;
+        padding: 3px;
+        text-align: center;
+
+        .TOC_Add_Section_button{
+            cursor: pointer;
+            color: white;
+            display: inline-block;
+            background: #ffffff33;
+            padding: 3px 6px;
+            border-radius: 7px;
+            margin: 0 2px 5px 2px;
+            transition: all .2s;
+            font-size: .85em;
+
+            &:hover {
+                background: #31c55f;
+            }
+
+            i{
+                padding-right:3px;
+            }
+        }
+
+
+    }
+
+
+
+    .TOC_Add_Lesson_wrapper {
+        background: #00000033;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+        margin: 0;
+        padding: 3px;
+        text-align: center;
+
+        .TOC_Add_Lesson_button{
+            cursor: pointer;
+            color: white;
+            display: inline-block;
+            background: #ffffff33;
+            padding: 3px 6px;
+            border-radius: 7px;
+            margin: 0 2px 5px 2px;
+            transition: all .2s;
+            font-size: .85em;
+
+            &:hover {
+                background: #31c55f;
+            }
+
+            i{
+                padding-right:3px;
+            }
+        }
+
+
+    }
+
+
+    // basic toolbox styling
+    .TOC_Toolbox{
+        font-family: "Lato", sans-serif;
+        font-size: 15px;
+        background:#ffffff44;
+        float:right;
+        padding: 1px 5px;
+        border-radius: 7px;
+        transition: all .2s;
+
+
+        i {
+            transition: all .2s;
+            padding: 1px 3px;
+            color: #fff;
+
+            &:hover{
+                color: #F98600;
+            }
+        }
+
+    }
+
+    .TOC_Title{
+        padding: 4px 10px 4px 25px;
+
+        .TOC_Toolbox{
+
+        }
+    }
+
+    .TOC_listing {
+        .accord-title {
+            //h3 {
+                padding-right: 10px;
+            //}
+        }
+
+        .TOC_Toolbox{
+
+        }
+
+    }
+
+    // set object state styling for EDITOR_TOC
+    .TOC_NEW_OBJ {
+        // apply green tint
+        background: #85cfa399;
+        font-weight: bold;
+        border-left: 3px solid #00ff00;
+
+        .accord-title{
+            font-weight: bold;
+        }
+
+        .TOC_NEW_OBJ {
+            border-left: none;
+        }
+    }
+
+    .TOC_EDITED_OBJ{
+        // apply orange tint
+        background: #cfb585bf;
+        font-weight: bold;
+        border-left: 3px solid #ffbc00;
+
+        .accord-title{
+            font-weight: bold;
+        }
+    }
+
+}
+
+.form_block {
+    display:none;
+}
+
+.Toggle_edit_btn{
+    float:right;
+}
+
+#content_form{
+
+    .has_error{
+        border: 1px dashed red;
+        background: #ffeeee;
+    }
+
+    .form-error{
+        color: red;
+        padding: 0px 12px;
+    }
+
+    #content_form_controls{
+        background: #ececec;
+        width: 100%;
+        height: 50px;
+        padding: 8px;
+        margin-top: 15px;
+        border-radius: 7px;
+    }
+
+    .Submit_button {
+        //float:right;
+        float:left;
+        background: $HL_seafoam;
+        color: white;
+        font-weight:bold;
+        transition: all .2s;
+
+        &:hover{
+            background: #31c55f;
+        }
+    }
+
+    .Cancel_button {
+        //float:right;
+        float:left;
+        margin:0 10px;
+        background: #eaeaea;
+        //color: white;
+        font-weight:bold;
+        transition: all .2s;
+
+        &:hover{
+            background: #d2d2d2;
+        }
+    }
+
+    .Delete_button {
+        float:right;
+        margin:0 10px;
+        background: $red;
+        color: white;
+        font-weight:bold;
+        transition: all .2s;
+
+        &:hover{
+            background: red;
+        }
+    }
+
+}
+
+
+.form_messages{
+    display:none;
+
+    width: 90%;
+    background-color: #eaeaea;
+    border-left: 3px solid #b1b1b1;
+    padding: 10px;
+    margin: 10px 0;
+    //clear:both;
+
+    text-align: center;
+    color: #676767;
+    font-style: italic;
+    font-weight: bold;
+
+    ul{
+         list-style: none !important;
+         list-style-type: none !important;
+
+    }
+}
+
+#content_form_errors {
+    background-color: #ffe5e5;
+    border-left: 3px solid red;
+    color: red;
+}
+
+#content_form_success {
+    background-color: #a6ffce;
+    border-left: 3px solid #069212;
+    color: #069212;
+}

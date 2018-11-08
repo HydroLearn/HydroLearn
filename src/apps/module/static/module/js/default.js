@@ -43,21 +43,6 @@ $(document).ready(function() {
 
     $(".collapsible_container .icon").click(collapse_event);
 
-        
-    //// initialize all JUI accordians (used in the table of contents)
-    //$(".JUIaccordion").accordion({
-    //    collapsible: true,
-    //    active: false,
-    //    heightStyle: 'content',
-    //});
-
-    //// initialize all sub accordions (also used in the table of contents)
-    //$(".subAccordion").accordion({
-    //    collapsible: true,
-    //    active: false,
-    //    heightStyle: 'content',
-    //});
-
 
     // initialize the dialog box used when confirming navigating away from a page (used for quiz sections)
     $("#lesson-nav-warning-dialog").dialog({
@@ -67,17 +52,36 @@ $(document).ready(function() {
         resizable: false,
         width: '450px',
         open: function() {
-            place_dialog_center($(this));
-        }
-    
+                place_dialog_center($(this));
+            }
     });
-    //
+
+    // initialize the dialog box used when confirming navigating away from a page (used for quiz sections)
+    $("#lesson-nav-denied-dialog").dialog({
+        autoOpen: false,
+        draggable: false,
+        modal: true,
+        resizable: false,
+        width: '450px',
+        open: function() {
+                place_dialog_center($(this));
+            }
+    });
+
+    $('#lesson-nav-denied-confirm').click(function(){
+        $('#lesson-nav-denied-dialog').dialog('close')
+    })
+
     //// keep warning dialog centered on screen when scrolling
-    //$(window).scroll(function() {
-    //    if ($("#lesson-nav-warning-dialog").dialog("isOpen") === true) {
-    //        place_dialog_center($("#lesson-nav-warning-dialog"));
-    //    }
-    //});
+    $(window).scroll(function() {
+        if ($("#lesson-nav-warning-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#lesson-nav-warning-dialog"));
+        }
+
+        if ($("#lesson-nav-denied-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#lesson-nav-denied-dialog"));
+        }
+    });
 
     // highlight the active section in the table of contents
     //HighlightActiveSection_TOC(true);
