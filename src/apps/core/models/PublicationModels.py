@@ -310,7 +310,6 @@ class Publication(CreationTrackingBaseModel):
             return self
         return self.published_copy
 
-
     def has_draft_access(self, user):
         '''
             Method to determine if a passed user has access to draft content of this publication
@@ -350,6 +349,9 @@ class Publication(CreationTrackingBaseModel):
             self.DRAFT_ONLY: self.has_draft_access(user),
 
         }.get(self.publish_status, False)
+
+    def get_owner(self):
+        return self.created_by
 
 class PublicationChild(CreationTrackingBaseModel):
     class Meta:
@@ -394,6 +396,10 @@ class PublicationChild(CreationTrackingBaseModel):
 
     # should this override save to trigger saving of parent? this would technically be accurate, right?
     #   if a child changes, it's parent by relation has changed
+
+    def get_owner(self):
+        return self.get_Publishable_parent().get_owner()
+
 
 class PolyPublication(PolyCreationTrackingBaseModel):
     class Meta:

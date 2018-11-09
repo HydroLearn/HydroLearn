@@ -14,7 +14,7 @@ def list_my_modules(context):
     :return: templated listing of all modules created by the user specified in view context
     '''
     my_lessons = context['user'].created_lessons.filter(depth=0).drafts().order_by('-changed_date')
-    shared_modules = None
+    shared_modules = context['user'].collaborations.all()
     return {
         'my_modules': my_lessons,
         'shared_modules': shared_modules,
@@ -71,3 +71,14 @@ def show_section_formset(formset_type, formset):
         # 'parent_prefix': parent_prefix,
     }
 
+@register.inclusion_tag('manage/partials/_lesson_repr.html')
+def show_lesson_representation(lesson):
+    return {
+        'lesson':lesson,
+    }
+
+@register.inclusion_tag('manage/partials/_section_repr.html')
+def show_section_representation(section):
+    return {
+        'section': section,
+    }

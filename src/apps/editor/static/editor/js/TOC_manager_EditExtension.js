@@ -1,10 +1,15 @@
 // object to extend functionality of TOC_manager to account for loading
 // of forms and interface changes within editor
 
-function EDITOR_TOC(target_container_selector, TOC_Listing){
+function EDITOR_TOC(target_container_selector, TOC_Listing, editor_access){
+
+    // set whether the table of contents will be loaded in edit mode
+    this.editor_access = (typeof(editor_access) != 'undefined') ? editor_access : false;
 
     // provide mapped configuration to parent 'Editor' constructor
     TABLE_OF_CONTENTS_MANAGER.call(this, target_container_selector, TOC_Listing);
+
+
 }
 
 // extend this object's prototype to extend from TABLE_OF_CONTENTS_MANAGER's prototype
@@ -86,8 +91,9 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
             // perform the default generate lesson operation
             var lesson_obj = TABLE_OF_CONTENTS_MANAGER.prototype.generate_lesson_obj.call(this, lesson, start_expanded)
 
+
             // if this is an instantiated lesson add the Add controls
-            if(!!lesson.is_instanced){
+            if(!!lesson.is_instanced && this.editor_access){
 
                 // grab the content container and add the 'Add New' buttons
                 var accord_content = lesson_obj.find('.accord-content').first()

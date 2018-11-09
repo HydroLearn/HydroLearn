@@ -340,7 +340,7 @@
                 /* ---------------------------------
                    initialize the Table of contents to link to the different SubStudies/sections
                 ---------------------------------*/
-                TOC_MGR = new EDITOR_TOC('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'));
+                TOC_MGR = new EDITOR_TOC('#TOC_content', JSON.parse('{{ TOC_Listing | escapejs }}'), {{ has_edit_access|yesno:"true,false" }} );
 
 
                 /* ---------------------------------

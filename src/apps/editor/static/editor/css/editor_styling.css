@@ -140,26 +140,10 @@
 .form_messages {
   display: none;
   width: 90%;
-  background-color: #eaeaea;
-  border-left: 3px solid #b1b1b1;
   padding: 10px;
-  margin: 10px 0;
-  text-align: center;
-  color: #676767;
-  font-style: italic;
-  font-weight: bold; }
+  margin: 10px 0; }
   .form_messages ul {
     list-style: none !important;
     list-style-type: none !important; }
-
-#content_form_errors {
-  background-color: #ffe5e5;
-  border-left: 3px solid red;
-  color: red; }
-
-#content_form_success {
-  background-color: #a6ffce;
-  border-left: 3px solid #069212;
-  color: #069212; }
 
 /*# sourceMappingURL=editor_styling.css.map */

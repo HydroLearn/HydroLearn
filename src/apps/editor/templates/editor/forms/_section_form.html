@@ -4,7 +4,13 @@
 
     {% if is_instance %}
         {# if there's a form instance display it's content as it would be in the viewer #}
-        <button class="Toggle_edit_btn btn btn-default">Edit</button>
+
+        {% if edit_access %}
+            <button class="Toggle_edit_btn btn btn-default">Edit</button>
+        {% else %}
+            <div class="HL-message-banner warning"> {{ manage_denied_message }}</div>
+        {% endif %}
+
         <div class="content_block">
 
             {# content_editor_button request.user object #}
@@ -13,39 +19,41 @@
         </div>
     {% endif %}
 
-    <div class="form_block" data-existing-instance="{{ is_instance }}">
-        <div id="content_form_success" class="form_messages"></div>
-        <div id="content_form_errors" class="form_messages"></div>
+    {% if edit_access %}
+        <div class="form_block" data-existing-instance="{{ is_instance }}">
+            <div id="content_form_success" class="HL-message-banner success form_messages"></div>
+            <div id="content_form_errors" class="HL-message-banner critical form_messages"></div>
 
-        <h2 class="lesson-header">
-            Editing:
-            {% if is_instance %}
-                {{form.instance.name}}
-            {% else %}
-                New Un-Typed Section
-            {% endif %}
-        </h2>
-        <hr class="headerSpacer">
-
-        <form id="content_form" action="{{ request.path }}" method="post">
-            {% csrf_token %}
-            {{ form.media }}
-            <table>
-                {{ form.as_table }}
-            </table>
-            <div id="content_form_controls">
-                <button class="Submit_button btn btn-default" type="submit">Submit Section</button>
-                <button class="Cancel_button btn btn-default">Cancel</button>
-
+            <h2 class="lesson-header">
+                Editing:
                 {% if is_instance %}
-                    <button class="Delete_button btn btn-default" type="submit"><i class="fas fa-trash glyph-button"></i> Delete Section</button>
+                    {{form.instance.name}}
+                {% else %}
+                    New Un-Typed Section
                 {% endif %}
-            </div>
-        </form>
-    </div>
+            </h2>
+            <hr class="headerSpacer">
+
+            <form id="content_form" action="{{ request.path }}" method="post">
+                {% csrf_token %}
+                {{ form.media }}
+                <table>
+                    {{ form.as_table }}
+                </table>
+                <div id="content_form_controls">
+                    <button class="Submit_button btn btn-default" type="submit">Submit Section</button>
+                    <button class="Cancel_button btn btn-default">Cancel</button>
+
+                    {% if is_instance %}
+                        <button class="Delete_button btn btn-default" type="submit"><i class="fas fa-trash glyph-button"></i> Delete Section</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    {% endif %}
 </div>
 
 
 <script>
-    $('#manage_form').load('{{ manage_view }}')
+    $('#manage_form').load('{{ content_view }}')
 </script>

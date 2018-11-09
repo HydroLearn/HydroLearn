@@ -6,10 +6,12 @@ from src.apps.manage.views import (
         manage_ModuleCreateView,
         manage_ModuleEditView,
         manage_ModuleDeleteView,
-        manage_ModuleShareView,
+
 
         manage_ModulePublishIndex,
         manage_ModulePublish,
+
+        manage_ModuleCollaboration,
 
         # manage_ModuleContent,
         # manage_TopicContent,
@@ -33,13 +35,13 @@ urlpatterns = [
         url(r'^create/module/$', manage_ModuleCreateView.as_view(), name="module_create"),
         url(r'^edit/module/(?P<slug>[^/]+)$', manage_ModuleEditView.as_view(), name="module_update"),
         url(r'^delete/module/(?P<slug>[^/]+)$', manage_ModuleDeleteView.as_view(), name="module_delete"),
-        url(r'^share/module/(?P<slug>[^/]+)$', manage_ModuleShareView.as_view(), name="module_share"),
+
 
 
         url(r'^publication/(?P<slug>[^/]+)/$', manage_ModulePublishIndex.as_view(), name="module_publishindex"),
         url(r'^publish/(?P<slug>[^/]+)/$', manage_ModulePublish.as_view(), name="module_publish"),
-        #url(r'^unpublish/(?P<slug>[^/]+)/$', manage_ModuleUnpublish.as_view(), name="module_unpublish"),
-        #url(r'^revert/(?P<slug>[^/]+)/$', manage_ModuleRevert.as_view(), name="module_revert"),
+
+        url(r'^collab/(?P<slug>[^/]+)/$', manage_ModuleCollaboration.as_view(), name="module_collaborate"),
 
 
 

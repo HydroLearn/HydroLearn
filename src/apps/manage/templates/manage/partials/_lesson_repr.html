@@ -1,0 +1,26 @@
+{% load manage_template_tags %}
+<div class="lesson_repr">
+
+    <div class="obj_block lesson_block">
+        {% if lesson.short_name %}
+            {{ lesson.short_name }}
+        {% else %}
+            {{ lesson.name }}
+        {% endif %}
+
+    </div>
+
+    <div class="lesson_children">
+        <!--show child sections-->
+        {% for section in lesson.sections.all %}
+            {% show_section_representation section %}
+        {% endfor %}
+
+        <!--show child lessons-->
+        {% for sub_lesson in lesson.sub_lessons.all %}
+            {% show_lesson_representation sub_lesson %}
+        {% endfor %}
+    </div>
+</div>
+
+

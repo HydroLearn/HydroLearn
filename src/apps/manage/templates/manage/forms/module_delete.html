@@ -1,44 +1,40 @@
-<h1>Confirm Delete</h1>
+{% load manage_template_tags %}
 
-<form method="post" action="{% url 'manage:module_delete' object.slug%}">{% csrf_token %}
-    <p>Are you sure you want to delete: "{{ object.name }}" and all of it's child objects? </p>
+<div class="view_stack_view">
+    <div class="HL-message-banner warning">Warning! This action is non-reversible!</div>
+    <h2>Confirm Deletion</h2>
+    <p>
+        Are you sure you want to delete "{{ object.name }}" and all of it's content?
+        This will remove all of the following content:
+    </p>
 
-    <ul>
-        <li>{{object.name}}</li>
+    <div class="lesson_listing_wrapper deletion">
+        <div class="lesson_listing">
+            {% show_lesson_representation object %}
+        </div>
+    </div>
 
-        {% if object.topics %}
 
-            <ul>
-                {% for topic in object.topics.all %}
-                    <li>{{topic.name}}</li>
+    <form id="deletion_form" method="post" action="{% url 'manage:module_delete' object.slug%}">{% csrf_token %}</form>
+    <div class="content_form_controls">
+        <!--<input type="submit" value="Confirm" class="btn Remove_button">-->
+        <!--<a href="/manage" class="btn btn-default">Cancel</a>-->
+        <button class="Remove_button btn btn-default">Confirm Deletion</button>
+        <button class="Cancel_button btn btn-default">Cancel</button>
+    </div>
 
-                    {% if topic.lessons %}
+</div>
 
-                        <ul>
-                            {% for lesson in topic.lessons.all %}
-                                <li>{{lesson.name}}</li>
+<script>
+    $('.content_form_controls .Remove_button').click(function(event){
+        debugger;
+        event.preventDefault();
+        $('#deletion_form').submit()
+    })
 
-                                {% if lesson.sections %}
+    $('.content_form_controls .Cancel_button').click(function(event){
+        event.preventDefault();
+        Manage_View_Stack.pop_view();
+    })
 
-                                <ul>
-                                    {% for section in lesson.sections.all %}
-                                        <li>{{section.name}}</li>
-                                    {% endfor %}
-                                </ul>
-
-                                {% endif %}
-
-                            {% endfor %}
-                        </ul>
-
-                    {% endif %}
-                {% endfor %}
-            </ul>
-
-        {% endif %}
-    </ul>
-
-    <input type="submit" value="Confirm" class="btn Remove_button">
-    <a href="/manage" class="btn btn-default">Cancel</a>
-
-</form>
+</script>

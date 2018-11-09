@@ -26,12 +26,8 @@ from django.views.generic import (
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import (
-
         HttpResponse,
         Http404,
-        #HttpResponseRedirect,
-        #JsonResponse,
-        #HttpResponseForbidden
     )
 #from taggit.models import Tag
 from django.contrib.contenttypes.models import ContentType
@@ -39,8 +35,6 @@ from django.views.generic.edit import FormMixin
 
 
 from src.apps.core.models.ModuleModels import (
-    # Module,
-    # Topic,
     Lesson,
     Section,
 )
@@ -62,7 +56,7 @@ from src.apps.core.views.PublicationViews import (
 from src.apps.core.views.mixins import (
     AjaxableResponseMixin,
     OwnershipRequiredMixin,
-)
+    CollabEditorAccessRequiredMixin)
 
 from src.apps.manage.forms import *
 
@@ -487,8 +481,6 @@ class manage_ModuleEditView(PublicationViewMixin, OwnershipRequiredMixin, DraftO
         } for sectionForm in sections_formset.forms]
 
 
-
-
 #class manage_ModulePublishIndex(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DetailView):
 class manage_ModulePublishIndex(PublicationViewMixin, OwnershipRequiredMixin, DetailView):
     template_name = 'manage/forms/module_publication_index.html'
@@ -509,6 +501,10 @@ class manage_ModulePublishIndex(PublicationViewMixin, OwnershipRequiredMixin, De
                 return None
 
 # TODO: FIXIT
+#       after the fact: not sure what i was referring to at the time of
+#       marking this as 'FIXIT', but let that be a lesson
+#       about commenting...
+#       potentially adding in permission restrictions
 class manage_ModulePublish(LoginRequiredMixin, FormView):
     template_name = 'manage/forms/module_publish_form.html'
     form_class = Module_ActionConfirmationForm
@@ -517,18 +513,15 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
     def form_valid(self, form):
 
         if 'publish' in self.request.POST:
-
             draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
             draft_instance.publish()
 
 
         if 'unpublish' in self.request.POST:
-
             draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
             draft_instance.unpublish()
 
         if 'revert' in self.request.POST:
-
             draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
             draft_instance.revert_to_live()
 
@@ -537,7 +530,6 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
     def form_invalid(self, form, **kwargs):
         return super(manage_ModulePublish, self).form_invalid(form)
 
-# class manage_ModuleDeleteView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, DeleteView):
 class manage_ModuleDeleteView(PublicationViewMixin, OwnershipRequiredMixin, DeleteView):
     model = Lesson
     template_name = 'manage/forms/module_delete.html'
@@ -556,33 +548,36 @@ class manage_ModuleDeleteView(PublicationViewMixin, OwnershipRequiredMixin, Dele
 
         raise Http404
 
-# class manage_ModuleShareView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, TemplateView):
-class manage_ModuleShareView(PublicationViewMixin, OwnershipRequiredMixin, TemplateView):
-    template_name = 'manage/partials/_module_shared_list.html'
+class manage_ModuleCollaboration(PublicationViewMixin, OwnershipRequiredMixin, DetailView):
+    template_name = 'manage/forms/module_collaborate_form.html'
+    success_url = '/manage/'
+    model = Lesson
+
+    def get_object(self, queryset=None):
+        # get the default object based on the slug
+        object = super(manage_ModuleCollaboration, self).get_object(queryset)
+
+        # if the object was found by the slug: get the draft object, check ownership, and return
+        if object:
+            object = object.get_draft_object()
+
+            if object.is_owner(self.request.user):
+                return object
+            else:
+                return None
+
+    def get_context_data(self, **kwargs):
+        context = super(manage_ModuleCollaboration, self).get_context_data(**kwargs)
+
+        return context
+
+
 
 ###############################################################################
 ###                 CONTENT EDITING VIEWS                                   ###
 ###############################################################################
-# class manage_ModuleContent(OwnershipRequiredMixin, PublicationViewMixin, DetailView):
-#     model = Module
-#     template_name = "manage/module_detail.html"
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(manage_ModuleContent, self).get_context_data(**kwargs)
-#         context['edit'] = True
-#         return context
 
-
-# class manage_TopicContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
-#     model = Topic
-#     template_name = "manage/topic_detail.html"
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(manage_TopicContent, self).get_context_data(**kwargs)
-#         context['edit'] = True
-#         return context
-
-class manage_LessonContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
+class manage_LessonContent(CollabEditorAccessRequiredMixin, PublicationChildViewMixin, DetailView):
     model = Lesson
     template_name = "manage/lesson_detail.html"
 
@@ -591,7 +586,7 @@ class manage_LessonContent(OwnershipRequiredMixin, PublicationChildViewMixin, De
         context['edit'] = True
         return context
 
-class manage_SectionContent(OwnershipRequiredMixin, PublicationChildViewMixin, DetailView):
+class manage_SectionContent(CollabEditorAccessRequiredMixin, PublicationChildViewMixin, DetailView):
     model = Section
 
     def get_context_data(self, **kwargs):

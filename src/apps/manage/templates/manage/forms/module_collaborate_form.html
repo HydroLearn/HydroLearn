@@ -1,0 +1,48 @@
+
+
+<div class="view_stack_view">
+
+    <h2>Manage Collaborators</h2>
+
+    <p>From this form you can grant other users permission to work on this module.</p>
+
+    <h3>Collaborators:</h3>
+    <div id="collab_listing">
+
+        <ul>
+            {% for collaborator in object.collaborators.all %}
+
+                <li>{{collaborator}}</li>
+
+            {% endfor %}
+        </ul>
+
+    </div>
+
+
+    <div class="content_form_controls">
+        <!--<input type="submit" value="Confirm" class="btn Remove_button">-->
+        <!--<a href="/manage" class="btn btn-default">Cancel</a>-->
+        <button class="Add_button btn btn-default">Confirm</button>
+        <button class="Cancel_button btn btn-default">Cancel</button>
+    </div>
+
+    <form id="add_collaborator_form"></form>
+    <form id="remove_collaborator_form"></form>
+
+</div>
+
+
+<script>
+    $('.content_form_controls .Remove_button').click(function(event){
+        debugger;
+        event.preventDefault();
+        $('#deletion_form').submit()
+    })
+
+    $('.content_form_controls .Cancel_button').click(function(event){
+        event.preventDefault();
+        Manage_View_Stack.pop_view();
+    })
+
+</script>
