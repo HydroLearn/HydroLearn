@@ -1,11 +1,15 @@
-#from django import forms
+from django.forms import ModelChoiceField
 from django.contrib import admin
+from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
 #from django.utils.translation import ugettext as _
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 #from cms.admin.placeholderadmin import FrontendEditableAdminMixin
 #from djangocms_text_ckeditor.widgets import TextEditorWidget
 #from src.apps.core.admin_actions import *
+
+from .models.LearningObjModels import Learning_Level, Learning_Verb, Learning_Outcome, \
+    Learning_Objective
 
 from src.apps.core.forms import (
     add_LessonForm,
@@ -402,7 +406,53 @@ class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehol
         else:
             return super(LessonAdmin, self).get_form(request, obj, **kwargs)
 
+class Learning_OutcomeAdmin(admin.ModelAdmin):
+    model = Learning_Outcome
 
+    sortable_field_name = "outcome"
+    list_display = ['outcome']
+
+class Learning_LevelAdmin(admin.ModelAdmin):
+    model = Learning_Level
+
+    sortable_field_name = "label"
+    list_display = ['label']
+
+class Learning_LevelChoiceField(ModelChoiceField):
+     def label_from_instance(self, obj):
+         return "%s" % (obj.label)
+
+class Learning_VerbAdminForm(ModelForm):
+    level = Learning_LevelChoiceField(queryset=Learning_Level.objects.all())
+    class Meta:
+        model = Learning_Verb
+        fields = ['verb', 'level']
+
+class Learning_VerbAdmin(admin.ModelAdmin):
+    form = Learning_VerbAdminForm
+
+    sortable_field_name = "verb"
+    list_display = ['verb']
+
+class Learning_VerbChoiceField(ModelChoiceField):
+     def label_from_instance(self, obj):
+         return "%s" % (obj.verb)
+
+class Learning_OutcomeChoiceField(ModelMultipleChoiceField):
+     def label_from_instance(self, obj):
+         return "%s" % (obj.outcome)
+
+class Learning_ObjectiveAdminForm(ModelForm):
+    verb = Learning_VerbChoiceField(queryset=Learning_Verb.objects.all())
+    outcomes = Learning_OutcomeChoiceField(queryset=Learning_Outcome.objects.all())
+    class Meta:
+        model = Learning_Objective
+        fields = ['condition', 'task', 'degree', 'verb', 'outcomes']
+
+class Learning_ObjectiveAdmin(PlaceholderAdminMixin, admin.ModelAdmin):
+    form = Learning_ObjectiveAdminForm
+
+    list_display = ['condition', 'task', 'degree']
 
 # REGISTER THE ABOVE DEFINED ADMIN OBJECTS
 admin.site.register(Lesson, LessonAdmin)
@@ -419,4 +469,8 @@ admin.site.register(QuizQuestion, QuizQuestionParentAdmin)
 admin.site.register(MultiChoice_answer, MultiChoice_AnswerAdmin)
 admin.site.register(MultiSelect_answer, MultiSelect_AnswerAdmin)
 
+admin.site.register(Learning_Outcome, Learning_OutcomeAdmin)
+admin.site.register(Learning_Level, Learning_LevelAdmin)
+admin.site.register(Learning_Verb, Learning_VerbAdmin)
+admin.site.register(Learning_Objective, Learning_ObjectiveAdmin)
 # admin.site.register(QuizAnswer, QuizAnswerParentAdmin)
