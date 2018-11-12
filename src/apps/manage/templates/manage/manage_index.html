@@ -56,7 +56,8 @@
                 </div>
 
                 <div id="find-content" class="tab-pane fade" role="tabpanel">
-                    {% include "manage/partials/_find_modules_tab_content.html" %}
+                    {# include "manage/partials/_find_modules_tab_content.html" #}
+                    <div id="find_modules_wrapper"></div>
 
                 </div>
                 <!-- <div id="app-tab" class="tab-pane fade" role="tabpanel"> -->
@@ -82,15 +83,15 @@
                 // initialize new viewstacks for 'My Modules' and 'My Collaborations' views
                 Module_View_Stack = new View_Stack('#my_modules_wrapper')
                 Collab_View_Stack = new View_Stack('#my_collab_wrapper')
+                FindModules_View_Stack = new View_Stack('#find_modules_wrapper')
 
                 // push the initial listing views to the viewstacks
                 Module_View_Stack.push_view('listing', 'Module Listing', '{% url 'manage:module_list'  %}' )
                 Collab_View_Stack.push_view('listing', 'Collab Listing', '{% url 'manage:collab_list'  %}' )
+                FindModules_View_Stack.push_view('listing', 'Find Modules', '{% url 'manage:find_modules'  %}' )
 
                 // start off view on "My Modules"
                 $('#modules-tab').tab('show')
-                //$('#collab-tab').tab('show') // Select home tab
-
 
             });
 

@@ -631,6 +631,17 @@ def collab_listing(request):
     #my_modules = request.user.created_modules.all()
     return render_to_response(template_name, context={'user': request.user})
 
+def find_modules(request):
+    '''
+        django partial view for displaying the current user's module listing
+    :param request:
+    :return:
+    '''
+    template_name = 'manage/partials/_find_modules_view.html'
+    #my_modules = request.user.created_modules.all()
+    return render_to_response(template_name, context={'user': request.user})
+
+
 
 def module_success(request):
 

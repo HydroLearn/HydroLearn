@@ -213,7 +213,8 @@ div[class^='multicolumn'] {
       background-repeat: no-repeat;
       width: 100%;
       height: 57px;
-      z-index: 100; }
+      z-index: 100;
+      min-width: 500px; }
       #content #content-wrapper #content-tab-header ul {
         width: 100%;
         padding: 15px 0 0 0; }
