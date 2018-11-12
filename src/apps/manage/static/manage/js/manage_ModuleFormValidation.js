@@ -150,7 +150,7 @@ $(function(){
             console.log('Submitting new module');
             form_action = $(form).attr('action')
             form_data = FormManager.generate_post_data()
-            //Manage_View_Stack.refresh_top_view(form_data)
+            //Module_View_Stack.refresh_top_view(form_data)
 
              $.ajax({
                 url: form_action,

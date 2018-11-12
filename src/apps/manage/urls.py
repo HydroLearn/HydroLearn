@@ -7,7 +7,6 @@ from src.apps.manage.views import (
         manage_ModuleEditView,
         manage_ModuleDeleteView,
 
-
         manage_ModulePublishIndex,
         manage_ModulePublish,
 
@@ -17,6 +16,7 @@ from src.apps.manage.views import (
         # manage_TopicContent,
         manage_LessonContent,
         manage_SectionContent,
+        collab_listing
 )
 
 
@@ -29,6 +29,7 @@ urlpatterns = [
         url(r'^$', Index.as_view(), name="manage_index"),
 
         url(r'^my_listing/$', module_listing, name="module_list"),
+        url(r'^my_collabs/$', collab_listing, name="collab_list"),
         url(r'^success/$', module_success, name="success"),
 
         # Module Actions

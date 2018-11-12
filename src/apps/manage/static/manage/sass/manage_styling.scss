@@ -22,13 +22,7 @@
 }
 */
 
-.view_stack_child {
-    padding: 20px 30px;
 
-    .view_stack_view{
-        padding: 10px 20px;
-    }
-}
 
 
 /********************************************
@@ -188,9 +182,101 @@ label.form-error {
     }
 }
 
+/********************************************
+ * ViewStack styling
+ ********************************************/
+
+div.VStack_container{
+    //background: red;
+    padding: 10px 20px;
+
+    .VStack_crumb_trail {
+        display: block;
+        width: 100%;
+
+        background-color: #eee;
+        border-radius: 7px;
+        padding: 5px 10px;
+        margin: 0 auto 20px;
+
+        &:empty {
+           display: none;
+        }
+
+        a.crumb_entry{
+            color: $HL_blue;
+            cursor: pointer;
+
+            &:hover{
+                color: $HL_seafoam;
+            }
+
+            &.current_view{
+                cursor: default;
+                color: #666 !important;
+            }
+        }
+    }
+
+    .VStack_content{
+        .VStack_child {
+            //padding: 20px 30px;
+
+        }
+    }
 
 
+}
 
+/********************************************
+ * Content styling
+ ********************************************/
+
+.module_table{
+    .module-action-container{
+        width: 275px;
+        cursor: default;
+
+        a{
+            margin: 3px;
+
+            i{
+                cursor: pointer;
+                text-align: center;
+                font-size: 20px;
+
+                width: 35px;
+                padding: 5px;
+                border-radius: .3em;
+            }
+
+            &.disabled_action{
+                i{
+                    color: #ccc;
+                    &:hover{
+                        cursor: not-allowed;
+                        background-color: #999;
+                    }
+                }
+            }
+        }
+
+        @media(max-width: $mobile_small){
+            width:200px;
+        }
+    }
+}
+
+.glyph-button {
+    color: $HL_blue;
+    transition: all .2s;
+
+    &:hover {
+        color: #fff;
+        background-color: $HL_blue;
+        box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
+    }
+}
 
 #manage-content{
     margin-top: 54px;
@@ -198,6 +284,7 @@ label.form-error {
 }
 
 #modules-content{
+
     #my_modules_header{
         float:left;
 
@@ -222,66 +309,6 @@ label.form-error {
         @media(max-width:$mobile_small){
             font-size:12px;
         }
-    }
-
-    .module-action-container{
-        width: 275px;
-
-        a{
-            margin: 3px 5px;
-
-            i{
-                font-size: 20px;
-                padding: 3px 3px;
-                border-radius: .3em;
-            }
-
-            &.disabled_action{
-                i{
-                    color: #ccc;
-                    &:hover{
-                        cursor: not-allowed;
-                        background-color: transparent;
-                    }
-                }
-            }
-        }
-
-
-
-
-
-        @media(max-width: $mobile_small){
-            width:200px;
-        }
-    }
-
-    #crumb_trail{
-        background-color: #eee;
-        border-radius: 7px;
-        padding: 5px 10px;
-
-        &:empty {
-           display: none;
-        }
-
-        a.crumb_entry{
-            color: $HL_blue;
-            cursor: pointer;
-
-            &:hover{
-                color: $HL_seafoam;
-            }
-
-            &.current_view{
-                cursor: default;
-                color: #666;
-            }
-        }
-
-
-
-
     }
 
     input[name$='-DELETE'], label[for$='-DELETE']{
@@ -423,14 +450,7 @@ label.form-error {
 
 }
 
-.glyph-button {
-    color: $HL_blue;
 
-    &:hover {
-        color: $HL_seafoam;
-        background-color: #eee;
-    }
-}
 
 .publish_status_icon_draft {
     color: #808080;

@@ -1,6 +1,6 @@
 {% load manage_template_tags %}
 
-<div class="view_stack_view">
+
     <div class="HL-message-banner warning">Warning! This action is non-reversible!</div>
     <h2>Confirm Deletion</h2>
     <p>
@@ -23,7 +23,7 @@
         <button class="Cancel_button btn btn-default">Cancel</button>
     </div>
 
-</div>
+
 
 <script>
     $('.content_form_controls .Remove_button').click(function(event){
@@ -34,7 +34,7 @@
 
     $('.content_form_controls .Cancel_button').click(function(event){
         event.preventDefault();
-        Manage_View_Stack.pop_view();
+        Module_View_Stack.pop_view();
     })
 
 </script>

@@ -1,5 +1,5 @@
 {% extends CMS_TEMPLATE %}
-{% load cms_tags menu_tags sekizai_tags static %}
+{% load cms_tags menu_tags sekizai_tags static manage_template_tags%}
 
 {% block title %}Manage{% endblock title %}
 
@@ -18,11 +18,14 @@
                 <div class="manage_navbar_wrapper">
                     <ul id="manage_nav" class="nav nav-tabs nav-fill" role="tablist">
 
-                        <li class="nav-item">
-                            <a class="nav-link" id="home-tab" data-toggle="tab" href="#home-content" role="tab" >Home</a>
-                        </li>
+                        <!--<li class="nav-item">-->
+                            <!--<a class="nav-link" id="home-tab" data-toggle="tab" href="#home-content" role="tab" >Home</a>-->
+                        <!--</li>-->
                         <li class="nav-item">
                             <a class="nav-link" id="modules-tab" data-toggle="tab" href="#modules-content" role="tab" >My Modules</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="collab-tab" data-toggle="tab" href="#collab-content" role="tab" >My Collaborations</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="find-tab" data-toggle="tab" href="#find-content" role="tab" >Find Modules</a>
@@ -38,12 +41,17 @@
 
             <div id="content-tab-body" class="tab-content">
 
-                <div id="home-content" class="tab-pane fade" role="tabpanel">
-                    {% include "manage/partials/_manage_home_tab_content.html" %}
-                </div>
+                <!--<div id="home-content" class="tab-pane fade" role="tabpanel">-->
+                    <!--{# include "manage/partials/_manage_home_tab_content.html" #}-->
+                <!--</div>-->
 
                 <div id="modules-content" class="tab-pane fade" role="tabpanel">
-                    {% include "manage/partials/_my_modules_tab_content.html" %}
+                    <div id="my_modules_wrapper"></div>
+
+                </div>
+
+                <div id="collab-content" class="tab-pane fade" role="tabpanel">
+                    <div id="my_collab_wrapper"></div>
 
                 </div>
 
@@ -64,9 +72,28 @@
 
     {% addtoblock "template_js" %}
         <script type="text/javascript" src="{% static 'js/plugins/jquery.validate.js' %}"></script>
+        <script type="text/javascript" src="{% static 'manage/js/manage_ViewStack.js' %}"></script>
+
         <!--<script type="text/javascript" src="{% static 'js/plugins/jquery.validate.additional-methods.js' %}"></script>-->
         <script>
-            $('#modules-tab').tab('show') // Select home tab
+
+            $(document).ready(function(){
+
+                // initialize new viewstacks for 'My Modules' and 'My Collaborations' views
+                Module_View_Stack = new View_Stack('#my_modules_wrapper')
+                Collab_View_Stack = new View_Stack('#my_collab_wrapper')
+
+                // push the initial listing views to the viewstacks
+                Module_View_Stack.push_view('listing', 'Module Listing', '{% url 'manage:module_list'  %}' )
+                Collab_View_Stack.push_view('listing', 'Collab Listing', '{% url 'manage:collab_list'  %}' )
+
+                // start off view on "My Modules"
+                $('#modules-tab').tab('show')
+                //$('#collab-tab').tab('show') // Select home tab
+
+
+            });
+
         </script>
     {% endaddtoblock %}
 

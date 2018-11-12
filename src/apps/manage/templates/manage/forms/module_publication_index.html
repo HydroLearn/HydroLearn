@@ -1,5 +1,5 @@
 {% load manage_template_tags %}
-<div class="view_stack_view">
+
 
     <h2>Confirm Publication</h2>
 
@@ -44,7 +44,7 @@
         <button class="Cancel_button btn btn-default">Cancel</button>
     </div>
 
-</div>
+
 <script>
     // disable 'Enter' key action in forms (causes submission of form by default)
     $("form").keypress(function(e) {
@@ -65,12 +65,12 @@
 
         form.submit();
 
-        //Manage_View_Stack.pop_view();
+        //Module_View_Stack.pop_view();
     })
 
     $('.content_form_controls .Cancel_button').click(function(event){
         event.preventDefault();
-        Manage_View_Stack.pop_view();
+        Module_View_Stack.pop_view();
     })
 
 
