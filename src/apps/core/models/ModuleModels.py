@@ -620,6 +620,10 @@ class Collaboration(models.Model):
         app_label = 'core'
         verbose_name = 'Collaboration'
         verbose_name_plural = 'Collaborations'
+        unique_together = (
+            'publication',
+            'collaborator',
+        )
 
 
 
