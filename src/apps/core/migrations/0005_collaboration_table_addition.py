@@ -19,12 +19,30 @@ class Migration(migrations.Migration):
             name='Collaboration',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('can_edit', models.BooleanField(default=True)),
+                ('can_edit', models.BooleanField(
+                    default=True,
+                    help_text='Allow this person edit the Lesson? if not checked, user will only be given view permissions to the Draft.'
+                )),
                 ('collaboration_date', models.DateField(auto_now_add=True)),
-                ('collaborator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('collaborator', models.ForeignKey(
+                    help_text='User being given Draft-View Permissions.',
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL)),
                 ('publication', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.Lesson')),
             ],
         ),
+
+        migrations.AlterModelOptions(
+            name='collaboration',
+            options={'verbose_name': 'Collaboration', 'verbose_name_plural': 'Collaborations'},
+        ),
+
+
+        migrations.AlterUniqueTogether(
+            name='collaboration',
+            unique_together=set([('publication', 'collaborator')]),
+        ),
+
         migrations.AddField(
             model_name='lesson',
             name='collaborators',
