@@ -43,6 +43,16 @@ class manage_LessonForm(forms.ModelForm):
 
         }
 
+class manage_LessonCollabForm(forms.ModelForm):
+    '''
+        parent form for collaborators, expected to only provide id
+        for use by updateview
+    '''
+    class Meta:
+        model = Lesson
+        fields = ['id']
+
+
 class manage_SectionForm(forms.ModelForm):
     class Meta:
         model = Section
@@ -68,6 +78,16 @@ class manage_SectionForm(forms.ModelForm):
             }),
 
         }
+
+class manage_CollaborationForm(forms.ModelForm):
+
+    class Meta:
+        model = Collaboration
+        fields = [
+            'publication',
+            'collaborator',
+            'can_edit',
+        ]
 
 
 ''' **********************************************************
@@ -168,8 +188,28 @@ class manage_QuizSectionForm(forms.ModelForm):
     Inline Formsets
 ********************************************************** '''
 
-class BaseLessonFormset(BaseInlineFormSet):
+class BaseCollabFormset(BaseInlineFormSet):
 
+    def add_fields(self, form, index):
+        '''
+        add hidden field to formset for marking deletions
+
+        :param form: collaborator form
+        :param index: index of form in formset
+        :return:
+        '''
+
+        super(BaseCollabFormset, self).add_fields(form, index)
+
+        if self.can_delete:
+            form.fields['DELETE'] = forms.BooleanField(
+                label=_('Delete'),
+                required=False,
+                widget=forms.HiddenInput
+            )
+
+
+class BaseLessonFormset(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         super(BaseLessonFormset, self).__init__(*args, **kwargs)
 
@@ -335,6 +375,14 @@ class BaseSectionFormset(BasePolymorphicInlineFormSet):
 Formset Factories
 ********************************************************** '''
 
+inlineCollabFormset = inlineformset_factory(
+    Lesson,
+    Lesson.collaborators.through,
+    exclude=['collaboration_date'],
+    extra=1,
+    form=manage_CollaborationForm,
+    formset=BaseCollabFormset,
+)
 
 inlineLessonFormset = inlineformset_factory(
         Lesson,

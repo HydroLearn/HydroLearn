@@ -93,3 +93,16 @@ def show_section_representation(section):
     return {
         'section': section,
     }
+
+@register.inclusion_tag('manage/partials/_collab_formset.html')
+def show_collab_formset(formset):
+    return {
+        'formset': formset,
+    }
+
+@register.inclusion_tag('manage/partials/_collab_form.html')
+def show_collab_form(form, can_delete=False):
+    return {
+        'form': form,
+        'can_delete': can_delete,
+    }

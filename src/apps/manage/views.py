@@ -9,7 +9,7 @@ from django.core.exceptions import (
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 #from django.db.models.query import EmptyQuerySet
-from django.forms.formsets import DELETION_FIELD_NAME
+from django.forms.formsets import DELETION_FIELD_NAME, formset_factory
 from django.shortcuts import get_object_or_404, render_to_response, render
 from django.utils.encoding import force_text
 from django.views import View
@@ -548,10 +548,27 @@ class manage_ModuleDeleteView(PublicationViewMixin, OwnershipRequiredMixin, Dele
 
         raise Http404
 
-class manage_ModuleCollaboration(PublicationViewMixin, OwnershipRequiredMixin, DetailView):
+class manage_ModuleCollaboration(PublicationViewMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
     template_name = 'manage/forms/module_collaborate_form.html'
     success_url = '/manage/'
     model = Lesson
+    form_class = manage_LessonCollabForm
+
+    def get_context_data(self, **kwargs):
+        context = super(manage_ModuleCollaboration, self).get_context_data(**kwargs)
+
+        # add collaborator formset to the lesson form
+
+
+        if self.request.POST:
+            # if submitting formset perform a clean
+            context['collaborator_fs'] = inlineCollabFormset(self.request.POST, instance=self.object)
+            context['collaborator_fs'].full_clean()
+        else:
+            context['collaborator_fs'] = inlineCollabFormset(instance=self.object)
+
+
+        return context
 
     def get_object(self, queryset=None):
         # get the default object based on the slug
@@ -566,12 +583,52 @@ class manage_ModuleCollaboration(PublicationViewMixin, OwnershipRequiredMixin, D
             else:
                 return None
 
-    def get_context_data(self, **kwargs):
-        context = super(manage_ModuleCollaboration, self).get_context_data(**kwargs)
+    def get_failed_return_data(self, form):
 
-        return context
+        context = self.get_context_data()
+        return {
+            'formset_errors': context['collaborator_fs'].errors,
+        }
+
+    
+    def get_success_return_data(self, form):
+        return super(manage_ModuleCollaboration, self).get_success_return_data(form)
+    
+    def form_valid(self, form, *args, **kwargs):
+        # will need to verify validity of formset
+
+        with transaction.atomic():
+
+            lesson = form.save(commit=False)
+
+            context = self.get_context_data(**kwargs)
+            collab_formset = context['collaborator_fs']
+
+            if collab_formset.is_valid():
+                collaborations = collab_formset.save(commit=False)
+
+                # delete any collabs marked for deletion
+                for deleted_collab in collab_formset.deleted_objects:
+                    deleted_collab.delete()
+
+                for collab in collaborations:
+                    collab.save()
 
 
+                lesson.save()
+                form.save_m2m()
+
+            else:
+                stop = True
+                return self.form_invalid(form,*args, **kwargs)
+
+
+
+
+        return super(manage_ModuleCollaboration, self).form_valid(form, *args, **kwargs)
+    
+    def form_invalid(self, form, *args, **kwargs):
+        return super(manage_ModuleCollaboration, self).form_invalid(form, *args, **kwargs)
 
 ###############################################################################
 ###                 CONTENT EDITING VIEWS                                   ###
@@ -630,6 +687,7 @@ def collab_listing(request):
     template_name = 'manage/partials/_module_collab_view.html'
     #my_modules = request.user.created_modules.all()
     return render_to_response(template_name, context={'user': request.user})
+
 
 def find_modules(request):
     '''

@@ -232,6 +232,44 @@ div.VStack_container{
  * Content styling
  ********************************************/
 
+
+.glyph-button {
+    color: $HL_blue;
+    transition: all .2s;
+    font-size: 20px;
+
+    cursor: pointer;
+    text-align: center;
+    width: 35px;
+    padding: 5px;
+    border-radius: .3em;
+
+    &:hover {
+        color: #fff;
+        background-color: $HL_blue;
+        box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &.glyph-delete{
+       color: $red;
+       &:hover{
+            color:#fff;
+            background-color:$red;
+       }
+
+    }
+
+    &.glyph-disabled{
+       color: #ccc;
+       &:hover{
+            color:#fff;
+            cursor: not-allowed;
+            background-color: #999;
+       }
+
+    }
+}
+
 .module_table{
     .module-action-container{
         width: 275px;
@@ -249,15 +287,15 @@ div.VStack_container{
                 border-radius: .3em;
             }
 
-            &.disabled_action{
-                i{
-                    color: #ccc;
-                    &:hover{
-                        cursor: not-allowed;
-                        background-color: #999;
-                    }
-                }
-            }
+            //&.disabled_action{
+            //    i{
+            //        color: #ccc;
+            //        &:hover{
+            //            cursor: not-allowed;
+            //            background-color: #999;
+            //        }
+            //    }
+            //}
         }
 
         @media(max-width: $mobile_small){
@@ -266,17 +304,6 @@ div.VStack_container{
     }
 }
 
-.glyph-button {
-    color: $HL_blue;
-    transition: all .2s;
-    font-size: 20px;
-
-    &:hover {
-        color: #fff;
-        background-color: $HL_blue;
-        box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
-    }
-}
 
 #manage-content{
     margin-top: 54px;
@@ -481,3 +508,82 @@ div.VStack_container{
     }
 }
 
+/***********************************************
+ *  dynamic Formset styling
+ ***********************************************/
+
+.dynamic_formset{
+    display: table;
+    width: 100%;
+
+    .formset_errors{
+        display: none;
+    }
+
+    .mgmt_form{
+        display: none;
+    }
+
+    .empty_form{
+        display:none
+    }
+
+    .formset_header_row {
+        display: table-row;
+
+        .formset_header_cell{
+            display: table-cell;
+            border-bottom: 3px solid $HL_blue;
+            padding: 5px 10px;
+            font-weight: bold;
+        }
+
+    }
+
+
+    .form_row{
+        display: table-row;
+        transition: all .2s;
+
+
+        &:nth-child(odd){
+            background: #eee;
+        }
+
+        &.new_form {
+            background-color: #d4ecdab0;
+        }
+
+        &.deleted_form {
+            background-color: #ecd4d4b0;
+        }
+
+        .form_errors{
+            display:none
+        }
+
+        .form_cell{
+            display: table-cell;
+            padding: 5px 10px;
+
+            a.form_delete{
+                //margin: 3px;
+
+                i {
+                    cursor: pointer;
+                    text-align: center;
+                    width: 35px;
+                    padding: 5px;
+                    border-radius: .3em;
+                }
+            }
+        }
+
+        .form_content{
+
+        }
+
+    }
+
+
+}
