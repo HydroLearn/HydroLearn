@@ -108,7 +108,7 @@
                 data: $(form).serialize(),
 
                 success: function(response){
-                    debugger;
+
                     if(response.success){
                         Module_View_Stack.pop_view();
                     }else{
@@ -128,7 +128,6 @@
                 },
 
                 error: function(response){
-                    debugger;
                     $('#collab_formset_errors').append('There was an error processing your request, please try again later.')
                     $('#collab_formset_errors').fadeIn();
 
