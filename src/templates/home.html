@@ -31,10 +31,16 @@
         <!--<script type="text/javascript" src="{% static 'js/helios_js/menu_animation.js' %}"></script>-->
 
         <script>
-              $('.navbar-default').removeClass('on')
-              $('#base-cms-toolbar-container').removeClass('noshow')
-              $('html').addClass('cms-content-shift')
-          </script>
+
+
+
+            if( typeof(CMS) != "undefined"){
+                $('.navbar-default').removeClass('on')
+                $('#base-cms-toolbar-container').removeClass('noshow')
+                $('html').addClass('cms-content-shift')
+            }
+
+        </script>
 
     {% endaddtoblock 'template_js' %}
 
