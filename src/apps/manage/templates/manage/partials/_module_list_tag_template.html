@@ -8,16 +8,16 @@
 
 <h3 id="my_modules_header">Manage My Modules</h3>
 
+<!--create new module button-->
 <a target="_blank" href="{% url 'editor:lesson_create' %}">
-    <!--<button id="create_module" type="button" class="btn btn-primary" onclick="Manage_View_Stack.push_view('CreateModule', 'Create Module', '{% url 'manage:module_create' %}' )" >-->
     <button id="create_module" type="button" class="btn btn-primary">
         <i class="fas fa-plus-circle"></i> Create Module
     </button>
 </a>
 
 
-
-<table id="my_modules_table" class="responsive_table">
+<!--my modules listing-->
+<table id="my_modules_table" class="module_table responsive_table">
     <tr>
         <th >Module Name</th>
         <th style="width: 120px;">
@@ -29,10 +29,10 @@
 
 
         </th>
-        <th style="width: 175px;">Last Modified</th>
-        <th >Shared</th>
-        <th style="width:110px">Share Code</th>
-        <th style="width:300px">
+        <th style="width: 200px;">Last Modified</th>
+        <th style="width: 100px;">Shared</th>
+        <th style="width: 110px">Share Code</th>
+        <th style="width: 300px">
             Actions
             <span class="module-actions_popover-trigger" data-toggle="popover" data-placement="top" data-html="true"  title='Module Actions' data-content=''>
                 <i class="fas fa-info-circle Info_legend_icon"></i>
@@ -40,14 +40,13 @@
         </th>
     </tr>
     {% for module in my_modules %}
-
     <tr>
             <td >{{ module.name }}</td>
             <td style="text-align: center;">
 
                 {# display the current Publication Status Icon #}
 
-                <a title="View Module" onclick="Manage_View_Stack.push_view('Publish-{{ module.ref_id }}', 'Publish - {{ module.name }}', '{% url 'manage:module_publishindex' slug=module.slug %}'  )">
+                <a title="View Module" onclick="Module_View_Stack.push_view('Publish-{{ module.ref_id }}', 'Publish - {{ module.name }}', '{% url 'manage:module_publishindex' slug=module.slug %}'  )">
 
                 {% if module.publish_status == module.PUBLISHED and module.is_dirty %}
                     <i title="{{module.get_publish_status_display}}" class="fas fa-circle publish_status_icon_pending"></i>
@@ -66,21 +65,26 @@
                 <div class="module-action-container">
                     <a title="View Module" target="_blank" href="{{module.viewer_url}}"><i class="fas fa-eye glyph-button"></i></a>
 
-                    <!--<a title="Edit Module" onclick="Manage_View_Stack.push_view('Manage-{{ module.ref_id }}', 'Manage - {{ module.name }}', '{% url 'manage:module_update' slug=module.slug %}'  )"><i class="fas fa-edit glyph-button"></i></a>-->
+                    <!--<a title="Edit Module" onclick="Module_View_Stack.push_view('Manage-{{ module.ref_id }}', 'Manage - {{ module.name }}', '{% url 'manage:module_update' slug=module.slug %}'  )"><i class="fas fa-edit glyph-button"></i></a>-->
                     <a title="Edit Module" target="_blank" href="{{module.edit_url}}" ><i class="fas fa-edit glyph-button"></i></a>
 
                     <!--placeholder links for future functionality-->
-                    <a class="disabled_action" title="Share Module" target="_blank" ><i class="fas fa-share-alt glyph-button"></i></a>
-                    <a class="disabled_action" title="Duplicate Module" target="_blank" ><i class="fas fa-copy glyph-button"></i></a>
+                    <!--<a class="disabled_action" title="Share Module" target="_blank" ><i class="fas fa-share-alt glyph-button"></i></a>-->
+                    <a title="Manage Collaborators" onclick="Module_View_Stack.push_view('Collaborate-{{ module.ref_id }}', 'Collaborate - {{ module.name }}', '{% url 'manage:module_collaborate' slug=module.slug %}')" >
+                        <i class="fas fa-users glyph-button"></i>
+                        <!--<i class="fas fa-share-alt glyph-button"></i>-->
+                    </a>
 
-                    <a title="Delete Module" onclick="Manage_View_Stack.push_view('Delete-{{ module.ref_id }}', 'Delete - {{ module.name }}', '{% url 'manage:module_delete' slug=module.slug %}'  )"><i class="fas fa-trash glyph-button"></i></a>
+                    <a class="disabled_action" title="Duplicate Module" target="_blank" ><i class="fas fa-copy glyph-button glyph-disabled"></i></a>
+
+                    <a title="Delete Module" onclick="Module_View_Stack.push_view('Delete-{{ module.ref_id }}', 'Delete - {{ module.name }}', '{% url 'manage:module_delete' slug=module.slug %}')"><i class="fas fa-trash glyph-button glyph-delete"></i></a>
                 </div>
             </td>
 
     </tr>
     {% empty %}
         <tr>
-            <td> no modules yet, please add some! </td>
+            <td> No modules yet, please add some! </td>
             <td></td>
             <td></td>
             <td></td>
@@ -89,16 +93,19 @@
     {% endfor %}
 </table>
 
+
+<!--publication status info popover content-->
 <div style="display:none;" class="pub-status_popover-content">
     <div><i title="{{module.get_publish_status_display}}" class="fas fa-circle publish_status_icon_draft"></i> - Draft Only</div>
     <div><i title="{{module.get_publish_status_display}}" class="fas fa-circle publish_status_icon_published"></i> - Published</div>
     <div><i title="{{module.get_publish_status_display}}" class="fas fa-circle publish_status_icon_pending"></i> - Pending Changes since last Publish</div>
 </div>
 
+<!--module actions info popover content-->
 <div style="display:none;" class="module-actions_popover-content">
     <div><i class="fas fa-eye glyph-button"></i> - View Current Draft of Module</div>
     <div><i class="fas fa-edit glyph-button"></i> - Edit Module Structure</div>
-    <div><i class="fas fa-share-alt glyph-button"></i> - Share with other Users</div>
+    <div><i class="fas fa-users glyph-button"></i> - Manage Module Collaborators</div>
     <div><i class="fas fa-copy glyph-button"></i> - Copy module</div>
     <div><i class="fas fa-trash glyph-button"></i> - Delete this Module</div>
 </div>

@@ -14,9 +14,20 @@ def list_my_modules(context):
     :return: templated listing of all modules created by the user specified in view context
     '''
     my_lessons = context['user'].created_lessons.filter(depth=0).drafts().order_by('-changed_date')
-    shared_modules = None
     return {
         'my_modules': my_lessons,
+    }
+
+@register.inclusion_tag('manage/partials/_collab_list_tag_template.html', takes_context=True)
+def list_my_collaborations(context):
+    '''
+        displays the modules created by the current user
+
+    :param context: the context of the current page
+    :return: templated listing of all modules created by the user specified in view context
+    '''
+    shared_modules = context['user'].collaborations.all()
+    return {
         'shared_modules': shared_modules,
     }
 
@@ -71,3 +82,27 @@ def show_section_formset(formset_type, formset):
         # 'parent_prefix': parent_prefix,
     }
 
+@register.inclusion_tag('manage/partials/_lesson_repr.html')
+def show_lesson_representation(lesson):
+    return {
+        'lesson':lesson,
+    }
+
+@register.inclusion_tag('manage/partials/_section_repr.html')
+def show_section_representation(section):
+    return {
+        'section': section,
+    }
+
+@register.inclusion_tag('manage/partials/_collab_formset.html')
+def show_collab_formset(formset):
+    return {
+        'formset': formset,
+    }
+
+@register.inclusion_tag('manage/partials/_collab_form.html')
+def show_collab_form(form, can_delete=False):
+    return {
+        'form': form,
+        'can_delete': can_delete,
+    }

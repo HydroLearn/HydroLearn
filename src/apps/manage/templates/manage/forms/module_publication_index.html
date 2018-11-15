@@ -1,68 +1,49 @@
-<h1>Confirm Publication</h1>
+{% load manage_template_tags %}
 
-<!--<form method="post" action="{% url 'manage:module_publish' object.slug%}">{% csrf_token %}-->
+
+    <h2>Confirm Publication</h2>
+
+
     <p>Are you sure you want to Publish "{{ object.name }}"?
         If this object has been previously published, this action will replace the current
         published Module with the current 'Draft' content.
     </p>
 
-    <ul>
-        <li>{{object.name}}</li>
+    <h3>Preview:</h3>
+    <div class="lesson_listing_wrapper">
+        <div class="lesson_listing">
+            {% show_lesson_representation object %}
+        </div>
+    </div>
 
-        {% if object.topics %}
+    <form id="publish_form" method="post" action="{% url 'manage:module_publish' object.slug %}">
+        {% csrf_token %}
+    </form>
 
-            <ul>
-                {% for topic in object.topics.all %}
-                    <li>{{topic.name}}</li>
+    <div class="content_form_controls">
 
-                    {% if topic.lessons %}
+        {% if object.publish_status != object.DRAFT_ONLY%}
 
-                        <ul>
-                            {% for lesson in topic.lessons.all %}
-                                <li>{{lesson.name}}</li>
+            <button data-button-action="publish" class="Add_button Action_button btn btn-default">Re-Publish</button>
+            <button data-button-action="unpublish" class="Remove_button Action_button btn btn-default">Unpublish</button>
 
-                                {% if lesson.sections %}
+            <!--<input type="submit" name="publish" value="Re-Publish" class="btn">-->
+            <!--<input type="submit" name="unpublish" value="Unpublish" class="btn">-->
+            <!--<input type="submit" name="revert" value="Revert" class="btn">-->
 
-                                <ul>
-                                    {% for section in lesson.sections.all %}
-                                        <li>{{section.name}}</li>
-                                    {% endfor %}
-                                </ul>
+        {% else %}
+            <button data-button-action="publish" class="Add_button Action_button btn btn-default">Publish</button>
 
-                                {% endif %}
-
-                            {% endfor %}
-                        </ul>
-
-                    {% endif %}
-                {% endfor %}
-            </ul>
+            <!--<input type="submit" name="publish" value="Publish" class="btn">-->
 
         {% endif %}
-    </ul>
 
-<form method="post" action="{% url 'manage:module_publish' object.slug %}"> {% csrf_token %}
+        <!--<input type="submit" value="Confirm" class="btn Remove_button">-->
+        <!--<a href="/manage" class="btn btn-default">Cancel</a>-->
 
+        <button class="Cancel_button btn btn-default">Cancel</button>
+    </div>
 
-
-
-    {% if object.publish_status != object.DRAFT_ONLY%}
-
-        <input type="submit" name="publish" value="Re-Publish" class="btn">
-        <input type="submit" name="unpublish" value="Unpublish" class="btn">
-        <!--<input type="submit" name="revert" value="Revert" class="btn">-->
-
-    {% else %}
-
-        <input type="submit" name="publish" value="Publish" class="btn">
-
-    {% endif %}
-
-
-
-    <a href="/manage" class="btn btn-default">Cancel</a>
-</form>
-<!--</form>-->
 
 <script>
     // disable 'Enter' key action in forms (causes submission of form by default)
@@ -72,4 +53,25 @@
         return false;
       }
     });
+
+    $('.content_form_controls .Action_button').click(function(event){
+        event.preventDefault();
+
+        var action = $(this).attr('data-button-action')
+
+        debugger;
+        var form = $('#publish_form');
+        $('<input>', {type:"hidden", name:action, value:action }).appendTo(form);
+
+        form.submit();
+
+        //Module_View_Stack.pop_view();
+    })
+
+    $('.content_form_controls .Cancel_button').click(function(event){
+        event.preventDefault();
+        Module_View_Stack.pop_view();
+    })
+
+
 </script>

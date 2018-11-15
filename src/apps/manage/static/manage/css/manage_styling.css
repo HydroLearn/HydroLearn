@@ -18,8 +18,58 @@
 
 }
 */
-.view_stack_child {
-  padding: 10px; }
+/********************************************
+ * Lesson Listing styling
+ ********************************************/
+.lesson_listing_wrapper {
+  width: 500px;
+  margin: auto;
+  border-radius: 7px;
+  padding: 15px;
+  background: #666666 url(/static/css/Jquery_Icons/ui-bg_diagonals-thick_20_666666_40x40.png) 50% 50% repeat; }
+  .lesson_listing_wrapper.deletion {
+    background: #666666 url(/static/css/Jquery_Icons/ui-bg_diagonals-thick_18_b81900_40x40.png) 50% 50% repeat; }
+
+.lesson_listing {
+  width: 300px;
+  margin: 5px auto; }
+  .lesson_listing .lesson_block:first-child {
+    font-weight: bold; }
+  .lesson_listing .lesson_block:not(:first-child) {
+    font-weight: normal; }
+
+.obj_block {
+  display: block;
+  padding: 5px 15px;
+  color: #fff; }
+
+.lesson_block {
+  background-color: rgba(0, 0, 0, 0.15); }
+
+.section_block {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2); }
+
+.lesson_repr {
+  background: #45a4f3;
+  margin-bottom: 5px; }
+  .lesson_repr .section_block, .lesson_repr .lesson_repr {
+    margin-left: 5px; }
+  .lesson_repr .lesson_repr {
+    background-color: transparent; }
+  .lesson_repr .lesson_children {
+    background-color: rgba(0, 0, 0, 0.15); }
+
+/********************************************
+ * Form styling
+ ********************************************/
+.content_form_controls {
+  background: #ececec;
+  width: 100%;
+  height: 50px;
+  padding: 8px;
+  margin-top: 15px;
+  border-radius: 7px; }
 
 input.has_error {
   border: 1px dashed red; }
@@ -45,6 +95,101 @@ label.form-error {
     list-style: none !important;
     list-style-type: none !important; }
 
+.Add_button {
+  font-weight: bold;
+  background: #85cfc1;
+  color: white;
+  margin: 0 10px;
+  transition: all .2s; }
+  .Add_button:hover {
+    background: #45a4f3;
+    color: white; }
+
+.Remove_button {
+  font-weight: bold;
+  background: #b1213c;
+  color: white;
+  margin: 0 10px;
+  transition: all .2s; }
+  .Remove_button:hover {
+    background: red;
+    color: white; }
+
+.Cancel_button {
+  font-weight: bold;
+  background: #eaeaea;
+  color: #333;
+  margin: 0 10px;
+  transition: all .2s; }
+  .Cancel_button:hover {
+    background: #d2d2d2; }
+
+/********************************************
+ * ViewStack styling
+ ********************************************/
+div.VStack_container {
+  padding: 10px 20px; }
+  div.VStack_container .VStack_crumb_trail {
+    display: block;
+    width: 100%;
+    background-color: #eee;
+    border-radius: 7px;
+    padding: 5px 10px;
+    margin: 0 auto 20px; }
+    div.VStack_container .VStack_crumb_trail:empty {
+      display: none; }
+    div.VStack_container .VStack_crumb_trail a.crumb_entry {
+      color: #45a4f3;
+      cursor: pointer; }
+      div.VStack_container .VStack_crumb_trail a.crumb_entry:hover {
+        color: #85cfc1; }
+      div.VStack_container .VStack_crumb_trail a.crumb_entry.current_view {
+        cursor: default;
+        color: #666 !important; }
+
+/********************************************
+ * Content styling
+ ********************************************/
+.glyph-button {
+  color: #45a4f3;
+  transition: all .2s;
+  font-size: 20px;
+  cursor: pointer;
+  text-align: center;
+  width: 35px;
+  padding: 5px;
+  border-radius: .3em; }
+  .glyph-button:hover {
+    color: #fff;
+    background-color: #45a4f3;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2); }
+  .glyph-button.glyph-delete {
+    color: #b1213c; }
+    .glyph-button.glyph-delete:hover {
+      color: #fff;
+      background-color: #b1213c; }
+  .glyph-button.glyph-disabled {
+    color: #ccc; }
+    .glyph-button.glyph-disabled:hover {
+      color: #fff;
+      cursor: not-allowed;
+      background-color: #999; }
+
+.module_table .module-action-container {
+  width: 275px;
+  cursor: default; }
+  .module_table .module-action-container a {
+    margin: 3px; }
+    .module_table .module-action-container a i {
+      cursor: pointer;
+      text-align: center;
+      width: 35px;
+      padding: 5px;
+      border-radius: .3em; }
+  @media (max-width: 480px) {
+    .module_table .module-action-container {
+      width: 200px; } }
+
 #manage-content {
   margin-top: 54px;
   padding-top: 30px; }
@@ -66,36 +211,6 @@ label.form-error {
   @media (max-width: 480px) {
     #modules-content #create_module {
       font-size: 12px; } }
-#modules-content .module-action-container {
-  width: 275px; }
-  #modules-content .module-action-container a {
-    margin: 3px 5px; }
-    #modules-content .module-action-container a i {
-      font-size: 20px;
-      padding: 3px 3px;
-      border-radius: .3em; }
-    #modules-content .module-action-container a.disabled_action i {
-      color: #ccc; }
-      #modules-content .module-action-container a.disabled_action i:hover {
-        cursor: not-allowed;
-        background-color: transparent; }
-  @media (max-width: 480px) {
-    #modules-content .module-action-container {
-      width: 200px; } }
-#modules-content #crumb_trail {
-  background-color: #eee;
-  border-radius: 7px;
-  padding: 5px 10px; }
-  #modules-content #crumb_trail:empty {
-    display: none; }
-  #modules-content #crumb_trail a.crumb_entry {
-    color: #45a4f3;
-    cursor: pointer; }
-    #modules-content #crumb_trail a.crumb_entry:hover {
-      color: #85cfc1; }
-    #modules-content #crumb_trail a.crumb_entry.current_view {
-      cursor: default;
-      color: #666; }
 #modules-content input[name$='-DELETE'], #modules-content label[for$='-DELETE'] {
   display: none; }
 #modules-content #post-new-module h3.ui-accordion-header {
@@ -118,18 +233,6 @@ label.form-error {
 #modules-content #post-new-module .helptext {
   font-style: italic;
   font-size: .9em; }
-#modules-content #post-new-module .Add_button {
-  background: #85cfc1;
-  color: white;
-  margin: 0 10px; }
-  #modules-content #post-new-module .Add_button:hover {
-    background: #45a4f3; }
-#modules-content #post-new-module .Remove_button {
-  background: #b1213c;
-  color: white;
-  margin: 0 10px 10px; }
-  #modules-content #post-new-module .Remove_button:hover {
-    background: red; }
 #modules-content #post-new-module .topic_actions_btn_group {
   float: right; }
   #modules-content #post-new-module .topic_actions_btn_group i {
@@ -176,12 +279,6 @@ label.form-error {
   box-shadow: #dcdcdc 2px 2px 5px 1px;
   background: #fff; }
 
-.glyph-button {
-  color: #45a4f3; }
-  .glyph-button:hover {
-    color: #85cfc1;
-    background-color: #eee; }
-
 .publish_status_icon_draft {
   color: #808080; }
 
@@ -215,5 +312,45 @@ label.form-error {
   border-radius: 7px; }
   .FM-sort-control:hover {
     background: #ffffff44; }
+
+/***********************************************
+ *  dynamic Formset styling
+ ***********************************************/
+.dynamic_formset {
+  display: table;
+  width: 100%; }
+  .dynamic_formset .formset_errors {
+    display: none; }
+  .dynamic_formset .mgmt_form {
+    display: none; }
+  .dynamic_formset .empty_form {
+    display: none; }
+  .dynamic_formset .formset_header_row {
+    display: table-row; }
+    .dynamic_formset .formset_header_row .formset_header_cell {
+      display: table-cell;
+      border-bottom: 3px solid #45a4f3;
+      padding: 5px 10px;
+      font-weight: bold; }
+  .dynamic_formset .form_row {
+    display: table-row;
+    transition: all .2s; }
+    .dynamic_formset .form_row:nth-child(odd) {
+      background: #eee; }
+    .dynamic_formset .form_row.new_form {
+      background-color: #d4ecdab0; }
+    .dynamic_formset .form_row.deleted_form {
+      background-color: #ecd4d4b0; }
+    .dynamic_formset .form_row .form_errors {
+      display: none; }
+    .dynamic_formset .form_row .form_cell {
+      display: table-cell;
+      padding: 5px 10px; }
+      .dynamic_formset .form_row .form_cell a.form_delete i {
+        cursor: pointer;
+        text-align: center;
+        width: 35px;
+        padding: 5px;
+        border-radius: .3em; }
 
 /*# sourceMappingURL=manage_styling.css.map */

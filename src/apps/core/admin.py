@@ -5,10 +5,7 @@ from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 #from cms.admin.placeholderadmin import FrontendEditableAdminMixin
-
-
 #from djangocms_text_ckeditor.widgets import TextEditorWidget
-
 #from src.apps.core.admin_actions import *
 
 from .models.LearningObjModels import Learning_Level, Learning_Verb, Learning_Outcome, \
@@ -28,6 +25,7 @@ from src.apps.core.models.ModuleModels import (
     # Topic,
     Lesson,
     Section,
+    Collaboration,
 
 )
 from src.apps.core.models.SectionTypeModels import (
@@ -172,6 +170,19 @@ class LessonInline(SortableInlineAdminMixin, admin.TabularInline):
     # #     'position',
     #  ]
 
+
+class CollaboratorInline(admin.TabularInline):
+    model = Collaboration
+
+    verbose_name = "Collaboration"
+    verbose_name_plural = "Collaborations"
+
+    extra = 0
+
+    fields = (
+        'collaborator',
+        'can_edit',
+    )
 
 
 # ============================================================
@@ -362,6 +373,7 @@ class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehol
         'name',
         'creation_date',
         'changed_date',
+        #'collaborators',
 
     ]
 
@@ -374,7 +386,9 @@ class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehol
     search_fields = ['name', 'short_name']
     list_filter = ('creation_date',)
 
-    inlines = [SectionInline, LessonInline]
+    #filter_horizontal = ('collaborators',)
+
+    inlines = [CollaboratorInline, SectionInline, LessonInline]
 
 
     # override 'get_form' to have a separate form for adding a new topic
@@ -447,6 +461,7 @@ admin.site.register(ReadingSection, ReadingSectionAdmin)
 admin.site.register(ActivitySection, ActivitySectionAdmin)
 admin.site.register(QuizSection, QuizSectionAdmin)
 
+#admin.site.register(Collaboration)
 #admin.site.register(LayerRef, LayerRefAdmin)
 
 

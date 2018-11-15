@@ -27,6 +27,7 @@ from django.contrib.contenttypes.models import ContentType
 from src.apps.core.models.ModuleModels import (
     Lesson,
     Section,
+    Collaboration,
 )
 
 from src.apps.editor.editor_queries import (
@@ -50,7 +51,12 @@ from src.apps.core.views.PublicationViews import (
     PublicationChildViewMixin,
     DraftOnlyViewMixin)
 
-from src.apps.core.views.mixins import AjaxableResponseMixin, OwnershipRequiredMixin
+from src.apps.core.views.mixins import (
+    AjaxableResponseMixin,
+    OwnershipRequiredMixin,
+    CollabViewAccessMixin,
+)
+
 
 #####################################################
 # CREATE VIEWS
@@ -67,6 +73,24 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
         # add context variable for if this form is instanced
         context['is_instance'] = False
+
+        # if there is a parent lesson specified in request
+        if self.kwargs.get('parent_lesson', None):
+
+            # check that the user has edit access to the parent lesson
+            parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
+
+            if parent_lesson and parent_lesson.has_edit_access(self.request.user):
+                context['edit_access'] = True
+            else:
+                context['edit_access'] = False
+                context[
+                    'manage_denied_message'] = "You cannot add to this lesson without editor access! ! If you require edit access, please contact the owner."
+        else:
+            # otherwise this is a new lesson the user is creating (grant edit permissions)
+            context['edit_access'] = True
+
+
         return context
 
     def get_success_return_data(self,form):
@@ -113,6 +137,22 @@ class editor_SectionCreateView(LoginRequiredMixin, AjaxableResponseMixin, Create
 
         # add context variable for if this form is instanced
         context['is_instance'] = False
+
+        # if there is a parent lesson specified in request
+        if self.kwargs.get('parent_lesson', None):
+
+            # check that the user has edit access to the parent lesson
+            parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
+
+            if parent_lesson and parent_lesson.has_edit_access(self.request.user):
+                context['edit_access'] = True
+            else:
+                context['edit_access'] = False
+                context['manage_denied_message'] = "You cannot add to this lesson without editor access! ! If you require edit access, please contact the owner."
+        else:
+            # otherwise this is a new lesson the user is creating (grant edit permissions)
+            context['edit_access'] = True
+
         return context
 
     # override get_form_class to grab the correct form based on polymorphic content type
@@ -177,23 +217,11 @@ class editor_SectionCreateView(LoginRequiredMixin, AjaxableResponseMixin, Create
 # UPDATE VIEWS
 #####################################################
 
-class editor_LessonUpdateView(OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
+class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, UpdateView):
     model = Lesson
     context_object_name = 'Lesson'
     template_name = 'editor/forms/_lesson_form.html'
     form_class = editor_LessonForm
-
-
-    # def delete_obj(self, form):
-    #     self.get_object().delete()
-    #
-    #     payload = {
-    #         'success': True,
-    #         'message': _("Success! The object was deleted."),
-    #         'data': {},
-    #     }
-    #
-    #     return HttpResponse(json.dumps(payload), content_type='application/json')
 
 
     def get_context_data(self, **kwargs):
@@ -202,7 +230,18 @@ class editor_LessonUpdateView(OwnershipRequiredMixin, AjaxableResponseMixin, Upd
         # add context variable for if this form is instanced
         context['is_instance'] = True
 
-        context['manage_view'] = self.object.manage_url
+        # if the current user has edit access to this view
+        # pass the manage url, otherwise just pass the module
+        #can_edit = Collaboration.objects.filter(publication_id=self.object.pk, collaborator_id=self.request.user.pk, can_edit=True).exists()
+
+        edit_access = self.object.has_edit_access(self.request.user)
+        context['edit_access'] = edit_access
+
+        if edit_access:
+            context['content_view'] = self.object.manage_url
+        else:
+            context['manage_denied_message'] = "You can view this Lesson, but don't have edit access! If you require edit access, please contact the owner."
+            context['content_view'] = reverse('modules:lesson_content', kwargs={ 'slug': self.object.slug })
 
         return context
 
@@ -223,7 +262,7 @@ class editor_LessonUpdateView(OwnershipRequiredMixin, AjaxableResponseMixin, Upd
     def form_invalid(self, form, *args, **kwargs):
         return super(editor_LessonUpdateView, self).form_invalid(form, *args, **kwargs)
 
-class editor_SectionUpdateView(OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
+class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, UpdateView):
     model = Section
     context_object_name = 'Section'
     template_name = 'editor/forms/_section_form.html'
@@ -235,7 +274,14 @@ class editor_SectionUpdateView(OwnershipRequiredMixin, AjaxableResponseMixin, Up
         # add context variable for if this form is instanced
         context['is_instance'] = True
 
-        context['manage_view'] = self.object.manage_url
+        edit_access = self.object.has_edit_access(self.request.user)
+        context['edit_access'] = edit_access
+
+        if edit_access:
+            context['content_view'] = self.object.manage_url
+        else:
+            context['manage_denied_message'] = "You can view this Section, but don't have edit access! If you require edit access, please contact the owner."
+            context['content_view'] = reverse('modules:section_content', kwargs={'lesson_slug': self.object.lesson.slug,'slug': self.object.slug})
 
         return context
 
@@ -347,6 +393,7 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
         # layers = get_module_layers(self.kwargs.get('slug'))
         # context['layers'] = layers
         context['loaded_section'] = self.request.GET.get('v', '')
+        context['has_edit_access'] = self.object.has_edit_access(self.request.user)
         context['TOC_Listing'] = get_editor_TOC_obj(self.kwargs.get('slug'))
 
         # TODO: add in listing of section types to context

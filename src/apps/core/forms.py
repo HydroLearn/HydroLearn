@@ -6,6 +6,7 @@ from src.apps.core.models.ModuleModels import (
     #Topic,
     Lesson,
     Section,
+    Collaboration,
 )
 from src.apps.core.models.PublicationModels import Publication
 
@@ -35,8 +36,6 @@ class Module_ActionConfirmationForm(forms.Form):
 
     class Meta:
         # model = Module
-
-
         widgets = {
             'confirm': forms.HiddenInput(),
         }
@@ -49,8 +48,11 @@ class add_LessonForm(forms.ModelForm):
                 'name',
                 'short_name',
                 'tags',
+
                 #'position',
             ]
+
+
         widgets = {
             'position': forms.HiddenInput(),
             'parent_lesson': forms.HiddenInput(),
@@ -65,10 +67,14 @@ class Edit_LessonForm(forms.ModelForm):
                 'name',
                 'short_name',
                 'tags',
+                'collaborators'
             ]
+
+        filter_horizontal = ('collaborators',)
         widgets = {
             'position': forms.HiddenInput(),
         } # hide the position field as it is determined by the sortable
+
 
 
 
@@ -157,13 +163,11 @@ class ActivitySectionForm(forms.ModelForm):
         readonly_fields = ['topic']
 
 
-
-
-#================================== Wizard Forms ==============================
-
-class CreateNewSection_WizardForm(BaseFormMixin, forms.ModelForm):
+class CollaborationForm(forms.ModelForm):
     class Meta:
-        model = Section
-        fields = ['name','lesson']
-    #def save(self, commit=True):
-    
+        model = Collaboration
+        fields = [
+            'publication',
+            'collaborator',
+            'can_edit',
+        ]

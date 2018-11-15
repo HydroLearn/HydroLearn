@@ -46,8 +46,6 @@ class CreationTrackingBaseModel(models.Model):
             if self.created_by == user:
                 return True
 
-
-
         return False
 
 

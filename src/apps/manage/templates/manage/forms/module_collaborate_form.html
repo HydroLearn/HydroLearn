@@ -1,0 +1,250 @@
+{% load manage_template_tags %}
+
+
+
+    <h2>Manage Collaborators</h2>
+
+    <p>
+        From this form you can grant other users permission to work on this module.
+        If a user is added to the list of collaborators, they will be granted View-access to the draft of this module.
+        Optionally, if you check the 'Can Edit' option, the user will be allowed to make edits
+        to this module, it's child lessons and sections, and their content.
+    </p>
+
+
+
+    <div id="collab_formset_errors" class="HL-message-banner critical" style="display:none"></div>
+    <h3 style="float: left;">Collaborators:</h3>
+
+
+    <a id="add-collaborator">
+        <button id="create_module" type="button" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Add Collaborator
+        </button>
+    </a>
+
+
+    <div id="empty_collab_form" class='form_row' style="display:none;">
+        {% show_collab_form collaborator_fs.empty_form %}
+    </div>
+
+    <form id="collab_form" method="post" action="{{ request.path }}">
+        {% csrf_token %}
+        {% show_collab_formset collaborator_fs %}
+    </form>
+
+    <div class="content_form_controls">
+        <!--<input type="submit" value="Confirm" class="btn Remove_button">-->
+        <!--<a href="/manage" class="btn btn-default">Cancel</a>-->
+        <button class="Add_button btn btn-default">Confirm</button>
+        <button class="Cancel_button btn btn-default">Cancel</button>
+    </div>
+
+    <!--<form id="add_collaborator_form"></form>-->
+    <!--<form id="remove_collaborator_form"></form>-->
+
+
+
+
+<script>
+
+    // get all form rows not part of the empty form
+    //      and apply formset widget
+    $('#collab_formset .form_row').formset({
+
+        formCssClass: 'form_row',
+
+
+        // add prefix for formset
+        prefix: '{{ collaborator_fs.prefix }}',
+
+        addText: '',
+        deleteText: '',
+
+        // specify the empty form representation
+        formTemplate: '#empty_collab_form',
+
+        // specify classes for add/remove buttons
+        addCssClass: 'collab_fs_add',
+        deleteCssClass: 'collab_fs_remove',
+
+        // perform actions on add
+        added: function(row){
+
+            // on add replace the text of the remove
+            // button with the delete glyph-icon
+            var remove_btn = $(row).find('.collab_fs_remove');
+
+            // example: <i class="fas fa-trash glyph-button glyph-delete"></i>
+            remove_btn.html($('<i>', {class: 'fas fa-trash glyph-button glyph-delete'}))
+
+            // move the remove button into the last cell
+            $(row).find('.form_cell').last().append(remove_btn)
+        },
+
+
+    });
+
+    // add action to cancel button
+    $('.content_form_controls .Cancel_button').click(function(event){
+        event.preventDefault();
+        Module_View_Stack.pop_view();
+    });
+
+    // add action to update collaborators button
+    $('.content_form_controls .Add_button').click(function(event){
+       event.preventDefault();
+
+       $('#collab_formset_errors').hide();
+       $('#collab_formset_errors').html("");
+
+       // get the form
+       var form = $('#collab_form');
+       var url = form.attr('action');
+
+       $.ajax({
+                url: url,
+                type: "post",
+                data: $(form).serialize(),
+
+                success: function(response){
+
+                    if(response.success){
+                        Module_View_Stack.pop_view();
+                    }else{
+
+                        $.each(response.data.formset_errors, function(index, error_object){
+                            $.each(error_object, function(key, value){
+                                $('#collab_formset_errors').append($('<div>').append(value))
+                            });
+
+
+                        })
+
+
+                    }
+                    $('#collab_formset_errors').fadeIn();
+
+                },
+
+                error: function(response){
+                    $('#collab_formset_errors').append('There was an error processing your request, please try again later.')
+                    $('#collab_formset_errors').fadeIn();
+
+                },
+
+        }).fail(function(response){
+            $('#collab_formset_errors').append('There was an error processing your request, please try again later.')
+            $('#collab_formset_errors').fadeIn();
+
+        });
+
+
+
+    });
+
+
+
+
+
+    // hide the default '.collab_fs_add' link
+    $('.collab_fs_add').hide();
+
+
+
+    $('#add-collaborator').click(function(event){
+        // fire the 'add_collaborator' button of formset
+        $('#collab_form .collab_fs_add').click();
+
+    });
+
+    // initialize delete buttons on existing forms to toggle 'deleted' state
+    $('#collab_form .form_delete').click(function(del_event){
+
+        var form = $(del_event.target).closest('.form_row')
+        var deletion_state = form.hasClass('deleted_form');
+
+        // add styling class to the form row
+
+        if(deletion_state){
+            form.removeClass('deleted_form');
+            form.find('input[name$="DELETE"]').removeAttr('value')
+
+        }else{
+            form.addClass('deleted_form');
+            form.find('input[name$="DELETE"]').attr('value',!deletion_state)
+        }
+    });
+
+
+
+    {% comment %}
+
+
+    $('.content_form_controls .Add_button').click(function(event){
+
+        event.preventDefault();
+
+
+        //$('#collab_form').submit()
+        // update the formset fields to store their values in a data attribute
+        $.each($('#collab_form').find('input,textarea,select'), function(index, field){
+            $(field).attr('data-value', $(field).val())
+        });
+
+
+        var formset = $('#collab_form').clone()
+
+        // remove the empty form from the clone
+        $(formset).find('.empty_form').remove()
+
+
+
+
+        // update the mangement form with total number of forms
+        update_mgmt_form(formset, formset.find('.form_row:not(.empty_form)').length)
+
+        // process the forms in the collaborators formset
+        $.each(formset.find('.form_row:not(.empty_form)'), function(form_index, form){
+
+            // if form has been marked for deletion, set the 'DELETED' field to true
+            if($(form).hasClass('deleted_form')){
+                $(form).find('input[name$="DELETE"]').attr('data-value', true)
+            }
+
+            // if new update the prefix with the index of the current form
+            if($(form).hasClass('new_form')){
+                $.each($(form).find('input,textarea,select'), function(field_index, field){
+                    var new_prefix = '{0}-{1}'.format($(formset).find('.dynamic_formset').attr('data-prefix'), form_index)
+
+                    replace_field_prefix(field, new_prefix);
+                });
+            }
+
+        })
+
+        // update the value of the formset fields to the processed data value
+        $.each($(formset).find('input,textarea,select'), function(index, field){
+            $(field).val($(field).attr('data-value'))
+        });
+
+
+        console.log($(formset).serialize())
+
+
+    });
+
+
+
+    // mark the empty form
+    //$('#collab_form .empty_form').find('.form_row').addClass('empty_form')
+
+
+
+
+
+    {% endcomment %}
+
+
+
+</script>

@@ -541,7 +541,6 @@ var FormManager = {
 
     _remove_form_event: function(){
         //debugger;
-        // TODO: maybe add in a prompt to confirm
 
         // get the parent form to this delete button
         var form = $(this).closest('.FM_form')
@@ -806,7 +805,6 @@ var FormManager = {
         }
 
 
-        // TODO: revise this to handle the actual attribute fields instead of full string replace
         function process_prefixes(level, formset){
 
             console.log('processing: ' + formset.attr('FM-type') + "-" + level)

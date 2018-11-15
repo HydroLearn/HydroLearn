@@ -9,6 +9,8 @@ from django.utils.encoding import force_text
 from djangocms_installer.compat import unicode
 from django.utils.translation import gettext as _
 
+from src.apps.core.models.ModuleModels import Collaboration
+
 
 class OwnershipRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     """
@@ -23,8 +25,77 @@ class OwnershipRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self):
         object = self.get_object()
-        has_permission = self.request.user.is_admin or (object and object.created_by == self.request.user)
-        return has_permission
+
+        # user is admin
+        if self.request.user.is_admin:
+            return True
+
+        # user is owner
+        if object and object.get_owner() == self.request.user:
+            return True
+
+        return False
+
+class CollabEditorAccessRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """
+        Mixin to adds in test function that checks that the user has permission
+        to view the requested object,
+            - Users can only access the manage view if they are the owner of the object (created_by)
+                or if it has been shared with them
+
+        if the tests defined in test_func are not passed, return a 403 error (permission exception)
+    """
+    raise_exception = True  # raise 403 exception if user fails permission test
+
+    def test_func(self):
+        object = self.get_object()
+
+        # user is admin
+        if self.request.user.is_admin:
+            return True
+
+        # user is owner
+        if object and object.created_by == self.request.user:
+            return True
+
+        # user is a collaborator
+        # if object and object.collaborators.filter(pk=self.request.user.pk).exists():
+        if object and object.has_edit_access(self.request.user):
+            return True
+
+
+        return False
+
+class CollabViewAccessMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """
+        Mixin to adds in test function that checks that the user has permission
+        to view the requested object,
+            - Users can only access the manage view if they are the owner of the object (created_by)
+                or if it has been shared with them
+
+        if the tests defined in test_func are not passed, return a 403 error (permission exception)
+    """
+    raise_exception = True  # raise 403 exception if user fails permission test
+
+    def test_func(self):
+        object = self.get_object()
+
+        # user is admin
+        if self.request.user.is_admin:
+            return True
+
+        # user is owner
+        if object and object.created_by == self.request.user:
+            return True
+
+
+        # if object and object.collaborators.filter(pk=self.request.user.pk).exists():
+        if object and object.has_draft_access(self.request.user):
+            return True
+
+
+        return False
+
 
 class AjaxableResponseMixin(object):
     """

@@ -4,7 +4,7 @@ from datetime import timedelta
 from cms.models import PlaceholderField, ValidationError, uuid
 from django.urls import reverse
 from django.db import models
-# from django.conf import settings
+from django.conf import settings
 
 from django_extensions.db.fields import (
     RandomCharField,
@@ -26,6 +26,8 @@ from src.apps.core.models.PublicationModels import (
     PolyPublicationChild)
 
 from cms.utils.copy_plugins import copy_plugins_to
+
+User = settings.AUTH_USER_MODEL
 
 
 class Lesson(Publication):
@@ -122,7 +124,14 @@ class Lesson(Publication):
 
     tags = TaggableManager(blank=True)
 
+    # many to many relationship for collaborators
+    # allowed to make edits to the draft of a publication
+    collaborators = models.ManyToManyField(User, related_name="collaborations", through='Collaboration')
+
+    # the content of this lesson
     summary = PlaceholderField('lesson_summary')
+
+
 
     #   the default related name for this many-to-many field is lesson_set
     #
@@ -413,6 +422,46 @@ class Lesson(Publication):
 
         if result: return result
 
+    def has_draft_access(self, user):
+
+        # if passes the default permission check (owner/admin) return true
+        if(super(Lesson, self).has_draft_access(user)):
+            return True
+        else:
+            # else check if the current user is a collaborator for this lesson
+            # or is a collaborator on the root object
+
+            access_conditions = [
+                self.collaborators.filter(pk=user.pk).exists(),
+                self.get_Publishable_parent().collaborators.filter(pk=user.pk).exists(),
+            ]
+            
+            return any(access_conditions)
+
+    def has_edit_access(self, user):
+
+        # user can edit if they are the owner or have been marked as a collaborator with
+        # edit access on either this lesson or the parent publication
+        access_conditions = [
+            self.get_owner() == user,
+            Collaboration.objects.filter(publication=self, collaborator=user, can_edit=True).exists(),
+            Collaboration.objects.filter(publication=self.get_Publishable_parent(), collaborator=user, can_edit=True).exists(),
+        ]
+
+        return any(access_conditions)
+
+
+    def get_owner(self):
+        '''
+            get the owner of the lesson (created-by), if this is a child lesson
+            return the owner of it's parent
+        :return: user who created the root lesson
+        '''
+        if self.parent_lesson:
+            return self.parent_lesson.get_Publishable_parent().get_owner()
+        else:
+            return self.created_by
+
 
 
 
@@ -539,12 +588,70 @@ class Section(PolyPublicationChild):
         # return this sections parent's publishible parent
         return self.lesson.get_Publishable_parent()
 
+    def has_draft_access(self, user):
+        return self.lesson.has_draft_access(user)
+
+    def has_edit_access(self, user):
+        # user can edit if they have been marked as a collaborator with
+        # edit access on either this sections parent lesson or the parent publication
+        access_conditions = [
+            self.lesson.get_owner() == user,
+            Collaboration.objects.filter(publication=self.lesson, collaborator=user, can_edit=True).exists(),
+            Collaboration.objects.filter(publication=self.get_Publishable_parent(), collaborator=user, can_edit=True).exists(),
+        ]
+
+        return any(access_conditions)
+
     @property
     def is_dirty(self):
         # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
         # edited after the most recent change date.
         return super(Section, self).is_dirty
 
+
+
+####################################################################
+#   Collaborator relationship model
+###################################################################
+
+class Collaboration(models.Model):
+    # dont think we need a meta for the m2m mapping table
+    class Meta:
+        app_label = 'core'
+        verbose_name = 'Collaboration'
+        verbose_name_plural = 'Collaborations'
+        unique_together = (
+            'publication',
+            'collaborator',
+        )
+
+
+
+
+    # the publication being collaborated on
+    publication = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE
+    )
+
+    # the user being granted draft permissions
+    collaborator = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        help_text=u'User being given Draft-View Permissions.',
+    )
+
+    # collaboration permissions
+    can_edit = models.BooleanField(
+        default=True,
+        help_text=u'Allow this person edit the Lesson? if not checked, user will only be given view permissions to the Draft.',
+        )
+
+    # the date the collaboration was initiated
+    collaboration_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return "Collab: %s -> %s" % (self.collaborator.__str__(), self.publication.__str__())
 
 ''' DEPRECIATED (Kept for potential future reference)
      Assign any signals needed for clearing placeholder fields of a model

@@ -147,6 +147,32 @@ div[class^='multicolumn'] {
     margin-left: 10px;
     margin-top: 10px; }
 
+/*************************************
+ * HL message banner styling
+ *************************************/
+.HL-message-banner {
+  display: block;
+  margin: 10px 0;
+  text-align: center;
+  font-weight: bold;
+  font-style: italic;
+  color: red;
+  background: #ffe5e5;
+  border-left: 3px solid red;
+  padding: 5px 10px; }
+  .HL-message-banner.success {
+    color: #069212;
+    background: #a6ffce;
+    border-left: 3px solid #069212; }
+  .HL-message-banner.warning {
+    color: #ff8d00;
+    background: #ffecd3;
+    border-left: 3px solid #ffa162; }
+  .HL-message-banner.critical {
+    color: red;
+    background: #ffe5e5;
+    border-left: 3px solid red; }
+
 /* helios overrides
     TODO: Phase out origional Helios style sheet entirely with this document
 */
@@ -187,7 +213,8 @@ div[class^='multicolumn'] {
       background-repeat: no-repeat;
       width: 100%;
       height: 57px;
-      z-index: 100; }
+      z-index: 100;
+      min-width: 500px; }
       #content #content-wrapper #content-tab-header ul {
         width: 100%;
         padding: 15px 0 0 0; }
