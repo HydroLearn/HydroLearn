@@ -465,3 +465,12 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
     EDITOR_TOC.prototype.remove_section = function(section_slug){
         $('.Section_Link[value="{0}"]'.format(section_slug)).remove()
     }
+
+    EDITOR_TOC.prototype.highlight_section = function (section_slug) {
+        TABLE_OF_CONTENTS_MANAGER.prototype.highlight_section.call(this, section_slug)
+
+
+        // hide any open 'Add' menus
+        $('.TOC_add_menu_content').hide()
+
+    }
