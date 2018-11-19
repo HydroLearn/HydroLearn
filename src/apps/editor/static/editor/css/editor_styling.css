@@ -6,57 +6,58 @@
 
 #TOC_content .TOC_add_menu {
   color: white;
-  padding: 10px;
   border-radius: 7px;
-  text-align: center; }
+  text-align: center;
+  display: inline;
+  padding: 3px 5px; }
   #TOC_content .TOC_add_menu .TOC_add_menu_trigger_btn {
     cursor: pointer;
-    border-radius: 7px; }
-    #TOC_content .TOC_add_menu .TOC_add_menu_trigger_btn:hover {
-      background: #ffffff22; }
-  #TOC_content .TOC_add_menu .TOC_add_menu_content {
-    background: #60c785a1;
     border-radius: 7px;
+    padding: 3px 5px;
+    display: inline-block;
+    float: right;
+    margin-left: 5px; }
+    #TOC_content .TOC_add_menu .TOC_add_menu_trigger_btn:hover {
+      background: #85cfc1; }
+  #TOC_content .TOC_add_menu .TOC_add_menu_content {
+    background: #85cfc1;
+    width: 100%;
     padding: 3px 0px;
-    margin: 7px 0; }
+    margin: 7px 0;
+    border: 1px solid #45a4f3;
+    box-shadow: 5px 5px 6px rgba(0, 0, 0, 0.3); }
 #TOC_content .TOC_Add_Section_wrapper {
-  background: #00000033;
   margin: 0;
-  padding: 3px;
   text-align: center; }
   #TOC_content .TOC_Add_Section_wrapper .TOC_Add_Section_button {
     cursor: pointer;
-    color: white;
-    display: inline-block;
     background: #ffffff33;
-    padding: 3px 6px;
-    border-radius: 7px;
-    margin: 0 2px 5px 2px;
+    color: #427e8d;
     transition: all .2s;
-    font-size: .85em; }
+    font-size: .85em;
+    padding: 3px 6px;
+    display: block;
+    border-bottom: 1px solid #00000033; }
     #TOC_content .TOC_Add_Section_wrapper .TOC_Add_Section_button:hover {
-      background: #31c55f; }
+      background: #31c55f;
+      color: #fff; }
     #TOC_content .TOC_Add_Section_wrapper .TOC_Add_Section_button i {
       padding-right: 3px; }
 #TOC_content .TOC_Add_Lesson_wrapper {
-  background: #00000033;
-  border-bottom-left-radius: 7px;
-  border-bottom-right-radius: 7px;
   margin: 0;
-  padding: 3px;
   text-align: center; }
   #TOC_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button {
     cursor: pointer;
-    color: white;
-    display: inline-block;
     background: #ffffff33;
     padding: 3px 6px;
-    border-radius: 7px;
-    margin: 0 2px 5px 2px;
     transition: all .2s;
-    font-size: .85em; }
+    font-size: .85em;
+    color: #427e8d;
+    display: block;
+    border-bottom: 1px solid #00000033; }
     #TOC_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button:hover {
-      background: #31c55f; }
+      background: #31c55f;
+      color: #fff; }
     #TOC_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button i {
       padding-right: 3px; }
 #TOC_content .TOC_Toolbox {

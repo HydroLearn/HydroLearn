@@ -97,6 +97,7 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
                 // grab the content container and add the 'Add New' buttons
                 var accord_content = lesson_obj.find('.accord-content').first()
+                var accord_header = lesson_obj.find('.accord-title').first()
 
                 var add_menu = $(document.createElement('div'));
                 add_menu.addClass('TOC_add_menu')
@@ -111,23 +112,46 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                 plus.addClass('fas')
                 plus.addClass('fa-plus')
                 collapse_button.append(plus)
-                collapse_button.append("Add Child")
+                //collapse_button.append("Add Child")
 
                 collapse_button.click(function(event){
                     event.stopPropagation();
 
-                    // get current content block
-                    var current_content_block =$(this).parent('.TOC_add_menu').find('.TOC_add_menu_content').first();
+                    if($('.TOC_EDITED_OBJ, .TOC_NEW_OBJ').length){
+                        $('#lesson-nav-denied-dialog').dialog("open");
+                        return;
+                    }
+
+                    // get the current content block
+                    var current_content_block = $(this).parent('.TOC_add_menu').find('.TOC_add_menu_content').first();
+
+
 
                     // hide all other 'add menu' content blocks
                     $('.TOC_add_menu_content').not(current_content_block).hide()
 
                     // toggle visibility of this content block
-                    $(this).parent('.TOC_add_menu').find('.TOC_add_menu_content').first().toggle(200);
+                    current_content_block.slideToggle(200, function(){
+                        // if this accordion isn't expanded and showing content block, expand it
+                        var parent_accord = $(this).closest('.JUIaccordion')
+                        if(current_content_block.is(':visible')){
+
+                            if($(parent_accord).accordion('option', 'active') === false){
+                                $(parent_accord).accordion('option', 'active', 0)
+                            }
+
+                            // close any child accordions that were active
+                            $(parent_accord).find('.JUIaccordion').accordion('option', 'active', false);
+                        }
+
+
+                    });
+
+
 
                 });
 
-                add_menu_content.append("Add To, {0}:".format(lesson.short_name || lesson.name))
+                //add_menu_content.append("Add To, {0}:".format(lesson.short_name || lesson.name))
 
                 var new_section_btn = this.generate_add_section_btn(lesson.slug);
                 add_menu_content.append(new_section_btn);
@@ -143,7 +167,9 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                 add_menu.append(add_menu_content);
 
 
-                accord_content.append(add_menu);
+                //accord_content.append(add_menu);
+                //accord_content.prepend(add_menu);
+                accord_header.append(add_menu)
             }
 
             // return the updated lesson object
@@ -385,13 +411,18 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
     EDITOR_TOC.prototype.add_new_lesson_click_evt = function (evt) {
 
+            evt.stopPropagation();
+
             // check that we're currently not editing a form,
             //  or currently in another 'new' form
+
 
             if($('.TOC_EDITED_OBJ, .TOC_NEW_OBJ').length){
                 $('#lesson-nav-denied-dialog').dialog("open");
                 return;
             }
+
+            $('.TOC_add_menu_content').hide()
 
             // generate the new placeholder
             var new_placeholder = this.generate_new_lesson_placeholder($(evt.target).attr('value'))
@@ -406,10 +437,14 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
     EDITOR_TOC.prototype.add_new_section_click_evt = function (evt) {
 
+            evt.stopPropagation();
+
             if($('.TOC_EDITED_OBJ, .TOC_NEW_OBJ').length){
                 $('#lesson-nav-denied-dialog').dialog("open");
                 return;
             }
+
+            $('.TOC_add_menu_content').hide()
 
             // generate the new section placeholder of the associated type
             var section_type = $(evt.target).attr('data-poly-type')
