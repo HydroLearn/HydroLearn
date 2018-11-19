@@ -6,7 +6,11 @@
 </ul>
 {% endif %}
 
-<h3 id="my_modules_header">Manage My Modules</h3>
+<h3 class="listing_header">
+    Manage My Modules
+    <span class="inline_count">({{ my_modules.count }})</span>
+</h3>
+
 
 <!--create new module button-->
 <a target="_blank" href="{% url 'editor:lesson_create' %}">

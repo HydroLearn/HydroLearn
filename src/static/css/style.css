@@ -434,6 +434,9 @@ a {
       border: 1px solid #ddd;
       border-bottom-color: transparent;
       background-color: #45a4f3; }
+    @media (min-width: 768px) {
+      #sidebar #sidebar_nav .nav-item #navigation-tab {
+        display: none; } }
   #sidebar a[data-toggle="collapse"] {
     position: relative; }
   #sidebar a[aria-expanded="false"]::before {
@@ -503,6 +506,18 @@ a {
     position: absolute;
     bottom: 0;
     width: 100%; }
+
+#sidebarCollapse {
+  display: none; }
+  #sidebarCollapse.has_children {
+    display: inline-block; }
+  #sidebarCollapse #navigation-tab {
+    display: none; }
+  @media (max-width: 768px) {
+    #sidebarCollapse {
+      display: inline-block; }
+      #sidebarCollapse #navigation-tab {
+        display: block; } }
 
 /*
     TODO: Currently not very pretty in mobile view

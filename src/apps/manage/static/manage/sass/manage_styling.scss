@@ -23,8 +23,6 @@
 */
 
 
-
-
 /********************************************
  * Lesson Listing styling
  ********************************************/
@@ -304,6 +302,21 @@ div.VStack_container{
     }
 }
 
+#content-wrapper{
+    .listing_header{
+        float:left;
+
+        .inline_count{
+            font-style: italic;
+            font-size: .75em;
+        }
+
+        @media(max-width:$mobile_small){
+            font-size:17px;
+        }
+    }
+
+}
 
 #manage-content{
     margin-top: 54px;
@@ -312,13 +325,7 @@ div.VStack_container{
 
 #modules-content{
 
-    #my_modules_header{
-        float:left;
 
-        @media(max-width:$mobile_small){
-            font-size:17px;
-        }
-    }
 
     #create_module{
         float:right;

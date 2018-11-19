@@ -488,11 +488,12 @@ a:focus {
 
 
 /* Media Styling */
+
+
 @media (max-width: $mobile_large) {
     .content {
         padding: 40% 0 0;
     }
-
 }
 
 @media (max-width: 603px) {

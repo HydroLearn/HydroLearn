@@ -99,12 +99,6 @@
                     <div id="content-tab-body" class="tab-content">
                         <div id="body-content">
 
-                            <!--<div id="pre-content-banner">-->
-                                <!--{% if user.is_authenticated and object.created_by == user %}-->
-                                    <!--{% publication_status_banner object %}-->
-                                <!--{% endif %}-->
-                            <!--</div>-->
-
                             <div id="lesson-content" style="display:none" class="tab-pane fade" role="tabpanel">
                                 <div class='lesson'>
 
@@ -253,6 +247,8 @@
 
         <script type='text/javascript'>
 
+            $('#sidebarCollapse').addClass('has_children')
+
             $(document).delegate('*[data-toggle="lightbox"]', 'click', function (event) {
                 event.preventDefault();
                 $(this).ekkoLightbox();
@@ -346,6 +342,7 @@
                 /* ---------------------------------
                     start on the lessons tab
                 ---------------------------------*/
+
                 {# if there was a supplied lesson, load it. Otherwise, just start load lesson tab with no loaded seciton #}
                 {% if loaded_section %}
                     VIEWPORT_MGR.Switch_View('Lessons', ['{{loaded_section}}']);

@@ -204,6 +204,7 @@
         <script src="{% static 'module/js/Lesson_Resource_Manager.js' %}"></script>
 
         <script type='text/javascript'>
+            $('#sidebarCollapse').addClass('has_children')
 
             $(document).delegate('*[data-toggle="lightbox"]', 'click', function (event) {
                 event.preventDefault();
