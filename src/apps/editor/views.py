@@ -364,6 +364,8 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
         #   when submitting through the content edit iframe
         #   the edit flag is passed, if this happens
         #   the toolbar throws an error
+        # if self.request.toolbar.edit_mode:
+
         if self.request.GET.get('edit', None) is not None:
             # DESCRIPTION :
             #   if this exception is raised, the editor just submitted
@@ -379,9 +381,6 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
 
 
         return super(editor_LessonView, self).get(request,*args,**kwargs)
-    #form_class = editor_LessonForm
-    # ajax response mixin parameter
-    #ajax_success_redirect = reverse_lazy("manage:manage_index")
 
     def get_context_data(self, **kwargs):
         context = super(editor_LessonView, self).get_context_data(**kwargs)

@@ -260,8 +260,20 @@ a {
             }
         }
 
+        #navigation-tab{
+
+            @media (min-width: $mobile_large) {
+                    display:none;
+
+            }
+
+        }
+
 
     }
+
+
+
   }
 
   a {
@@ -391,5 +403,30 @@ a {
         bottom: 0;
         width: 100%;
     }
+
+}
+
+
+
+#sidebarCollapse{
+    display:none;
+
+    &.has_children{
+        display: inline-block;
+    }
+
+    #navigation-tab{
+        display:none;
+    }
+
+    @media (max-width: $mobile_large) {
+        display:inline-block;
+
+        #navigation-tab{
+            display:block;
+        }
+
+    }
+
 
 }

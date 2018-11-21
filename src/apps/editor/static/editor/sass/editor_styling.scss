@@ -8,97 +8,165 @@
 }
 
 
+/*
+    jquery CONTEXT MENU styling header via data attribute
+*/
+    .data-title:before {
+
+        color: #8f8f8f;
+
+        content: attr(data-menutitle);
+        display: block;
+        padding: 2px;
+
+        font-family: "Open Sans", sans-serif;
+        font-size: 1em;
+        font-weight: bold;
+
+
+    }
+    .data-title :first-child {
+        //margin-top: 20px;
+    }
+
+    .context-menu-item{
+        &.context-menu-icon-delete{
+            color: $red;
+            &:before {
+                color: $red;
+            }
+
+        }
+    }
+
+
 #TOC_content {
 
     .TOC_add_menu{
+
+        color: white;
+        border-radius: 7px;
+        text-align: center;
+        //padding: 10px;
+
+        //display: inline-block;
+        //float: right;
+
+
+        //padding: 3px 5px;
+        display:unset;
+
+
         .TOC_add_menu_trigger_btn{
             cursor: pointer;
             border-radius: 7px;
+            padding: 3px 5px;
+
+            display:inline-block;
+            float:right;
+            margin-top: -2px;
+            margin-left: 5px;
+            border: none;
+
+            background: transparent;
+
+            &.active {
+                background: $HL_seafoam;
+                border-bottom-left-radius: unset;
+                border-bottom-right-radius: unset;
+            }
 
             &:hover{
-                background: #ffffff22;
+                //background: #ffffff22;
+                background: $HL_seafoam;
             }
         }
-
-
-        color: white;
-        padding: 10px;
-        border-radius: 7px;
-        text-align: center;
 
         .TOC_add_menu_content{
-            background: #60c785a1;
-            border-radius: 7px;
-            padding: 3px 0px;
-            margin: 7px 0;
 
+
+            background: $HL_seafoam;
+            width: 100%;
+
+            //margin: 7px 0;
+            //border: 1px solid $HL_blue;
+            //padding: 3px 0px;
+
+            border-radius: 7px;
+            border-top-right-radius: unset;
+
+            margin: 3px 0;
+            padding: 5px;
+
+            box-shadow: 5px 5px 6px rgba(0, 0, 0, 0.3);
+
+            .TOC_Add_Section_wrapper {
+
+                margin: 0;
+                text-align: center;
+
+                .TOC_Add_Section_button{
+
+                    cursor: pointer;
+
+                    background: #ffffff33;
+                    color: #427e8d;
+                    transition: all .2s;
+                    font-size: .85em;
+                    padding: 3px 6px;
+
+                    display:block;
+                    border-bottom: 1px solid #00000033;
+
+                    &:hover {
+                        background: #31c55f;
+                        color: #fff;
+                    }
+
+                    i{
+                        padding-right:3px;
+                    }
+                }
+
+
+            }
+
+
+
+            .TOC_Add_Lesson_wrapper {
+
+                margin: 0;
+                text-align: center;
+
+                .TOC_Add_Lesson_button{
+
+                    cursor: pointer;
+
+                    background: #ffffff33;
+                    padding: 3px 6px;
+                    transition: all .2s;
+                    font-size: .85em;
+                    color: #427e8d;
+
+                    display:block;
+                    border-bottom: 1px solid #00000033;
+
+
+                    &:hover {
+                        background: #31c55f;
+                        color: #fff;
+                    }
+
+                    i{
+                        padding-right:3px;
+                    }
+                }
+            }
         }
 
     }
 
-    .TOC_Add_Section_wrapper {
-        background: #00000033;
-        //border-bottom-left-radius: 7px;
-        //border-bottom-right-radius: 7px;
-        margin: 0;
-        padding: 3px;
-        text-align: center;
 
-        .TOC_Add_Section_button{
-            cursor: pointer;
-            color: white;
-            display: inline-block;
-            background: #ffffff33;
-            padding: 3px 6px;
-            border-radius: 7px;
-            margin: 0 2px 5px 2px;
-            transition: all .2s;
-            font-size: .85em;
-
-            &:hover {
-                background: #31c55f;
-            }
-
-            i{
-                padding-right:3px;
-            }
-        }
-
-
-    }
-
-
-
-    .TOC_Add_Lesson_wrapper {
-        background: #00000033;
-        border-bottom-left-radius: 7px;
-        border-bottom-right-radius: 7px;
-        margin: 0;
-        padding: 3px;
-        text-align: center;
-
-        .TOC_Add_Lesson_button{
-            cursor: pointer;
-            color: white;
-            display: inline-block;
-            background: #ffffff33;
-            padding: 3px 6px;
-            border-radius: 7px;
-            margin: 0 2px 5px 2px;
-            transition: all .2s;
-            font-size: .85em;
-
-            &:hover {
-                background: #31c55f;
-            }
-
-            i{
-                padding-right:3px;
-            }
-        }
-
-
-    }
 
 
     // basic toolbox styling
@@ -134,9 +202,12 @@
 
     .TOC_listing {
         .accord-title {
-            //h3 {
-                padding-right: 10px;
-            //}
+            padding-right: 10px;
+
+            // &:after{
+            //     display:none;
+            // }
+
         }
 
         .TOC_Toolbox{

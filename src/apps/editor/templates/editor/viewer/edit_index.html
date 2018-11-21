@@ -74,6 +74,8 @@
         <!--<link rel="stylesheet" href="{% static 'editor/css/editor_validation_styling.css' %}" type="text/css">-->
         <!--<link rel="stylesheet" href="{% static 'editor/css/DIV-TableStyle.css' %}" type="text/css">-->
         <!--<link rel="stylesheet" href="{% static 'editor/css/map.css' %}" type="text/css">-->
+        <link rel="stylesheet" href="{% static 'css/jquery.contextMenu.min.css' %}" type="text/css">
+
     {% endaddtoblock 'template_css' %}
 
     <div id="content-wrapper">
@@ -98,12 +100,6 @@
 
                     <div id="content-tab-body" class="tab-content">
                         <div id="body-content">
-
-                            <!--<div id="pre-content-banner">-->
-                                <!--{% if user.is_authenticated and object.created_by == user %}-->
-                                    <!--{% publication_status_banner object %}-->
-                                <!--{% endif %}-->
-                            <!--</div>-->
 
                             <div id="lesson-content" style="display:none" class="tab-pane fade" role="tabpanel">
                                 <div class='lesson'>
@@ -180,7 +176,6 @@
                 </div>
 
 
-
         </div>
 
 
@@ -239,6 +234,9 @@
         <script src="{% static 'module/js/Highcharts_manager.js' %}"></script>
         <script src="{% static 'module/js/Map_functionality.js' %}"></script>
 
+        <!--jquery contextMenu-->
+        <script src="{% static 'js/plugins/jquery-contextMenu/jquery.ui.position.min.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery-contextMenu/jquery.ContextMenu.min.js' %}"></script>
 
 
 
@@ -252,6 +250,8 @@
         <script src="{% static 'module/js/Lesson_Resource_Manager.js' %}"></script>
 
         <script type='text/javascript'>
+
+            $('#sidebarCollapse').addClass('has_children')
 
             $(document).delegate('*[data-toggle="lightbox"]', 'click', function (event) {
                 event.preventDefault();
@@ -346,6 +346,7 @@
                 /* ---------------------------------
                     start on the lessons tab
                 ---------------------------------*/
+
                 {# if there was a supplied lesson, load it. Otherwise, just start load lesson tab with no loaded seciton #}
                 {% if loaded_section %}
                     VIEWPORT_MGR.Switch_View('Lessons', ['{{loaded_section}}']);

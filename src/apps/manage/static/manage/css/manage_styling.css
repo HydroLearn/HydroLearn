@@ -190,15 +190,19 @@ div.VStack_container {
     .module_table .module-action-container {
       width: 200px; } }
 
+#content-wrapper .listing_header {
+  float: left; }
+  #content-wrapper .listing_header .inline_count {
+    font-style: italic;
+    font-size: .75em; }
+  @media (max-width: 480px) {
+    #content-wrapper .listing_header {
+      font-size: 17px; } }
+
 #manage-content {
   margin-top: 54px;
   padding-top: 30px; }
 
-#modules-content #my_modules_header {
-  float: left; }
-  @media (max-width: 480px) {
-    #modules-content #my_modules_header {
-      font-size: 17px; } }
 #modules-content #create_module {
   float: right;
   margin: 13px 0 10px;
