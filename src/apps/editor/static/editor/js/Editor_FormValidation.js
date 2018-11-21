@@ -65,13 +65,12 @@ function submit_content_form_evt(){
                     if(response.success){
                         console.log('success')
 
+                        var existing_toc_obj = TOC_MGR.get_TOC_obj($('.current_selected_section').attr('value'))
 
                         //response.data.slug
                         //response.data.updated_toc_obj
                         switch(response.data.updated_toc_obj.obj_type){
                             case 'lesson':
-                                    // since current selection should only be the form section just submitted can get placeholder from there
-                                    var existing_toc_obj = TOC_MGR.get_lesson_obj($('.current_selected_section').attr('value'))
 
                                     // if the submitted lesson was a new-base-lesson redirect to the edit page
                                     if(existing_toc_obj.attr('id') == "Base_Lesson_obj" && existing_toc_obj.hasClass('TOC_NEW_OBJ')){
@@ -93,8 +92,7 @@ function submit_content_form_evt(){
 
                                 break;
                             case 'section':
-                                    // since current selection should only be the form section just submitted can get placeholder from there
-                                    var existing_toc_obj = TOC_MGR.get_section_obj($('.current_selected_section').attr('value'))
+
                                     var updated_toc_obj = TOC_MGR.generate_section_obj(response.data.updated_toc_obj)
 
                                     updated_toc_obj.addClass('current_selected_section')
@@ -112,7 +110,8 @@ function submit_content_form_evt(){
                         if(LESSON_MGR.get_Loaded_Section() != response.data.updated_toc_obj.slug){
                             LESSON_MGR.Show_Section(response.data.updated_toc_obj.slug)
                         }else{
-                            TOC_MGR.highlight_section(response.data.updated_toc_obj.slug)
+
+                            TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.HIGHLIGHT_OBJ, [response.data.updated_toc_obj.slug])
                         }
 
 

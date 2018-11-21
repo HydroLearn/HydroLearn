@@ -149,7 +149,7 @@ LESSON_VIEW.prototype = Object.create(View.prototype)
                 });
 
 
-                TOC_MGR.highlight_section(passed_section);
+                TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.HIGHLIGHT_OBJ, [passed_section])
 
 
                 // TODO: VERIFY THIS IS A VALID OPTION FOR AUTOMATING RESPONSIVE TABLES

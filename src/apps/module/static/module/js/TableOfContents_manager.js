@@ -24,6 +24,21 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
 
         // auto expand to loaded section
         //this.expand_to_section();
+
+    // add triggerable event lookup for use by other components
+    this.EVENT_TRIGGERS = {
+        SELECT_OBJ: '_TOC_select_obj',
+        HIGHLIGHT_OBJ: '_TOC_highlight_obj',
+        FOCUS_OBJ: '_TOC_focus_obj',
+    }
+
+    // add bind triggers for events
+    $(this._target).on(this.EVENT_TRIGGERS.SELECT_OBJ, this._select_obj_listener.bind(this))
+    $(this._target).on(this.EVENT_TRIGGERS.HIGHLIGHT_OBJ, this._highlight_obj_listener.bind(this))
+    $(this._target).on(this.EVENT_TRIGGERS.FOCUS_OBJ, this._focus_obj_listener.bind(this))
+
+    //this.trigger_event(this.EVENT_TRIGGERS.HIGHLIGHT_OBJ)
+
 }
 
 /* ---------------------------------
@@ -144,6 +159,8 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
             Lesson_accord.addClass('JUIaccordion');
             Lesson_accord.addClass('Lesson_obj');
             Lesson_accord.attr('data-value', lesson.slug)
+            Lesson_accord.attr('data-depth', lesson.depth)
+            Lesson_accord.attr('data-TOC-obj-id', lesson.slug)
 
             var Lesson_title = $(document.createElement('h3'));
             Lesson_title.addClass('accord-title');
@@ -201,6 +218,7 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
 
                 section_link.addClass('Section_obj')
                 section_link.attr('data-value', section.slug_trail)
+                section_link.attr('data-TOC-obj-id', section.slug_trail)
 
                 // add an icon for each of the section types for visual identification
 
@@ -256,6 +274,26 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
     /* ---------------------------------
         TOC Helper Methods
     ---------------------------------*/
+        TABLE_OF_CONTENTS_MANAGER.prototype.get_TOC_obj = function(value){
+            // get the TOC-object associated with the passed value and return it
+            var obj = $(this._target).find('[data-TOC-obj-id="{0}"]'.format(value))
+            return (obj.length)? obj : null;
+        }
+
+        TABLE_OF_CONTENTS_MANAGER.prototype._select_object = function(obj_id) {
+
+                var obj = this.get_TOC_obj(obj_id);
+                if(!!obj){
+                    // if this object is a lesson, click it's summary link
+                    if(obj.hasClass('Lesson_obj')) obj.find('.Lesson_Link:first').click();
+
+                    // if this is a section link, click it
+                    if(obj.hasClass('Section_obj')) obj.click();
+                }
+
+
+            }
+
         TABLE_OF_CONTENTS_MANAGER.prototype.get_next_section = function(section) {
                 var section_index = this._section_listing.indexOf(section);
 
@@ -327,19 +365,19 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
 
             }
 
-        TABLE_OF_CONTENTS_MANAGER.prototype.highlight_section = function (section_slug) {
+        TABLE_OF_CONTENTS_MANAGER.prototype._highlight_section = function (section_slug) {
 
                 $(".TOC_Title").removeClass('current_selected_section');
                 $(".TOC_Title[value='" + section_slug +"']").addClass('current_selected_section');
 
-                setTimeout(function(){ this.expand_to_section() }.bind(this), 500);
+                setTimeout(function(){ this._expand_to_section() }.bind(this), 500);
             }
 
-        TABLE_OF_CONTENTS_MANAGER.prototype.expand_to_section = function(value) {
+        TABLE_OF_CONTENTS_MANAGER.prototype._expand_to_section = function(value) {
             // method to expand the table of contents to the section specified by 'value' parameter,
             //   or the current_selected_section by default
             var toc_title =(typeof(value) != 'undefined') ?
-                    $('.TOC_Title[data-value="{0}"]'.format(value)) :
+                    $('.Section_Link[data-value="{0}"]'.format(value)) :
                     $('.current_selected_section')
 
             // collect a list of parents for expansion
@@ -365,7 +403,7 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
                 // delay
                 setTimeout(function(){
                     $(accordion).accordion('option', 'active', 0);
-                }, index * 500)
+                }, index * 300)
 
             })
 
@@ -386,6 +424,17 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
                 if better to pass events to other containers to deal with
                 or if should just set others to listen for this target container's events
     ---------------------------------*/
+        TABLE_OF_CONTENTS_MANAGER.prototype.trigger_event = function(event_trigger, args_array){
+            /*
+             * convenience method for triggering TOC events, accepts an event trigger,
+             * and array of arguments to pass to the event (most support callbacks)
+             */
+
+            $(this._target).trigger(event_trigger, args_array);
+
+
+        }
+
         TABLE_OF_CONTENTS_MANAGER.prototype.register_listener = function(listener_selector){
              if($(listener_selector).length == 0)
                 throw new Error("LESSON_MANAGER Attempted to register, '" + listener_selector +"', as an event listener, but container cannot be found.")
@@ -406,4 +455,43 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
                 $(value).trigger('_TOC_section_changed', [current_section])
             })
 
+        }
+
+        TABLE_OF_CONTENTS_MANAGER.prototype._select_obj_listener = function(evt, obj_id, callback_fn, callback_args_array){
+            /* event to highlight a specified object in the table of contents
+             * if no object id was provided defaults to the 'current_selected'
+             * object
+             */
+            //this._expand_to_section(obj_id)
+
+            this._select_object(obj_id)
+
+            if(typeof(callback_fn) != undefined && typeof(callback_fn) == "function"){
+                callback_fn.apply(null, callback_args_array)
+            }
+        }
+
+        TABLE_OF_CONTENTS_MANAGER.prototype._highlight_obj_listener = function(evt, obj_id, callback_fn, callback_args_array){
+            /* event to highlight a specified object in the table of contents
+             * if no object id was provided defaults to the 'current_selected'
+             * object
+             */
+            //this._expand_to_section(obj_id)
+            this._highlight_section(obj_id)
+
+            if(typeof(callback_fn) != undefined && typeof(callback_fn) == "function"){
+                callback_fn.apply(null, callback_args_array)
+            }
+        }
+
+        TABLE_OF_CONTENTS_MANAGER.prototype._focus_obj_listener = function(evt, obj_id, callback_fn, callback_args_array){
+            /* event to expand child object in the table of contents to focus a specific object
+             * if no object id was provided defaults to the 'current_selected'
+             * object
+             */
+            this._expand_to_section(obj_id)
+
+            if(typeof(callback_fn) != undefined && typeof(callback_fn) == "function"){
+                callback_fn.apply(null, callback_args_array)
+            }
         }

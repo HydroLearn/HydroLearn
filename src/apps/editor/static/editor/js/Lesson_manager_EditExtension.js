@@ -107,6 +107,11 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
         $('.Delete_button').click(function(event){
             event.preventDefault()
 
+            var obj_id = LESSON_MGR.get_Loaded_Section()
+            debugger;
+            TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.DELETE_DIALOG, [obj_id]);
+
+            return
             // hide the controls while loading
             $('#delete-confirmation-confirm').hide()
             $('#delete-confirmation-cancel').hide()
@@ -222,7 +227,9 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
                 var parent_lesson = $('.current_selected_section').closest('.Lesson_obj')
 
                 if(parent_lesson.hasClass('TOC_NEW_OBJ')){
-                    TOC_MGR.remove_lesson($('.current_selected_section').attr('value'))
+
+                    TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.REMOVE_OBJ, [$('.current_selected_section').attr('value')])
+
 
                     // no natural return point after this removal
                     //      so load the Root Lesson Introduction
@@ -238,8 +245,7 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
             // if a new section
             if($('.current_selected_section').hasClass('TOC_NEW_OBJ')){
-                //$('.current_selected_section').remove()
-                TOC_MGR.remove_section($('.current_selected_section').attr('value'))
+                TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.REMOVE_OBJ, [$('.current_selected_section').attr('value')])
 
                 // no natural return point after this removal
                 //      so load the Root Lesson Introduction
@@ -324,7 +330,7 @@ EDITOR_LESSON_MANAGER.prototype = Object.create(LESSON_MANAGER.prototype)
 
                 var parent_lesson = $(current_view_TOC_obj).closest('.Lesson_obj')
                 if(parent_lesson.hasClass('TOC_NEW_OBJ')){
-                    TOC_MGR.remove_lesson($(current_view_TOC_obj).attr('value'))
+                    TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.REMOVE_OBJ, [$(current_view_TOC_obj).attr('value')])
                 }
 
                 // no natural return point after this removal
@@ -334,7 +340,7 @@ EDITOR_LESSON_MANAGER.prototype = Object.create(LESSON_MANAGER.prototype)
 
             // otherwise if this is a new section, remove the placeholder from the table of contents
             if($(current_view_TOC_obj).hasClass('TOC_NEW_OBJ')){
-                TOC_MGR.remove_section($(current_view_TOC_obj).attr('value'))
+                TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.REMOVE_OBJ, [$(current_view_TOC_obj).attr('value')])
             }
 
             // perform default operations

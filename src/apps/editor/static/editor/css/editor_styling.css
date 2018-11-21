@@ -4,62 +4,86 @@
 .cms-modal-item-buttons a {
   color: white; }
 
+/*
+    jquery CONTEXT MENU styling header via data attribute
+*/
+.data-title:before {
+  color: #8f8f8f;
+  content: attr(data-menutitle);
+  display: block;
+  padding: 2px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1em;
+  font-weight: bold; }
+
+.context-menu-item.context-menu-icon-delete {
+  color: #b1213c; }
+  .context-menu-item.context-menu-icon-delete:before {
+    color: #b1213c; }
+
 #TOC_content .TOC_add_menu {
   color: white;
   border-radius: 7px;
   text-align: center;
-  display: inline;
-  padding: 3px 5px; }
+  display: unset; }
   #TOC_content .TOC_add_menu .TOC_add_menu_trigger_btn {
     cursor: pointer;
     border-radius: 7px;
     padding: 3px 5px;
     display: inline-block;
     float: right;
-    margin-left: 5px; }
+    margin-top: -2px;
+    margin-left: 5px;
+    border: none;
+    background: transparent; }
+    #TOC_content .TOC_add_menu .TOC_add_menu_trigger_btn.active {
+      background: #85cfc1;
+      border-bottom-left-radius: unset;
+      border-bottom-right-radius: unset; }
     #TOC_content .TOC_add_menu .TOC_add_menu_trigger_btn:hover {
       background: #85cfc1; }
   #TOC_content .TOC_add_menu .TOC_add_menu_content {
     background: #85cfc1;
     width: 100%;
-    padding: 3px 0px;
-    margin: 7px 0;
-    border: 1px solid #45a4f3;
+    border-radius: 7px;
+    border-top-right-radius: unset;
+    margin: 3px 0;
+    padding: 5px;
     box-shadow: 5px 5px 6px rgba(0, 0, 0, 0.3); }
-#TOC_content .TOC_Add_Section_wrapper {
-  margin: 0;
-  text-align: center; }
-  #TOC_content .TOC_Add_Section_wrapper .TOC_Add_Section_button {
-    cursor: pointer;
-    background: #ffffff33;
-    color: #427e8d;
-    transition: all .2s;
-    font-size: .85em;
-    padding: 3px 6px;
-    display: block;
-    border-bottom: 1px solid #00000033; }
-    #TOC_content .TOC_Add_Section_wrapper .TOC_Add_Section_button:hover {
-      background: #31c55f;
-      color: #fff; }
-    #TOC_content .TOC_Add_Section_wrapper .TOC_Add_Section_button i {
-      padding-right: 3px; }
-#TOC_content .TOC_Add_Lesson_wrapper {
-  margin: 0;
-  text-align: center; }
-  #TOC_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button {
-    cursor: pointer;
-    background: #ffffff33;
-    padding: 3px 6px;
-    transition: all .2s;
-    font-size: .85em;
-    color: #427e8d;
-    display: block;
-    border-bottom: 1px solid #00000033; }
-    #TOC_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button:hover {
-      background: #31c55f;
-      color: #fff; }
-    #TOC_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button i {
-      padding-right: 3px; }
+    #TOC_content .TOC_add_menu .TOC_add_menu_content .TOC_Add_Section_wrapper {
+      margin: 0;
+      text-align: center; }
+      #TOC_content .TOC_add_menu .TOC_add_menu_content .TOC_Add_Section_wrapper .TOC_Add_Section_button {
+        cursor: pointer;
+        background: #ffffff33;
+        color: #427e8d;
+        transition: all .2s;
+        font-size: .85em;
+        padding: 3px 6px;
+        display: block;
+        border-bottom: 1px solid #00000033; }
+        #TOC_content .TOC_add_menu .TOC_add_menu_content .TOC_Add_Section_wrapper .TOC_Add_Section_button:hover {
+          background: #31c55f;
+          color: #fff; }
+        #TOC_content .TOC_add_menu .TOC_add_menu_content .TOC_Add_Section_wrapper .TOC_Add_Section_button i {
+          padding-right: 3px; }
+    #TOC_content .TOC_add_menu .TOC_add_menu_content .TOC_Add_Lesson_wrapper {
+      margin: 0;
+      text-align: center; }
+      #TOC_content .TOC_add_menu .TOC_add_menu_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button {
+        cursor: pointer;
+        background: #ffffff33;
+        padding: 3px 6px;
+        transition: all .2s;
+        font-size: .85em;
+        color: #427e8d;
+        display: block;
+        border-bottom: 1px solid #00000033; }
+        #TOC_content .TOC_add_menu .TOC_add_menu_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button:hover {
+          background: #31c55f;
+          color: #fff; }
+        #TOC_content .TOC_add_menu .TOC_add_menu_content .TOC_Add_Lesson_wrapper .TOC_Add_Lesson_button i {
+          padding-right: 3px; }
 #TOC_content .TOC_Toolbox {
   font-family: "Lato", sans-serif;
   font-size: 15px;
