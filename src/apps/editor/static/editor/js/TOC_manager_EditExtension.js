@@ -162,7 +162,7 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                         show: function(options){
                             // add the lesson's title to the context menu
                             // for added clarity of object being interacted with
-                            options.$menu.attr('data-menutitle', "{0}:".format($(this).text()))
+                            options.$menu.attr('data-menutitle', "{0}".format($(this).text()))
                         },
                     },
 
@@ -180,7 +180,7 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                         show: function(options){
                             // add the lesson's title to the context menu
                             // for added clarity of object being interacted with
-                            options.$menu.attr('data-menutitle', "{0}:".format($(this).closest('.Lesson_obj').find('.accord-title').first().text()))
+                            options.$menu.attr('data-menutitle', "{0}".format($(this).closest('.Lesson_obj').find('.accord-title').first().text()))
                         },
                     },
 
@@ -192,7 +192,7 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
                 // attach context menu to the lesson header object
                 $(lesson_obj).contextMenu(lesson_c_menu_opts1);
-                $(lesson_obj).contextMenu(lesson_c_menu_opts2);
+                //$(lesson_obj).contextMenu(lesson_c_menu_opts2);
 
 
 
@@ -252,7 +252,7 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                 show: function(options){
                     // add the lesson's title to the context menu
                     // for added clarity of object being interacted with
-                    options.$menu.attr('data-menutitle', "{0}:".format($(this).text()))
+                    options.$menu.attr('data-menutitle', "{0}".format($(this).text()))
                 },
             },
 

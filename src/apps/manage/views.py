@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 #from django.db.models.query import EmptyQuerySet
 from django.forms.formsets import DELETION_FIELD_NAME, formset_factory
-from django.shortcuts import get_object_or_404, render_to_response, render
+from django.shortcuts import get_object_or_404, render_to_response, render, redirect
 from django.utils.encoding import force_text
 from django.views import View
 from django.views.generic import (
@@ -75,6 +75,14 @@ from django.utils.translation import gettext as _
 #@login_required
 class Index(LoginRequiredMixin, TemplateView):
     template_name = 'manage/manage_index.html'
+
+    def get(self, request, *args, **kwargs):
+
+        if not self.request.toolbar.edit_mode_active:
+            return redirect("/manage/?edit")
+
+
+        return super(Index, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(Index, self).get_context_data(**kwargs)

@@ -269,6 +269,15 @@ a {
 
         }
 
+        #TOC_tab{
+
+            @media (min-width: $mobile_large) {
+                    display:none;
+
+            }
+
+        }
+
 
     }
 

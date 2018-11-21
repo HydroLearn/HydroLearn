@@ -437,6 +437,9 @@ a {
     @media (min-width: 768px) {
       #sidebar #sidebar_nav .nav-item #navigation-tab {
         display: none; } }
+    @media (min-width: 768px) {
+      #sidebar #sidebar_nav .nav-item #TOC_tab {
+        display: none; } }
   #sidebar a[data-toggle="collapse"] {
     position: relative; }
   #sidebar a[aria-expanded="false"]::before {
