@@ -23,8 +23,6 @@ function EDITOR_TOC(target_container_selector, TOC_Listing, editor_access){
 
 
 
-
-
 }
 
 // extend this object's prototype to extend from TABLE_OF_CONTENTS_MANAGER's prototype
@@ -38,6 +36,10 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
                 // perform the same action as default TOC
                 TABLE_OF_CONTENTS_MANAGER.prototype.parse_listing.call(this, listing)
+
+
+                // prevent the default context menu action on the table of contents object
+                $('#Base_Lesson_obj').contextmenu(function(){return false;})
 
                 if(listing.slug == 'new_lesson'){
                     $('#Base_Lesson_obj').addClass('TOC_NEW_OBJ')
@@ -192,7 +194,10 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
                 // attach context menu to the lesson header object
                 $(lesson_obj).contextMenu(lesson_c_menu_opts1);
-                //$(lesson_obj).contextMenu(lesson_c_menu_opts2);
+                // $(lesson_obj).contextMenu(lesson_c_menu_opts2);
+
+                // disable the NORMAL context menu on the lesson links
+                //$(lesson_obj).find('.Lesson_Link:first').contextmenu(function(){return false;});
 
 
 
