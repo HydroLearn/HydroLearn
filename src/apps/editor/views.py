@@ -360,23 +360,17 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
 
     def get(self, request, *args, **kwargs):
 
-        # TODO: THIS IS HACKY, FIND A BETTER WAY
-        #   when submitting through the content edit iframe
-        #   the edit flag is passed, if this happens
-        #   the toolbar throws an error
-        # if self.request.toolbar.edit_mode:
+        # if this is an ajax request, it was either triggered
+        # by the cms edit-plugin interface/ or ISNT SUPPOSED TO BE USED
+        # trigger a refresh of the page
+        if self.request.is_ajax():
+            url = self.request.path
+            current_view = self.request.GET.get('v', '')
 
-        if self.request.GET.get('edit', None) is not None:
-            # DESCRIPTION :
-            #   if this exception is raised, the editor just submitted
-            #   a form and is attempting to refresh, but since there
-            #   is an extra 'edit' parameter, the CMS toolbar fails to initialize correctly
-            #   resulting in a non initialized page being presented to the user
-            #
-            #   to prevent breaking workflow, raise an error here which
-            #   triggers the default behavior of reloading the page
-            #       (without the parameter)
-            raise Exception('KNOWN ERROR (editor_LessonView): Error Triggers necessary reloading of an edited lesson/section in frontend.')
+            if current_view:
+                url = url + "?v=" + current_view
+
+            return render_to_response(self.get_template_names(), self.get_context_data())
 
 
 
