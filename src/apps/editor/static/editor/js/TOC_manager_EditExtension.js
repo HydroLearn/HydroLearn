@@ -38,8 +38,7 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                 TABLE_OF_CONTENTS_MANAGER.prototype.parse_listing.call(this, listing)
 
 
-                // prevent the default context menu action on the table of contents object
-                $('#Base_Lesson_obj').contextmenu(function(){return false;})
+
 
                 if(listing.slug == 'new_lesson'){
                     $('#Base_Lesson_obj').addClass('TOC_NEW_OBJ')
@@ -51,7 +50,12 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                     this._add_section_contextMenus();
                 }
 
+                // prevent the default context menu action on the table of contents object
+                $('#Base_Lesson_obj').contextmenu(function(evt){
 
+                  if(!$(evt.target).hasClass('Section_Link') || $(evt.target).attr('data-is-instanced') != 'true')
+                        return false;
+                })
 
             }
 
@@ -193,7 +197,10 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                 };
 
                 // attach context menu to the lesson header object
-                $(lesson_obj).contextMenu(lesson_c_menu_opts1);
+                if( lesson.is_instanced){
+                    $(lesson_obj).contextMenu(lesson_c_menu_opts1);
+                }
+
                 // $(lesson_obj).contextMenu(lesson_c_menu_opts2);
 
                 // disable the NORMAL context menu on the lesson links
@@ -250,7 +257,7 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
         var section_c_menu_opts = {
             trigger:'right',
-            selector: '.Section_obj[data-is-instanced=true]',
+            selector: '.Section_obj[data-is-instanced="true"]',
             className: 'data-title',
 
             events: {
