@@ -11,13 +11,12 @@ from django.utils.translation import gettext as _
 
 from django.views.generic import (
     DetailView,
-    ListView,
     TemplateView,
     CreateView,
     UpdateView,
     DeleteView)
 
-from django.http import JsonResponse, Http404, HttpResponseNotFound, HttpResponse
+from django.http import JsonResponse, Http404, HttpResponseNotFound
 from django.shortcuts import redirect, render, get_object_or_404, render_to_response
 #from taggit.models import Tag
 from django.contrib.contenttypes.models import ContentType
@@ -357,22 +356,40 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
     context_object_name = 'Lesson'
     template_name = 'editor/viewer/edit_index.html'
 
-
     def get(self, request, *args, **kwargs):
+
+        # if accessing this page out of edit mode trigger a redirect
+        # edit enabled view
+        if not self.request.toolbar.edit_mode_active:
+            current_partial = request.GET.get('v','')
+            return redirect(self.request.path_info + '?edit&v=' + current_partial)
+
 
         # if this is an ajax request, it was either triggered
         # by the cms edit-plugin interface/ or ISNT SUPPOSED TO BE USED
         # trigger a refresh of the page
+
+
+        # TODO: THIS IS HACKY, FIND A BETTER WAY
+        #   the only current instance of this view being called via ajax
+        #   is through submission of CMS content editor
+        #
+        #   if treated normally this causes a javascript error which
+        #   breaks the page
+        #   to maintain workflow throw an error which triggers the CMS method
+        #   to do a full refresh
         if self.request.is_ajax():
-            url = self.request.path
-            current_view = self.request.GET.get('v', '')
-
-            if current_view:
-                url = url + "?v=" + current_view
-
-            return render_to_response(self.get_template_names(), self.get_context_data())
-
-
+            # DESCRIPTION :
+            #   if this exception is raised, the editor just submitted
+            #   a form and is attempting to refresh, but since there
+            #   is an extra 'edit' parameter, the CMS toolbar fails to initialize correctly
+            #   resulting in a non initialized page being presented to the user
+            #
+            #   to prevent breaking workflow, raise an error here which
+            #   triggers the default behavior of reloading the page
+            #       (without the parameter)
+            raise Exception(
+                'KNOWN ERROR (editor_LessonView): Error Triggers necessary reloading of an edited lesson/section in frontend.')
 
         return super(editor_LessonView, self).get(request,*args,**kwargs)
 
