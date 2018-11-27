@@ -349,7 +349,12 @@
 
                 {# if there was a supplied lesson, load it. Otherwise, just start load lesson tab with no loaded seciton #}
                 {% if loaded_section %}
-                    VIEWPORT_MGR.Switch_View('Lessons', ['{{loaded_section}}']);
+                    // if the requested section is in the TOC load it
+                    if(!!TOC_MGR.get_TOC_obj('{{loaded_section}}')){
+                        VIEWPORT_MGR.Switch_View('Lessons', ['{{loaded_section}}']);
+                    }else{
+                        VIEWPORT_MGR.Switch_View('Lessons');
+                    }
                     $('#lesson-tab').tab('show') // Select lesson tab
 
 
