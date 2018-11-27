@@ -365,11 +365,6 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
             return redirect(self.request.path_info + '?edit&v=' + current_partial)
 
 
-        # if this is an ajax request, it was either triggered
-        # by the cms edit-plugin interface/ or ISNT SUPPOSED TO BE USED
-        # trigger a refresh of the page
-
-
         # TODO: THIS IS HACKY, FIND A BETTER WAY
         #   the only current instance of this view being called via ajax
         #   is through submission of CMS content editor
@@ -379,15 +374,6 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
         #   to maintain workflow throw an error which triggers the CMS method
         #   to do a full refresh
         if self.request.is_ajax():
-            # DESCRIPTION :
-            #   if this exception is raised, the editor just submitted
-            #   a form and is attempting to refresh, but since there
-            #   is an extra 'edit' parameter, the CMS toolbar fails to initialize correctly
-            #   resulting in a non initialized page being presented to the user
-            #
-            #   to prevent breaking workflow, raise an error here which
-            #   triggers the default behavior of reloading the page
-            #       (without the parameter)
             raise Exception(
                 'KNOWN ERROR (editor_LessonView): Error Triggers necessary reloading of an edited lesson/section in frontend.')
 
