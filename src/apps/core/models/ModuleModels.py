@@ -199,6 +199,31 @@ class Lesson(Publication):
         return self.name
 
     ########################################
+    #   Import/Export Methods
+    ########################################
+
+    def clone(self):
+        '''
+            method to clone the lesson
+        :return:
+        '''
+        pass
+
+    def export(self):
+        '''
+            method to clone the lesson to it's own module.
+
+            generating a unique ref-id as it will now be it's own
+            publishable
+
+        :return:
+        '''
+        pass
+
+
+
+
+    ########################################
     #   Publication Method overrides
     ########################################
 
@@ -449,7 +474,6 @@ class Lesson(Publication):
         ]
 
         return any(access_conditions)
-
 
     def get_owner(self):
         '''
