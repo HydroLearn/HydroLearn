@@ -11,16 +11,19 @@ class HS_ResourceLink_AdminForm(ModelForm):
         model = HS_ResourceLink_model
         fields = ['display_text', 'resource_link', 'resource_type']
 
-        widgets = {
-            'resource_link': forms.HiddenInput(attrs={
-                'data-field-name':'resource_link',
-            }),
-            'resource_type': forms.HiddenInput(attrs={
-                'data-field-name':'resource_type',
-            }),
-
-
-        }
+        # TODO: UN-comment this hide action once the HydroShare Browser is integrated
+        #       events tied to this browser will be used to populate these fields
+        #
+        # widgets = {
+        #     'resource_link': forms.HiddenInput(attrs={
+        #         'data-field-name':'resource_link',
+        #     }),
+        #     'resource_type': forms.HiddenInput(attrs={
+        #         'data-field-name':'resource_type',
+        #     }),
+        #
+        #
+        # }
 
 
     class Media:
