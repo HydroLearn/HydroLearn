@@ -177,6 +177,10 @@ INSTALLED_APPS = (
     'src.apps.editor',
     'src.apps.tags',
 
+    # ***************** include content plugins
+    'src.apps.Content_Plugins',
+    'src.apps.Content_Plugins.HS_ResourceLink',
+
 )
 
 AUTH_USER_MODEL = 'accounts.User'

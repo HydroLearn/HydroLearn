@@ -22,6 +22,7 @@ from src.apps.editor.views import (
 
     editor_LessonDeleteView,
     editor_SectionDeleteView,
+
 )
 
 handler404 = 'src.editor.views.handler404'
