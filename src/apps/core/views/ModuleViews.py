@@ -4,6 +4,8 @@ from django.views.generic import DetailView, ListView, TemplateView
 from django.http import JsonResponse
 #from taggit.models import Tag
 from django.contrib.contenttypes.models import ContentType
+from src.apps.core.forms import Learning_ObjectiveForm
+from django.forms import formset_factory
 
 from src.apps.core.models.PublicationModels import (
     Publication,
@@ -68,3 +70,12 @@ class core_QuizQuestionDetailView(DetailView):
     model = QuizQuestion
     context_object_name = "Quiz Question"
     queryset = QuizQuestion.objects.all()  #select all of the questions, add in published filter later
+
+class LearningObjectiveView(TemplateView):
+
+    template_name = "core/learning_outcomes.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['learning_objective_formset'] = formset_factory(Learning_ObjectiveForm)
+        return context

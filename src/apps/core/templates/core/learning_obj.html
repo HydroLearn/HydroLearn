@@ -1,0 +1,17 @@
+<div id="learning_outcomes_formset">
+    <form class="learning_obj_form empty_form">
+        <div class="LO_representation"></div>
+        {{ learning_objective_formset }}
+    </form>
+</div>
+
+<script>
+    $('.learning_obj_form').formset();
+    // remove the inital row... TODO, this will be removed when we're hooked into the backend?
+    $('.delete-row').click()
+</script>
+<style type="text/css">
+    .add-row {
+        visibility: hidden;
+    }
+</style>
