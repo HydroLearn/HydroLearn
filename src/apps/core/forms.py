@@ -1,6 +1,8 @@
 from django import forms
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext as _
+from .models.LearningObjModels import Learning_Level, Learning_Verb, Learning_Outcome, \
+    Learning_Objective
 
 from src.apps.core.models.ModuleModels import (
     #Module,
@@ -224,3 +226,35 @@ ResourceInline = inlineformset_factory(
     form=ResourceForm,
     formset=BaseResourceFormset,
 )
+
+class Learing_LevelForm(forms.ModelForm):
+    class Meta:
+        model = Learning_Level
+        fields = ['label', 'definition']
+
+
+class Learing_VerbForm(forms.ModelForm):
+    class Meta:
+        model = Learning_Verb
+        fields = ['verb', 'level']
+
+
+class Learing_OutcomeForm(forms.ModelForm):
+    class Meta:
+        model = Learning_Outcome
+        fields = ['outcome']
+
+
+class Learning_ObjectiveForm(forms.ModelForm):
+    class Meta:
+        model = Learning_Objective
+        fields = ['condition', 'task', 'degree', 'verb', 'outcomes']
+
+
+class Learning_ObjectiveForm(forms.Form):
+    learning_condition_text = forms.CharField(widget = forms.HiddenInput())
+    learning_task_text = forms.CharField(widget = forms.HiddenInput())
+    learning_degree_text = forms.CharField(widget = forms.HiddenInput())
+    learning_level_text = forms.CharField(widget = forms.HiddenInput())
+    learning_verb_text = forms.CharField(widget = forms.HiddenInput())
+    learning_outcomes_ids = forms.CharField(widget = forms.HiddenInput())

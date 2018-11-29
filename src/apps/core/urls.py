@@ -1,6 +1,5 @@
 from django.conf.urls import url
 
-
 from src.apps.core.views.ModuleViews import *
 
 # 'core' app urls
@@ -8,6 +7,7 @@ urlpatterns = [
     
     # url(r'^tag/(?P<slug>[-\w]+)/$', TagIndexView.as_view(), name='tagged'),
 
+    url(r'^lo/$', LearningObjectiveView.as_view(), name="learning_objectives"),
     # lesson views
     url(r'^$', core_LessonListView.as_view(), name="lesson_list"),
     url(r'^(?P<slug>[^/]+)/$', core_LessonDetailView.as_view(), name="lesson_detail"),
@@ -20,7 +20,6 @@ urlpatterns = [
     url(r'^(?P<lesson_slug>[^/]+)/(?P<quiz_slug>[^/]+)/(?P<pk>[^/]+)/$', core_QuizQuestionDetailView.as_view(), name="quiz_question_detail"),
 
     # ======================================== PARTIAL VIEW RETURNS ====================
-        
         
 
 
