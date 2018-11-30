@@ -498,25 +498,18 @@ class editor_LessonExportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
                 form.add_error(None, "You cannot export a root module! Export Canceled!")
                 return self.form_invalid(form)
 
-            # if the exported lesson is expected to be retained
-            #  generate a copy of the lesson and save with a new ref_id
             if retained:
 
-               # generate a new lesson reference based on the exported lesson
+                # if retaining the lesson being exported, generate a copy
                 new_copy = exported_lesson.copy()
 
                 new_copy.created_by = self.request.user
-                exported_lesson.parent_lesson = None
-                exported_lesson.position = 0
+                new_copy.parent_lesson = None
+                new_copy.position = 0
 
                 new_copy.save()
                 new_copy.copy_content(exported_lesson)
                 new_copy.copy_relations(exported_lesson)
-
-                #new_copy.copy_relations(exported_lesson, False)
-
-
-
 
             else:
                 # otherwise just remove the parent reference and save
@@ -585,7 +578,7 @@ class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
 
             # grab specified objects for transaction
             parent_lesson = Lesson.objects.get(slug=self.kwargs.get('slug'))
-            #imported_lesson = Lesson.objects.get(pk=import_lesson_id)
+
 
             # check user has draft permissions to the parent object, and the imported object
             if not parent_lesson.has_edit_access(self.request.user):
@@ -609,8 +602,20 @@ class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
 
 
             if retained:
-                pass
+                # if retaining the lesson being imported generate a copy
+                new_copy = imported_lesson.copy()
+
+                new_copy.created_by = self.request.user
+                new_copy.parent_lesson = parent_lesson
+                new_copy.position = parent_lesson.num_children
+
+                new_copy.save()
+                new_copy.copy_content(imported_lesson)
+                new_copy.copy_relations(imported_lesson)
+
+
             else:
+                # otherwise just move the imported lesson into the parent lesson
                 imported_lesson.parent_lesson = parent_lesson
                 imported_lesson.position = parent_lesson.num_children
                 imported_lesson.save()
