@@ -187,6 +187,15 @@ class Publication(CreationTrackingBaseModel):
 
             self.save()
 
+    def copy(self, maintain_ref=False):
+        raise NotImplemented("Objects Inheriting from Publication must provide a 'copy' method to generate a new instance! (don't call this super method)")
+
+    def copy_content(self, from_instance):
+        raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_content' method to copy over content fields after saving a new 'copy'! (don't call this super method)")
+
+    def copy_relations(self, from_instance, maintain_ref=False):
+        raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_relations' method for copying any child objects! (don't call this super method)")
+
     def publish(self):
         '''
             Generate a new published copy for a Draft (publication with is_draft == True)
@@ -222,7 +231,8 @@ class Publication(CreationTrackingBaseModel):
                 self.save()
 
             # create a new publication with the same publication id as the draft, and same creator
-            public_page = self.copy()
+            # public_page = self.clone()
+            public_page = self.copy(True)
 
 
 
@@ -239,7 +249,8 @@ class Publication(CreationTrackingBaseModel):
             public_page.save()
 
             # copy any children
-            public_page.copy_relations(self)
+            public_page.copy_content(self)
+            public_page.copy_relations(self, True)
 
             # mark the current draft as published (happens in save)
             #self.publish_status = self.PUBLISHED
@@ -254,8 +265,6 @@ class Publication(CreationTrackingBaseModel):
 
         # save the new published copy
         #public_page.save()
-
-
 
     def unpublish(self):
         # if there is an existing published copy of this Publication, delete it and save
@@ -533,7 +542,8 @@ class PolyPublication(PolyCreationTrackingBaseModel):
                 self.save()
 
             # create a new publication with the same publication id as the draft, and same creator
-            public_page = self.copy()
+            #public_page = self.clone()
+            public_page = self.copy(True)
 
             # copy any additional attributes from draft to public copy
             self._copy_attributes_to(public_page)
@@ -546,7 +556,8 @@ class PolyPublication(PolyCreationTrackingBaseModel):
             public_page.save()
 
             # copy any children
-            public_page.copy_relations(self)
+            public_page.copy_content(self)
+            public_page.copy_relations(self, True)
 
             # mark the current draft as published (happens in save)
             # self.publish_status = self.PUBLISHED
@@ -646,6 +657,16 @@ class PolyPublicationChild(PolyCreationTrackingBaseModel):
         app_label = 'core'
         verbose_name_plural = 'Poly-Publication Children'
         abstract = True
+
+    def copy(self, maintain_ref=False):
+        raise NotImplemented("Objects Inheriting from Publication must provide a 'copy' method to generate a new instance! (don't call this super method)")
+
+    def copy_content(self, from_instance):
+        raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_content' method to copy over content fields! (don't call this super method)")
+
+    def copy_relations(self, from_instance, maintain_ref=False):
+        raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_relations' method for copying any child objects! (don't call this super method)")
+
 
     def get_Publishable_parent(self):
         '''

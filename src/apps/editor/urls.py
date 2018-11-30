@@ -23,6 +23,8 @@ from src.apps.editor.views import (
     editor_LessonDeleteView,
     editor_SectionDeleteView,
 
+    editor_LessonExportView,
+    editor_LessonImportView,
 )
 
 handler404 = 'src.editor.views.handler404'
@@ -60,11 +62,16 @@ urlpatterns = [
     # editor view for new lessons
     url(r'^new/$', editor_NewLessonView.as_view(), name="lesson_create"),
 
+    # import/export
+    url(r'^export/(?P<slug>[^/]+)/$', editor_LessonExportView.as_view(), name="lesson_export"),
+    url(r'^import/(?P<slug>[^/]+)/$', editor_LessonImportView.as_view(), name="lesson_import"),
+
+
     # main editor view
     url(r'^(?P<slug>[^/]+)/$', editor_LessonView.as_view(), name="lesson_edit"),
 
 
-    # section detail view
+
 
     # ======================================== PARTIAL VIEW RETURNS ====================
         

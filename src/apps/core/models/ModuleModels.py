@@ -1,9 +1,10 @@
 from copy import deepcopy
 from datetime import timedelta
+from django.utils.timezone import now
 
 from cms.models import PlaceholderField, ValidationError, uuid
 from django.urls import reverse
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 
 from django_extensions.db.fields import (
@@ -132,6 +133,19 @@ class Lesson(Publication):
     summary = PlaceholderField('lesson_summary')
 
 
+    ########################################
+    # Cloning references
+    ########################################
+
+    # the date this lesson was cloned from a published lesson
+    #derived_date = models.DateTimeField(null=True)
+
+    # the published lesson this lesson was derived from's ref_id
+    #derived_from = models.UUIDField(null=True, default=None, editable=False)
+
+
+
+
 
     #   the default related name for this many-to-many field is lesson_set
     #
@@ -142,6 +156,7 @@ class Lesson(Publication):
     #       resource types potentially needing different attributes
     #
     # resources = models.ManyToManyField('core.Resource')
+
 
     # TODO: potentially add 1-to-1 relationship to a publishable (instead of direct inheritance)
     #           this will allow for a lesson to be a child and root
@@ -156,8 +171,12 @@ class Lesson(Publication):
     #
     # publishable = models.OneToOneField('core.Publishable', default=None, on_delete=modeld.SET_NULL, parent_link=True)
 
+    def __str__(self):
+        return self.name
+
+
     ########################################
-    #   Methods
+    #   URL Methods
     ########################################
 
     # define for use by FormMixin
@@ -195,40 +214,96 @@ class Lesson(Publication):
         })
 
     # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
-    def __str__(self):
-        return self.name
 
     ########################################
-    #   Import/Export Methods
+    #   Query Methods/properties
     ########################################
 
-    def clone(self):
+    @property
+    def total_depth(self):
         '''
-            method to clone the lesson
-        :return:
+            method to return the total depth of this lesson's structure
+            (the max level of nested children)
+        :return: integer representation of child depth
         '''
-        pass
 
-    def export(self):
-        '''
-            method to clone the lesson to it's own module.
+        if self.sub_lessons:
 
-            generating a unique ref-id as it will now be it's own
-            publishable
+            max_depth = 0
+            for sub_lesson in self.sub_lessons.all():
+                max_depth = max(max_depth, sub_lesson.total_depth)
 
-        :return:
-        '''
-        pass
+            return max_depth + 1
+        else:
+            return 1
 
+    @property
+    def num_children(self):
+        return self.num_sections + self.num_sub_lessons
 
+    @property
+    def num_sections(self):
+        return self.sections.count()
 
+    @property
+    def num_sub_lessons(self):
+        return self.sub_lessons.count()
 
     ########################################
     #   Publication Method overrides
     ########################################
+    # def copy_attributes(self, from_lesson):
+    #     '''
+    #         method to copy attributes from another lesson into this lesson
+    #     :param from_lesson: lesson to copy attributes from
+    #     :return: None
+    #     '''
+    #     self.name = from_lesson.name
+    #     self.short_name = from_lesson.short_name
+    #     self.position = from_lesson.position
 
-    def copy(self):
 
+    def copy(self, maintain_ref=False):
+        '''
+            generate a new (unsaved) lesson instance based on this lesson, with a fresh ref_id if specified.
+
+            Notes:
+                The newly generated instance:
+                    - removes reference to parent
+                    - marks 'position' as 0
+                    - and sets 'is_deleted' to False
+
+                Additionally, this method does not copy placeholder(content), tags, collaborators, or
+                child-objects (use copy_content (or copy_relations for children) after save to do this)
+
+
+        :return: a new (unsaved) copy of this lesson
+        '''
+
+        new_instance = Lesson(
+
+            parent_lesson = None,
+            position=0,
+            is_deleted = False,
+
+            name = self.name,
+            short_name = self.short_name,
+        )
+
+        # if specified, mark this new instance as the same lesson
+        # typically only used in publication methods
+        if maintain_ref:
+            new_instance.ref_id = self.ref_id
+
+        return new_instance
+
+    def clone(self):
+        '''
+            (USED IN PUBLICATION)
+            clone this lesson to another object with the same ref_id
+
+        :return: new instance of this lesson with the same reference id
+        '''
         new_instance = deepcopy(self)
         new_instance.pk = None
         # new_instance.ref_id = None
@@ -236,13 +311,18 @@ class Lesson(Publication):
 
         return new_instance
 
-    def copy_relations(self, from_instance, preserve_child_ref_id=True):
+    def copy_relations(self, from_instance, maintain_ref=False):
+        '''
+            Copy child relations (sub_lessons/sections) from a passed lesson, with the option of specifying
+            if the ref_id should be maintained. this should only happen during publishing.
 
+        :param from_instance: Lesson instance from which the child relations are provided.
+        :param maintain_ref: Boolean representing if the ref_id should be maintained on the child objects, this should only be true in the case of publication.
+
+        :return: None
+        '''
         # copy over the content
-        self.copy_content(from_instance)
-
-        # add any tags from the 'from_instance'
-        self.tags.add(*list(from_instance.tags.names()))
+        #self.copy_content(from_instance)
 
         # Before copying related objects from the old instance, the ones
         # on the current one need to be deleted. Otherwise, duplicates may
@@ -252,33 +332,39 @@ class Lesson(Publication):
 
         for section_item in from_instance.sections.all():
             # copy the section items and set their linked lesson to this new instance
-            new_section = section_item.copy()
-
-            if preserve_child_ref_id:
-                new_section.ref_id = section_item.ref_id
+            new_section = section_item.copy(maintain_ref)
 
             new_section.lesson = self
+            new_section.position = section_item.position
 
             # save the copied section instance
             new_section.save()
-
-            new_section.copy_relations(section_item)
+            new_section.copy_content(section_item)
+            new_section.copy_relations(section_item, maintain_ref)
 
         for sub_lesson in from_instance.sub_lessons.all():
             # copy the sub-lesson items and set their linked parent_lesson to this new instance
-            new_lesson = sub_lesson.copy()
-
-            if preserve_child_ref_id:
-                new_lesson.ref_id = sub_lesson.ref_id
+            new_lesson = sub_lesson.copy(maintain_ref)
 
             new_lesson.parent_lesson = self
+            new_lesson.position = sub_lesson.position
 
             # save the copied sub-lesson instance
             new_lesson.save()
-
-            new_lesson.copy_relations(sub_lesson)
+            new_lesson.copy_content(sub_lesson)
+            new_lesson.copy_relations(sub_lesson, maintain_ref)
 
     def copy_content(self, from_instance):
+        '''
+            copy content including tags, and placeholder plugins to this instance from a passed Lesson
+
+        :param from_instance: a Lesson object the content/tags are being copied from
+        :return: None
+        '''
+
+        # add any tags from the 'from_instance'
+        self.tags.add(*list(from_instance.tags.names()))
+
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.summary.get_plugins_list()
 
@@ -291,6 +377,8 @@ class Lesson(Publication):
         # set depth level on save
         if self.parent_lesson:
             self.depth = self.parent_lesson.depth + 1
+        else:
+            self.depth = 0
 
 
         # TODO: this needs to be flipped

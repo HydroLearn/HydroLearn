@@ -1,5 +1,6 @@
 import json
 
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
@@ -8,13 +9,15 @@ from django.db import transaction
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template import RequestContext
 from django.utils.translation import gettext as _
+from django.utils.timezone import now
+
 
 from django.views.generic import (
     DetailView,
     TemplateView,
     CreateView,
     UpdateView,
-    DeleteView)
+    DeleteView, FormView)
 
 from django.http import JsonResponse, Http404, HttpResponseNotFound
 from django.shortcuts import redirect, render, get_object_or_404, render_to_response
@@ -35,13 +38,13 @@ from src.apps.editor.editor_queries import (
 
 from src.apps.editor.forms import (
 
-    inlineLessonFormset,
-    inlineSectionFormset,
     editor_LessonForm,
     editor_SectionForm,
     editor_ReadingSectionForm,
     editor_ActivitySectionForm,
     editor_QuizSectionForm,
+    # editor_ExportLessonForm,
+    # editor_ImportLessonForm,
 
 )
 
@@ -55,6 +58,7 @@ from src.apps.core.views.mixins import (
     OwnershipRequiredMixin,
     CollabViewAccessMixin,
 )
+
 
 
 #####################################################
@@ -428,6 +432,200 @@ class editor_NewLessonView(LoginRequiredMixin, TemplateView):
 
         return context
 
+
+#####################################################
+# Import Export views
+#####################################################
+class editor_LessonExportView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewMixin, AjaxableResponseMixin, FormView):
+    #form_class = editor_ExportLessonForm
+    template_name = "editor/forms/_export_form.html"
+    success_url = '/manage/'
+
+    def get_form_class(self):
+
+        class editor_ExportLessonForm(forms.Form):
+            exported_lesson = forms.CharField(
+                    initial=self.kwargs.get('slug'),
+                    widget=forms.HiddenInput()
+                )
+            retain_copy = forms.BooleanField(
+                    initial=False,
+                    required=False,
+                    label="Retain Instance",
+                    help_text="Checking this option will copy the selected lesson to it's own module, but will also retain the current copy as part of this module.",
+                )
+
+
+        return editor_ExportLessonForm
+
+    def get_context_data(self, **kwargs):
+        context = super(editor_LessonExportView, self).get_context_data(**kwargs)
+
+        context['Lesson'] = Lesson.objects.get(slug=self.kwargs.get('slug'))
+
+        return context
+
+    def success_message(self):
+        return _('Module Successfully Exported! Return to the Manage page if you wish to edit it.')
+
+    def failed_message(self):
+        return _('Export Failed! A problem was detected when exporting your module. Please correct any errors before attempting another export.')
+
+    def get_success_return_data(self, form):
+        return {
+            'retained_lesson': form.cleaned_data.get('retain_copy'),
+            'export_slug': '',
+        }
+
+    def get_failed_return_data(self, form):
+        return super(editor_LessonExportView,self).get_failed_return_data(form)
+
+    def form_valid(self, form):
+
+        with transaction.atomic():
+
+            exported_slug = form.cleaned_data.get('exported_lesson')
+            retained = form.cleaned_data.get('retain_copy', False)
+            exported_lesson = Lesson.objects.get(slug=exported_slug)
+
+            # ensure user has edit permission for the lesson being exported
+            if not exported_lesson.has_edit_access(self.request.user):
+                form.add_error(None, "You do not have edit permissions for this Lesson! Export Canceled!")
+                return self.form_invalid(form)
+
+            # ensure not exporting a root module
+            if exported_lesson.depth == 0:
+                form.add_error(None, "You cannot export a root module! Export Canceled!")
+                return self.form_invalid(form)
+
+            # if the exported lesson is expected to be retained
+            #  generate a copy of the lesson and save with a new ref_id
+            if retained:
+
+               # generate a new lesson reference based on the exported lesson
+                new_copy = exported_lesson.copy()
+
+                new_copy.created_by = self.request.user
+                exported_lesson.parent_lesson = None
+                exported_lesson.position = 0
+
+                new_copy.save()
+                new_copy.copy_content(exported_lesson)
+                new_copy.copy_relations(exported_lesson)
+
+                #new_copy.copy_relations(exported_lesson, False)
+
+
+
+
+            else:
+                # otherwise just remove the parent reference and save
+                exported_lesson.parent_lesson = None
+                exported_lesson.position = 0
+                exported_lesson.save()
+
+        return super(editor_LessonExportView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super(editor_LessonExportView, self).form_invalid(form)
+
+
+class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewMixin, AjaxableResponseMixin, FormView):
+    #form_class = editor_ImportLessonForm
+    template_name = "editor/forms/_import_form.html"
+    success_url = '/manage/'
+
+    def get_form_class(self):
+
+        # since this form view requires the current user for
+        #   generating a queryset, a specialized form must be defined
+        #   to set queryset for 'import_lesson'
+        class editor_ImportLessonForm(forms.Form):
+            import_lesson = forms.ModelChoiceField(
+                    queryset=self.request.user.created_lessons.filter(depth=0).drafts().order_by('-changed_date'),
+                    help_text="Select which of your Modules to import",
+                    required=True,
+                )
+            retain_copy = forms.BooleanField(
+                    initial=False,
+                    required=False,
+                    label="Retain Instance",
+                    help_text="Checking this option will copy the selected Module to this Lesson, but will also retain the current External copy as it's own module."
+                )
+
+
+
+        return editor_ImportLessonForm
+
+    def get_context_data(self, **kwargs):
+        context = super(editor_LessonImportView, self).get_context_data(**kwargs)
+        context['Lesson'] = Lesson.objects.get(slug=self.kwargs.get('slug'))
+
+        return context
+
+    def success_message(self):
+        return super(editor_LessonImportView, self).success_message()
+
+    def failed_message(self):
+        return super(editor_LessonImportView, self).failed_message()
+
+    def get_success_return_data(self, form):
+        return super(editor_LessonImportView, self).get_success_return_data(form)
+
+    def get_failed_return_data(self, form):
+        return super(editor_LessonImportView, self).get_failed_return_data(form)
+
+    def form_valid(self, form):
+
+        with transaction.atomic():
+
+            # get form data
+            imported_lesson = form.cleaned_data.get('import_lesson')
+            retained = form.cleaned_data.get('retain_copy', False)
+
+            # grab specified objects for transaction
+            parent_lesson = Lesson.objects.get(slug=self.kwargs.get('slug'))
+            #imported_lesson = Lesson.objects.get(pk=import_lesson_id)
+
+            # check user has draft permissions to the parent object, and the imported object
+            if not parent_lesson.has_edit_access(self.request.user):
+                form.add_error(None, "You do not have edit permissions for this Lesson! Import Canceled!")
+                return self.form_invalid(form)
+
+            if not imported_lesson.has_edit_access(self.request.user):
+                form.add_error(None, "You do not have edit permissions for the Lesson being Imported! Import Canceled!")
+                return self.form_invalid(form)
+
+            # ensure not trying to import into self...
+            if imported_lesson.slug == parent_lesson.slug:
+                form.add_error(None, "You cannot import a module into itself! Import Canceled!")
+                return self.form_invalid(form)
+
+            # check depth return invalid if total depth > 2
+            child_total_depth = imported_lesson.total_depth
+            if child_total_depth + parent_lesson.depth > 2:
+                form.add_error(None, "The Lesson being imported has too many children (%s) to be added to this lesson. Import Canceled!" % child_total_depth)
+                return self.form_invalid(form)
+
+
+            if retained:
+                pass
+            else:
+                imported_lesson.parent_lesson = parent_lesson
+                imported_lesson.position = parent_lesson.num_children
+                imported_lesson.save()
+
+
+
+        return super(editor_LessonImportView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super(editor_LessonImportView, self).form_invalid(form)
+
+
+    #####################################################
+# Generic Partial Views
+#####################################################
 
 def submission_success(request):
     template_name = 'editor/forms/_success.html'

@@ -1,0 +1,19 @@
+<form id="export_form" action="{{ request.path }}" method="post">
+    {% csrf_token %}
+    Export '{{ Lesson.name }}' to new it's own module?
+
+    <div id="form_errors" class="HL-message-banner critical">{{ form.errors }}</div>
+
+    <table>
+        {{ form.as_table }}
+    </table>
+
+    <div id="export_selection_preview"></div>
+
+     <div id="content_form_controls">
+        <button class="Submit_button btn btn-default" type="submit">Confirm Export</button>
+        <button class="Cancel_button btn btn-default">Cancel</button>
+
+    </div>
+
+</form>

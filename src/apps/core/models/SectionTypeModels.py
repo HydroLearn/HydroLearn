@@ -14,17 +14,36 @@ class ReadingSection(Section):
         verbose_name_plural = 'Reading Sections'
         manager_inheritance_from_future = True
 
+    content = PlaceholderField('reading_content')
+
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })
 
-    '''
-        define method to clear placeholderfield to be signaled on predelete
-    '''
+    def copy(self, maintain_ref=False):
+        '''
+            generate a new ReadingSection instance based on this ReadingSection instance with a fresh ref_id and no parent
+        :return: a new lesson with a fresh reference id
+        '''
+        new_instance = ReadingSection(
+                lesson=None,
+                position=0,
+                is_deleted = False,
 
-    def copy(self):
+                name = self.name,
+                short_name = self.short_name,
+                duration = self.duration,
+
+            )
+
+        if maintain_ref:
+            new_instance.ref_id = self.ref_id
+
+        return new_instance
+
+    def clone(self):
 
         new_instance = deepcopy(self)
         new_instance.pk = None
@@ -36,15 +55,18 @@ class ReadingSection(Section):
 
         return new_instance
 
-    def copy_relations(self, from_instance):
+    def copy_relations(self, from_instance, maintain_ref=False):
 
         # copy over the content
-        self.copy_content(from_instance)
+        #self.copy_content(from_instance)
+        pass
+
+
+    def copy_content(self, from_instance):
 
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
 
-    def copy_content(self, from_instance):
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.content.get_plugins_list()
 
@@ -88,7 +110,7 @@ class ReadingSection(Section):
         return result
 
 
-    content = PlaceholderField('reading_content')
+
 
 
 class ActivitySection(Section):
@@ -97,13 +119,36 @@ class ActivitySection(Section):
         verbose_name_plural = 'Activity Sections'
         manager_inheritance_from_future = True
 
+    content = PlaceholderField('activity_content')
+
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })
 
-    def copy(self):
+    def copy(self, maintain_ref=False):
+        '''
+            generate a new Activity instance based on this Activitiy instance with a fresh ref_id and no parent
+        :return: a new lesson with a fresh reference id
+        '''
+        new_instance = ActivitySection(
+                lesson=None,
+                is_deleted=False,
+                position = 0,
+
+                name = self.name,
+                short_name = self.short_name,
+                duration = self.duration,
+
+            )
+
+        if maintain_ref:
+            new_instance.ref_id = self.ref_id
+
+        return new_instance
+
+    def clone(self):
 
         new_instance = deepcopy(self)
         new_instance.pk = None
@@ -115,15 +160,19 @@ class ActivitySection(Section):
 
         return new_instance
 
-    def copy_relations(self, from_instance):
+    def copy_relations(self, from_instance, maintain_ref=False):
 
         # copy over the content
-        self.copy_content(from_instance)
+        #self.copy_content(from_instance)
+        pass
+
+
+
+    def copy_content(self, from_instance):
 
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
 
-    def copy_content(self, from_instance):
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.content.get_plugins_list()
 
@@ -156,7 +205,7 @@ class ActivitySection(Section):
 
         return result
 
-    content = PlaceholderField('activity_content')
+
 
 
 class QuizSection(Section):
@@ -170,7 +219,28 @@ class QuizSection(Section):
             'slug': self.slug
         })
 
-    def copy(self):
+    def copy(self, maintain_ref=False):
+        '''
+            generate a new Quiz instance based on this Quiz instance with a fresh ref_id and no parent
+        :return: a new lesson with a fresh reference id
+        '''
+        new_instance = QuizSection(
+                lesson=None,
+                position=0,
+                is_deleted = False,
+
+                name = self.name,
+                short_name = self.short_name,
+                duration = self.duration,
+
+            )
+
+        if maintain_ref:
+            new_instance.ref_id = self.ref_id
+
+        return new_instance
+
+    def clone(self):
 
         new_instance = deepcopy(self)
         new_instance.pk = None
@@ -179,7 +249,12 @@ class QuizSection(Section):
 
         return new_instance
 
-    def copy_relations(self, oldinstance):
+    def copy_content(self, from_instance):
+
+        # add any tags from the 'from_instance'
+        self.tags.add(*list(from_instance.tags.names()))
+
+    def copy_relations(self, oldinstance, maintain_ref=False):
         # Before copying related objects from the old instance, the ones
         # on the current one need to be deleted. Otherwise, duplicates may
         # appear on the public version of the page
@@ -187,13 +262,14 @@ class QuizSection(Section):
 
         for quiz_question_item in oldinstance.quiz_question_item.all():
             # copy the lesson item and set its linked topic
-            new_quiz_question_item = quiz_question_item.copy()
+            new_quiz_question_item = quiz_question_item.copy(maintain_ref)
             new_quiz_question_item.quiz = self
+            new_quiz_question_item.position = quiz_question_item.position
 
             # save the new topic instance
             new_quiz_question_item.save()
-
-            new_quiz_question_item.copy_relations(quiz_question_item)
+            new_quiz_question_item.copy_content(quiz_question_item)
+            new_quiz_question_item.copy_relations(quiz_question_item, maintain_ref)
 
 
 

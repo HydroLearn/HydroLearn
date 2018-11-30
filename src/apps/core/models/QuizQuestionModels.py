@@ -29,6 +29,15 @@ from src.apps.core.models.PublicationModels import (
         each with their own methods, fields, etc
 ***********************************************************
 '''
+
+# TODO: Quiz Question/Answer should not specify ref_id as the primary key,
+#       reference id is expected to be representative of the 'Publishable instance' of this object
+#       being that Quiz questions can be published with the module, this needs to be seperate to
+#       allow consistency in copy methods.
+#
+#       in the below code the copy methods have been generated, but 'maintain_ref' addition has been commented
+#       until this design flaw is addressed,
+
 #class QuizQuestion(PolyCreationTrackingBaseModel):
 #class QuizQuestion(PolymorphicModel):
 class QuizQuestion(PolyPublicationChild):
@@ -45,7 +54,25 @@ class QuizQuestion(PolyPublicationChild):
         ordering = ('position',)
         verbose_name_plural = 'Quiz-Questions'
 
+    ref_id = RandomCharField(
+        primary_key=True,
+        unique=True,
+        length=8,
+        include_punctuation=False,
+    )
 
+    position = models.PositiveIntegerField(default=0, blank=False, null=False)
+
+    question_text = PlaceholderField('question_text')
+
+    quiz = models.ForeignKey('core.QuizSection',
+                             related_name="quiz_question_item",
+                             blank=False,
+                             default=None,
+                             help_text=u'Please specify a Quiz Section to map this question to.',
+                             null=False,
+                             on_delete=models.CASCADE,
+                             )
 
     def absolute_url(self):
         return reverse('core:quiz_question_detail', kwargs={
@@ -90,25 +117,7 @@ class QuizQuestion(PolyPublicationChild):
             ph.delete()
 
 
-    ref_id = RandomCharField(
-        primary_key=True,
-        unique=True,
-        length=8,
-        include_punctuation=False,
-    )
 
-    position = models.PositiveIntegerField(default=0, blank=False, null=False)
-
-    question_text = PlaceholderField('question_text')
-
-    quiz = models.ForeignKey('core.QuizSection',
-                             related_name="quiz_question_item",
-                             blank=False,
-                             default=None,
-                             help_text=u'Please specify a Quiz Section to map this question to.',
-                             null=False,
-                             on_delete=models.CASCADE,
-                             )
     #parent = 'QuizSection'
 
 '''
@@ -137,7 +146,7 @@ class QuizAnswerBase(PublicationChild):
         include_punctuation=False,
     )
 
-
+    position = models.PositiveIntegerField(default=0, blank=False, null=False)
 
     @property
     def is_dirty(self):
@@ -148,7 +157,7 @@ class QuizAnswerBase(PublicationChild):
 
 
 
-    position = models.PositiveIntegerField(default=0, blank=False, null=False)
+
 
 
 '''
@@ -182,7 +191,19 @@ class MultiChoice_question(QuizQuestion):
     class Meta:
         verbose_name_plural = 'MultiChoice-Questions'
 
-    def copy(self):
+    def copy(self, maintain_ref=False):
+        new_instance = MultiChoice_question(
+            position = 0,
+            quiz = None,
+        )
+
+        # if maintain_ref:
+        #     new_instance.ref_id = self.ref_id
+
+
+        return new_instance
+
+    def clone(self):
         new_instance = deepcopy(self)
         new_instance.pk = None
         new_instance.id = None
@@ -193,7 +214,7 @@ class MultiChoice_question(QuizQuestion):
 
         return new_instance
 
-    def copy_relations(self, from_instance):
+    def copy_relations(self, from_instance, maintain_ref=False):
 
         # copy over the content
         self.copy_content(from_instance)
@@ -201,12 +222,14 @@ class MultiChoice_question(QuizQuestion):
         self.answer_item.delete()
         for answer_item in from_instance.answer_item.all():
             # copy the lesson item and set its linked topic
-            new_answer = answer_item.copy()
+            #new_answer = answer_item.clone()
+            new_answer = answer_item.copy(maintain_ref)
             new_answer.quiz_question = self
+            new_answer.position = answer_item.position
 
             # save the new topic instance
             new_answer.save()
-
+            new_answer.copy_content(answer_item)
             new_answer.copy_relations(answer_item)
 
 
@@ -247,7 +270,32 @@ class MultiChoice_answer(QuizAnswerBase):
         ordering = ('position',)
         verbose_name_plural = 'MultiChoice-Answers'
 
-    def copy(self):
+    quiz_question = models.ForeignKey(
+        'core.MultiChoice_question',
+        related_name='answer_item',
+        null=False,
+        blank=False,
+    )
+
+    answer_text = PlaceholderField('answer_text')
+
+    is_correct = models.BooleanField()
+
+    def copy(self, maintain_ref=False):
+
+        new_instance = MultiChoice_answer(
+            quiz_question=None,
+            position=0,
+            is_correct=self.is_correct,
+
+        )
+
+        # if maintain_ref:
+        #     new_instance.ref_id = self.ref_id
+
+        return new_instance
+
+    def clone(self):
         new_instance = deepcopy(self)
         new_instance.pk = None
         new_instance.id = None
@@ -258,10 +306,11 @@ class MultiChoice_answer(QuizAnswerBase):
 
         return new_instance
 
-    def copy_relations(self, from_instance):
+    def copy_relations(self, from_instance, maintain_ref=False):
 
         # copy over the content
-        self.copy_content(from_instance)
+        #self.copy_content(from_instance)
+        pass
 
     def copy_content(self, from_instance):
         # get the list of plugins in the 'from_instance's intro
@@ -303,16 +352,7 @@ class MultiChoice_answer(QuizAnswerBase):
             ph.delete()
 
 
-    quiz_question = models.ForeignKey(
-        'core.MultiChoice_question',
-        related_name='answer_item',
-        null=False,
-        blank=False,
-    )
 
-    answer_text = PlaceholderField('answer_text')
-
-    is_correct = models.BooleanField()
 
 
 '''
@@ -326,7 +366,19 @@ class MultiSelect_question(QuizQuestion):
     class Meta:
         verbose_name_plural = 'MultiSelect-Questions'
 
-    def copy(self):
+    def copy(self, maintain_ref=False):
+
+        new_instance = MultiSelect_question(
+            position=0,
+            quiz=None,
+        )
+
+        # if maintain_ref:
+        #     new_instance.ref_id = self.ref_id
+
+        return new_instance
+
+    def clone(self):
         new_instance = deepcopy(self)
         new_instance.pk = None
         new_instance.id = None
@@ -337,19 +389,21 @@ class MultiSelect_question(QuizQuestion):
 
         return new_instance
 
-    def copy_relations(self, from_instance):
+    def copy_relations(self, from_instance, maintain_ref=False):
         # copy over the content
-        self.copy_content(from_instance)
+        #self.copy_content(from_instance)
 
         self.answer_item.delete()
         for answer_item in from_instance.answer_item.all():
             # copy the lesson item and set its linked topic
-            new_answer = answer_item.copy()
+            #new_answer = answer_item.clone()
+            new_answer = answer_item.copy(maintain_ref)
             new_answer.quiz_question = self
+            new_answer.position = answer_item.position
 
             # save the new topic instance
             new_answer.save()
-
+            new_answer.copy_content(answer_item)
             new_answer.copy_relations(answer_item)
 
     def copy_content(self, from_instance):
@@ -390,7 +444,33 @@ class MultiSelect_answer(QuizAnswerBase):
         ordering = ('position',)
         verbose_name_plural = 'MultiSelect-Answers'
 
-    def copy(self):
+    quiz_question = models.ForeignKey(
+        'core.MultiSelect_question',
+        related_name='answer_item',
+        null=False,
+        blank=False,
+    )
+
+    answer_text = PlaceholderField('answer_text')
+
+    is_correct = models.BooleanField()
+
+
+    def copy(self, maintain_ref=False):
+
+        new_instance = MultiSelect_answer(
+            position = 0,
+            quiz_question = None,
+            is_correct=self.is_correct,
+        )
+
+        # if maintain_ref:
+        #     new_instance.ref_id = self.ref_id
+
+        return new_instance
+
+
+    def clone(self):
         new_instance = deepcopy(self)
         new_instance.pk = None
         new_instance.id = None
@@ -401,10 +481,11 @@ class MultiSelect_answer(QuizAnswerBase):
 
         return new_instance
 
-    def copy_relations(self, from_instance):
+    def copy_relations(self, from_instance, maintain_ref=False):
 
         # copy over the content
-        self.copy_content(from_instance)
+        #self.copy_content(from_instance)
+        pass
 
     def copy_content(self, from_instance):
         # get the list of plugins in the 'from_instance's intro
@@ -444,13 +525,4 @@ class MultiSelect_answer(QuizAnswerBase):
             ph.clear()
             ph.delete()
 
-    quiz_question = models.ForeignKey(
-        'core.MultiSelect_question',
-        related_name='answer_item',
-        null=False,
-        blank=False,
-    )
 
-    answer_text = PlaceholderField('answer_text')
-
-    is_correct = models.BooleanField()
