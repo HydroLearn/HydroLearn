@@ -22,27 +22,6 @@ from src.settings import cms_settings
 
 
 ''' **********************************************************
-    Action forms
-********************************************************** '''
-# class editor_ExportLessonForm(forms.Form):
-#     exported_lesson = forms.HiddenInput()
-#     retain_copy = forms.BooleanField(initial=True, label="Retain Instance", help_text="Checking this option will copy the selected lesson to it's own module, but will also retain the current copy as part of this module.")
-#     # class Meta:
-
-#
-# class editor_ImportLessonForm(forms.Form):
-#     parent_lesson = forms.HiddenInput()
-#     # import_lesson = forms.HiddenInput()
-#     import_lesson = forms.ModelChoiceField(queryset=None) # need reference to lesson being imported
-#     retain_copy = forms.BooleanField(initial=True, label="Retain Instance", help_text="Checking this option will copy the selected Module to this Lesson, but will also retain the current External copy as it's own module.")
-#
-#     def __init__(self, parent_lesson, my_modules, *args, **kwargs):
-#         super(editor_ImportLessonForm, self).__init__(*args, **kwargs)
-#         self.fields['parent_lesson'] = parent_lesson
-#         self.fields['import_lesson'].queryset = my_modules
-
-
-''' **********************************************************
     Model Forms 
 ********************************************************** '''
 
