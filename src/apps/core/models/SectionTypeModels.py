@@ -67,6 +67,9 @@ class ReadingSection(Section):
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
 
+        # clear any existing plugins
+        self.content.clear()
+
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.content.get_plugins_list()
 
@@ -164,6 +167,9 @@ class ActivitySection(Section):
 
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
+
+        # clear any existing plugins
+        self.content.clear()
 
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.content.get_plugins_list()

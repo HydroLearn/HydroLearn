@@ -202,6 +202,10 @@ class MultiChoice_question(QuizQuestion):
         return new_instance
 
     def copy_content(self, from_instance):
+
+        # clear any existing plugins
+        self.question_text.clear()
+
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.question_text.get_plugins_list()
 
@@ -299,6 +303,9 @@ class MultiChoice_answer(QuizAnswerBase):
         return new_instance
 
     def copy_content(self, from_instance):
+        # clear any existing plugins
+        self.answer_text.clear()
+
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.answer_text.get_plugins_list()
 
@@ -380,6 +387,10 @@ class MultiSelect_question(QuizQuestion):
             new_answer.copy_children(answer_item)
 
     def copy_content(self, from_instance):
+
+        # clear any existing plugins
+        self.question_text.clear()
+
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.question_text.get_plugins_list()
 
@@ -465,6 +476,10 @@ class MultiSelect_answer(QuizAnswerBase):
         pass
 
     def copy_content(self, from_instance):
+
+        # clear any existing plugins
+        self.answer_text.clear()
+
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.answer_text.get_plugins_list()
 

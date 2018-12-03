@@ -377,6 +377,9 @@ class Lesson(Publication):
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
 
+        # clear any existing plugins
+        self.summary.clear()
+
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.summary.get_plugins_list()
 
