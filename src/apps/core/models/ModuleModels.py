@@ -7,13 +7,11 @@ from django.db import models, transaction
 from django.conf import settings
 
 from django_extensions.db.fields import (
-    RandomCharField,
     AutoSlugField
 )
 
 from taggit.managers import TaggableManager
 
-# from src.apps.core.QuerysetManagers import IterativeDeletion_Manager, PolyIterativeDeletion_Manager
 from src.apps.core.managers.IterativeDeletionManagers import (
     IterativeDeletion_Manager,
     PolyIterativeDeletion_Manager
@@ -21,9 +19,8 @@ from src.apps.core.managers.IterativeDeletionManagers import (
 
 from src.apps.core.models.PublicationModels import (
     Publication,
-    # PolyPublication,
-    PublicationChild,
-    PolyPublicationChild)
+    PolyPublicationChild
+)
 
 from cms.utils.copy_plugins import copy_plugins_to
 
@@ -31,12 +28,9 @@ User = settings.AUTH_USER_MODEL
 
 
 class Lesson(Publication):
-    # class Lesson(PublicationChild):
-    # objects = IterativeDeletion_Manager()
-    # objects = PublicationManager()
 
     # TODO: if needed for publishable, can inherit parent's meta
-    # class Meta(Publishable.Meta):
+    #       class Meta(Publishable.Meta):
     class Meta:
         app_label = 'core'
         unique_together = ('parent_lesson', 'name')  # enforce only unique topic names within a module
@@ -160,8 +154,8 @@ class Lesson(Publication):
     # TODO: potentially add 1-to-1 relationship to a publishable (instead of direct inheritance)
     #           this will allow for a lesson to be a child and root
     #           e.g. root.publishable = [publishable object], child.publishable = None
-    #
-    #   parent_link
+    #       ______________________________
+    #       parent_link
     #           When True and used in a model which inherits from another
     #           concrete model, indicates that this field should be used as
     #           the link back to the parent class, rather than the extra
@@ -212,11 +206,52 @@ class Lesson(Publication):
             'ref_id': self.ref_id,
         })
 
-    # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
-
     ########################################
     #   Query Methods/properties
     ########################################
+
+    # TODO: Watch for this, as formsets may not access this with update
+    def save(self, **kwargs):
+        # print('---- in custom lesson save')
+        # set depth level on save
+        if self.parent_lesson:
+            self.depth = self.parent_lesson.depth + 1
+        else:
+            self.depth = 0
+
+        # TODO: this needs to be flipped
+        # based on depth level set the depth label
+        self.depth_label = {
+            0: 'Module',
+            1: 'Topic',
+            2: 'Lesson',
+        }.get(self.depth, "INVALID")
+
+        super(Lesson, self).save(**kwargs)
+
+    def delete(self, *args, **kwargs):
+
+        # self.cleanup_placeholders()
+        placeholders = [self.summary]
+
+        self.sections.delete()
+        self.sub_lessons.delete()
+
+        super(Lesson, self).delete(*args, **kwargs)
+
+        for ph in placeholders:
+            ph.clear()
+            ph.delete()
+
+    def validate_unique(self, exclude=None):
+        # add a conditional unique constraint to prevent
+        #   creation of multiple drafts with the same name
+        #   this is only valid if a base lesson so check that it's not a root lesson too
+        #   TODO: watch this, it could be inadequate when 'lesson-copy' becomes enabled later in development
+        #           if not self.parent_lesson and self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
+        #               raise ValidationError('A Draft-Lesson with this name already exists')
+
+        return super(Lesson, self).validate_unique(exclude)
 
     @property
     def total_depth(self):
@@ -248,19 +283,11 @@ class Lesson(Publication):
     def num_sub_lessons(self):
         return self.sub_lessons.count()
 
+
+
     ########################################
     #   Publication Method overrides
     ########################################
-    # def copy_attributes(self, from_lesson):
-    #     '''
-    #         method to copy attributes from another lesson into this lesson
-    #     :param from_lesson: lesson to copy attributes from
-    #     :return: None
-    #     '''
-    #     self.name = from_lesson.name
-    #     self.short_name = from_lesson.short_name
-    #     self.position = from_lesson.position
-
 
     def copy(self, maintain_ref=False):
         '''
@@ -355,54 +382,6 @@ class Lesson(Publication):
 
         # copy 'from_instance's intro plugins to this object's intro
         copy_plugins_to(plugins, self.summary, no_signals=True)
-
-    # TODO: Watch for this, as formsets may not access this with update
-    def save(self, **kwargs):
-        # print('---- in custom lesson save')
-        # set depth level on save
-        if self.parent_lesson:
-            self.depth = self.parent_lesson.depth + 1
-        else:
-            self.depth = 0
-
-
-        # TODO: this needs to be flipped
-        # based on depth level set the depth label
-        self.depth_label = {
-            0:'Module',
-            1:'Topic',
-            2: 'Lesson',
-        }.get(self.depth, "INVALID")
-
-
-        super(Lesson, self).save(**kwargs)
-
-    # def save_base(self, raw=False, force_insert=False, force_update=False, using=None, update_fields=None):
-    #     super().save_base(raw, force_insert, force_update, using, update_fields)
-
-    def delete(self, *args, **kwargs):
-
-        # self.cleanup_placeholders()
-        placeholders = [self.summary]
-
-        self.sections.delete()
-        self.sub_lessons.delete()
-
-        super(Lesson, self).delete(*args, **kwargs)
-
-        for ph in placeholders:
-            ph.clear()
-            ph.delete()
-
-    def validate_unique(self, exclude=None):
-        # add a conditional unique constraint to prevent
-        #   creation of multiple drafts with the same name
-        #   this is only valid if a base lesson so check that it's not a root lesson too
-        #   TODO: watch this, it could be inadequate when 'lesson-copy' becomes enabled later in development
-        # if not self.parent_lesson and self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
-        #     raise ValidationError('A Draft-Lesson with this name already exists')
-
-        return super(Lesson, self).validate_unique(exclude)
 
     def get_Publishable_parent(self):
 
@@ -500,26 +479,6 @@ class Lesson(Publication):
 
         return False
 
-
-    def dirty_content(self):
-        return True
-
-        # TODO: Revise this for checking placeholder plugins based off
-        #       of published date
-
-        # if there is no published copy, return dirty
-        if self.published_copy is None: return True
-
-        # otherwise check that no plugin in this lesson
-        # was saved after last publish's creation date
-        result = any([
-            super(Lesson, self).is_dirty,
-            self.summary.cmsplugin_set.filter(
-                changed_date__gt=self.published_copy.published_date).exists(),
-        ])
-
-        if result: return result
-
     def has_draft_access(self, user):
 
         # if passes the default permission check (owner/admin) return true
@@ -562,9 +521,9 @@ class Lesson(Publication):
 
 
 
-# class Section(PolyCreationTrackingBaseModel):
+
 class Section(PolyPublicationChild):
-    # class Section(CreationTrackingBaseModel, PolymorphicModel):
+
     objects = PolyIterativeDeletion_Manager()
 
     class Meta:
@@ -572,7 +531,7 @@ class Section(PolyPublicationChild):
         unique_together = (
             'lesson',
             'name'
-        )  # enforce only unique section names within a topic
+        )  # enforce only unique section names within a lesson
         ordering = ('position',)
         verbose_name_plural = 'Sections'
         manager_inheritance_from_future = True
@@ -618,14 +577,6 @@ class Section(PolyPublicationChild):
                          help_text=u'Please enter a unique slug for this Section (can autogenerate from name field)',
                          )
 
-    # slug = AutoSlugField(u'slug',
-    #                      blank=False,
-    #                      default='',
-    #                      max_length=8,
-    #                      unique=True,
-    #                      populate_from=('ref_id',),
-    #                      help_text=u'Please enter a unique slug for this Lesson (can autogenerate from name field)',
-    #                      )
 
     lesson = models.ForeignKey('core.Lesson',
                                related_name="sections",
@@ -678,6 +629,10 @@ class Section(PolyPublicationChild):
     # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
     def __str__(self):
         return "%s:%s" % (self.lesson.name, self.name)
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
 
     def get_Publishable_parent(self):
         # return self.lesson.topic.module
@@ -750,14 +705,20 @@ class Collaboration(models.Model):
     def __str__(self):
         return "Collab: %s -> %s" % (self.collaborator.__str__(), self.publication.__str__())
 
-''' DEPRECIATED (Kept for potential future reference)
+
+
+
+
+''' --------------------------------------------------------------- 
+
+    DEPRECIATED (Kept for potential future reference)
      Assign any signals needed for clearing placeholder fields of a model
 
      WARNING:
          IF A MODEL HAS A 'PLACEHOLDERFIELD' AND AN APPROPRIATE SIGNAL IS NOT SET FOR IT
          THE PLUGIN INSTANCES WILL REMAIN IN THE DATABASE, WHICH WILL LEAD TO ORPHANED DATA
 
-'''
+--------------------------------------------------------------- '''
 
 # signals.pre_save.connect(module_pre_save_handler, sender=Module, dispatch_uid='Module_pre_save')
 

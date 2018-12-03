@@ -21,6 +21,20 @@ class ReadingSection(Section):
             'slug': self.slug
         })
 
+    def delete(self, *args, **kwargs):
+        #print("----- in ReadingSection overridden delete")
+        # self.cleanup_placeholders()
+        placeholders = [self.content]
+        super(ReadingSection, self).delete(*args, **kwargs)
+
+        for ph in placeholders:
+            ph.clear()
+            ph.delete()
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
+
     def copy(self, maintain_ref=False):
         '''
             generate a new ReadingSection instance based on this ReadingSection instance with a fresh ref_id and no parent
@@ -48,7 +62,6 @@ class ReadingSection(Section):
         #self.copy_content(from_instance)
         pass
 
-
     def copy_content(self, from_instance):
 
         # add any tags from the 'from_instance'
@@ -60,15 +73,6 @@ class ReadingSection(Section):
         # copy 'from_instance's intro plugins to this object's intro
         copy_plugins_to(plugins, self.content, no_signals=True)
 
-    def delete(self, *args, **kwargs):
-        #print("----- in ReadingSection overridden delete")
-        # self.cleanup_placeholders()
-        placeholders = [self.content]
-        super(ReadingSection, self).delete(*args, **kwargs)
-
-        for ph in placeholders:
-            ph.clear()
-            ph.delete()
 
     @property
     def is_dirty(self):
@@ -114,6 +118,21 @@ class ActivitySection(Section):
             'slug': self.slug
         })
 
+    def delete(self, *args, **kwargs):
+        #print("----- in ActivitySection overridden delete")
+        # self.cleanup_placeholders()
+
+        placeholders = [self.content]
+        super(ActivitySection, self).delete(*args, **kwargs)
+
+        for ph in placeholders:
+            ph.clear()
+            ph.delete()
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
+
     def copy(self, maintain_ref=False):
         '''
             generate a new Activity instance based on this Activitiy instance with a fresh ref_id and no parent
@@ -141,8 +160,6 @@ class ActivitySection(Section):
         #self.copy_content(from_instance)
         pass
 
-
-
     def copy_content(self, from_instance):
 
         # add any tags from the 'from_instance'
@@ -153,17 +170,6 @@ class ActivitySection(Section):
 
         # copy 'from_instance's intro plugins to this object's intro
         copy_plugins_to(plugins, self.content, no_signals=True)
-
-    def delete(self, *args, **kwargs):
-        #print("----- in ActivitySection overridden delete")
-        # self.cleanup_placeholders()
-
-        placeholders = [self.content]
-        super(ActivitySection, self).delete(*args, **kwargs)
-
-        for ph in placeholders:
-            ph.clear()
-            ph.delete()
 
     @property
     def is_dirty(self):
@@ -193,6 +199,10 @@ class QuizSection(Section):
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
 
     def copy(self, maintain_ref=False):
         '''
@@ -236,8 +246,6 @@ class QuizSection(Section):
             new_quiz_question_item.save()
             new_quiz_question_item.copy_content(quiz_question_item)
             new_quiz_question_item.copy_children(quiz_question_item, maintain_ref)
-
-
 
     @property
     def is_dirty(self):

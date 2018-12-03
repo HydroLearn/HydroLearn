@@ -37,8 +37,6 @@ from src.apps.core.models.PublicationModels import (
 #       in the below code the copy methods have been generated, but 'maintain_ref' addition has been commented
 #       until this design flaw is addressed,
 
-#class QuizQuestion(PolyCreationTrackingBaseModel):
-#class QuizQuestion(PolymorphicModel):
 class QuizQuestion(PolyPublicationChild):
 
 
@@ -46,10 +44,6 @@ class QuizQuestion(PolyPublicationChild):
 
     class Meta:
         app_label = 'core'
-        # unique_together = (
-        #         'quiz',
-        #         'name'
-        #     ) #enforce only unique section names within a topic
         ordering = ('position',)
         verbose_name_plural = 'Quiz-Questions'
 
@@ -90,18 +84,6 @@ class QuizQuestion(PolyPublicationChild):
         return "%s:%s" % (self.quiz.name, self.ref_id)
 
 
-    def get_Publishable_parent(self):
-        return self.quiz.lesson.topic.module
-
-    @property
-    def is_dirty(self):
-
-        # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
-        # edited after the most recent change date.
-        return super(QuizQuestion, self).is_dirty
-
-
-
     def delete(self, *args, **kwargs):
 
         # self.cleanup_placeholders()
@@ -115,9 +97,21 @@ class QuizQuestion(PolyPublicationChild):
             ph.clear()
             ph.delete()
 
+    ########################################
+    #   Publication Method overrides
+    ########################################
+
+    def get_Publishable_parent(self):
+        return self.quiz.lesson.topic.module
+
+    @property
+    def is_dirty(self):
+
+        # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
+        # edited after the most recent change date.
+        return super(QuizQuestion, self).is_dirty
 
 
-    #parent = 'QuizSection'
 
 '''
 ***********************************************************
@@ -129,9 +123,6 @@ class QuizQuestion(PolyPublicationChild):
 '''
 
 
-# class QuizAnswer(FrontendEditableAdminMixin, PolymorphicModel, models.Model):
-#class QuizAnswerBase(CreationTrackingBaseModel):
-#class QuizAnswerBase(models.Model):
 class QuizAnswerBase(PublicationChild):
     class Meta:
         abstract = True
@@ -146,6 +137,10 @@ class QuizAnswerBase(PublicationChild):
     )
 
     position = models.PositiveIntegerField(default=0, blank=False, null=False)
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
 
     @property
     def is_dirty(self):
@@ -190,6 +185,10 @@ class MultiChoice_question(QuizQuestion):
     class Meta:
         verbose_name_plural = 'MultiChoice-Questions'
 
+    ########################################
+    #   Publication Method overrides
+    ########################################
+
     def copy(self, maintain_ref=False):
         new_instance = MultiChoice_question(
             position = 0,
@@ -201,6 +200,13 @@ class MultiChoice_question(QuizQuestion):
 
 
         return new_instance
+
+    def copy_content(self, from_instance):
+        # get the list of plugins in the 'from_instance's intro
+        plugins = from_instance.question_text.get_plugins_list()
+
+        # copy 'from_instance's intro plugins to this object's intro
+        copy_plugins_to(plugins, self.question_text, no_signals=True)
 
     def copy_children(self, from_instance, maintain_ref=False):
 
@@ -219,14 +225,6 @@ class MultiChoice_question(QuizQuestion):
             new_answer.save()
             new_answer.copy_content(answer_item)
             new_answer.copy_children(answer_item)
-
-
-    def copy_content(self, from_instance):
-        # get the list of plugins in the 'from_instance's intro
-        plugins = from_instance.question_text.get_plugins_list()
-
-        # copy 'from_instance's intro plugins to this object's intro
-        copy_plugins_to(plugins, self.question_text, no_signals=True)
 
     def get_Publishable_parent(self):
         return self.quiz.lesson.topic.module
@@ -250,7 +248,6 @@ class MultiChoice_question(QuizQuestion):
         return False
 
 
-    parent = 'quizsection'
 
 class MultiChoice_answer(QuizAnswerBase):
     class Meta:
@@ -269,6 +266,24 @@ class MultiChoice_answer(QuizAnswerBase):
 
     is_correct = models.BooleanField()
 
+    def delete(self, *args, **kwargs):
+
+        # self.cleanup_placeholders()
+        placeholders = [self.answer_text]
+
+        #self.sections.delete()
+
+        super(MultiChoice_answer, self).delete(*args, **kwargs)
+
+        for ph in placeholders:
+            ph.clear()
+            ph.delete()
+
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
+
     def copy(self, maintain_ref=False):
 
         new_instance = MultiChoice_answer(
@@ -283,18 +298,18 @@ class MultiChoice_answer(QuizAnswerBase):
 
         return new_instance
 
-    def copy_children(self, from_instance, maintain_ref=False):
-
-        # copy over the content
-        #self.copy_content(from_instance)
-        pass
-
     def copy_content(self, from_instance):
         # get the list of plugins in the 'from_instance's intro
         plugins = from_instance.answer_text.get_plugins_list()
 
         # copy 'from_instance's intro plugins to this object's intro
         copy_plugins_to(plugins, self.answer_text, no_signals=True)
+
+    def copy_children(self, from_instance, maintain_ref=False):
+
+        # copy over the content
+        #self.copy_content(from_instance)
+        pass
 
     def get_Publishable_parent(self):
         return self.quiz_question.quiz.lesson.topic.module
@@ -315,18 +330,6 @@ class MultiChoice_answer(QuizAnswerBase):
         return result
 
 
-    def delete(self, *args, **kwargs):
-
-        # self.cleanup_placeholders()
-        placeholders = [self.answer_text]
-
-        #self.sections.delete()
-
-        super(MultiChoice_answer, self).delete(*args, **kwargs)
-
-        for ph in placeholders:
-            ph.clear()
-            ph.delete()
 
 
 
@@ -342,6 +345,10 @@ class MultiChoice_answer(QuizAnswerBase):
 class MultiSelect_question(QuizQuestion):
     class Meta:
         verbose_name_plural = 'MultiSelect-Questions'
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
 
     def copy(self, maintain_ref=False):
 
@@ -421,6 +428,22 @@ class MultiSelect_answer(QuizAnswerBase):
 
     is_correct = models.BooleanField()
 
+    def delete(self, *args, **kwargs):
+
+        # self.cleanup_placeholders()
+        placeholders = [self.answer_text]
+
+        # self.sections.delete()
+
+        super(MultiSelect_answer, self).delete(*args, **kwargs)
+
+        for ph in placeholders:
+            ph.clear()
+            ph.delete()
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
 
     def copy(self, maintain_ref=False):
 
@@ -434,7 +457,6 @@ class MultiSelect_answer(QuizAnswerBase):
         #     new_instance.ref_id = self.ref_id
 
         return new_instance
-
 
     def copy_children(self, from_instance, maintain_ref=False):
 
@@ -467,17 +489,5 @@ class MultiSelect_answer(QuizAnswerBase):
         return result
 
 
-    def delete(self, *args, **kwargs):
-
-        # self.cleanup_placeholders()
-        placeholders = [self.answer_text]
-
-        # self.sections.delete()
-
-        super(MultiSelect_answer, self).delete(*args, **kwargs)
-
-        for ph in placeholders:
-            ph.clear()
-            ph.delete()
 
 

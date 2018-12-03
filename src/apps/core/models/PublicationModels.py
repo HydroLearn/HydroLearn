@@ -1,15 +1,7 @@
 import datetime
 import uuid
-import copy
-from enum import Enum
 from django.conf import settings
 from django.db import models, transaction
-# from django.db.models.query import QuerySet
-# from django.utils.functional import cached_property
-
-#from src.apps.core.models.module_models import Module
-# from polymorphic.models import PolymorphicModel
-#from treebeard.mp_tree import MP_NodeManager, MP_NodeQuerySet, MP_Node
 
 from src.apps.core.models.CreationTrackingModels import (
     CreationTrackingBaseModel,
@@ -21,28 +13,11 @@ from src.apps.core.managers.PublicationManagers import (
     PolyPublicationManager,
 )
 
-# from src.apps.core.managers.IterativeDeletionManagers import (
-#     IterativeDeletion_QuerySet,
-#     IterativeDeletion_Manager,
-#     PolyIterativeDeletion_QuerySet,
-#     PolyIterativeDeletion_Manager,
-#
-# )
-
-
 
 User = settings.AUTH_USER_MODEL
 
 # to get current user in a model method use the following local import
 #   from cms.utils.permissions import get_current_user
-
-
-#PUBLICATION_STATE_DEFAULT = 0
-#PUBLICATION_STATE_DIRTY = 1
-# Page was marked published, but some of page parents are not.
-#PUBLICATION_STATE_PENDING = 4
-
-
 
 
 '''
