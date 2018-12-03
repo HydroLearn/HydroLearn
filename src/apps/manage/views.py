@@ -672,7 +672,7 @@ class manage_SectionContent(CollabEditorAccessRequiredMixin, PublicationChildVie
 
 
 ###############################################################################
-###                 PARTIALVIEWS                                            ###
+###                 PARTIALVIEWS
 ###############################################################################
 
 def module_listing(request):
@@ -713,3 +713,4 @@ def module_success(request):
 
     template_name = 'manage/partials/_edit_successful.html'
     return render_to_response(template_name)
+
