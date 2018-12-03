@@ -1,0 +1,39 @@
+<!--Keeping for reference, but to be removed-->
+{% load cms_tags menu_tags sekizai_tags static manage_template_tags %}
+<div>
+    <!-- Drop down filter, find all other resource official names at https://www.hydroshare.org/hsapi/resource/types/ -->
+    <div style="position:relative; text-align: right;">
+        <span><b>Type: </b></span>
+        <select id="type_dropdown">
+            <option value="All">All</option>
+            <option value="GenericResource">Generic</option>
+            <option value="CompositeResource">Composite</option>
+            <option value="RasterResource">Raster</option>
+            <option value="RefTimeSeriesResource">HIS References Time Series</option>
+            <option value="TimeSeriesResource">Time Series</option>
+            <option value="NetcdfResource">Multidimentional (NetCDF)</option>
+            <option value="ModelProgramResource">Model Program</option>
+            <option value="ModelInstanceResource">Model Instance</option>
+            <option value="ToolResource">Web App</option>
+            <option value="SWATModelInstanceResource">SWAT Model Instance</option>
+            <option value="GeographicFeatureResource">Geographic Feature</option>
+            <option value="ScriptResource">Script</option>
+        </select>
+    </div>
+    <div id="model-rep">
+        <img src="{% static 'manage/images/hydroshare/loading-animation.gif' %}">
+      <br>
+      <p><b>Loading HydroShare resources...</b></p>
+    </div>
+</div>
+
+
+{% addtoblock "js" %}
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{% static 'manage/js/hydroshare/hydroshare.js' %}"></script>
+{% endaddtoblock %}
+
+
+{% addtoblock "css" %}
+     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+{% endaddtoblock %}
