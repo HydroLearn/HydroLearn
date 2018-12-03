@@ -1,4 +1,3 @@
-from copy import deepcopy
 from cms.models import PlaceholderField
 from cms.utils.copy_plugins import copy_plugins_to
 
@@ -43,19 +42,7 @@ class ReadingSection(Section):
 
         return new_instance
 
-    def clone(self):
-
-        new_instance = deepcopy(self)
-        new_instance.pk = None
-        new_instance.id = None
-
-        # placeholder needs to be cleared out in the copy so it can be auto generated
-        # with a new id (Polymorphic Quirk)
-        new_instance.content = None
-
-        return new_instance
-
-    def copy_relations(self, from_instance, maintain_ref=False):
+    def copy_children(self, from_instance, maintain_ref=False):
 
         # copy over the content
         #self.copy_content(from_instance)
@@ -148,19 +135,7 @@ class ActivitySection(Section):
 
         return new_instance
 
-    def clone(self):
-
-        new_instance = deepcopy(self)
-        new_instance.pk = None
-        new_instance.id = None
-
-        # placeholder needs to be cleared out in the copy so it can be auto generated
-        # with a new id (Polymorphic Quirk)
-        new_instance.content = None
-
-        return new_instance
-
-    def copy_relations(self, from_instance, maintain_ref=False):
+    def copy_children(self, from_instance, maintain_ref=False):
 
         # copy over the content
         #self.copy_content(from_instance)
@@ -240,21 +215,12 @@ class QuizSection(Section):
 
         return new_instance
 
-    def clone(self):
-
-        new_instance = deepcopy(self)
-        new_instance.pk = None
-        new_instance.id = None
-        # new_instance.copy_relations(self)
-
-        return new_instance
-
     def copy_content(self, from_instance):
 
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
 
-    def copy_relations(self, oldinstance, maintain_ref=False):
+    def copy_children(self, oldinstance, maintain_ref=False):
         # Before copying related objects from the old instance, the ones
         # on the current one need to be deleted. Otherwise, duplicates may
         # appear on the public version of the page
@@ -269,7 +235,7 @@ class QuizSection(Section):
             # save the new topic instance
             new_quiz_question_item.save()
             new_quiz_question_item.copy_content(quiz_question_item)
-            new_quiz_question_item.copy_relations(quiz_question_item, maintain_ref)
+            new_quiz_question_item.copy_children(quiz_question_item, maintain_ref)
 
 
 

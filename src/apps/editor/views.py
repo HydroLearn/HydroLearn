@@ -509,7 +509,7 @@ class editor_LessonExportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
 
                 new_copy.save()
                 new_copy.copy_content(exported_lesson)
-                new_copy.copy_relations(exported_lesson)
+                new_copy.copy_children(exported_lesson)
 
             else:
                 # otherwise just remove the parent reference and save
@@ -611,7 +611,7 @@ class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
 
                 new_copy.save()
                 new_copy.copy_content(imported_lesson)
-                new_copy.copy_relations(imported_lesson)
+                new_copy.copy_children(imported_lesson)
 
 
             else:

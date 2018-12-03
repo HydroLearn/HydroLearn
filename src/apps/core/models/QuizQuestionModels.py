@@ -1,5 +1,4 @@
 import uuid
-from copy import deepcopy
 
 from cms.utils.copy_plugins import copy_plugins_to
 from django.urls import reverse
@@ -203,26 +202,15 @@ class MultiChoice_question(QuizQuestion):
 
         return new_instance
 
-    def clone(self):
-        new_instance = deepcopy(self)
-        new_instance.pk = None
-        new_instance.id = None
-
-        # placeholder needs to be cleared out in the copy so it can be auto generated
-        # with a new id (Polymorphic Quirk)
-        new_instance.question_text = None
-
-        return new_instance
-
-    def copy_relations(self, from_instance, maintain_ref=False):
+    def copy_children(self, from_instance, maintain_ref=False):
 
         # copy over the content
         self.copy_content(from_instance)
 
         self.answer_item.delete()
         for answer_item in from_instance.answer_item.all():
+
             # copy the lesson item and set its linked topic
-            #new_answer = answer_item.clone()
             new_answer = answer_item.copy(maintain_ref)
             new_answer.quiz_question = self
             new_answer.position = answer_item.position
@@ -230,7 +218,7 @@ class MultiChoice_question(QuizQuestion):
             # save the new topic instance
             new_answer.save()
             new_answer.copy_content(answer_item)
-            new_answer.copy_relations(answer_item)
+            new_answer.copy_children(answer_item)
 
 
     def copy_content(self, from_instance):
@@ -295,18 +283,7 @@ class MultiChoice_answer(QuizAnswerBase):
 
         return new_instance
 
-    def clone(self):
-        new_instance = deepcopy(self)
-        new_instance.pk = None
-        new_instance.id = None
-
-        # placeholder needs to be cleared out in the copy so it can be auto generated
-        # with a new id (Polymorphic Quirk)
-        new_instance.answer_text = None
-
-        return new_instance
-
-    def copy_relations(self, from_instance, maintain_ref=False):
+    def copy_children(self, from_instance, maintain_ref=False):
 
         # copy over the content
         #self.copy_content(from_instance)
@@ -378,25 +355,14 @@ class MultiSelect_question(QuizQuestion):
 
         return new_instance
 
-    def clone(self):
-        new_instance = deepcopy(self)
-        new_instance.pk = None
-        new_instance.id = None
-
-        # placeholder needs to be cleared out in the copy so it can be auto generated
-        # with a new id (Polymorphic Quirk)
-        new_instance.question_text = None
-
-        return new_instance
-
-    def copy_relations(self, from_instance, maintain_ref=False):
+    def copy_children(self, from_instance, maintain_ref=False):
         # copy over the content
         #self.copy_content(from_instance)
 
         self.answer_item.delete()
         for answer_item in from_instance.answer_item.all():
+
             # copy the lesson item and set its linked topic
-            #new_answer = answer_item.clone()
             new_answer = answer_item.copy(maintain_ref)
             new_answer.quiz_question = self
             new_answer.position = answer_item.position
@@ -404,7 +370,7 @@ class MultiSelect_question(QuizQuestion):
             # save the new topic instance
             new_answer.save()
             new_answer.copy_content(answer_item)
-            new_answer.copy_relations(answer_item)
+            new_answer.copy_children(answer_item)
 
     def copy_content(self, from_instance):
         # get the list of plugins in the 'from_instance's intro
@@ -470,18 +436,7 @@ class MultiSelect_answer(QuizAnswerBase):
         return new_instance
 
 
-    def clone(self):
-        new_instance = deepcopy(self)
-        new_instance.pk = None
-        new_instance.id = None
-
-        # placeholder needs to be cleared out in the copy so it can be auto generated
-        # with a new id (Polymorphic Quirk)
-        new_instance.answer_text = None
-
-        return new_instance
-
-    def copy_relations(self, from_instance, maintain_ref=False):
+    def copy_children(self, from_instance, maintain_ref=False):
 
         # copy over the content
         #self.copy_content(from_instance)

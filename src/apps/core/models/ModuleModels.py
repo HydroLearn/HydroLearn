@@ -1,4 +1,3 @@
-from copy import deepcopy
 from datetime import timedelta
 from django.utils.timezone import now
 
@@ -274,7 +273,7 @@ class Lesson(Publication):
                     - and sets 'is_deleted' to False
 
                 Additionally, this method does not copy placeholder(content), tags, collaborators, or
-                child-objects (use copy_content (or copy_relations for children) after save to do this)
+                child-objects (use copy_content (or copy_children for children) after save to do this)
 
 
         :return: a new (unsaved) copy of this lesson
@@ -297,21 +296,7 @@ class Lesson(Publication):
 
         return new_instance
 
-    def clone(self):
-        '''
-            (USED IN PUBLICATION)
-            clone this lesson to another object with the same ref_id
-
-        :return: new instance of this lesson with the same reference id
-        '''
-        new_instance = deepcopy(self)
-        new_instance.pk = None
-        # new_instance.ref_id = None
-
-
-        return new_instance
-
-    def copy_relations(self, from_instance, maintain_ref=False):
+    def copy_children(self, from_instance, maintain_ref=False):
         '''
             Copy child relations (sub_lessons/sections) from a passed lesson, with the option of specifying
             if the ref_id should be maintained. this should only happen during publishing.
@@ -340,7 +325,7 @@ class Lesson(Publication):
             # save the copied section instance
             new_section.save()
             new_section.copy_content(section_item)
-            new_section.copy_relations(section_item, maintain_ref)
+            new_section.copy_children(section_item, maintain_ref)
 
         for sub_lesson in from_instance.sub_lessons.all():
             # copy the sub-lesson items and set their linked parent_lesson to this new instance
@@ -352,7 +337,7 @@ class Lesson(Publication):
             # save the copied sub-lesson instance
             new_lesson.save()
             new_lesson.copy_content(sub_lesson)
-            new_lesson.copy_relations(sub_lesson, maintain_ref)
+            new_lesson.copy_children(sub_lesson, maintain_ref)
 
     def copy_content(self, from_instance):
         '''
