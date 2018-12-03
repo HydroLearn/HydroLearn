@@ -16,7 +16,7 @@ from src.apps.core.models.SectionTypeModels import (
     QuizSection
 )
 
-from djangocms_text_ckeditor.widgets import TextEditorWidget
+# from djangocms_text_ckeditor.widgets import TextEditorWidget
 
 from cms.api import add_plugin
 from cms.utils import permissions

@@ -171,4 +171,8 @@
     list-style: none !important;
     list-style-type: none !important; }
 
+#form-confirmation-content form .helptext {
+  display: block;
+  font-style: italic; }
+
 /*# sourceMappingURL=editor_styling.css.map */

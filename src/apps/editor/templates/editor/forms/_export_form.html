@@ -1,19 +1,29 @@
-<form id="export_form" action="{{ request.path }}" method="post">
+<form id="export_form" action="{% url 'editor:lesson_export' Lesson.slug %}" method="post">
     {% csrf_token %}
-    Export '{{ Lesson.name }}' to new it's own module?
+    <h4>Export "<span style="font-weight:bold;">{{ Lesson.name }}</span>" to new it's own module?</h4>
 
-    <div id="form_errors" class="HL-message-banner critical">{{ form.errors }}</div>
+    <p>
+        This action will export the selected lesson to it's own module.
+        You will be able to access the exported module from your <span style="font-style:italic;">My Modules</span> listing
+        located in the <span style="font-style:italic;">Manage</span> interface, and have the option to add collaborators to help
+        with development.
 
-    <table>
-        {{ form.as_table }}
-    </table>
+    </p>
+
+    {% if not request.is_ajax %}
+        <div id="form_errors" class="HL-message-banner critical">{{ form.errors }}</div>
+    {% endif %}
+
+
+    {{ form.as_p }}
 
     <div id="export_selection_preview"></div>
 
-     <div id="content_form_controls">
-        <button class="Submit_button btn btn-default" type="submit">Confirm Export</button>
-        <button class="Cancel_button btn btn-default">Cancel</button>
-
-    </div>
+    {% if not request.is_ajax %}
+         <div id="content_form_controls">
+            <button class="Submit_button btn btn-default" type="submit">Confirm Export</button>
+            <button class="Cancel_button btn btn-default">Cancel</button>
+        </div>
+    {% endif %}
 
 </form>

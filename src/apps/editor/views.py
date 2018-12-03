@@ -465,6 +465,19 @@ class editor_LessonExportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
 
         return context
 
+    def save_sub_lessons(self, lesson):
+        '''
+            method to recursively save sublessons, this will trigger updates to
+            depth/depth_label fields in child objects of lesson
+        :param lesson: lesson to save sub_lessons for
+        :return: None
+        '''
+
+        for sub in lesson.sub_lessons.all():
+            sub.save()
+            self.save_sub_lessons(sub)
+
+
     def success_message(self):
         return _('Module Successfully Exported! Return to the Manage page if you wish to edit it.')
 
@@ -474,7 +487,7 @@ class editor_LessonExportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
     def get_success_return_data(self, form):
         return {
             'retained_lesson': form.cleaned_data.get('retain_copy'),
-            'export_slug': '',
+            'exported_slug': form.cleaned_data.get('exported_lesson'),
         }
 
     def get_failed_return_data(self, form):
@@ -489,8 +502,8 @@ class editor_LessonExportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
             exported_lesson = Lesson.objects.get(slug=exported_slug)
 
             # ensure user has edit permission for the lesson being exported
-            if not exported_lesson.has_edit_access(self.request.user):
-                form.add_error(None, "You do not have edit permissions for this Lesson! Export Canceled!")
+            if self.request.user != exported_lesson.get_owner():
+                form.add_error(None, "You must own this lesson to export it! Export Canceled!")
                 return self.form_invalid(form)
 
             # ensure not exporting a root module
@@ -517,6 +530,12 @@ class editor_LessonExportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
                 exported_lesson.position = 0
                 exported_lesson.save()
 
+                # being that the depth has changed with the export
+                # the child lessons must be saved to update their depths as well
+                self.save_sub_lessons(exported_lesson)
+
+
+
         return super(editor_LessonExportView, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -527,6 +546,9 @@ class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
     #form_class = editor_ImportLessonForm
     template_name = "editor/forms/_import_form.html"
     success_url = '/manage/'
+
+    imported_lesson_slug_return = ""
+
 
     def get_form_class(self):
 
@@ -542,8 +564,8 @@ class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
             retain_copy = forms.BooleanField(
                     initial=False,
                     required=False,
-                    label="Retain Instance",
-                    help_text="Checking this option will copy the selected Module to this Lesson, but will also retain the current External copy as it's own module."
+                    label="Retain Instance?",
+                    help_text="Checking this option will copy the selected Lesson to this module, but will also retain the current External copy as it's own module."
                 )
 
 
@@ -556,14 +578,30 @@ class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
 
         return context
 
+    def save_sub_lessons(self, lesson):
+        '''
+            method to recursively save sublessons, this will trigger updates to
+            depth/depth_label fields in child objects of lesson
+        :param lesson: lesson to save sub_lessons for
+        :return: None
+        '''
+
+        for sub in lesson.sub_lessons.all():
+            sub.save()
+            self.save_sub_lessons(sub)
+
     def success_message(self):
-        return super(editor_LessonImportView, self).success_message()
+        return _('Module Successfully Imported!')
 
     def failed_message(self):
-        return super(editor_LessonImportView, self).failed_message()
+        return _('Import Failed! A problem was detected while importing your module. Please correct any errors before trying again.')
 
     def get_success_return_data(self, form):
-        return super(editor_LessonImportView, self).get_success_return_data(form)
+        return {
+            #'imported_lesson_slug': form.cleaned_data.get('import_lesson').slug,
+            'imported_lesson_slug': self.imported_lesson_slug_return,
+
+        }
 
     def get_failed_return_data(self, form):
         return super(editor_LessonImportView, self).get_failed_return_data(form)
@@ -581,12 +619,12 @@ class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
 
 
             # check user has draft permissions to the parent object, and the imported object
-            if not parent_lesson.has_edit_access(self.request.user):
-                form.add_error(None, "You do not have edit permissions for this Lesson! Import Canceled!")
+            if self.request.user != parent_lesson.get_owner():
+                form.add_error(None, "Only the owner can import Modules! Import Canceled!")
                 return self.form_invalid(form)
 
-            if not imported_lesson.has_edit_access(self.request.user):
-                form.add_error(None, "You do not have edit permissions for the Lesson being Imported! Import Canceled!")
+            if self.request.user != imported_lesson.get_owner():
+                form.add_error(None, "You must own the Module being Imported! Import Canceled!")
                 return self.form_invalid(form)
 
             # ensure not trying to import into self...
@@ -613,12 +651,18 @@ class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
                 new_copy.copy_content(imported_lesson)
                 new_copy.copy_children(imported_lesson)
 
+                # set the return slug for this view
+                self.imported_lesson_slug_return = new_copy.slug
 
             else:
                 # otherwise just move the imported lesson into the parent lesson
                 imported_lesson.parent_lesson = parent_lesson
                 imported_lesson.position = parent_lesson.num_children
                 imported_lesson.save()
+
+                self.save_sub_lessons(imported_lesson)
+
+                self.imported_lesson_slug_return = imported_lesson.slug
 
 
 

@@ -113,36 +113,36 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
             return
             // hide the controls while loading
-            $('#delete-confirmation-confirm').hide()
-            $('#delete-confirmation-cancel').hide()
+            $('#form-confirmation-confirm').hide()
+            $('#form-confirmation-cancel').hide()
 
             // load the delete form for the current loaded section
-            $('#delete-confirmation-content').html("Loading Form...")
+            $('#form-confirmation-content').html("Loading Form...")
 
             // generate the delete url, and get the associated form
             var delete_url = '/editor/delete/{0}'.format(LESSON_MGR.get_Loaded_Section())
 
-            $('#delete-confirmation-content').load(delete_url, function(){
+            $('#form-confirmation-content').load(delete_url, function(){
 
                 // after loading show the controls
-                $('#delete-confirmation-confirm').show()
-                $('#delete-confirmation-cancel').show()
+                $('#form-confirmation-confirm').show()
+                $('#form-confirmation-cancel').show()
 
                 // map the confirm button's click action to submit form
-                $('#delete-confirmation-confirm').unbind('click');
-                $('#delete-confirmation-confirm').click(function(){
+                $('#form-confirmation-confirm').unbind('click');
+                $('#form-confirmation-confirm').click(function(){
 
                     // serialize the loaded form
-                    var form = $('#delete-confirmation-content').find('form');
+                    var form = $('#form-confirmation-content').find('form');
                     var form_method = $(form).attr('method');
                     var form_action =  $(form).attr('action');
                     var form_data =  $(form).serialize();
 
 
-                    $('#delete-confirmation-confirm').hide()
-                    $('#delete-confirmation-cancel').hide()
+                    $('#form-confirmation-confirm').hide()
+                    $('#form-confirmation-cancel').hide()
 
-                    $('#delete-confirmation-content').html('Processing request...')
+                    $('#form-confirmation-content').html('Processing request...')
 
                     // submit the form,
                     // if success
@@ -160,8 +160,8 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
                         success: function(response){
                             debugger;
-                            $('#delete-confirmation-content').html(response)
-                            $('#delete-confirmation-content').append('<p>You may now close this dialog</p>');
+                            $('#form-confirmation-content').html(response)
+                            $('#form-confirmation-content').append('<p>You may now close this dialog</p>');
 
                             var is_lesson = $('.current_selected_section').hasClass('Lesson_Link')
                             var section_value = $('.current_selected_section').attr('value')
@@ -182,7 +182,7 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
                         error: function(response){
 
-                            $('#delete-confirmation-content').html("There was an error processing your request, Please try again later");
+                            $('#form-confirmation-content').html("There was an error processing your request, Please try again later");
 
                         },
                     })
@@ -195,7 +195,7 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
             })
 
 
-            $('#delete-confirmation-dialog').dialog("open")
+            $('#form-confirmation-dialog').dialog("open")
 
             // mark this form to delete on submit
             //$('#id_delete_on_submit').val("True")

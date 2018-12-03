@@ -1,11 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 
-#from nested_formset import nestedformset_factory
 from taggit.forms import TagWidget
-
 from src.apps.core.forms import *
-#from src.apps.core.models.share_model import ShareMapping
 
 from polymorphic.formsets import (
         polymorphic_inlineformset_factory,
@@ -14,11 +11,6 @@ from polymorphic.formsets import (
     )
 
 from django.utils.translation import gettext as _
-
-from djangocms_text_ckeditor.widgets import TextEditorWidget
-#from djangocms_text_ckeditor.
-
-from src.settings import cms_settings
 
 
 ''' **********************************************************
@@ -148,12 +140,6 @@ class editor_SectionForm(forms.ModelForm):
             raise ValidationError("Section name must be at least 4 characters.")
 
         return name
-
-
-# class manage_ShareForm(forms.ModelForm):
-#     class Meta:
-#         model = ShareMapping
-#         exclude = ['module']
 
 
 ''' **********************************************************
