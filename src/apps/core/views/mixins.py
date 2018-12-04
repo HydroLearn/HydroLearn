@@ -146,6 +146,12 @@ class AjaxableResponseMixin(object):
             url = None
         return url
 
+    def success_message(self):
+        return _("Success! The form was saved.")
+
+    def failed_message(self):
+        return _("Submission failed! The form was not saved.")
+
     def get_success_return_data(self, form):
         return {}
 
@@ -180,7 +186,7 @@ class AjaxableResponseMixin(object):
 
             payload = {
                 'success': True,
-                'message': _("Success! The form was saved."),
+                'message': self.success_message(),
                 'data': return_data,
             }
 

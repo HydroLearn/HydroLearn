@@ -1,19 +1,17 @@
-from copy import deepcopy
 from datetime import timedelta
+from django.utils.timezone import now
 
 from cms.models import PlaceholderField, ValidationError, uuid
 from django.urls import reverse
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 
 from django_extensions.db.fields import (
-    RandomCharField,
     AutoSlugField
 )
 
 from taggit.managers import TaggableManager
 
-# from src.apps.core.QuerysetManagers import IterativeDeletion_Manager, PolyIterativeDeletion_Manager
 from src.apps.core.managers.IterativeDeletionManagers import (
     IterativeDeletion_Manager,
     PolyIterativeDeletion_Manager
@@ -21,9 +19,8 @@ from src.apps.core.managers.IterativeDeletionManagers import (
 
 from src.apps.core.models.PublicationModels import (
     Publication,
-    # PolyPublication,
-    PublicationChild,
-    PolyPublicationChild)
+    PolyPublicationChild
+)
 
 from cms.utils.copy_plugins import copy_plugins_to
 
@@ -31,12 +28,9 @@ User = settings.AUTH_USER_MODEL
 
 
 class Lesson(Publication):
-    # class Lesson(PublicationChild):
-    # objects = IterativeDeletion_Manager()
-    # objects = PublicationManager()
 
     # TODO: if needed for publishable, can inherit parent's meta
-    # class Meta(Publishable.Meta):
+    #       class Meta(Publishable.Meta):
     class Meta:
         app_label = 'core'
         unique_together = ('parent_lesson', 'name')  # enforce only unique topic names within a module
@@ -132,6 +126,19 @@ class Lesson(Publication):
     summary = PlaceholderField('lesson_summary')
 
 
+    ########################################
+    # Cloning references
+    ########################################
+
+    # the date this lesson was cloned from a published lesson
+    #derived_date = models.DateTimeField(null=True)
+
+    # the published lesson this lesson was derived from's ref_id
+    #derived_from = models.UUIDField(null=True, default=None, editable=False)
+
+
+
+
 
     #   the default related name for this many-to-many field is lesson_set
     #
@@ -143,11 +150,12 @@ class Lesson(Publication):
     #
     # resources = models.ManyToManyField('core.Resource')
 
+
     # TODO: potentially add 1-to-1 relationship to a publishable (instead of direct inheritance)
     #           this will allow for a lesson to be a child and root
     #           e.g. root.publishable = [publishable object], child.publishable = None
-    #
-    #   parent_link
+    #       ______________________________
+    #       parent_link
     #           When True and used in a model which inherits from another
     #           concrete model, indicates that this field should be used as
     #           the link back to the parent class, rather than the extra
@@ -156,8 +164,12 @@ class Lesson(Publication):
     #
     # publishable = models.OneToOneField('core.Publishable', default=None, on_delete=modeld.SET_NULL, parent_link=True)
 
+    def __str__(self):
+        return self.name
+
+
     ########################################
-    #   Methods
+    #   URL Methods
     ########################################
 
     # define for use by FormMixin
@@ -194,71 +206,9 @@ class Lesson(Publication):
             'ref_id': self.ref_id,
         })
 
-    # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
-    def __str__(self):
-        return self.name
-
     ########################################
-    #   Publication Method overrides
+    #   Query Methods/properties
     ########################################
-
-    def copy(self):
-
-        new_instance = deepcopy(self)
-        new_instance.pk = None
-        # new_instance.ref_id = None
-
-
-        return new_instance
-
-    def copy_relations(self, from_instance, preserve_child_ref_id=True):
-
-        # copy over the content
-        self.copy_content(from_instance)
-
-        # add any tags from the 'from_instance'
-        self.tags.add(*list(from_instance.tags.names()))
-
-        # Before copying related objects from the old instance, the ones
-        # on the current one need to be deleted. Otherwise, duplicates may
-        # appear on the public version of the page
-        self.sections.delete()
-        self.sub_lessons.delete()
-
-        for section_item in from_instance.sections.all():
-            # copy the section items and set their linked lesson to this new instance
-            new_section = section_item.copy()
-
-            if preserve_child_ref_id:
-                new_section.ref_id = section_item.ref_id
-
-            new_section.lesson = self
-
-            # save the copied section instance
-            new_section.save()
-
-            new_section.copy_relations(section_item)
-
-        for sub_lesson in from_instance.sub_lessons.all():
-            # copy the sub-lesson items and set their linked parent_lesson to this new instance
-            new_lesson = sub_lesson.copy()
-
-            if preserve_child_ref_id:
-                new_lesson.ref_id = sub_lesson.ref_id
-
-            new_lesson.parent_lesson = self
-
-            # save the copied sub-lesson instance
-            new_lesson.save()
-
-            new_lesson.copy_relations(sub_lesson)
-
-    def copy_content(self, from_instance):
-        # get the list of plugins in the 'from_instance's intro
-        plugins = from_instance.summary.get_plugins_list()
-
-        # copy 'from_instance's intro plugins to this object's intro
-        copy_plugins_to(plugins, self.summary, no_signals=True)
 
     # TODO: Watch for this, as formsets may not access this with update
     def save(self, **kwargs):
@@ -266,21 +216,18 @@ class Lesson(Publication):
         # set depth level on save
         if self.parent_lesson:
             self.depth = self.parent_lesson.depth + 1
-
+        else:
+            self.depth = 0
 
         # TODO: this needs to be flipped
         # based on depth level set the depth label
         self.depth_label = {
-            0:'Module',
-            1:'Topic',
+            0: 'Module',
+            1: 'Topic',
             2: 'Lesson',
         }.get(self.depth, "INVALID")
 
-
         super(Lesson, self).save(**kwargs)
-
-    # def save_base(self, raw=False, force_insert=False, force_update=False, using=None, update_fields=None):
-    #     super().save_base(raw, force_insert, force_update, using, update_fields)
 
     def delete(self, *args, **kwargs):
 
@@ -301,10 +248,143 @@ class Lesson(Publication):
         #   creation of multiple drafts with the same name
         #   this is only valid if a base lesson so check that it's not a root lesson too
         #   TODO: watch this, it could be inadequate when 'lesson-copy' becomes enabled later in development
-        # if not self.parent_lesson and self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
-        #     raise ValidationError('A Draft-Lesson with this name already exists')
+        #           if not self.parent_lesson and self.is_draft and Lesson.objects.exclude(pk=self.pk).filter(name=self.name, is_draft=True).exists():
+        #               raise ValidationError('A Draft-Lesson with this name already exists')
 
         return super(Lesson, self).validate_unique(exclude)
+
+    @property
+    def total_depth(self):
+        '''
+            method to return the total depth of this lesson's structure
+            (the max level of nested children)
+        :return: integer representation of child depth
+        '''
+
+        if self.sub_lessons:
+
+            max_depth = 0
+            for sub_lesson in self.sub_lessons.all():
+                max_depth = max(max_depth, sub_lesson.total_depth)
+
+            return max_depth + 1
+        else:
+            return 1
+
+    @property
+    def num_children(self):
+        return self.num_sections + self.num_sub_lessons
+
+    @property
+    def num_sections(self):
+        return self.sections.count()
+
+    @property
+    def num_sub_lessons(self):
+        return self.sub_lessons.count()
+
+
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
+
+    def copy(self, maintain_ref=False):
+        '''
+            generate a new (unsaved) lesson instance based on this lesson, with a fresh ref_id if specified.
+
+            Notes:
+                The newly generated instance:
+                    - removes reference to parent
+                    - marks 'position' as 0
+                    - and sets 'is_deleted' to False
+
+                Additionally, this method does not copy placeholder(content), tags, collaborators, or
+                child-objects (use copy_content (or copy_children for children) after save to do this)
+
+
+        :return: a new (unsaved) copy of this lesson
+        '''
+
+        new_instance = Lesson(
+
+            parent_lesson = None,
+            position=0,
+            is_deleted = False,
+
+            name = self.name,
+            short_name = self.short_name,
+        )
+
+        # if specified, mark this new instance as the same lesson
+        # typically only used in publication methods
+        if maintain_ref:
+            new_instance.ref_id = self.ref_id
+
+        return new_instance
+
+    def copy_children(self, from_instance, maintain_ref=False):
+        '''
+            Copy child relations (sub_lessons/sections) from a passed lesson, with the option of specifying
+            if the ref_id should be maintained. this should only happen during publishing.
+
+        :param from_instance: Lesson instance from which the child relations are provided.
+        :param maintain_ref: Boolean representing if the ref_id should be maintained on the child objects, this should only be true in the case of publication.
+
+        :return: None
+        '''
+        # copy over the content
+        #self.copy_content(from_instance)
+
+        # Before copying related objects from the old instance, the ones
+        # on the current one need to be deleted. Otherwise, duplicates may
+        # appear on the public version of the page
+        self.sections.delete()
+        self.sub_lessons.delete()
+
+        for section_item in from_instance.sections.all():
+            # copy the section items and set their linked lesson to this new instance
+            new_section = section_item.copy(maintain_ref)
+
+            new_section.lesson = self
+            new_section.position = section_item.position
+
+            # save the copied section instance
+            new_section.save()
+            new_section.copy_content(section_item)
+            new_section.copy_children(section_item, maintain_ref)
+
+        for sub_lesson in from_instance.sub_lessons.all():
+            # copy the sub-lesson items and set their linked parent_lesson to this new instance
+            new_lesson = sub_lesson.copy(maintain_ref)
+
+            new_lesson.parent_lesson = self
+            new_lesson.position = sub_lesson.position
+
+            # save the copied sub-lesson instance
+            new_lesson.save()
+            new_lesson.copy_content(sub_lesson)
+            new_lesson.copy_children(sub_lesson, maintain_ref)
+
+    def copy_content(self, from_instance):
+        '''
+            copy content including tags, and placeholder plugins to this instance from a passed Lesson
+
+        :param from_instance: a Lesson object the content/tags are being copied from
+        :return: None
+        '''
+
+        # add any tags from the 'from_instance'
+        self.tags.add(*list(from_instance.tags.names()))
+
+        # clear any existing plugins
+        self.summary.clear()
+
+        # get the list of plugins in the 'from_instance's intro
+        plugins = from_instance.summary.get_plugins_list()
+
+        # copy 'from_instance's intro plugins to this object's intro
+        copy_plugins_to(plugins, self.summary, no_signals=True)
 
     def get_Publishable_parent(self):
 
@@ -402,26 +482,6 @@ class Lesson(Publication):
 
         return False
 
-
-    def dirty_content(self):
-        return True
-
-        # TODO: Revise this for checking placeholder plugins based off
-        #       of published date
-
-        # if there is no published copy, return dirty
-        if self.published_copy is None: return True
-
-        # otherwise check that no plugin in this lesson
-        # was saved after last publish's creation date
-        result = any([
-            super(Lesson, self).is_dirty,
-            self.summary.cmsplugin_set.filter(
-                changed_date__gt=self.published_copy.published_date).exists(),
-        ])
-
-        if result: return result
-
     def has_draft_access(self, user):
 
         # if passes the default permission check (owner/admin) return true
@@ -450,7 +510,6 @@ class Lesson(Publication):
 
         return any(access_conditions)
 
-
     def get_owner(self):
         '''
             get the owner of the lesson (created-by), if this is a child lesson
@@ -465,9 +524,9 @@ class Lesson(Publication):
 
 
 
-# class Section(PolyCreationTrackingBaseModel):
+
 class Section(PolyPublicationChild):
-    # class Section(CreationTrackingBaseModel, PolymorphicModel):
+
     objects = PolyIterativeDeletion_Manager()
 
     class Meta:
@@ -475,7 +534,7 @@ class Section(PolyPublicationChild):
         unique_together = (
             'lesson',
             'name'
-        )  # enforce only unique section names within a topic
+        )  # enforce only unique section names within a lesson
         ordering = ('position',)
         verbose_name_plural = 'Sections'
         manager_inheritance_from_future = True
@@ -521,14 +580,6 @@ class Section(PolyPublicationChild):
                          help_text=u'Please enter a unique slug for this Section (can autogenerate from name field)',
                          )
 
-    # slug = AutoSlugField(u'slug',
-    #                      blank=False,
-    #                      default='',
-    #                      max_length=8,
-    #                      unique=True,
-    #                      populate_from=('ref_id',),
-    #                      help_text=u'Please enter a unique slug for this Lesson (can autogenerate from name field)',
-    #                      )
 
     lesson = models.ForeignKey('core.Lesson',
                                related_name="sections",
@@ -581,6 +632,10 @@ class Section(PolyPublicationChild):
     # needed to show the name in the admin interface (otherwise will show 'Module Object' for all entries)
     def __str__(self):
         return "%s:%s" % (self.lesson.name, self.name)
+
+    ########################################
+    #   Publication Method overrides
+    ########################################
 
     def get_Publishable_parent(self):
         # return self.lesson.topic.module
@@ -653,14 +708,20 @@ class Collaboration(models.Model):
     def __str__(self):
         return "Collab: %s -> %s" % (self.collaborator.__str__(), self.publication.__str__())
 
-''' DEPRECIATED (Kept for potential future reference)
+
+
+
+
+''' --------------------------------------------------------------- 
+
+    DEPRECIATED (Kept for potential future reference)
      Assign any signals needed for clearing placeholder fields of a model
 
      WARNING:
          IF A MODEL HAS A 'PLACEHOLDERFIELD' AND AN APPROPRIATE SIGNAL IS NOT SET FOR IT
          THE PLUGIN INSTANCES WILL REMAIN IN THE DATABASE, WHICH WILL LEAD TO ORPHANED DATA
 
-'''
+--------------------------------------------------------------- '''
 
 # signals.pre_save.connect(module_pre_save_handler, sender=Module, dispatch_uid='Module_pre_save')
 

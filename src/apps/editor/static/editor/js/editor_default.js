@@ -19,19 +19,19 @@ $(document).ready(function() {
     })
 
     // initialize the dialog box used when confirming navigating away from a page (used for quiz sections)
-    $("#delete-confirmation-dialog").dialog({
+    $("#form-confirmation-dialog").dialog({
         autoOpen: false,
         draggable: false,
         modal: true,
         resizable: false,
-        width: '450px',
+        width: '50%',
         open: function() {
                 place_dialog_center($(this));
             }
     });
 
-    $('#delete-confirmation-cancel').click(function(){
-        $('#delete-confirmation-dialog').dialog('close')
+    $('#form-confirmation-cancel').click(function(){
+        $('#form-confirmation-dialog').dialog('close')
     })
 
 //    $('#lesson-nav-denied-confirm').click(function(){

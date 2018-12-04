@@ -14,13 +14,16 @@ function EDITOR_TOC(target_container_selector, TOC_Listing, editor_access){
     this.EVENT_TRIGGERS['ADD_LESSON'] = '_TOC_add_lesson';
     this.EVENT_TRIGGERS['REMOVE_OBJ'] = '_TOC_remove_obj';
     this.EVENT_TRIGGERS['DELETE_DIALOG'] = '_TOC_delete_dialog';
+    this.EVENT_TRIGGERS['EXPORT_DIALOG'] = '_TOC_export_dialog';
+    this.EVENT_TRIGGERS['IMPORT_DIALOG'] = '_TOC_import_dialog';
 
     // bind custom trigger events to target container
     $(this._target).on(this.EVENT_TRIGGERS.ADD_SECTION, this._add_section_evt.bind(this))
     $(this._target).on(this.EVENT_TRIGGERS.ADD_LESSON, this._add_lesson_evt.bind(this))
     $(this._target).on(this.EVENT_TRIGGERS.REMOVE_OBJ, this._remove_obj_event.bind(this))
     $(this._target).on(this.EVENT_TRIGGERS.DELETE_DIALOG, this._show_deletion_dialog_listener.bind(this))
-
+    $(this._target).on(this.EVENT_TRIGGERS.EXPORT_DIALOG, this._show_export_dialog_listener.bind(this))
+    $(this._target).on(this.EVENT_TRIGGERS.IMPORT_DIALOG, this._show_import_dialog_listener.bind(this))
 
 
 }
@@ -130,6 +133,23 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
                 }
 
+                function lesson_c_menu_export_evt(key, options){
+
+                    // so this should apply for all lessons
+                    var obj_id = $(this).closest('.Lesson_obj').attr('data-TOC-obj-id');
+                    manager.trigger_event(manager.EVENT_TRIGGERS.EXPORT_DIALOG, [obj_id]);
+
+                }
+
+                function lesson_c_menu_import_evt(key, options){
+
+                    // so this should apply for all lessons
+                    var obj_id = $(this).closest('.Lesson_obj').attr('data-TOC-obj-id');
+                    manager.trigger_event(manager.EVENT_TRIGGERS.IMPORT_DIALOG, [obj_id]);
+
+                }
+
+
                 var lesson_c_menu_items = {
                         // there will be a header with the selected lesson title
                         "head-sep": "---------",
@@ -138,32 +158,55 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                         "add_submenu": {
                                 "name": "Add",
                                 "icon": "add",
-                                "items": (lesson.depth < 2)?
-                                    { // if this lesson is less than a depth of 2, include an add-lesson item
+                                "items": {
                                         "add_reading":{name: "New Reading", className:"add_reading_menu_item", icon:"add", callback: lesson_c_menu_add_section_evt},
                                         "add_activity":{name: "New Activity", className:"add_activity_menu_item", icon:"add", callback: lesson_c_menu_add_section_evt},
                                         "add_quiz":{name: "New Quiz",   className:"add_quiz_menu_item",icon:"add", callback: lesson_c_menu_add_section_evt},
                                         'add_submenu-menu-sep': "---------",
                                         'add_lesson':{name: "New Lesson", icon:"add", callback: lesson_c_menu_add_lesson_evt}
-                                    }:
-                                    { // if this lesson at a depth of 2 or more, dont include 'add lesson'
-
-                                        "add_reading":{name: "New Reading", icon:"add", className:"reading_section", callback: lesson_c_menu_add_section_evt},
-                                        "add_activity":{name: "New Activity", icon:"add", className:"activity_section", callback: lesson_c_menu_add_section_evt},
-                                        "add_quiz":{name: "New Quiz", icon:"add", className:"quiz_section", callback: lesson_c_menu_add_section_evt},
-
                                     },
 
                             },
 
                         "sep1": "---------",
+
+                        "import_export_submenu": {
+                            "name": "Import/Export",
+                            "icon": "",
+                            "items": {
+                                    'export': {name: "Export as Module",icon: "fas fa-share-square", callback: lesson_c_menu_export_evt },
+                                    'import': {name: "Import Module",icon: "fas fa-download", callback: lesson_c_menu_import_evt },
+                                },
+
+                            },
+
+
+
+                        "sep2": "---------",
                         "delete": {name: "Delete",icon: "delete",callback: lesson_c_menu_delete_evt},
                     };
 
-                var lesson_c_menu_opts1 = {
+                // Disable specific actions based on the lesson depth
+                switch(lesson.depth){
+                    case 0:
+                        // root lessons cannot be exported as they are already their own modules
+                        lesson_c_menu_items["import_export_submenu"]["items"]["export"]["disabled"] = true;
+                        break;
+                    case 2:
+                        // max_depth lessons cannot add/import lessons as they at the maximum depth
+                        lesson_c_menu_items["add_submenu"]["items"]["add_lesson"]["disabled"] = true;
+                        lesson_c_menu_items["import_export_submenu"]["items"]["import"]["disabled"] = true;
+
+                        break;
+                }
+
+
+
+                var lesson_c_menu_opts = {
                     trigger:'right',
                     className: 'data-title',
                     selector:'h3.accord-title',
+                    //selector:'.Lesson_Link', // for selecting child lesson_link (DEPRECIATED)
                     events: {
                         show: function(options){
                             // add the lesson's title to the context menu
@@ -178,36 +221,10 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                     items: lesson_c_menu_items,
                 };
 
-                var lesson_c_menu_opts2 = {
-                    trigger:'right',
-                    className: 'data-title',
-                    selector:'.Lesson_Link',
-                    events: {
-                        show: function(options){
-                            // add the lesson's title to the context menu
-                            // for added clarity of object being interacted with
-                            options.$menu.attr('data-menutitle', "{0}".format($(this).closest('.Lesson_obj').find('.accord-title').first().text()))
-                        },
-                    },
-
-                    callback: function(key, options) {
-                        console.warn('ContextMenu: no method has been specified for "{0}" menu item.'.format(key))
-                    },
-                    items: lesson_c_menu_items,
-                };
-
                 // attach context menu to the lesson header object
                 if( lesson.is_instanced){
-                    $(lesson_obj).contextMenu(lesson_c_menu_opts1);
+                    $(lesson_obj).contextMenu(lesson_c_menu_opts);
                 }
-
-                // $(lesson_obj).contextMenu(lesson_c_menu_opts2);
-
-                // disable the NORMAL context menu on the lesson links
-                //$(lesson_obj).find('.Lesson_Link:first').contextmenu(function(){return false;});
-
-
-
 
             }
 
@@ -473,38 +490,38 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
         var manager = this;
         // hide the controls while loading
-        $('#delete-confirmation-confirm').hide()
-        $('#delete-confirmation-cancel').hide()
+        $('#form-confirmation-confirm').hide()
+        $('#form-confirmation-cancel').hide()
 
         // load the delete form for the current loaded section
-        $('#delete-confirmation-content').html("Loading Form...")
+        $('#form-confirmation-content').html("Loading Form...")
 
         // generate the delete url, and get the associated form
         var delete_url = '/editor/delete/{0}'.format(obj_id)
 
 
 
-        $('#delete-confirmation-content').load(delete_url, function(){
+        $('#form-confirmation-content').load(delete_url, function(){
 
             // after loading show the controls
-            $('#delete-confirmation-confirm').show()
-            $('#delete-confirmation-cancel').show()
+            $('#form-confirmation-confirm').show()
+            $('#form-confirmation-cancel').show()
 
             // map the confirm button's click action to submit form
-            $('#delete-confirmation-confirm').unbind('click');
-            $('#delete-confirmation-confirm').click(function(){
+            $('#form-confirmation-confirm').unbind('click');
+            $('#form-confirmation-confirm').click(function(){
 
                 // serialize the loaded form
-                var form = $('#delete-confirmation-content').find('form');
+                var form = $('#form-confirmation-content').find('form');
                 var form_method = $(form).attr('method');
                 var form_action =  $(form).attr('action');
                 var form_data =  $(form).serialize();
 
 
-                $('#delete-confirmation-confirm').hide()
-                $('#delete-confirmation-cancel').hide()
+                $('#form-confirmation-confirm').hide()
+                $('#form-confirmation-cancel').hide()
 
-                $('#delete-confirmation-content').html('Processing request...')
+                $('#form-confirmation-content').html('Processing request...')
 
                 // submit the form,
                 // if success
@@ -522,8 +539,8 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
                     success: function(response){
 
-                        $('#delete-confirmation-content').html(response)
-                        $('#delete-confirmation-content').append('<p>You may now close this dialog</p>');
+                        $('#form-confirmation-content').html(response)
+                        $('#form-confirmation-content').append('<p>You may now close this dialog</p>');
 
                         //var section_value = $('.current_selected_section').attr('value')
                         var TOC_obj = TOC_MGR.get_TOC_obj(obj_id)
@@ -544,7 +561,7 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
                     },
 
                     error: function(response){
-                        $('#delete-confirmation-content').html("There was an error processing your request, Please try again later");
+                        $('#form-confirmation-content').html("There was an error processing your request, Please try again later");
 
                     },
                 })
@@ -556,9 +573,226 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
         })
 
-        $('#delete-confirmation-dialog').dialog("open")
+        $('#form-confirmation-dialog').dialog("open")
     }
 
+    EDITOR_TOC.prototype._show_export_dialog_listener = function(event, obj_id){
 
+        if(typeof(obj_id) == "undefined") throw new Error('EDITOR_TOC: cannot show deletion dialog without valid object id')
+
+        var manager = this;
+        // hide the controls while loading
+        $('#form-confirmation-confirm').hide()
+        $('#form-confirmation-cancel').hide()
+
+        // load the delete form for the current loaded section
+        $('#form-confirmation-content').html("Loading Form...")
+
+        // generate the delete url, and get the associated form
+        var export_url = '/editor/export/{0}'.format(obj_id)
+
+
+
+        $('#form-confirmation-content').load(export_url, function(){
+
+            // after loading show the controls
+            $('#form-confirmation-confirm').show()
+            $('#form-confirmation-cancel').show()
+
+            // map the confirm button's click action to submit form
+            $('#form-confirmation-confirm').unbind('click');
+            $('#form-confirmation-confirm').click(function(){
+
+                // serialize the loaded form
+                var form = $('#form-confirmation-content').find('form');
+                var form_method = $(form).attr('method');
+                var form_action =  $(form).attr('action');
+                var form_data =  $(form).serialize();
+
+
+                $('#form-confirmation-confirm').hide()
+                $('#form-confirmation-cancel').hide()
+
+                $('#form-confirmation-content').html('Processing request...')
+
+                // submit the form,
+                // if success
+                //  refresh the content,
+                //  and remove TOC representation
+
+                // if error
+                //      display error
+
+                $.ajax({
+                    url: form_action,
+                    type: form_method,
+                    method: form_method,
+                    data: form_data,
+
+                    success: function(response){
+
+                        if(response.success){
+
+                            $('#form-confirmation-content').html(response.message);
+                            $('#form-confirmation-content').append('<p>You may now close this dialog</p>');
+
+                            if(!response.data.retained_lesson){
+                                var TOC_obj = TOC_MGR.get_TOC_obj(obj_id)
+                                manager.trigger_event(manager.EVENT_TRIGGERS.REMOVE_OBJ, [obj_id])
+                            }
+
+                        }else{
+
+                            $('#form-confirmation-content').html(response.message);
+                            $('#form-confirmation-content').append(response.data.errors)
+
+
+                        }
+
+
+                        //var section_value = $('.current_selected_section').attr('value')
+                        var TOC_obj = TOC_MGR.get_TOC_obj(obj_id)
+
+
+
+                        $('')
+
+                        // if deleted base lesson, return to manage interface
+//                        if(TOC_obj.attr('id') == "Base_Lesson_obj"){
+//                            window.location = "/manage/"
+//                            return;
+//                        }
+
+                        // trigger the removal of the newly deleted object from toc
+//                        manager.trigger_event(manager.EVENT_TRIGGERS.REMOVE_OBJ, [obj_id])
+
+                        // redirect view to base lesson form
+//                        manager.trigger_event(manager.EVENT_TRIGGERS.SELECT_OBJ, [$('#Base_Lesson_obj').attr('data-TOC-obj-id')]);
+
+
+                    },
+
+                    error: function(response){
+                        $('#form-confirmation-content').html("There was an error processing your request, Please try again later");
+
+                    },
+                })
+
+
+
+            })
+
+
+        })
+
+        $('#form-confirmation-dialog').dialog("open")
+    }
+
+    EDITOR_TOC.prototype._show_import_dialog_listener = function(event, obj_id){
+
+        if(typeof(obj_id) == "undefined") throw new Error('EDITOR_TOC: cannot show deletion dialog without valid object id')
+
+        var manager = this;
+        // hide the controls while loading
+        $('#form-confirmation-confirm').hide()
+        $('#form-confirmation-cancel').hide()
+
+        // load the delete form for the current loaded section
+        $('#form-confirmation-content').html("Loading Form...")
+
+        // generate the delete url, and get the associated form
+        var import_url = '/editor/import/{0}'.format(obj_id)
+
+
+
+        $('#form-confirmation-content').load(import_url, function(){
+
+            // after loading show the controls
+            $('#form-confirmation-confirm').show()
+            $('#form-confirmation-cancel').show()
+
+            // map the confirm button's click action to submit form
+            $('#form-confirmation-confirm').unbind('click');
+            $('#form-confirmation-confirm').click(function(){
+
+                // serialize the loaded form
+                var form = $('#form-confirmation-content').find('form');
+                var form_method = $(form).attr('method');
+                var form_action =  $(form).attr('action');
+                var form_data =  $(form).serialize();
+
+
+                $('#form-confirmation-confirm').hide()
+                $('#form-confirmation-cancel').hide()
+
+                $('#form-confirmation-content').html('Processing request...')
+
+                // submit the form,
+                // if success
+                //  refresh the content,
+                //  and remove TOC representation
+
+                // if error
+                //      display error
+
+                $.ajax({
+                    url: form_action,
+                    type: form_method,
+                    method: form_method,
+                    data: form_data,
+
+                    success: function(response){
+
+                        if(response.success){
+                            $('#form-confirmation-content').html(response.message);
+                            $('#form-confirmation-content').append('<p>You may now close this dialog</p>');
+
+                            // refresh the page to the newly imported lesson summary
+                            window.location = "{0}?v={1}".format(window.location.pathname, response.data.imported_lesson_slug)
+
+                        }else{
+                            $('#form-confirmation-content').html(response.message);
+                            $('#form-confirmation-content').append(response.data.errors)
+
+                        }
+
+
+
+                        //var section_value = $('.current_selected_section').attr('value')
+                        //var TOC_obj = TOC_MGR.get_TOC_obj(obj_id)
+
+                        //debugger;
+
+
+                        // if deleted base lesson, return to manage interface
+//                        if(TOC_obj.attr('id') == "Base_Lesson_obj"){
+//                            window.location = "/manage/"
+//                            return;
+//                        }
+
+                        // trigger the removal of the newly deleted object from toc
+//                        manager.trigger_event(manager.EVENT_TRIGGERS.REMOVE_OBJ, [obj_id])
+
+                        // redirect view to base lesson form
+//                        manager.trigger_event(manager.EVENT_TRIGGERS.SELECT_OBJ, [$('#Base_Lesson_obj').attr('data-TOC-obj-id')]);
+
+
+                    },
+
+                    error: function(response){
+                        $('#form-confirmation-content').html("There was an error processing your request, Please try again later");
+
+                    },
+                })
+
+
+
+            })
+
+
+        })
+
+        $('#form-confirmation-dialog').dialog("open")
+    }
 
 

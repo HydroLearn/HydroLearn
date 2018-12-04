@@ -81,6 +81,10 @@ $(document).ready(function() {
         if ($("#lesson-nav-denied-dialog").dialog("isOpen") === true) {
             place_dialog_center($("#lesson-nav-denied-dialog"));
         }
+
+        if ($("#form-confirmation-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#form-confirmation-dialog"));
+        }
     });
 
     // highlight the active section in the table of contents
@@ -94,10 +98,14 @@ function place_dialog_center(dialog_obj) {
     var window_height = $(window).height();
     var window_width = $(window).width();
     var scroll_top = $(window).scrollTop();
-    var scroll_left = $(window).scrollLeft();
+    //var scroll_left = $(window).scrollLeft();
 
-    $(dialog_obj).parent('.ui-dialog').css('top', window_height / 2 - $(dialog_obj).height() + scroll_top);
-    $(dialog_obj).parent('.ui-dialog').css('left', window_width / 2 - $(dialog_obj).width() / 2 + scroll_left);
+    //$(dialog_obj).parent('.ui-dialog').css('top', window_height / 2 - $(dialog_obj).height() + scroll_top);
+    //$(dialog_obj).parent('.ui-dialog').css('left', window_width / 2 - $(dialog_obj).width() / 2 + scroll_left);
+
+
+    $(dialog_obj).parent('.ui-dialog').css('top', 50 + scroll_top);
+
 }
 
 /* general functions
