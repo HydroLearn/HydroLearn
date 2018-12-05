@@ -4,7 +4,7 @@ from src.settings.config_reader import get_config_setting
 '''
 
 SOCIAL_AUTH_HYDROSHARE_KEY = get_config_setting("HS_KEY")
-SOCIAL_AUTH_HYDROSHARE_SECRET = get_config_setting("HS_KEY")
+SOCIAL_AUTH_HYDROSHARE_SECRET = get_config_setting("HS_SECRET")
 
 
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['email']
