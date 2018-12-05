@@ -4,7 +4,7 @@
 
 from src.apps.manage.hydroshare import HydroShareUtils
 from django.http import JsonResponse
-# import numpy as np
+import numpy as np
 
 def get_hs_res_list(request):
 
