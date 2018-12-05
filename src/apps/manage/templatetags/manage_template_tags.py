@@ -70,7 +70,6 @@ def show_lesson_formset(formset_type, formset):
     }
 
 
-
 @register.inclusion_tag('manage/partials/_section_formset.html')
 #def show_section_formset(parent_form, formset):
 def show_section_formset(formset_type, formset):
