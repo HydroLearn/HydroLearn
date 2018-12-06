@@ -12,7 +12,7 @@
         <th style="width: 110px">Share Code</th>
         <th style="width: 300px">
             Actions
-            <span class="module-actions_popover-trigger" data-toggle="popover" data-placement="top" data-html="true"  title='Module Actions' data-content=''>
+            <span class="find-actions_popover-trigger" data-toggle="popover" data-placement="top" data-html="true"  title='Module Actions' data-content=''>
                 <i class="fas fa-info-circle Info_legend_icon"></i>
             </span>
         </th>
@@ -21,13 +21,13 @@
     {% for module in found_modules %}
         <tr>
                 <td >{{ module.name }}</td>
-                <td >{{ module.changed_date }}</td>
+                <td >{{ module.published_date }}</td>
                 <td >{{ module.created_by }}</td>
                 <td >{{ module.slug }}</td>
                 <td >
                     <div class="module-action-container">
                         <a title="View Module" target="_blank" href="{{module.viewer_url}}"><i class="fas fa-eye glyph-button"></i></a>
-                        <a title="Clone Module" target="_blank" href="" ><i class="fas fa-copy glyph-button"></i></a>
+                        <a title="Clone Module" target="_blank" onclick="FindModules_View_Stack.push_view('Clone-{{ module.ref_id }}', 'Clone Publication - {{ module.name }}', '{% url 'manage:publication_clone_index' slug=module.slug %}')" ><i class="fas fa-copy glyph-button"></i></a>
 
                     </div>
                 </td>
@@ -36,7 +36,7 @@
 
     {% empty %}
         <tr>
-            <td> No Modules have been Published yet!</td>
+            <td> No Publications matching search filters found! </td>
             <td></td>
             <td></td>
             <td></td>
@@ -44,3 +44,26 @@
         </tr>
     {% endfor %}
 </table>
+
+<!--module actions info popover content-->
+<div style="display:none;" class="find-actions_popover-content">
+    <div><i class="fas fa-eye glyph-button"></i> - View Publication</div>
+    <div><i class="fas fa-edit glyph-button"></i> - Copy Publication to My Modules</div>
+</div>
+
+<script>
+
+
+$(document).ready(function(){
+
+    // populate the content of the pub-status info popover
+    $('.find-actions_popover-trigger').attr('data-content',$('.find-actions_popover-content').html())
+
+
+    // initialize the pub-status info popover
+    $('.find-actions_popover-trigger').popover({
+        trigger: 'hover',
+    });
+
+});
+</script>

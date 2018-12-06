@@ -1,10 +1,12 @@
 {% load cms_tags menu_tags sekizai_tags static manage_template_tags %}
 
-<h3>Search Filters</h3>
-<p> there should be some search filters here (a form view)</p>
+<div id="filter_form">
+    {# find_publications_filter_form #}
+</div>
 
-{% find_publications_filter_form %}
 
 
-{% list_published_modules %}
 
+<script>
+    $('#filter_form').load('/manage/find_form')
+</script>

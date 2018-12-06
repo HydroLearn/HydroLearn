@@ -56,8 +56,15 @@ function View_Stack(target){
 
             error: function(data){
                 $(top_id).html(data);
+
             },
-        })
+        }).fail(function(){
+            $(top_id).fadeOut(function(){
+                $(top_id).html('There was an refreshing this Page.. Please try again later');
+                $(top_id).fadeIn();
+            });
+
+        });
 
 
     };
