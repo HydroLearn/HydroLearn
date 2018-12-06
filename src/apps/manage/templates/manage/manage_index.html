@@ -7,7 +7,7 @@
     {% addtoblock "template_css" %}
         <link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">
         <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
-
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
     {% endaddtoblock "template_css" %}
 
 
@@ -71,7 +71,32 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg" style="display: inline-block;text-align: left;vertical-align: middle;">
                     <div class="modal-content">
                         <div class="modal-body">
-                            {%  include "manage/partials/_hydroshare_tab_content.html" %}
+                            <div>
+                                <!-- Drop down filter, find all other resource official names at https://www.hydroshare.org/hsapi/resource/types/ -->
+                                <div style="position:relative; text-align: right;">
+                                    <span><b>Type: </b></span>
+                                    <select id="type_dropdown">
+                                        <option value="All">All</option>
+                                        <option value="GenericResource">Generic</option>
+                                        <option value="CompositeResource">Composite</option>
+                                        <option value="RasterResource">Raster</option>
+                                        <option value="RefTimeSeriesResource">HIS References Time Series</option>
+                                        <option value="TimeSeriesResource">Time Series</option>
+                                        <option value="NetcdfResource">Multidimentional (NetCDF)</option>
+                                        <option value="ModelProgramResource">Model Program</option>
+                                        <option value="ModelInstanceResource">Model Instance</option>
+                                        <option value="ToolResource">Web App</option>
+                                        <option value="SWATModelInstanceResource">SWAT Model Instance</option>
+                                        <option value="GeographicFeatureResource">Geographic Feature</option>
+                                        <option value="ScriptResource">Script</option>
+                                    </select>
+                                </div>
+                                <div id="model-rep">
+                                    <img src="{% static 'manage/images/hydroshare/loading-animation.gif' %}">
+                                  <br>
+                                  <p><b>Loading HydroShare resources...</b></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,7 +110,8 @@
         <script type="text/javascript" src="{% static 'js/plugins/jquery.validate.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/plugins/jquery.formset.js' %}"></script>
         <script type="text/javascript" src="{% static 'manage/js/manage_ViewStack.js' %}"></script>
-
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="{% static 'manage/js/hydroshare/hydroshare.js' %}"></script>
         <!--<script type="text/javascript" src="{% static 'js/plugins/jquery.validate.additional-methods.js' %}"></script>-->
         <script>
 
