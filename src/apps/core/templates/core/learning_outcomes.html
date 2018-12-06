@@ -263,7 +263,7 @@
                     form.find('input[name$=learning_outcomes_ids]').val(values_dictionary['outcomes']);
 
                     var learn = values_dictionary["condition"] + " " + values_dictionary["verb"] + " " + values_dictionary["task"] + " " + values_dictionary["degree"];
-                    form.find('div.LO_representation').html(learn);
+                    form.find('div.LO_representation').last().html(learn);
                 }
 
                 function resetWizard(){

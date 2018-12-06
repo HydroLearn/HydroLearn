@@ -1,17 +1,35 @@
 <div id="learning_outcomes_formset">
-    <form class="learning_obj_form empty_form">
+    <div id="LO_Empty_form">
         <div class="LO_representation"></div>
-        {{ learning_objective_formset }}
+        {{ learning_objective_formset.empty_form }}
+    </div>
+    <form class="learning_obj_form empty_form">
+        {{ learning_objective_formset.management_form }}
+        {% for form in  learning_objective_formset %}
+            <div class="LO_form">
+                <div class="LO_representation"></div>
+                {{ form }}
+            </div>
+        {% endfor %}
     </form>
 </div>
 
 <script>
-    $('.learning_obj_form').formset();
+    $('.LO_form').formset({
+
+        formCssClass: "LO_form",
+
+        // add prefix for formset (you can comment this out for now, but you will
+        // need to add this once it’s part of the lesson form)
+        // prefix: '{{ learning_objective_formset.prefix }}',
+
+        // this will remove the text from the add button so you don’t need to hide it
+        addText: "",
+
+        // specify the empty form representation
+        formTemplate: "#LO_Empty_form",
+    });
+
     // remove the inital row... TODO, this will be removed when we're hooked into the backend?
     $('.delete-row').click()
 </script>
-<style type="text/css">
-    .add-row {
-        visibility: hidden;
-    }
-</style>
