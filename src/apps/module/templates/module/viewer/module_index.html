@@ -339,7 +339,20 @@
 {% endblock content %}
 
 
+{% block footer_additions %}
+    <div class="Module_Attribution">
+        Module By: {{module.created_by}}.
 
+        {% if module.derived_date %}
+        <div>
+            <a target="_blank" href="{% url 'modules:lesson_detail' slug=module.derived_lesson_slug %}">Derived from Module</a>, by {{module.derived_lesson_creator}}.
+        </div>
+
+        {% endif %}
+    </div>
+
+
+{% endblock footer_additions%}
 
 
     <iframe id="hFrame" name="hFrame" style="display:none"></iframe>

@@ -473,6 +473,10 @@ div[class^='multicolumn'] {
           }
     }
 
+    #footer_additions {
+        display: inline-block;
+        text-align: left;
+    }
 }
 
 a:focus {

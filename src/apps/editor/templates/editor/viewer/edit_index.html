@@ -422,6 +422,21 @@
 {% endblock content %}
 
 
+{% block footer_additions %}
+    <div class="Module_Attribution">
+        Module By: {{Lesson.created_by}}.
+
+        {% if Lesson.derived_date %}
+        <div>
+            <a target="_blank" href="{% url 'modules:lesson_detail' slug=Lesson.derived_lesson_slug %}">Derived from Module</a>, by {{Lesson.derived_lesson_creator}}.
+        </div>
+
+        {% endif %}
+    </div>
+
+
+{% endblock footer_additions%}
+
 
 
 

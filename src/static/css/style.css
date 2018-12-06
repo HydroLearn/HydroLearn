@@ -286,6 +286,9 @@ div[class^='multicolumn'] {
       #footer .social a:hover {
         text-decoration: none;
         color: #45a4f3; }
+  #footer #footer_additions {
+    display: inline-block;
+    text-align: left; }
 
 a:focus {
   text-decoration: none;
