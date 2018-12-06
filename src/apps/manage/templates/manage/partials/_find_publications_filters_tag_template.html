@@ -1,0 +1,33 @@
+
+<form style="width:100%; float:left; background-color:#eee; border-radius:7px;" id="publication_search_filters">
+
+    <!--filter by name-->
+    <div  id="name_filter_wrapper">
+        {% csrf_token %}
+
+        <label for="name_filter">Module Name:</label>
+        <input type="text" name="name" class="object_name" id="name_filter" maxlength="250">
+
+        <div id="name_filter_options">
+            <input type="radio" name="name_filter_option" value="starts with" checked="checked"> starts with
+            <input type="radio" name="name_filter_option" value="contains"> contains
+        </div>
+
+    </div>
+
+    <button style="float:right; margin: 10px;" class="Submit_button btn btn-default" type="submit">Search</button>
+
+</form>
+
+<script>
+    // override default form submission
+    $('#publication_search_filters').submit(function(event){
+        event.preventDefault();
+        alert('filter form submitted');
+
+        // trigger reloading of a specified container with a publication
+        // listing filtered by the specified form fields
+
+    })
+
+</script>

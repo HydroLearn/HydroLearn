@@ -703,8 +703,11 @@ def find_modules(request):
     :param request:
     :return:
     '''
-    template_name = 'manage/partials/_find_modules_view.html'
-    #my_modules = request.user.created_modules.all()
+    template_name = 'manage/partials/_module_find_view.html'
+
+    # potentially add a form here and handle post requests
+
+
     return render_to_response(template_name, context={'user': request.user})
 
 

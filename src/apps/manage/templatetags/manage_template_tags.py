@@ -3,6 +3,11 @@ from src.apps.manage.forms import (
     inlineLessonFormset,
     inlineSectionFormset
 )
+
+from src.apps.core.models.ModuleModels import(
+    Lesson
+)
+
 register = template.Library()
 
 @register.inclusion_tag('manage/partials/_module_list_tag_template.html', takes_context=True)
@@ -30,6 +35,24 @@ def list_my_collaborations(context):
     return {
         'shared_modules': shared_modules,
     }
+
+@register.inclusion_tag('manage/partials/_find_publications_filters_tag_template.html', takes_context=True)
+def find_publications_filter_form(context):
+
+    return {
+        'filter_object': None,
+    }
+
+
+
+@register.inclusion_tag('manage/partials/_find_list_tag_template.html', takes_context=True)
+def list_published_modules(context):
+
+    found_modules = Lesson.objects.public().order_by('-published_date')
+    return {
+        'found_modules': found_modules,
+    }
+
 
 # not sure how to handle this yet...
 #@register.inclusion_tag('manage/forms/module_form.html')
