@@ -663,19 +663,11 @@ class manage_PublicationClone(LoginRequiredMixin, FormView):
 
         if 'clone' in self.request.POST:
             publication_instance = Lesson.objects.public().get(slug=self.kwargs['slug'])
-            stop = True
 
             with transaction.atomic():
                 new_clone = publication_instance.derivation()
 
                 new_clone.created_by = self.request.user
-
-
-
-                # new_clone.derived_date = now()
-                # new_clone.derived_lesson_slug = publication_instance.slug
-                # new_clone.derived_lesson_creator = publication_instance.created_by
-
                 new_clone.save()
 
                 new_clone.copy_content(publication_instance)
