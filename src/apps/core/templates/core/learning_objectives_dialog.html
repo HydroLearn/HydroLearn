@@ -1,0 +1,481 @@
+<style>
+    .redtext {
+        color: red;
+        font-size: small;
+    }
+    .inputtext {
+        width: 500px;
+    }
+    .purpletext {
+        color: purple;
+    }
+    .whitetext {
+        color: white;
+    }
+    /* Popup box BEGIN */
+    .hover_bkgr_fricc{
+        background:rgba(0,0,0,.4);
+        cursor:pointer;
+        display:none;
+        height:100%;
+        position:fixed;
+        text-align:center;
+        top:0;
+        width:100%;
+        z-index:10000;
+    }
+    .hover_bkgr_fricc .helper{
+        display:inline-block;
+        height:100%;
+        vertical-align:middle;
+    }
+    .hover_bkgr_fricc > div {
+        background-color: #fff;
+        box-shadow: 10px 10px 60px #555;
+        display: inline-block;
+        height: auto;
+        min-height: 100px;
+        vertical-align: middle;
+        text-align:left;
+        width: 65%;
+        position: relative;
+        border-radius: 8px;
+        padding: 15px 5%;
+    }
+    .popupCloseButton {
+        background-color: #fff;
+        border: 3px solid #999;
+        border-radius: 50px;
+        cursor: pointer;
+        display: inline-block;
+        font-family: arial;
+        font-weight: bold;
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        font-size: 25px;
+        line-height: 30px;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+    }
+    .popupCloseButton:hover {
+        background-color: #ccc;
+    }
+    .trigger_popup_fricc {
+        cursor: pointer;
+        font-size: 20px;
+        margin: 20px;
+        display: inline-block;
+        font-weight: bold;
+    }
+    /* Popup box END */
+</style>
+<script type="text/javascript">
+    $(window).load(function () {
+        $(".trigger_popup_fricc").click(function(){
+           $('.hover_bkgr_fricc').show();
+        });
+        $('.hover_bkgr_fricc').click(function(){
+            $('.hover_bkgr_fricc').hide();
+        });
+        $('.popupCloseButton').click(function(){
+            $('.hover_bkgr_fricc').hide();
+        });
+    });
+
+    function updateABETSelection(checkbox, index){
+        if (checkbox.checked){
+            var aText = $("#abet_text_" + index).text();
+            $("#abet_outcomes").append("<li id='abet_" + index + "'>" + aText + "</li>");
+        }
+        else{
+            $("#abet_" + index).remove();
+        }
+    }
+
+    knowledgeOptions = ["Remembering", "Understanding", "Applying", "Analyzing", "Evaluating", "Creating"];
+    rememberingOptions = ["define", "describe", "identify", "label", "list", "match", "name", "order", "recall", "select"];
+    understandingOptions = ["illustrate", "compare", "distinguish", "estimate", "explain", "classify", "interpret", "predict", "summarize", "translate"];
+    applyingOptions = ["organize", "solve", "demonstrate", "discover", "modify", "operate", "predict", "prepare", "produce", "relate", "solve", "choose"];
+    analyzingOptions = ["analyze", "break down", "compare", "select", "contrast", "deconstruct", "discriminate", "distinguish", "differentiate", "outline", "interelate"];
+    evaluatingOptions = ["Rate", "assess", "monitor", "check", "test", "judge", "Critique", "Recommend", "Interpret", "Weigh"];
+    creatingOptions = ["generate", "plan", "compose", "develop", "create", "invent", "organize", "construct", "produce", "compile", "design", "devise"];
+
+    function updateActionList(knowledge){
+        if(!(typeof knowledge === 'string')) {
+            knowledge = knowledge.value;
+        }
+        options = ["not found"];
+        if(knowledge === "Remembering"){
+            options = rememberingOptions;
+        }
+        if(knowledge === "Understanding"){
+            options = understandingOptions;
+        }
+        if(knowledge === "Applying"){
+            options = applyingOptions;
+        }
+        if(knowledge === "Analyzing"){
+            options = analyzingOptions;
+        }
+        if(knowledge === "Evaluating"){
+            options = evaluatingOptions;
+        }
+        if(knowledge === "Creating"){
+            options = creatingOptions;
+        }
+        $('#actionList').empty();
+        jQuery.each(options, function(i, val){
+            $('#actionList').append(new Option(options[i], options[i], false, false));
+        });
+    }
+
+    function selectAction(actionValue){
+        $('.verbDisplay').each(function() {
+            $(this).text(actionValue.value);
+        });
+    }
+
+    $( document ).ready(function() {
+        // Setup knowledge dropdown
+        jQuery.each(knowledgeOptions, function(i, val){
+            $('#knowledgeSelection').append(new Option(knowledgeOptions[i], knowledgeOptions[i], false, false));
+        });
+        updateActionList("Remembering");
+
+        $(document).on('input','#condition',function () {
+            var conditionText = $(this).val();
+            $('.conditionDisplay').each(function() {
+                $(this).text(conditionText);
+            });
+        });
+        $(document).on('input','#task',function () {
+            var taskText = $(this).val();
+            $('.taskDisplay').each(function() {
+                $(this).text(taskText);
+            });
+        });
+        $(document).on('input','#degree',function () {
+            var degreeText = $(this).val();
+            $('.degreeDisplay').each(function() {
+                $(this).text(degreeText);
+            });
+        });
+    });
+
+</script>
+
+
+<!--[if lt IE 7]>
+    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+<![endif]-->
+
+<div class="content">
+    <script>
+        $(function ()
+        {
+            var form = $("#wizard").show();
+            form.steps({
+                headerTag: "h2",
+                bodyTag: "section",
+                transitionEffect: "slideLeft",
+                onStepChanging: function (event, currentIndex, newIndex)
+                {
+                    // Always allow previous action even if the current form is not valid
+                    if (currentIndex > newIndex)
+                    {
+                        return true;
+                    }
+                    if(currentIndex === 0){
+                        if($("#condition").val().trim().length == 0){
+                            return false;
+                        }
+                    }
+                    if(currentIndex === 1){
+                        if($("#actionText").val().trim().length == 0){
+                            return false;
+                        }
+                    }
+                    if(currentIndex === 2){
+                        if($("#task").val().trim().length == 0){
+                            return false;
+                        }
+                    }
+                    if(currentIndex === 3){
+                        if($("#degree").val().trim().length == 0){
+                            return false;
+                        }
+                    }
+                    if(currentIndex === 4){
+                    }
+                    return true;
+                },
+                onFinished: function (event, currentIndex)
+                {
+                    var outcomes_ids = $("#outcomes_selection input:checked").map(function(){
+                                          return $(this).val();
+                                        }).get();
+                    var values_dictionary = {
+                        "condition": $(".conditionDisplay").html(),
+                        "task": $(".taskDisplay").html(),
+                        "degree": $(".degreeDisplay").html(),
+                        "level": $("#knowledgeSelection option:selected").text(),
+                        "verb": $(".verbDisplay").html(),
+                        "outcomes": outcomes_ids
+                    }
+                    // add the new form
+                    $('.add-row').click();
+                    var learning_objective_form = $('#learning_outcomes_formset .learning_obj_form .LO_form').last();
+                    updateLearningObjective(learning_objective_form, values_dictionary);
+                    $('.ui-dialog-titlebar-close').click();
+                    resetWizard();
+                }
+            });
+        });
+
+        function updateLearningObjective(form, values_dictionary){
+            form.find('input[name$=learning_condition_text]').val(values_dictionary['condition']);
+            form.find('input[name$=learning_task_text]').val(values_dictionary['task']);
+            form.find('input[name$=learning_degree_text]').val(values_dictionary['degree']);
+            form.find('input[name$=learning_level_text]').val(values_dictionary['level']);
+            form.find('input[name$=learning_verb_text]').val(values_dictionary['verb']);
+            form.find('input[name$=learning_outcomes_ids]').val(values_dictionary['outcomes']);
+
+            var learn = values_dictionary["condition"] + " " + values_dictionary["verb"] + " " + values_dictionary["task"] + " " + values_dictionary["degree"];
+            form.find('div.LO_representation').last().html(learn);
+        }
+
+        function resetWizard(){
+            // reset inputs
+            $("#condition").val("");
+            $("#task").val("");
+            $("#degree").val("");
+            $("#actionText").val("");
+            updateActionList("Remembering");
+            $("#outcomes_selection input:checked").map(function(){
+                                          return $(this).prop('checked', false);
+                                        }).get();
+            $("#knowledgeSelection").prop("selectedIndex", 0).change();
+
+            // reset displays
+            $('.conditionDisplay').each(function() {
+                $(this).text("");
+            });
+            $('.taskDisplay').each(function() {
+                $(this).text("");
+            });
+            $('.degreeDisplay').each(function() {
+                $(this).text("");
+            });
+            $('.verbDisplay').each(function() {
+                $(this).text("");
+            });
+            $("#abet_outcomes").empty();
+
+            // click back to beginning
+            $('a[href="#previous"]').click();
+            $('a[href="#previous"]').click();
+            $('a[href="#previous"]').click();
+            $('a[href="#previous"]').click();
+            $('a[href="#previous"]').click();
+        }
+    </script>
+
+    <form id="wizard" action="#">
+<!-- Section 1 -->
+        <h2>Describe</h2>
+        <a class="trigger_popup_fricc">help</a>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span>...<br/><br/>
+
+            <h3>What's the condition?</h3>
+            <label for="condition" class="redtext"><i>Describe the condition under which the student will perform the described behavior in the gray box:</i></label>
+            <input class="inputtext required" id="condition" name="condition" type="text">
+            <h3>Examples:</h3>
+            <ul>
+                <li>Given a map</li>
+                <li>Given a set of data</li>
+                <li>Using course notes</li>
+                <li>Using the equation resource worksheet</li>
+            </ul>
+        </section>
+<!-- Section 2 -->
+        <h2>Action</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span>...<br/><br/>
+
+            <a>Choose Level of Knowledge:</a>
+            <select id="knowledgeSelection" onChange="updateActionList(this);"></select>
+            </br>
+            <a>Choose an Action:</a>
+            <input id="actionText" list="actionList" onchange="selectAction(this);" type="text">
+            <datalist id="actionList"></datalist>
+            </br>
+            <table>
+                <tr>
+                    <td><i>Based on Bloom's Taxonomy</i></td>
+                </tr>
+                <tr>
+                    <td bgcolor="green" class="whitetext">Remembering (level 1)</br>Remembering involves recognizing or recalling relevant facts, terms, concepts, knowledge, or answers.</td>
+                </tr>
+                <tr>
+                    <td bgcolor="#9acd32" class="whitetext">Understanding (level 2)</br>Understanding involved constructing meaning from instructional messages.</td>
+                </tr>
+                <tr>
+                    <td bgcolor="orange" class="whitetext">Applying (level 3)</br>Applying involves using ideas and concepts to solve problems.</td>
+                </tr>
+                <tr>
+                    <td bgcolor="blue" class="whitetext">Analyzing (level 4)</br>Involves breaking something down into components, seeing relationships and overall structure.</td>
+                </tr>
+                <tr>
+                    <td bgcolor="purple" class="whitetext">Evaluating (level 5)</br>Involves making judgments based on criteria and standards</td>
+                </tr>
+                <tr>
+                    <td bgcolor="red" class="whitetext">Creating (level 6)</br>Involves reorganizing diverse elements to form a new pattern or structure</td>
+                </tr>
+            </table>
+        </section>
+<!-- Section 3 -->
+        <h2>Task</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span>...<br/><br/>
+
+            <label for="task"><b>What is the TASK the learner has to do?</b></br><i class="redtext">Describe the task as specific as possible in the gray box</i></label>
+            <input class="inputtext required" id="task" name="task" type="text">
+            <h3>Examples:</h3>
+            <ul>
+                <li>all areas below 100 year flood plane</li>
+                <li>{example 2}</li>
+                <li>{example 2}</li>
+                <li>{example 2}</li>
+            </ul>
+        </section>
+<!-- Section 4 -->
+        <h2>Degree</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span>...<br/><br/>
+
+            <label for="degree">Describe the desired degree or level of performance. <i class="redtext">Write degree in gray box</i></label>
+            <input class="inputtext required" id="degree" name="condition" type="text">
+            <h3>Examples:</h3>
+            <ul>
+                <li>With a definition of each source of ground water recharge and how it functions in the water cycle </li>
+                <li>to 90% accuracy</li>
+                <li>within 0.1 correct measure</li>
+                <li>with at least 5 characteristics listed</li>
+            </ul>
+
+        </section>
+<!-- Section 5 -->
+        <h2>ABET</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span><br/><br/>
+
+            <h3>Link to ABET Outcomes</h3>
+            <p class="redtext">OPTIONAL: Select ABET Outcomes that correspond with your learning objectives</p>
+
+            <table id="outcomes_selection">
+                <tr>
+                    <td>
+                        <input id="abet_1" type='checkbox' value="1" onclick='updateABETSelection(this, 1);'>
+                    </td>
+                    <td id="abet_text_1"><label for="abet_1">An ability to identify, formulate, and solve complex engineering problems by applying principles of engineering, science, and mathematics</label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="abet_2" type='checkbox' value="2" onclick='updateABETSelection(this, 2);'>
+                    </td>
+                    <td id="abet_text_2"><label for="abet_2">An ability to apply engineering design to produce solutions that meet specified needs with consideration of public helaht, safety, and welfare, as well as global, cultural, social, environmental, and economic factors</label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="abet_3" type='checkbox' value="3" onclick='updateABETSelection(this, 3);'>
+                    </td>
+                    <td id="abet_text_3"><label for="abet_3">An ability to communicate effectively with a range of audiences</label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="abet_4" type='checkbox' value="4" onclick='updateABETSelection(this, 4);'>
+                    </td>
+                    <td id="abet_text_4"><label for="abet_4">An ability to recognize ethical and professional responsibilities in engineering situations and make informed judgments, which must consider the impact of engineering solutions in global, economic, environmetal, and societal contexts.</label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="abet_5" type='checkbox' value="5" onclick='updateABETSelection(this, 5);'>
+                    </td>
+                    <td id="abet_text_5"><label for="abet_5">An ability to function effectively on a team whose members together provide leadership, create a collaborative and inclusive environmetna, establish goals, plan tasks, and meet objectives </label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="abet_6" type='checkbox' value="6" onclick='updateABETSelection(this, 6);'>
+                    </td>
+                    <td id="abet_text_6"><label for="abet_6">An ability to develop and conduct appropriate experimentation, analyze and interpret data, and use engineering judgement to draw conclusions</label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="abet_7" type='checkbox' value="7" onclick='updateABETSelection(this, 7);'>
+                    </td>
+                    <td id="abet_text_7"><label for="abet_7">An ability to acquire and apply new knowledge as needed, using appropriate learning strategies.</label></td>
+                </tr>
+            </table>
+        </section>
+<!-- Section 6 -->
+        <h2>Review</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span><br/><br/>
+            <h3>ABET Outcomes:</h3>
+            <ul id="abet_outcomes"></ul>
+        </section>
+
+    </form>
+</div>
+
+<div class="hover_bkgr_fricc">
+    <span class="helper"></span>
+    <div>
+        <div class="popupCloseButton">X</div>
+        <h3>Learning Objectives - Introduction</h3>
+        <p>Every educational course begins with goals that can be broken down into concise statements about what students will understand or be able to do when they complete the course. These statements are known as Learning Objectives. Well formulated learning objectives not only help communicate to students what to expect from a lesson, but also aid the teacher in preparing lecture and assignment materials and facilitate construction of in-class and out-of-class activities, and aid in designing course assessments and rubrics.</p>
+        <h3>How to Write a Learning Objective:</h3>
+        <p>Learning objectives should define observable behavior that can be measured. Although “learning” and “understanding” are worthy instructional goals, they are not observable or measurable. However, a student’s ability to “organize”, “label”, or “explain” is measurable.</p>
+        <p>Well-written learning objectives typically include three main elements:</p>
+        <ol>
+            <li><b>Condition</b> - the condition under which the student will perform the described behavior</li>
+            <li><b>Behavior</b> - a description of a specific, observable behavior including an action (action usually selected from Bloom’s Taxonomy and corresponds with various levels of knowledge)</li>
+            <li><b>Degree</b> - the degree indicates the desired level or degree of acceptable performance</li>
+        </ol>
+        <h3>For example, a well-written learning objective may look like this:</h3>
+        <p>“Given a diagram of the water cycle, student will identify at least three sources of ground water recharge with a definition of each source and description of how it functions in the larger water cycle”</p>
+        <p>
+            Condition: “Given a diagram of the water cycle…”<br \>
+            Behavior: “…student will identify at least three sources of ground water recharge…”<br \>
+            <b>Action:</b> Identify<br \>
+            Degree: “…with a definition of each source and description of how it functions in the larger water cycle.”<br \>
+        </p>
+    </div>
+</div>
