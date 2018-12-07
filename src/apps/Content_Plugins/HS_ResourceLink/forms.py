@@ -27,8 +27,5 @@ class HS_ResourceLink_AdminForm(ModelForm):
 
 
     class Media:
-        js = ('/static/HS_ResourceLink/js/ResourceLink_functionality.js',)
-
-
-
-
+        js = ('/static/HS_ResourceLink/js/ResourceLink_functionality.js','/static/HS_ResourceLink/js/hydroshare.js','/static/HS_ResourceLink/js/dataTables.js')
+        css = ('/static/HS_ResourceLink/css/dataTables.css')
