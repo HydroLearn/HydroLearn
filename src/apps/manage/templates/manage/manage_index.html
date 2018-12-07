@@ -7,7 +7,7 @@
     {% addtoblock "template_css" %}
         <link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">
         <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+        <link rel="stylesheet" href="{% static 'HS_ResourceLink/css/dataTables.css' %}" type="text/css"/>
     {% endaddtoblock "template_css" %}
 
 
@@ -110,7 +110,7 @@
         <script type="text/javascript" src="{% static 'js/plugins/jquery.validate.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/plugins/jquery.formset.js' %}"></script>
         <script type="text/javascript" src="{% static 'manage/js/manage_ViewStack.js' %}"></script>
-        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="{% static 'HS_ResourceLink/js/dataTables.js' %}"></script>
         <script type="text/javascript" src="{% static 'manage/js/hydroshare/hydroshare.js' %}"></script>
         <!--<script type="text/javascript" src="{% static 'js/plugins/jquery.validate.additional-methods.js' %}"></script>-->
         <script>
