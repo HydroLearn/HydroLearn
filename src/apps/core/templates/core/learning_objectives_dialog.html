@@ -235,12 +235,12 @@
         });
 
         function updateLearningObjective(form, values_dictionary){
-            form.find('input[name$=learning_condition_text]').val(values_dictionary['condition']);
-            form.find('input[name$=learning_task_text]').val(values_dictionary['task']);
-            form.find('input[name$=learning_degree_text]').val(values_dictionary['degree']);
-            form.find('input[name$=learning_level_text]').val(values_dictionary['level']);
-            form.find('input[name$=learning_verb_text]').val(values_dictionary['verb']);
-            form.find('input[name$=learning_outcomes_ids]').val(values_dictionary['outcomes']);
+            form.find('input[name$=condition]').val(values_dictionary['condition']);
+            form.find('input[name$=task]').val(values_dictionary['task']);
+            form.find('input[name$=degree]').val(values_dictionary['degree']);
+            form.find('input[name$=level]').val(values_dictionary['level']);
+            form.find('input[name$=verb]').val(values_dictionary['verb']);
+            form.find('input[name$=outcomes]').val(values_dictionary['outcomes']);
 
             var learn = values_dictionary["condition"] + " " + values_dictionary["verb"] + " " + values_dictionary["task"] + " " + values_dictionary["degree"];
             form.find('div.LO_representation').last().html(learn);

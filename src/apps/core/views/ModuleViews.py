@@ -4,7 +4,7 @@ from django.views.generic import DetailView, ListView, TemplateView
 from django.http import JsonResponse
 #from taggit.models import Tag
 from django.contrib.contenttypes.models import ContentType
-from src.apps.core.forms import Learning_ObjectiveForm
+from src.apps.core.forms import Learning_ObjectiveTextForm
 from django.forms import formset_factory
 from django.shortcuts import render
 from src.apps.core.models.LearningObjModels import Learning_Level, Learning_Verb, \
@@ -75,36 +75,16 @@ class core_QuizQuestionDetailView(DetailView):
     queryset = QuizQuestion.objects.all()  #select all of the questions, add in published filter later
 
 def add_learning_objectives(request):
-    Learning_ObjectiveFormSet = formset_factory(Learning_ObjectiveForm)
+    Learning_ObjectiveFormSet = formset_factory(Learning_ObjectiveTextForm)
     if request.method == 'POST':
         formset = Learning_ObjectiveFormSet(request.POST, request.FILES)
-        logger.error("POSTING!!!!!!!!!!!!!!!!!!!!!!!")
         if formset.is_valid():
-            logger.error("WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
-            logger.error(formset.cleaned_data)
-            for form in formset.cleaned_data:
-                condition = form["learning_condition_text"]
-                task = form["learning_task_text"]
-                degree = form["learning_degree_text"]
-                outcome_ids = form["learning_outcomes_ids"]
-                level = form["learning_level_text"]
-                verb = form["learning_verb_text"]
-                logger.error(condition + task + degree + outcome_ids + level + verb)
-                ll = Learning_Level.objects.get(label=level)
-                lv = Learning_Verb(verb=verb, level=ll)
-                lv.save()
-                lou = Learning_Outcome.objects.filter(pk__in=outcome_ids.split(","))
-                lo = Learning_Objective(condition=condition, task=task, degree=degree, verb=lv)#, outcomes=lou)
-                lo.save()
-                lo.outcomes = lou
-                lo.save()
-            #lo = Learning_Objective(condition="", task="", degree="", verb="", outcomes="")
-            #lo.save()
-            pass
+            for form in formset:
+                verb = form.cleaned_data.get("verb")
+                outcomes = form.cleaned_data.get("outcomes")
+                form.save(verb, outcomes)
     else:
-        lo = Learning_Objective.objects.all()
-        logger.error("GETTING!!!!!!!!!!!!!!!!!!!!!!!")
-        formset = formset_factory(Learning_ObjectiveForm)
+        formset = formset_factory(Learning_ObjectiveTextForm)
     return render(request, 'core/learning_obj.html', {'learning_objective_formset': formset})
 
 class core_AppRefDetailView(DetailView):

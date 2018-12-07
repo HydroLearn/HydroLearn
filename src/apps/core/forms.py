@@ -251,10 +251,47 @@ class Learning_ObjectiveForm(forms.ModelForm):
         fields = ['condition', 'task', 'degree', 'verb', 'outcomes']
 
 
-class Learning_ObjectiveForm(forms.Form):
-    learning_condition_text = forms.CharField(widget = forms.HiddenInput())
-    learning_task_text = forms.CharField(widget = forms.HiddenInput())
-    learning_degree_text = forms.CharField(widget = forms.HiddenInput())
-    learning_level_text = forms.CharField(widget = forms.HiddenInput())
-    learning_verb_text = forms.CharField(widget = forms.HiddenInput())
-    learning_outcomes_ids = forms.CharField(widget = forms.HiddenInput())
+class Learning_ObjectiveTextForm(forms.ModelForm):
+    level = forms.CharField(widget = forms.HiddenInput())
+    verb = forms.CharField(widget = forms.HiddenInput())
+    outcomes = forms.CharField(widget = forms.HiddenInput())
+
+    class Meta:
+        model = Learning_Objective
+        fields = ('condition', 'task', 'degree')
+        widgets = {"condition": forms.HiddenInput(), "task": forms.HiddenInput(), "degree": forms.HiddenInput()}
+
+    def clean_verb(self):
+        verb = self.cleaned_data.get('verb')
+        level = self.cleaned_data.get('level')
+        if verb is None:
+            raise forms.ValidationError("verb is a required field.")
+        learning_level = Learning_Level.objects.get(label=level)
+        if learning_level is None:
+            raise forms.ValidationError("No Learning_Level with label {} exists".format(level))
+        learning_verb = Learning_Verb(verb=verb, level=learning_level)
+        learning_verb.save()
+        if learning_verb is None:
+            raise forms.ValidationError("No Learning_Verb with verb {} and level {} exists".format(verb, level))
+        return learning_verb
+
+    def clean_outcomes(self):
+        outcomes = self.cleaned_data.get('outcomes')
+        if outcomes is None:
+            raise forms.ValidationError("outcomes is a required field.")
+        learning_outcomes = Learning_Outcome.objects.filter(pk__in=outcomes.split(","))
+        if learning_outcomes is None:
+            raise forms.ValidationError("No Learning_Outcome with ids {} exists".format(outcomes))
+        for o in learning_outcomes:
+            print("here we go")
+            print(o.outcome)
+        return learning_outcomes
+
+    def save(self, verb, outcomes):
+        self.instance.verb_id = verb.pk
+        self.instance.save()
+        for outcome in outcomes:
+            print("hello world")
+            print(outcome)
+            self.instance.outcomes.add(outcome)
+        return super().save()
