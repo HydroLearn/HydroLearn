@@ -7,7 +7,7 @@ urlpatterns = [
     
     # url(r'^tag/(?P<slug>[-\w]+)/$', TagIndexView.as_view(), name='tagged'),
 
-    url(r'^lo/$', LearningObjectiveView.as_view(), name="learning_objectives"),
+    url(r'^lo/$', add_learning_objectives, name="learning_objectives"),
     # lesson views
     url(r'^$', core_LessonListView.as_view(), name="lesson_list"),
     url(r'^(?P<slug>[^/]+)/$', core_LessonDetailView.as_view(), name="lesson_detail"),
