@@ -3,6 +3,11 @@ from src.apps.manage.forms import (
     inlineLessonFormset,
     inlineSectionFormset
 )
+
+from src.apps.core.models.ModuleModels import(
+    Lesson
+)
+
 register = template.Library()
 
 @register.inclusion_tag('manage/partials/_module_list_tag_template.html', takes_context=True)
@@ -31,6 +36,25 @@ def list_my_collaborations(context):
         'shared_modules': shared_modules,
     }
 
+@register.inclusion_tag('manage/partials/_find_publications_filters_tag_template.html', takes_context=True)
+def find_publications_filter_form(context):
+
+    return {
+        'filter_object': None,
+    }
+
+
+ # potentially extract this into it's own view so the form can reload it
+@register.inclusion_tag('manage/partials/_find_list_tag_template.html', takes_context=True)
+def list_published_modules(context):
+
+    found_modules = Lesson.objects.public().order_by('-published_date')
+
+    return {
+        'found_modules': found_modules,
+    }
+
+
 # not sure how to handle this yet...
 #@register.inclusion_tag('manage/forms/module_form.html')
 # def display_module_form(module):
@@ -40,7 +64,6 @@ def list_my_collaborations(context):
 #     }
 
 @register.inclusion_tag('manage/partials/_lesson_form.html')
-#def show_lesson_form(form, sections, sub_lessons):
 def show_lesson_form(form,  sections_fs=None, sub_lessons_fs=None):
     stop_here = None
     return {
@@ -59,7 +82,6 @@ def show_section_form(form):
     }
 
 @register.inclusion_tag('manage/partials/_lesson_formset.html')
-#def show_lesson_formset(parent_form, formset):
 def show_lesson_formset(formset_type, formset):
     #lesson_fs = inlineLessonFormset()
     return {
@@ -70,9 +92,7 @@ def show_lesson_formset(formset_type, formset):
     }
 
 
-
 @register.inclusion_tag('manage/partials/_section_formset.html')
-#def show_section_formset(parent_form, formset):
 def show_section_formset(formset_type, formset):
     #section_fs = inlineSectionFormset()
     return {

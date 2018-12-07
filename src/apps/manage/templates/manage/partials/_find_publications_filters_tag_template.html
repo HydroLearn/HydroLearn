@@ -1,0 +1,131 @@
+
+<style>
+    #publication_search_filters{
+        width:100%;
+        float:left;
+        background-color:#eee;
+        border-radius:7px;
+        padding: 5px 10px;
+
+    }
+
+    #filter_wrapper{
+        display:inline-block;
+    }
+
+    .filter_block{
+        display: inline-block;
+        padding: 10px 10px;
+        vertical-align: top;
+    }
+
+    #name_filter_options{
+        text-align: right;
+    }
+
+    #find_filter_submit{
+        float:right;
+        margin: 10px;
+    }
+
+    .spinner{
+        margin: 0 3px;
+    }
+
+    #find_filter_reset{
+        float:right;
+        margin: 10px;
+    }
+
+</style>
+
+<form  id="publication_search_filters" method="GET" action="">
+    {% csrf_token %}
+    <h3>Search Filters</h3>
+    <!--filter by name-->
+    <div  id="filter_wrapper">
+        <div class="filter_block">
+            <label for="name">Module Name:</label>
+            <input type="text" name="name" class="object_name" id="name" maxlength="250">
+
+            <div id="name_filter_options">
+                <input type="radio" name="name_filter" value="starts_with" checked="checked"> Starts With
+                <input type="radio" name="name_filter" value="contains"> Contains
+            </div>
+        </div>
+
+        <div class="filter_block">
+            <label for="SC_filter">Share Code:</label>
+            <input type="text" name="share_code" class="object_name" id="SC_filter" maxlength="8">
+        </div>
+
+
+    </div>
+    <button id="find_filter_reset" class="Submit_button btn btn-default">Reset Filters</button>
+    <button id="find_filter_submit" class="Submit_button btn btn-default" type="submit">Search</button>
+
+</form>
+
+<div id="found_modules_listing"></div>
+
+
+<script>
+    $('#found_modules_listing').load('/manage/find_list/', function(){})
+
+    $('#find_filter_reset').click(function(evt){
+        evt.preventDefault();
+
+        $('#publication_search_filters').find('input[type=text]').each(function(index, input){
+            $(input).val("");
+        })
+
+    });
+
+    // override default form submission
+    $('#publication_search_filters').submit(function(evt){
+        evt.preventDefault();
+
+
+        // trim form input values
+        $('#publication_search_filters').find('input[type=text]').each(function(index, input){
+            $(input).val($(input).val().trim());
+        })
+
+        var find_url = "/manage/find_list"
+        var form_method = $('#publication_search_filters').attr('method')
+        var filters = $('#publication_search_filters').serialize()
+
+        // add spinner to signify loading
+        $('#find_filter_submit').prepend('<i class="spinner fas fa-spinner fa-spin"> </i>')
+
+        $.ajax({
+            type: 'GET',
+            url: find_url,
+            data: filters,
+            success: function(response){
+                $('#find_filter_submit').find('.spinner').remove()
+                $('#found_modules_listing').fadeOut(function(){
+                    $('#found_modules_listing').html(response)
+                    $('#found_modules_listing').fadeIn();
+                });
+
+            },
+            error: function(response){
+                $('#find_filter_submit').find('.spinner').remove()
+                alert('filter request error')
+
+            },
+
+        }).fail(function(){
+            $('#found_modules_listing').fadeOut(function(){
+                $('#found_modules_listing').html('There was an refreshing this Page.. Please try again later');
+                $('#found_modules_listing').fadeIn();
+            });
+        });
+
+        // trigger reloading of a specified container with a publication
+        // listing filtered by the specified form fields
+
+    })
+
+</script>

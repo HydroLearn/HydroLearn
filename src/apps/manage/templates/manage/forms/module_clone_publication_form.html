@@ -1,0 +1,56 @@
+{% load manage_template_tags %}
+
+<h2>Confirm Clone</h2>
+
+    <p>Are you sure you want to Clone "{{ object.name }}"?
+        This will clone this publication to your 'My Modules' listing with internal references
+        to the Module it was derived from, and it's creator.
+
+    </p>
+
+    <h3>Preview:</h3>
+    <div class="lesson_listing_wrapper">
+        <div class="lesson_listing">
+            {% show_lesson_representation object %}
+        </div>
+    </div>
+
+    <form id="publish_form" method="post" action="{% url 'manage:publication_clone' slug=object.slug %}">
+        {% csrf_token %}
+    </form>
+
+    <div class="content_form_controls">
+        <button data-button-action="clone" class="Add_button Action_button btn btn-default">Clone</button>
+        <button class="Cancel_button btn btn-default">Cancel</button>
+    </div>
+
+
+<script>
+    // disable 'Enter' key action in forms (causes submission of form by default)
+    $("form").keypress(function(e) {
+      //Enter key
+      if (e.which == 13) {
+        return false;
+      }
+    });
+
+    $('.content_form_controls .Action_button').click(function(event){
+        event.preventDefault();
+
+        var action = $(this).attr('data-button-action')
+
+        var form = $('#publish_form');
+        $('<input>', {type:"hidden", name:action, value:action }).appendTo(form);
+
+        form.submit();
+
+        //FindModules_View_Stack.pop_view();
+    })
+
+    $('.content_form_controls .Cancel_button').click(function(event){
+        event.preventDefault();
+        FindModules_View_Stack.pop_view();
+    })
+
+
+</script>

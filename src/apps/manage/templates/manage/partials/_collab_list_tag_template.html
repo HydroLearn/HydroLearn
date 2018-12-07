@@ -21,7 +21,7 @@
         <th style="width: 110px">Share Code</th>
         <th style="width: 300px">
             Actions
-            <span class="module-actions_popover-trigger" data-toggle="popover" data-placement="top" data-html="true"  title='Module Actions' data-content=''>
+            <span class="collab-actions_popover-trigger" data-toggle="popover" data-placement="top" data-html="true"  title='Module Actions' data-content=''>
                 <i class="fas fa-info-circle Info_legend_icon"></i>
             </span>
         </th>
@@ -67,3 +67,27 @@
         </tr>
     {% endfor %}
 </table>
+
+<!--module actions info popover content-->
+<div style="display:none;" class="collab-actions_popover-content">
+    <div><i class="fas fa-eye glyph-button"></i> - View Current Draft of Module</div>
+    <div><i class="fas fa-edit glyph-button"></i> - Edit Module</div>
+</div>
+
+<script>
+
+
+$(document).ready(function(){
+
+    // populate the content of the pub-status info popover
+    $('.pub-status_popover-trigger').attr('data-content',$('.pub-status_popover-content').html())
+    $('.collab-actions_popover-trigger').attr('data-content',$('.collab-actions_popover-content').html())
+
+
+    // initialize the pub-status info popover
+    $('.pub-status_popover-trigger, .collab-actions_popover-trigger').popover({
+        trigger: 'hover',
+    });
+
+});
+</script>

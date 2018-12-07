@@ -184,6 +184,12 @@ class manage_QuizSectionForm(forms.ModelForm):
         # exclude = ['created_by']
 
 
+class manage_PublicationCloneForm(forms.Form):
+    class Meta:
+        widgets = {
+            "confirm":forms.HiddenInput(),
+        }
+
 ''' **********************************************************
     Inline Formsets
 ********************************************************** '''

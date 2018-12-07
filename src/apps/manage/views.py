@@ -1,5 +1,5 @@
 #from urllib.parse import to_bytes
-
+from django.utils.timezone import now
 from django.core.exceptions import (
     ImproperlyConfigured,
     PermissionDenied,
@@ -51,7 +51,8 @@ from src.apps.core.model_queries import *
 from src.apps.core.views.PublicationViews import (
     PublicationChildViewMixin,
     PublicationViewMixin,
-    DraftOnlyViewMixin)
+    DraftOnlyViewMixin
+)
 
 from src.apps.core.views.mixins import (
     AjaxableResponseMixin,
@@ -638,6 +639,47 @@ class manage_ModuleCollaboration(PublicationViewMixin, OwnershipRequiredMixin, A
     def form_invalid(self, form, *args, **kwargs):
         return super(manage_ModuleCollaboration, self).form_invalid(form, *args, **kwargs)
 
+class manage_PublicationCloneIndex(LoginRequiredMixin, AjaxableResponseMixin, DetailView):
+    model = Lesson
+    template_name = 'manage/forms/module_clone_publication_form.html'
+    form_class = manage_PublicationCloneForm
+    success_url = '/manage/'
+    
+    def get_object(self, queryset=None):
+        # get the default object based on the slug
+        object = super(manage_PublicationCloneIndex, self).get_object(queryset)
+
+        # if the object was found by the slug: get the draft object, check ownership, and return
+        if object:
+            object = object.get_public_object()
+            return object
+
+class manage_PublicationClone(LoginRequiredMixin, FormView):
+    template_name = 'manage/forms/module_publish_form.html'
+    form_class = Module_ActionConfirmationForm
+    success_url = '/manage/'
+
+    def form_valid(self, form):
+
+        if 'clone' in self.request.POST:
+            publication_instance = Lesson.objects.public().get(slug=self.kwargs['slug'])
+
+            with transaction.atomic():
+                new_clone = publication_instance.derivation()
+
+                new_clone.created_by = self.request.user
+                new_clone.save()
+
+                new_clone.copy_content(publication_instance)
+                new_clone.derive_children_from(publication_instance)
+
+
+
+
+        return super(manage_PublicationClone, self).form_valid(form)
+
+    def form_invalid(self, form, **kwargs):
+        return super(manage_PublicationClone, self).form_invalid(form)
 ###############################################################################
 ###                 CONTENT EDITING VIEWS                                   ###
 ###############################################################################
@@ -703,10 +745,63 @@ def find_modules(request):
     :param request:
     :return:
     '''
-    template_name = 'manage/partials/_find_modules_view.html'
-    #my_modules = request.user.created_modules.all()
+    template_name = 'manage/partials/_module_find_view.html'
+
+    # potentially add a form here and handle post requests
+
+
     return render_to_response(template_name, context={'user': request.user})
 
+
+def find_filter_form(request):
+
+    template_name = 'manage/partials/_find_publications_filters_tag_template.html'
+
+
+    # currently this form isn't being used directly...
+    # name_filter_choices = [
+    #     ("starts_with", "Starts With"),
+    #     ("contains", "Contains"),
+    # ]
+    # class Filter_form(forms.Form):
+    #     name = forms.CharField(max_length=250)
+    #     name_filter = forms.ChoiceField(choices=name_filter_choices, widget=forms.RadioSelect())
+    #     share_code = forms.CharField(max_length=8)
+    #
+    # filter_form = Filter_form(request.POST or None)
+
+    context = {
+        'user': request.user,
+        #'form': filter_form
+    }
+
+
+    return render(request, template_name, )
+
+
+def find_listing(request, *args, **kwargs):
+    template_name = 'manage/partials/_find_list_tag_template.html'
+    # collect the filter parameters
+
+    name = request.GET.get("name", "")
+    name_filter = request.GET.get("name_filter")
+    share_code = request.GET.get('share_code', "")
+
+    # prioritize share_code filter
+    if share_code:
+        found_modules = Lesson.objects.public().filter(slug=share_code).order_by('-published_date')
+
+    elif name:
+        if name_filter == "contains":
+            found_modules = Lesson.objects.public().filter(name__contains=name).order_by('-published_date')
+        else:
+            found_modules = Lesson.objects.public().filter(name__startswith=name).order_by('-published_date')
+
+    else:
+        # no filter specified
+        found_modules = Lesson.objects.public().order_by('-published_date')
+
+    return render(request, template_name, context={'user': request.user, 'found_modules': found_modules})
 
 
 def module_success(request):

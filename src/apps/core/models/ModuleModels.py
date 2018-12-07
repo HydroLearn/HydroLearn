@@ -131,11 +131,13 @@ class Lesson(Publication):
     ########################################
 
     # the date this lesson was cloned from a published lesson
-    #derived_date = models.DateTimeField(null=True)
+    derived_date = models.DateTimeField(null=True)
 
     # the published lesson this lesson was derived from's ref_id
-    #derived_from = models.UUIDField(null=True, default=None, editable=False)
+    derived_lesson_slug = models.CharField(null=True, default=None, editable=False, max_length=8)
 
+    # the user that created the lesson this was derived from
+    derived_lesson_creator = models.ForeignKey(User, null=True, blank=True, related_name='inspired_lessons')
 
 
 
@@ -283,6 +285,48 @@ class Lesson(Publication):
     def num_sub_lessons(self):
         return self.sub_lessons.count()
 
+    def derivation(self):
+        '''
+            Method to copy a published lesson instance and set
+            derivation attributes to point to this lesson and it's creator
+
+        :return: new lesson instance with attributes set to link to derived lesson
+        '''
+
+        derivation = self.copy()
+        derivation.derived_date = now()
+        derivation.derived_lesson_slug = self.slug
+        derivation.derived_lesson_creator = self.created_by
+
+        return derivation
+
+    def derive_children_from(self,from_lesson):
+        self.sections.delete()
+        self.sub_lessons.delete()
+
+        for section_item in from_lesson.sections.all():
+            # copy the section items and set their linked lesson to this new instance
+            new_section = section_item.copy()
+
+            new_section.lesson = self
+            new_section.position = section_item.position
+
+            # save the copied section instance
+            new_section.save()
+            new_section.copy_content(section_item)
+            new_section.copy_children(section_item)
+
+        for sub_lesson in from_lesson.sub_lessons.all():
+            # copy the sub-lesson items and set their linked parent_lesson to this new instance
+            new_lesson = sub_lesson.derivation()
+
+            new_lesson.parent_lesson = self
+            new_lesson.position = sub_lesson.position
+
+            # save the copied sub-lesson instance
+            new_lesson.save()
+            new_lesson.copy_content(sub_lesson)
+            new_lesson.derive_children_from(sub_lesson)
 
 
     ########################################
@@ -314,12 +358,22 @@ class Lesson(Publication):
 
             name = self.name,
             short_name = self.short_name,
+
+
         )
 
         # if specified, mark this new instance as the same lesson
         # typically only used in publication methods
         if maintain_ref:
             new_instance.ref_id = self.ref_id
+
+        if self.derived_date:
+            new_instance.derived_date = self.derived_date
+            new_instance.derived_lesson_slug = self.derived_lesson_slug
+            new_instance.derived_lesson_creator = self.derived_lesson_creator
+
+
+
 
         return new_instance
 
