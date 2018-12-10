@@ -19,9 +19,22 @@
             Editing: {{ object.name }}
         </h2>
         <hr>
+
+        <div class="resource_box">
+            <h4>Resources:</h4>
+            <ul>
+                {% for resource in object.resources.all %}
+                   <li> <a target="_blank" class="resource_link {{ resource.resource_type }}" href="{{ resource.resource_link }}"> {{resource.display_text}} </a> </li>
+                {% endfor %}
+
+            </ul>
+        </div>
+
         <div>
             {% render_placeholder object.content %}
         </div>
+
+
     </div>
 
 

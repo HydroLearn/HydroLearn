@@ -59,6 +59,8 @@ from src.apps.core.views.mixins import (
     CollabViewAccessMixin,
 )
 
+from src.apps.core.forms import ResourceInline
+
 
 
 #####################################################
@@ -282,6 +284,16 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
 
         if edit_access:
             context['content_view'] = self.object.manage_url
+
+            c_type = str(ContentType.objects.get_for_id(self.get_object().polymorphic_ctype_id))
+
+            context['resources'] = {
+                'Reading Section': None,
+                'Activity Section': ResourceInline(),
+                'Quiz Section': None,
+            }.get(c_type, None)
+
+
         else:
             context['manage_denied_message'] = "You can view this Section, but don't have edit access! If you require edit access, please contact the owner."
             context['content_view'] = reverse('modules:section_content', kwargs={'lesson_slug': self.object.lesson.slug,'slug': self.object.slug})

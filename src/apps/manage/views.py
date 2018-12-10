@@ -697,9 +697,18 @@ class manage_SectionContent(CollabEditorAccessRequiredMixin, PublicationChildVie
     model = Section
 
     def get_context_data(self, **kwargs):
-        #kwargs['edit'] = kwargs.get('edit', False)
+
         context = super(manage_SectionContent, self).get_context_data(**kwargs)
-        #context['edit'] = True
+
+        # c_type = str(ContentType.objects.get_for_id(self.get_object().polymorphic_ctype_id))
+        #
+        # context['resources'] = {
+        #     'Reading Section': None,
+        #     'Activity Section': ResourceInline(),
+        #     'Quiz Section': None,
+        # }.get(c_type, None)
+
+
 
         return context
 

@@ -40,6 +40,29 @@
                 <table>
                     {{ form.as_table }}
                 </table>
+
+                <h4>Resources</h4>
+
+                <div id="resources_wrapper">
+                <ul>
+                    {% if resources %}
+
+
+
+                        {{ resources.media }}
+                        {{ resources.management_form }}
+
+                        {% for form in resources %}
+
+                            <li>{{form}}</li>
+
+                        {% endfor %}
+
+                    {% endif %}
+                </ul>
+
+                </div>
+
                 <div id="content_form_controls">
                     <button class="Submit_button btn btn-default" type="submit">Submit Section</button>
                     <button class="Cancel_button btn btn-default">Cancel</button>
@@ -56,4 +79,6 @@
 
 <script>
     $('#manage_form').load('{{ content_view }}')
+
+    $('#resources_wrapper').formset();
 </script>

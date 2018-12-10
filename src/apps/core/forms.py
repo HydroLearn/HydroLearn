@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import inlineformset_factory
 from django.utils.translation import ugettext as _
 
 from src.apps.core.models.ModuleModels import (
@@ -15,6 +16,8 @@ from src.apps.core.models.SectionTypeModels import (
     ActivitySection,
     QuizSection
 )
+
+from src.apps.core.models.ResourceModels import Resource
 
 # from djangocms_text_ckeditor.widgets import TextEditorWidget
 
@@ -171,3 +174,24 @@ class CollaborationForm(forms.ModelForm):
             'collaborator',
             'can_edit',
         ]
+
+
+class ResourceForm(forms.ModelForm):
+    class Meta:
+        model = Resource
+        fields = [
+            'display_text',
+            'resource_link',
+            'resource_type',
+            'activity',
+        ]
+
+
+ResourceInline = inlineformset_factory(
+    ActivitySection,
+    Resource,
+    form=ResourceForm,
+    extra=1,
+    #form=manage_CollaborationForm,
+    #formset=BaseCollabFormset,
+)
