@@ -44,22 +44,32 @@
                 <h4>Resources</h4>
 
                 <div id="resources_wrapper">
-                <ul>
+
                     {% if resources %}
-
-
 
                         {{ resources.media }}
                         {{ resources.management_form }}
 
-                        {% for form in resources %}
+                        <div id="Resource_Empty_form" style="display:none;">
+                            <table>
+                                {{ resources.empty_form.as_table }}
+                            </table>
+                        </div>
 
-                            <li>{{form}}</li>
+                        <div id="resource_listing">
 
-                        {% endfor %}
+                            {% for form in resources %}
+                                <div class="resource_form">
+                                    <table>
+                                    {{ form.as_table }}
+                                    </table>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+
 
                     {% endif %}
-                </ul>
 
                 </div>
 
@@ -80,5 +90,17 @@
 <script>
     $('#manage_form').load('{{ content_view }}')
 
-    $('#resources_wrapper').formset();
+    $('#resources_wrapper').formset({
+                formCssClass: "resource_form",
+
+                // add prefix for formset (you can comment this out for now, but you will
+                // need to add this once it’s part of the lesson form)
+                prefix: '{{ resources.prefix }}',
+
+                // this will remove the text from the add button so you don’t need to hide it
+                addText: "Add",
+
+                // specify the empty form representation
+                formTemplate: "#Resource_Empty_form",
+            });
 </script>

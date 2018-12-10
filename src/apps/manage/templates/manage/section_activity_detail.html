@@ -25,6 +25,8 @@
             <ul>
                 {% for resource in object.resources.all %}
                    <li> <a target="_blank" class="resource_link {{ resource.resource_type }}" href="{{ resource.resource_link }}"> {{resource.display_text}} </a> </li>
+                {% empty %}
+                    <li>No Resources for this Activity.</li>
                 {% endfor %}
 
             </ul>
