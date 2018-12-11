@@ -92,57 +92,34 @@
         else{
             $("#abet_" + index).remove();
         }
-    }
-
-    knowledgeOptions = ["Remembering", "Understanding", "Applying", "Analyzing", "Evaluating", "Creating"];
-    rememberingOptions = ["define", "describe", "identify", "label", "list", "match", "name", "order", "recall", "select"];
-    understandingOptions = ["illustrate", "compare", "distinguish", "estimate", "explain", "classify", "interpret", "predict", "summarize", "translate"];
-    applyingOptions = ["organize", "solve", "demonstrate", "discover", "modify", "operate", "predict", "prepare", "produce", "relate", "solve", "choose"];
-    analyzingOptions = ["analyze", "break down", "compare", "select", "contrast", "deconstruct", "discriminate", "distinguish", "differentiate", "outline", "interelate"];
-    evaluatingOptions = ["Rate", "assess", "monitor", "check", "test", "judge", "Critique", "Recommend", "Interpret", "Weigh"];
-    creatingOptions = ["generate", "plan", "compose", "develop", "create", "invent", "organize", "construct", "produce", "compile", "design", "devise"];
+    };
+    var verbsByKnowledge;
 
     function updateActionList(knowledge){
         if(!(typeof knowledge === 'string')) {
             knowledge = knowledge.value;
         }
         options = ["not found"];
-        if(knowledge === "Remembering"){
-            options = rememberingOptions;
-        }
-        if(knowledge === "Understanding"){
-            options = understandingOptions;
-        }
-        if(knowledge === "Applying"){
-            options = applyingOptions;
-        }
-        if(knowledge === "Analyzing"){
-            options = analyzingOptions;
-        }
-        if(knowledge === "Evaluating"){
-            options = evaluatingOptions;
-        }
-        if(knowledge === "Creating"){
-            options = creatingOptions;
-        }
         $('#actionList').empty();
-        jQuery.each(options, function(i, val){
-            $('#actionList').append(new Option(options[i], options[i], false, false));
+        jQuery.each(verbsByKnowledge[knowledge], function(i, verb){
+            $('#actionList').append(new Option(verb, verb, false, false));
         });
-    }
+    };
 
     function selectAction(actionValue){
         $('.verbDisplay').each(function() {
             $(this).text(actionValue.value);
         });
-    }
+    };
 
     $( document ).ready(function() {
+        var knowledgeOrder = JSON.parse("{{ knowledge_order|escapejs }}");
+        verbsByKnowledge = JSON.parse("{{ verbs_by_knowledge|escapejs }}");
         // Setup knowledge dropdown
-        jQuery.each(knowledgeOptions, function(i, val){
-            $('#knowledgeSelection').append(new Option(knowledgeOptions[i], knowledgeOptions[i], false, false));
+         knowledgeOrder.map( function(knowledge){
+            $('#knowledgeSelection').append(new Option(knowledge, knowledge, false, false));
         });
-        updateActionList("Remembering");
+        updateActionList(knowledgeOrder[0]);
 
         $(document).on('input','#condition',function () {
             var conditionText = $(this).val();
