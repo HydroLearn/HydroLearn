@@ -254,7 +254,7 @@ class Learning_ObjectiveForm(forms.ModelForm):
 class Learning_ObjectiveTextForm(forms.ModelForm):
     level = forms.CharField(widget = forms.HiddenInput())
     verb = forms.CharField(widget = forms.HiddenInput())
-    outcomes = forms.CharField(widget = forms.HiddenInput())
+    outcomes = forms.CharField(widget = forms.HiddenInput(), required=False)
 
     class Meta:
         model = Learning_Objective
@@ -277,8 +277,8 @@ class Learning_ObjectiveTextForm(forms.ModelForm):
 
     def clean_outcomes(self):
         outcomes = self.cleaned_data.get('outcomes')
-        if outcomes is None:
-            raise forms.ValidationError("outcomes is a required field.")
+        if not outcomes:
+            return Learning_Outcome.objects.none()
         learning_outcomes = Learning_Outcome.objects.filter(pk__in=outcomes.split(","))
         if learning_outcomes is None:
             raise forms.ValidationError("No Learning_Outcome with ids {} exists".format(outcomes))
