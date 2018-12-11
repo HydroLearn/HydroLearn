@@ -373,48 +373,14 @@
             <p class="redtext">OPTIONAL: Select ABET Outcomes that correspond with your learning objectives</p>
 
             <table id="outcomes_selection">
+                {% for outcome in abet_outcomes %}
                 <tr>
                     <td>
-                        <input id="abet_1" type='checkbox' value="1" onclick='updateABETSelection(this, 1);'>
+                        <input id="abet_{{ forloop.counter }}" type='checkbox' value="{{ forloop.counter }}" onclick='updateABETSelection(this, 1);'>
                     </td>
-                    <td id="abet_text_1"><label for="abet_1">An ability to identify, formulate, and solve complex engineering problems by applying principles of engineering, science, and mathematics</label></td>
+                    <td id="abet_text_{{ forloop.counter }}"><label for="abet_{{ forloop.counter }}">{{ outcome }}</label></td>
                 </tr>
-                <tr>
-                    <td>
-                        <input id="abet_2" type='checkbox' value="2" onclick='updateABETSelection(this, 2);'>
-                    </td>
-                    <td id="abet_text_2"><label for="abet_2">An ability to apply engineering design to produce solutions that meet specified needs with consideration of public helaht, safety, and welfare, as well as global, cultural, social, environmental, and economic factors</label></td>
-                </tr>
-                <tr>
-                    <td>
-                        <input id="abet_3" type='checkbox' value="3" onclick='updateABETSelection(this, 3);'>
-                    </td>
-                    <td id="abet_text_3"><label for="abet_3">An ability to communicate effectively with a range of audiences</label></td>
-                </tr>
-                <tr>
-                    <td>
-                        <input id="abet_4" type='checkbox' value="4" onclick='updateABETSelection(this, 4);'>
-                    </td>
-                    <td id="abet_text_4"><label for="abet_4">An ability to recognize ethical and professional responsibilities in engineering situations and make informed judgments, which must consider the impact of engineering solutions in global, economic, environmetal, and societal contexts.</label></td>
-                </tr>
-                <tr>
-                    <td>
-                        <input id="abet_5" type='checkbox' value="5" onclick='updateABETSelection(this, 5);'>
-                    </td>
-                    <td id="abet_text_5"><label for="abet_5">An ability to function effectively on a team whose members together provide leadership, create a collaborative and inclusive environmetna, establish goals, plan tasks, and meet objectives </label></td>
-                </tr>
-                <tr>
-                    <td>
-                        <input id="abet_6" type='checkbox' value="6" onclick='updateABETSelection(this, 6);'>
-                    </td>
-                    <td id="abet_text_6"><label for="abet_6">An ability to develop and conduct appropriate experimentation, analyze and interpret data, and use engineering judgement to draw conclusions</label></td>
-                </tr>
-                <tr>
-                    <td>
-                        <input id="abet_7" type='checkbox' value="7" onclick='updateABETSelection(this, 7);'>
-                    </td>
-                    <td id="abet_text_7"><label for="abet_7">An ability to acquire and apply new knowledge as needed, using appropriate learning strategies.</label></td>
-                </tr>
+                {% endfor %}
             </table>
         </section>
 <!-- Section 6 -->

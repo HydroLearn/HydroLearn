@@ -89,9 +89,11 @@ def add_learning_objectives(request):
     verbs_by_knowledge = defaultdict(list)
     for verb in Learning_Verb.objects.all():
         verbs_by_knowledge[verb.level.label].append(verb.verb)
+    abet_outcomes = Learning_Outcome.objects.values_list("outcome", flat=True).order_by("pk")
     return render(request, 'core/learning_obj.html', {'learning_objective_formset': formset,
                                                       "verbs_by_knowledge": json.dumps(verbs_by_knowledge),
-                                                      'knowledge_order': json.dumps(knowledge_order)})
+                                                      'knowledge_order': json.dumps(knowledge_order),
+                                                      'abet_outcomes': abet_outcomes})
 
 class core_AppRefDetailView(DetailView):
     model = AppReference

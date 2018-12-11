@@ -17,4 +17,4 @@ class Learning_Objective(CreationTrackingBaseModel):
     task = models.TextField()
     degree = models.TextField()
     verb = models.ForeignKey(Learning_Verb)
-    outcomes = models.ManyToManyField(Learning_Outcome)
+    outcomes = models.ManyToManyField(Learning_Outcome, blank=True)
