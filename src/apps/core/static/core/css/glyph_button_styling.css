@@ -1,0 +1,29 @@
+/********************************************
+ * Glyph button styling
+ ********************************************/
+.glyph-button {
+  color: #45a4f3;
+  transition: all .2s;
+  font-size: 20px;
+  cursor: pointer;
+  text-align: center;
+  width: 35px;
+  padding: 5px;
+  border-radius: .3em; }
+  .glyph-button:hover {
+    color: #fff;
+    background-color: #45a4f3;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2); }
+  .glyph-button.glyph-delete {
+    color: #b1213c; }
+    .glyph-button.glyph-delete:hover {
+      color: #fff;
+      background-color: #b1213c; }
+  .glyph-button.glyph-disabled {
+    color: #ccc; }
+    .glyph-button.glyph-disabled:hover {
+      color: #fff;
+      cursor: not-allowed;
+      background-color: #999; }
+
+/*# sourceMappingURL=glyph_button_styling.css.map */

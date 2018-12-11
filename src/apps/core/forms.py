@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext as _
 
 from src.apps.core.models.ModuleModels import (
@@ -186,12 +186,31 @@ class ResourceForm(forms.ModelForm):
             'activity',
         ]
 
+class BaseResourceFormset(BaseInlineFormSet):
+
+    def add_fields(self, form, index):
+        '''
+        add hidden field to formset for marking deletions
+
+        :param form: collaborator form
+        :param index: index of form in formset
+        :return:
+        '''
+
+        super(BaseResourceFormset, self).add_fields(form, index)
+
+        if self.can_delete:
+            form.fields['DELETE'] = forms.BooleanField(
+                label=_('Delete'),
+                required=False,
+                widget=forms.HiddenInput
+            )
+
 
 ResourceInline = inlineformset_factory(
     ActivitySection,
     Resource,
-    form=ResourceForm,
     extra=1,
-    #form=manage_CollaborationForm,
-    #formset=BaseCollabFormset,
+    form=ResourceForm,
+    formset=BaseResourceFormset,
 )

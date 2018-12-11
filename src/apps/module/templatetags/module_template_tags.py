@@ -68,3 +68,13 @@ def map_container(context):
         'layers': layers,
         sezikai_ctx_var: context[sezikai_ctx_var],
     }
+
+
+@register.inclusion_tag('module/tag_templates/_resource_box.html',takes_context=True)
+def show_resources_box(context, resource_list):
+    sezikai_ctx_var = getattr(settings, 'SEKIZAI_VARNAME', 'SEKIZAI_CONTENT_HOLDER')
+    return {
+        "resources": resource_list,
+        sezikai_ctx_var: context[sezikai_ctx_var],
+    }
+

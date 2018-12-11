@@ -1,8 +1,8 @@
-{% load manage_template_tags %}
-<div id="collab_formset" class="collab_formset_wrapper dynamic_formset" data-prefix="{{ formset.prefix }}">
+{% load static editor_template_tags %}
 
+<div id="resources_wrapper" class="dynamic_formset">
     <div class="formset_header_row">
-
+    {% if formset %}
         {% for field in formset.empty_form.visible_fields  %}
             <div class="formset_header_cell">{{ field.label }}</div>
         {% endfor %}
@@ -12,15 +12,25 @@
         {% endif %}
 
         <div class="formset_errors">{{ formset.non_form_errors }}</div>
-        <div class="mgmt_form">{{ formset.management_form }}</div>
-
+        <div class="mgmt_form">
+            {{ formset.management_form }}
+            {{ formset.media }}
+        </div>
     </div>
 
-    {% for collaborator_form in formset %}
+
+    {% for form in formset %}
         <div class="form_row">
-            {% show_collab_form collaborator_form formset.can_delete %}
+            {% show_resource_form form formset.can_delete %}
         </div>
     {% endfor %}
 
 
+
+
+    {% endif %}
+
 </div>
+
+
+

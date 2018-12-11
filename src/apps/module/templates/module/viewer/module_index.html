@@ -64,15 +64,17 @@
     {% endaddtoblock 'head_js' %}
 
 
-    {% addtoblock 'template_css' %}
-        <link rel="stylesheet" href="{% static 'module/css/Load_Spinner_Manager.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/Load_Spinner_Manager.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
         <!--<link rel="stylesheet" href="{% static 'module/css/DIV-TableStyle.css' %}" type="text/css">-->
         <!--<link rel="stylesheet" href="{% static 'module/css/map.css' %}" type="text/css">-->
-    {% endaddtoblock 'template_css' %}
+    <!--
+        TODO: find out why this isn't loading from the template tag...
+    -->
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/resource_box_styling.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
 
     <div id="content-wrapper">
             <div id="main-content">

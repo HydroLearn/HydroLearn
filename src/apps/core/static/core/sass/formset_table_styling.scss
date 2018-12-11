@@ -1,0 +1,80 @@
+@import 'branding';
+/***********************************************
+ *  dynamic Formset styling
+ ***********************************************/
+
+.dynamic_formset{
+    display: table;
+    width: 100%;
+
+    .formset_errors{
+        display: none;
+    }
+
+    .mgmt_form{
+        display: none;
+    }
+
+    .empty_form{
+        display:none
+    }
+
+    .formset_header_row {
+        display: table-row;
+
+        .formset_header_cell{
+            display: table-cell;
+            border-bottom: 3px solid $HL_blue;
+            padding: 5px 10px;
+            font-weight: bold;
+        }
+
+    }
+
+
+    .form_row{
+        display: table-row;
+        transition: all .2s;
+
+
+        &:nth-child(odd){
+            background: #eee;
+        }
+
+        &.new_form {
+            background-color: #d4ecdab0;
+        }
+
+        &.deleted_form {
+            background-color: #ecd4d4b0;
+        }
+
+        .form_errors{
+            display:none
+        }
+
+        .form_cell{
+            display: table-cell;
+            padding: 5px 10px;
+
+            a.form_delete{
+                //margin: 3px;
+
+                i {
+                    cursor: pointer;
+                    text-align: center;
+                    width: 35px;
+                    padding: 5px;
+                    border-radius: .3em;
+                }
+            }
+        }
+
+        .form_content{
+
+        }
+
+    }
+
+
+}

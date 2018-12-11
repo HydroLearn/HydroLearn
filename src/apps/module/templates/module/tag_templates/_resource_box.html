@@ -1,0 +1,30 @@
+{% load static sekizai_tags %}
+
+<!--
+    TODO: this isn't loading automatically in 'module_index.html', find out why
+-->
+{% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/resource_box_styling.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+
+<div class="resource_box">
+    <div class="resource_box_header">Resources</div>
+
+    <div class="resource_box_listing">
+        {% for resource in resources %}
+           <div class="resource_box_listing_row">
+                <div class="resource_box_listing_cell">
+                    <a target="_blank" class="resource_link {{ resource.resource_type }}" href="{{ resource.resource_link }}"> {{resource.display_text}} </a>
+                </div>
+           </div>
+        {% empty %}
+           <div class="resource_box_listing_row">
+               <div class="resource_box_listing_cell">
+                    No Resources for this Activity.
+               </div>
+           </div>
+        {% endfor %}
+
+    </div>
+
+
+
+</div>

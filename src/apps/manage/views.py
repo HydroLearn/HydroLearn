@@ -700,16 +700,6 @@ class manage_SectionContent(CollabEditorAccessRequiredMixin, PublicationChildVie
 
         context = super(manage_SectionContent, self).get_context_data(**kwargs)
 
-        # c_type = str(ContentType.objects.get_for_id(self.get_object().polymorphic_ctype_id))
-        #
-        # context['resources'] = {
-        #     'Reading Section': None,
-        #     'Activity Section': ResourceInline(),
-        #     'Quiz Section': None,
-        # }.get(c_type, None)
-
-
-
         return context
 
     def get_template_names(self):
