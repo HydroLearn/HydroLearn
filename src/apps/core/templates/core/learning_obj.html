@@ -38,6 +38,13 @@
         </script>
     </head>
     <body>
+        <div>
+            {% for map in existing_objectives %}
+                {% for pk,objective in map.items %}
+                    <div pk="{{ pk }}">{{ objective }}</div>
+                {% endfor %}
+            {% endfor %}
+        </div>
         <div id="learning_outcomes_formset">
             <div id="LO_Empty_form">
                 <div class="LO_representation"></div>
