@@ -282,16 +282,11 @@ class Learning_ObjectiveTextForm(forms.ModelForm):
         learning_outcomes = Learning_Outcome.objects.filter(pk__in=outcomes.split(","))
         if learning_outcomes is None:
             raise forms.ValidationError("No Learning_Outcome with ids {} exists".format(outcomes))
-        for o in learning_outcomes:
-            print("here we go")
-            print(o.outcome)
         return learning_outcomes
 
-    def save(self, verb, outcomes):
-        self.instance.verb_id = verb.pk
+    def save(self):
+        self.instance.verb_id = self.cleaned_data.get("verb").pk
         self.instance.save()
-        for outcome in outcomes:
-            print("hello world")
-            print(outcome)
+        for outcome in self.cleaned_data.get("outcomes"):
             self.instance.outcomes.add(outcome)
         return super().save()
