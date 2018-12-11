@@ -1,5 +1,5 @@
 from django.db import models, transaction
-from src.apps.core.models.SectionTypeModels import ActivitySection
+# from src.apps.core.models.SectionTypeModels import ActivitySection
 
 from django.utils.translation import ugettext as _
 
