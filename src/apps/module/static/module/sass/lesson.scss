@@ -228,16 +228,24 @@
         -moz-border-radius: 50%;
       }
     }
-    ol {
+    ol { // 2nd level
+
       > li:before {
         content: counter(li, lower-alpha);
+        background: #ffa51e; // orange
       }
-      ol {
+
+      ol {  //3rd level
         > li:before {
           content: counter(li, lower-roman);
+          background: #62ab76; // green
         }
-        ol > li:before {
+
+        ol > li:before { // 4th level
+
           content: counter(li);
+          background: #8f8f8f; //grey
+
         }
       }
     }

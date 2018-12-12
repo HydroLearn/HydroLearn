@@ -148,11 +148,14 @@
         -webkit-border-radius: 50%;
         -moz-border-radius: 50%; }
     #lesson-content ol ol > li:before {
-      content: counter(li,lower-alpha); }
+      content: counter(li,lower-alpha);
+      background: #ffa51e; }
     #lesson-content ol ol ol > li:before {
-      content: counter(li,lower-roman); }
+      content: counter(li,lower-roman);
+      background: #62ab76; }
     #lesson-content ol ol ol ol > li:before {
-      content: counter(li); }
+      content: counter(li);
+      background: #8f8f8f; }
     #lesson-content ol.orange > li:before {
       background: #EF8C08; }
     #lesson-content ol.light_green > li:before {
