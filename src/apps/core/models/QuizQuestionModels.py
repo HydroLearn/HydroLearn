@@ -31,7 +31,7 @@ from src.apps.core.models.PublicationModels import (
 
 # TODO: Quiz Question/Answer should not specify ref_id as the primary key,
 #       reference id is expected to be representative of the 'Publishable instance' of this object
-#       being that Quiz questions can be published with the module, this needs to be seperate to
+#       being that Quiz questions can be published with the module, this needs to be separate to
 #       allow consistency in copy methods.
 #
 #       in the below code the copy methods have been generated, but 'maintain_ref' addition has been commented
