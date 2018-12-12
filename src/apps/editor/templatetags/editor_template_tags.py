@@ -36,5 +36,15 @@ register = template.Library()
 #         'form': form,
 #     }
 
+@register.inclusion_tag('editor/forms/_resource_formset.html')
+def show_resource_formset(formset):
+    return {
+        'formset': formset,
+    }
 
-
+@register.inclusion_tag('editor/forms/_resource_form.html')
+def show_resource_form(form, can_delete=False):
+    return {
+        'form': form,
+        'can_delete': can_delete,
+    }

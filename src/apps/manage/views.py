@@ -697,9 +697,8 @@ class manage_SectionContent(CollabEditorAccessRequiredMixin, PublicationChildVie
     model = Section
 
     def get_context_data(self, **kwargs):
-        #kwargs['edit'] = kwargs.get('edit', False)
+
         context = super(manage_SectionContent, self).get_context_data(**kwargs)
-        #context['edit'] = True
 
         return context
 

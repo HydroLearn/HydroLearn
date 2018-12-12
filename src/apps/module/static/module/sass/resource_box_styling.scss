@@ -1,0 +1,53 @@
+.resource_box {
+    display: block;
+    float: right;
+    width: 300px;
+    background: #eee;
+    //padding: 10px 15px;
+
+    border-radius: 7px;
+    margin: 0 10px 25px 25px;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+
+    .resource_box_header{
+        display:inline-block;
+        width:100%;
+        border-bottom: 1px solid #ccc;
+
+        margin:0;
+        padding: 7px 7px;
+
+        font-weight: bold;
+        line-height: normal;
+        color: #8F8F8F;
+
+    }
+
+    .resource_box_listing {
+        display: table;
+        width: 100%;
+
+        .resource_box_listing_row {
+            display: table-row;
+
+            .resource_box_listing_cell {
+                display: table-cell;
+                padding: 5px 10px;
+                border-bottom: 1px solid #ccc;
+
+                &:hover {
+                    background: #ffffff55;
+                }
+
+                .resource_link {
+                    display:block;
+                    text-decoration: none !important;
+                }
+
+            }
+
+        }
+
+    }
+}
+

@@ -2,7 +2,7 @@
 {% load cms_tags module_template_tags sekizai_tags static thumbnail %}
 
 {% block content %}
-    {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
+    {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'module/css/activity_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
 
     {# Load content into non editable context variable  #}
     {% render_placeholder object.content as content %}
@@ -12,6 +12,8 @@
         
         <h2 class="lesson-header">{{object.name}}</h2>
         <hr class="headerSpacer">
+        {% show_resources_box object.resources.all %}
+
         {{ content }}
     </div>
 

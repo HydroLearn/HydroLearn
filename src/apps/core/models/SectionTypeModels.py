@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from src.apps.core.models.ModuleModels import Section
 from src.apps.core.models.PublicationModels import Publication
-
+from src.apps.core.models.ResourceModels import Resource
 
 class ReadingSection(Section):
     class Meta:
@@ -159,8 +159,19 @@ class ActivitySection(Section):
 
     def copy_children(self, from_instance, maintain_ref=False):
 
-        # copy over the content
-        #self.copy_content(from_instance)
+        # copy over the resources for this activity
+        self.resources.all().delete()
+
+        for resource in from_instance.resources.all():
+            new_resource = Resource(
+                display_text=resource.display_text,
+                resource_link=resource.resource_link,
+                resource_type=resource.resource_type,
+                activity=self,
+            )
+
+            new_resource.save()
+
         pass
 
     def copy_content(self, from_instance):

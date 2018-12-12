@@ -111,9 +111,9 @@ class module_SectionDetailView(PublicationChildViewMixin, DetailView):
 
 
         return {
-            'reading section':  'module/viewer/_section_reading_view.html',
-            'activity section': 'module/viewer/_section_activity_view.html',
-            'quiz section':     'module/viewer/_section_quiz_view.html',
+            'Reading Section':  'module/viewer/_section_reading_view.html',
+            'Activity Section': 'module/viewer/_section_activity_view.html',
+            'Quiz Section':     'module/viewer/_section_quiz_view.html',
         }.get(c_type, 'module/viewer/_section_reading_view.html')
 
         #return 'module/section_detail.html'

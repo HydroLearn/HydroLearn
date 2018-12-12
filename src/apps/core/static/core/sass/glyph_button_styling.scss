@@ -1,0 +1,42 @@
+@import 'branding';
+
+/********************************************
+ * Glyph button styling
+ ********************************************/
+
+.glyph-button {
+    color: $HL_blue;
+    transition: all .2s;
+    font-size: 20px;
+
+    cursor: pointer;
+    text-align: center;
+    width: 35px;
+    padding: 5px;
+    border-radius: .3em;
+
+    &:hover {
+        color: #fff;
+        background-color: $HL_blue;
+        box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &.glyph-delete{
+       color: $red;
+       &:hover{
+            color:#fff;
+            background-color:$red;
+       }
+
+    }
+
+    &.glyph-disabled{
+       color: #ccc;
+       &:hover{
+            color:#fff;
+            cursor: not-allowed;
+            background-color: #999;
+       }
+
+    }
+}

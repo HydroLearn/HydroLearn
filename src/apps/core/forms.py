@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext as _
 
 from src.apps.core.models.ModuleModels import (
@@ -15,6 +16,8 @@ from src.apps.core.models.SectionTypeModels import (
     ActivitySection,
     QuizSection
 )
+
+from src.apps.core.models.ResourceModels import Resource
 
 # from djangocms_text_ckeditor.widgets import TextEditorWidget
 
@@ -171,3 +174,43 @@ class CollaborationForm(forms.ModelForm):
             'collaborator',
             'can_edit',
         ]
+
+
+class ResourceForm(forms.ModelForm):
+    class Meta:
+        model = Resource
+        fields = [
+            'display_text',
+            'resource_link',
+            'resource_type',
+            'activity',
+        ]
+
+class BaseResourceFormset(BaseInlineFormSet):
+
+    def add_fields(self, form, index):
+        '''
+        add hidden field to formset for marking deletions
+
+        :param form: collaborator form
+        :param index: index of form in formset
+        :return:
+        '''
+
+        super(BaseResourceFormset, self).add_fields(form, index)
+
+        if self.can_delete:
+            form.fields['DELETE'] = forms.BooleanField(
+                label=_('Delete'),
+                required=False,
+                widget=forms.HiddenInput
+            )
+
+
+ResourceInline = inlineformset_factory(
+    ActivitySection,
+    Resource,
+    extra=1,
+    form=ResourceForm,
+    formset=BaseResourceFormset,
+)

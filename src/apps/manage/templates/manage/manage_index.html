@@ -4,11 +4,11 @@
 {% block title %}Manage{% endblock title %}
 
 {% block content %}
-    {% addtoblock "template_css" %}
-        <link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
+    {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
+    {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">{% endaddtoblock "template_css" %}
+    {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'core/css/glyph_button_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
+    {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'core/css/formset_table_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
 
-    {% endaddtoblock "template_css" %}
 
 
 

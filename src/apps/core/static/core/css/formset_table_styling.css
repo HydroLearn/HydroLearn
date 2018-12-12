@@ -1,0 +1,41 @@
+/***********************************************
+ *  dynamic Formset styling
+ ***********************************************/
+.dynamic_formset {
+  display: table;
+  width: 100%; }
+  .dynamic_formset .formset_errors {
+    display: none; }
+  .dynamic_formset .mgmt_form {
+    display: none; }
+  .dynamic_formset .empty_form {
+    display: none; }
+  .dynamic_formset .formset_header_row {
+    display: table-row; }
+    .dynamic_formset .formset_header_row .formset_header_cell {
+      display: table-cell;
+      border-bottom: 3px solid #45a4f3;
+      padding: 5px 10px;
+      font-weight: bold; }
+  .dynamic_formset .form_row {
+    display: table-row;
+    transition: all .2s; }
+    .dynamic_formset .form_row:nth-child(odd) {
+      background: #eee; }
+    .dynamic_formset .form_row.new_form {
+      background-color: #d4ecdab0; }
+    .dynamic_formset .form_row.deleted_form {
+      background-color: #ecd4d4b0; }
+    .dynamic_formset .form_row .form_errors {
+      display: none; }
+    .dynamic_formset .form_row .form_cell {
+      display: table-cell;
+      padding: 5px 10px; }
+      .dynamic_formset .form_row .form_cell a.form_delete i {
+        cursor: pointer;
+        text-align: center;
+        width: 35px;
+        padding: 5px;
+        border-radius: .3em; }
+
+/*# sourceMappingURL=formset_table_styling.css.map */

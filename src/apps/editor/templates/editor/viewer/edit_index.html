@@ -64,19 +64,20 @@
     {% endaddtoblock 'head_js' %}
 
 
-    {% addtoblock 'template_css' %}
-        <link rel="stylesheet" href="{% static 'module/css/Load_Spinner_Manager.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'editor/css/editor_styling.css' %}" type="text/css">
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/Load_Spinner_Manager.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'editor/css/editor_styling.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'css/jquery.contextMenu.min.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'core/css/formset_table_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
+    {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'core/css/glyph_button_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
         <!--<link rel="stylesheet" href="{% static 'editor/css/editor_validation_styling.css' %}" type="text/css">-->
         <!--<link rel="stylesheet" href="{% static 'editor/css/DIV-TableStyle.css' %}" type="text/css">-->
         <!--<link rel="stylesheet" href="{% static 'editor/css/map.css' %}" type="text/css">-->
-        <link rel="stylesheet" href="{% static 'css/jquery.contextMenu.min.css' %}" type="text/css">
 
-    {% endaddtoblock 'template_css' %}
+
 
     <div id="content-wrapper">
             <div id="main-content">
@@ -236,6 +237,8 @@
         <script src="{% static 'js/plugins/jquery-contextMenu/jquery.ui.position.min.js' %}"></script>
         <script src="{% static 'js/plugins/jquery-contextMenu/jquery.contextMenu.min.js' %}"></script>
 
+        <!-- jquery formset -->
+        <script type="text/javascript" src="{% static 'js/plugins/jquery.formset.js' %}"></script>
 
 
         <!--//JSLINQ-->

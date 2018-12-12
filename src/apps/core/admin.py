@@ -28,6 +28,7 @@ from src.apps.core.models.ModuleModels import (
     Collaboration,
 
 )
+
 from src.apps.core.models.SectionTypeModels import (
     ReadingSection,
     ActivitySection,
@@ -41,6 +42,10 @@ from src.apps.core.models.QuizQuestionModels import (
     MultiChoice_answer,
     MultiSelect_question,
     MultiSelect_answer
+)
+
+from src.apps.core.models.ResourceModels import (
+    Resource,
 )
 
 #from src.apps.core.QuerysetManagers import *
@@ -406,6 +411,31 @@ class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehol
         else:
             return super(LessonAdmin, self).get_form(request, obj, **kwargs)
 
+
+##############################################
+#       (activity) Resource admin
+##############################################
+# class ResourceInlineAdmin(admin.TabularInline):
+#     model = Resource
+#     fields = [
+#         'display_text',
+#         'resource_link',
+#         'resource_type',
+#         'activity',
+#     ]
+
+
+
+
+
+class ResourceAdmin(admin.ModelAdmin):
+    model = Resource
+
+
+##############################################
+#       Learning Objective admin forms
+##############################################
+
 class Learning_OutcomeAdmin(admin.ModelAdmin):
     model = Learning_Outcome
 
@@ -468,6 +498,8 @@ admin.site.register(QuizSection, QuizSectionAdmin)
 admin.site.register(QuizQuestion, QuizQuestionParentAdmin)
 admin.site.register(MultiChoice_answer, MultiChoice_AnswerAdmin)
 admin.site.register(MultiSelect_answer, MultiSelect_AnswerAdmin)
+
+admin.site.register(Resource, ResourceAdmin)
 
 admin.site.register(Learning_Outcome, Learning_OutcomeAdmin)
 admin.site.register(Learning_Level, Learning_LevelAdmin)

@@ -1,15 +1,10 @@
 <!--extend this to provide a detail view for a module-->
 {% extends 'content.html' %}
-{% load cms_tags sekizai_tags static thumbnail %}
+{% load cms_tags module_template_tags sekizai_tags static thumbnail %}
 
 {% block subtitle%} - Manage Lesson {% endblock subtitle %}
 
 {% block content %}
-    {% addtoblock "template_css" %}
-        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">-->
-        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_content_styling.css' %}" type="text/css">-->
-        <!--<link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">-->
-    {% endaddtoblock "template_css" %}
 
     <!--<div id="manage-content">-->
 
@@ -19,9 +14,14 @@
             Editing: {{ object.name }}
         </h2>
         <hr>
+
+        {% show_resources_box object.resources.all %}
+
         <div>
             {% render_placeholder object.content %}
         </div>
+
+
     </div>
 
 

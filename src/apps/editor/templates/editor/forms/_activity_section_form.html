@@ -34,21 +34,35 @@
             </h2>
             <hr class="headerSpacer">
 
+            <div id="Resource_Empty_form" class="form_row" style="display:none;">
+                {% show_resource_form resources.empty_form %}
+            </div>
+
             <form id="content_form" action="{{ request.path }}" method="post">
                 {% csrf_token %}
                 {{ form.media }}
                 <table>
                     {{ form.as_table }}
                 </table>
+
+                <h4 style="display:inline-block">Resources</h4>
+                <div id="Add_Resource" class="Submit_button btn btn-default" style="float:right;"> <i class="fas fa-plus-circle"></i> New Resource </div>
+
+
+                {% show_resource_formset resources %}
+
                 <div id="content_form_controls">
                     <button class="Submit_button btn btn-default" type="submit">Submit Section</button>
                     <button class="Cancel_button btn btn-default">Cancel</button>
 
                     {% if is_instance %}
-                        <button class="Delete_button btn btn-default" type="submit"><i class="fas fa-trash glyph-button"></i> Delete Section</button>
+                        <button class="Delete_button btn btn-default" type="submit"><i class="fas fa-trash"></i> Delete Section</button>
                     {% endif %}
                 </div>
             </form>
+
+
+
         </div>
     {% endif %}
 </div>
@@ -56,4 +70,64 @@
 
 <script>
     $('#manage_form').load('{{ content_view }}')
+
+    $('#Add_Resource').click(function(evt){
+        evt.preventDefault()
+
+        // fire the 'add_collaborator' button of formset
+        $('#resources_wrapper .res_fs_add').click();
+
+    });
+
+    $('#resources_wrapper .form_row').formset({
+            formCssClass: "resource_form",
+
+            // add prefix for formset (you can comment this out for now, but you will
+            // need to add this once it’s part of the lesson form)
+            prefix: '{{ resources.prefix }}',
+
+            // this will remove the text from the add button so you don’t need to hide it
+            addText: "",
+            deleteText: "",
+
+            // specify the empty form representation
+            formTemplate: "#Resource_Empty_form",
+
+
+            addCssClass: 'res_fs_add',
+            deleteCssClass: 'res_fs_remove',
+
+            // perform actions on add
+            added: function(row){
+
+                // on add replace the text of the remove
+                // button with the delete glyph-icon
+                var remove_btn = $(row).find('.res_fs_remove');
+
+                // example: <i class="fas fa-trash glyph-button glyph-delete"></i>
+                remove_btn.html($('<i>', {class: 'fas fa-trash glyph-button glyph-delete'}))
+
+                // move the remove button into the last cell
+                $(row).find('.form_cell').last().append(remove_btn)
+            },
+
+        });
+
+    // initialize delete buttons on existing forms to toggle 'deleted' state
+    $('#resources_wrapper .form_delete').click(function(del_event){
+
+        var form = $(del_event.target).closest('.form_row')
+        var deletion_state = form.hasClass('deleted_form');
+
+        // add styling class to the form row
+
+        if(deletion_state){
+            form.removeClass('deleted_form');
+            form.find('input[name$="DELETE"]').removeAttr('value')
+
+        }else{
+            form.addClass('deleted_form');
+            form.find('input[name$="DELETE"]').attr('value',!deletion_state)
+        }
+    });
 </script>

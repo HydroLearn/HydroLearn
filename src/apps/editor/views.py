@@ -59,6 +59,8 @@ from src.apps.core.views.mixins import (
     CollabViewAccessMixin,
 )
 
+from src.apps.core.forms import ResourceInline
+
 
 
 #####################################################
@@ -149,6 +151,11 @@ class editor_SectionCreateView(LoginRequiredMixin, AjaxableResponseMixin, Create
 
             if parent_lesson and parent_lesson.has_edit_access(self.request.user):
                 context['edit_access'] = True
+
+                if self.kwargs.get('section_type', None) == 'activity_section':
+                    context['resources'] = ResourceInline(self.request.POST or None)
+                else:
+                    context['resources'] = None
             else:
                 context['edit_access'] = False
                 context['manage_denied_message'] = "You cannot add to this lesson without editor access! ! If you require edit access, please contact the owner."
@@ -200,15 +207,42 @@ class editor_SectionCreateView(LoginRequiredMixin, AjaxableResponseMixin, Create
         # Find parent_lesson by using the passed slug in the URL
         # this view may be called with or without specifying a parent lesson,
         #   depending on if the
-        if self.kwargs.get('parent_lesson', None):
-            parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
+        with transaction.atomic():
+            if self.kwargs.get('parent_lesson', None):
+                parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
 
-            if parent_lesson and parent_lesson.has_draft_access(self.request.user):
-                new_section = form.save(commit=False)
-                new_section.lesson = parent_lesson
-            else:
-                form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
-                return self.form_invalid(form)
+                if parent_lesson and parent_lesson.has_draft_access(self.request.user):
+                    new_section = form.save(commit=False)
+                    new_section.lesson = parent_lesson
+
+                    context = self.get_context_data(**kwargs)
+
+                    # if there are resources for this section process them
+                    if context['resources']:
+                        resources_fs = context['resources']
+
+                        if resources_fs.is_valid():
+
+                            resources_fs.instance = new_section
+                            #resources = resources_fs.save()
+
+                            new_section.save()
+                            resources_fs.save()
+
+                            form.save_m2m()
+
+                        else:
+                            return self.form_invalid(form, *args, **kwargs)
+
+
+                else:
+                    form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
+                    return self.form_invalid(form)
+
+
+
+
+
 
         return super(editor_SectionCreateView, self).form_valid(form, *args, **kwargs)
 
@@ -271,6 +305,20 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
     template_name = 'editor/forms/_section_form.html'
     form_class = editor_SectionForm
 
+    def section_type(self):
+        '''
+            method to check the current view object's polymorphic type
+            and return the string representation
+        '''
+        c_type = str(ContentType.objects.get_for_id(self.get_object().polymorphic_ctype_id))
+
+        return {
+            'Reading Section':  'reading_section',
+            'Activity Section': 'activity_section',
+            'Quiz Section':     'quiz_section',
+        }.get(c_type, None)
+
+
     def get_context_data(self, **kwargs):
         context = super(editor_SectionUpdateView, self).get_context_data(**kwargs)
 
@@ -282,6 +330,12 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
 
         if edit_access:
             context['content_view'] = self.object.manage_url
+
+            if self.section_type() == "activity_section":
+                context['resources'] = ResourceInline(self.request.POST or None, instance=self.object)
+            else:
+                context['resources'] = None
+
         else:
             context['manage_denied_message'] = "You can view this Section, but don't have edit access! If you require edit access, please contact the owner."
             context['content_view'] = reverse('modules:section_content', kwargs={'lesson_slug': self.object.lesson.slug,'slug': self.object.slug})
@@ -300,6 +354,38 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
         }
 
     def form_valid(self, form, *args, **kwargs):
+
+        with transaction.atomic():
+
+            section = form.save(commit=False)
+
+            context = self.get_context_data(**kwargs)
+
+            # if there are resources for this section process them
+            if context['resources']:
+                resources_fs = context['resources']
+
+                if resources_fs.is_valid():
+                    resources = resources_fs.save(commit=False)
+
+                    # delete any collabs marked for deletion
+                    for deleted_res in resources_fs.deleted_objects:
+                        deleted_res.delete()
+
+                    for res in resources:
+                        res.save()
+
+                    section.save()
+                    form.save_m2m()
+
+                else:
+                    return self.form_invalid(form,*args, **kwargs)
+
+
+
+
+
+
         return super(editor_SectionUpdateView, self).form_valid(form, *args, **kwargs)
 
     def form_invalid(self, form, *args, **kwargs):
@@ -307,23 +393,20 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
 
     # override get_form_class to grab the correct form based on polymorphic content type
     def get_form_class(self):
-        c_type = str(ContentType.objects.get_for_id(self.get_object().polymorphic_ctype_id))
-
         return {
-            'Reading Section':  editor_ReadingSectionForm,
-            'Activity Section': editor_ActivitySectionForm,
-            'Quiz Section':     editor_QuizSectionForm,
-        }.get(c_type, editor_ReadingSectionForm)
+            'reading_section':  editor_ReadingSectionForm,
+            'activity_section': editor_ActivitySectionForm,
+            'quiz_section':     editor_QuizSectionForm,
+        }.get(self.section_type(), editor_ReadingSectionForm)
 
     # override get_template_names to grab the correct template based on polymorphic content type
     def get_template_names(self):
-        c_type = str(ContentType.objects.get_for_id(self.get_object().polymorphic_ctype_id))
 
         return {
-            'Reading Section': 'editor/forms/_reading_section_form.html',
-            'Activity Section': 'editor/forms/_activity_section_form.html',
-            'Quiz Section': 'editor/forms/_quiz_section_form.html',
-        }.get(c_type, 'editor/forms/_reading_section_form.html')
+            'reading_section': 'editor/forms/_reading_section_form.html',
+            'activity_section': 'editor/forms/_activity_section_form.html',
+            'quiz_section': 'editor/forms/_quiz_section_form.html',
+        }.get(self.section_type(), 'editor/forms/_reading_section_form.html')
 
 
 #####################################################

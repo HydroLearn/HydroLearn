@@ -1,0 +1,58 @@
+// define the color palette
+
+    $HL_blue: #45a4f3;
+    $HL_darkBlue: #3D6BAA;
+    $HL_seafoam: #85cfc1;
+    $HL_offwhite: #fefcfd;
+
+    // general use colors
+    $light_gray: #F5F5F5;
+    $dark_gray: #232323;
+    $red: #b1213c;
+
+    $trans_gray: rgba($dark_gray, .2);
+    $trans_white: rgba($HL_offwhite, .3);
+
+
+
+// define logo paths
+    $logo_150x28: '../img/logo_150x28.png';
+    $logo_215x40: '../img/logo_215x40.png';
+    $logo_1280x720: '../img/logo_1280x720.png';
+
+
+// fonts
+    $header_font: 'Lato', sans-serif;
+    $body_font: 'Open Sans', sans-serif;
+
+
+// addtl vars
+    $header-height: 50px;
+    $footer-height: 50px;
+    $sidebar-width: 250px;
+    $content-tabs-height: 57px;
+
+// mobile cutoff measurements
+    $mobile_large: 768px;
+    $mobile_small: 480px;
+
+
+
+// mixin styles
+@mixin border-radius($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    -ms-border-radius: $radius;
+    border-radius: $radius;
+}
+
+
+@mixin trans_background($hex_color, $transparency) {
+    background: rgba($hex_color, $transparency);
+}
+
+@mixin trans_color($hex_color, $transparency) {
+    color: rgba($hex_color, $transparency);
+}
+
+
