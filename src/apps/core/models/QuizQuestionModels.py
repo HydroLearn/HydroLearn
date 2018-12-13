@@ -47,12 +47,7 @@ class QuizQuestion(PolyPublicationChild):
         ordering = ('position',)
         verbose_name_plural = 'Quiz-Questions'
 
-    ref_id = RandomCharField(
-        primary_key=True,
-        unique=True,
-        length=8,
-        include_punctuation=False,
-    )
+    ref_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
     position = models.PositiveIntegerField(default=0, blank=False, null=False)
 
@@ -129,12 +124,7 @@ class QuizAnswerBase(PublicationChild):
 
     objects = IterativeDeletion_Manager()
 
-    ref_id = RandomCharField(
-        primary_key=True,
-        unique=True,
-        length=8,
-        include_punctuation=False,
-    )
+    ref_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
     position = models.PositiveIntegerField(default=0, blank=False, null=False)
 
