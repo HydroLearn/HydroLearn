@@ -46,6 +46,11 @@
                         {% endfor %}
                     {% endfor %}
                 </div>
+
+
+                <h4>Learning Objectives</h4>
+                <hr/>
+
                 <div id="learning_outcomes_formset" class="LO_form">
                     <div id="LO_Empty_form">
                         <div class="LO_representation"></div>
@@ -61,6 +66,12 @@
                         {% endfor %}
                     </div>
                 </div>
+
+                <div>
+                    <button id="add-objective-btn">Add</button>
+                </div>
+
+
                 <div id="content_form_controls">
                     <button class="Submit_button btn btn-default" type="submit">Submit Lesson</button>
                     <button class="Cancel_button btn btn-default">Cancel</button>
@@ -70,23 +81,102 @@
                     {% endif %}
                 </div>
             </form>
-            <div>
-                <button id="add-objective-btn">Add</button>
-            </div>
+
         </div>
     {% endif %}
 
 </div>
 
 
-        <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
-        <link rel="stylesheet" href="{% static 'css/main.css' %}">
-        <link rel="stylesheet" href="{% static 'css/jquery.steps.css' %}">
-        <script src="{% static 'js/plugins/modernizr-2.6.2.min.js' %}"></script>
-        <script src="{% static 'js/plugins/jquery.cookie-1.3.1.js' %}"></script>
-        <script src="{% static 'js/plugins/jquery.steps.js' %}"></script>
-        <script src="{% static 'js/plugins/jquery.formset.js' %}"></script>
+        {% addtoblock 'template_css'%}<link rel="stylesheet" href="{% static 'css/normalize.css' %}">{% endaddtoblock 'template_css'%}
+        {% addtoblock 'template_css'%}<link rel="stylesheet" href="{% static 'css/main.css' %}">{% endaddtoblock 'template_css'%}
+        {% addtoblock 'template_css'%}<link rel="stylesheet" href="{% static 'css/jquery.steps.css' %}">{% endaddtoblock 'template_css'%}
+
+        {% addtoblock 'template_js'%}<script src="{% static 'js/plugins/modernizr-2.6.2.min.js' %}"></script>{% endaddtoblock 'template_js'%}
+        {% addtoblock 'template_js'%}<script src="{% static 'js/plugins/jquery.cookie-1.3.1.js' %}"></script>{% endaddtoblock 'template_js'%}
+
+
+
+
         <script type='text/javascript'>
+
+            $("#add-objective-btn").click(function(event ) {
+                    debugger;
+                    event.preventDefault()
+                    lo_dialog.dialog( "open" );
+                } );
+
+            $(window).load(function () {
+                $(".trigger_popup_fricc").click(function(){
+                   $('.hover_bkgr_fricc').show();
+                });
+                $('.hover_bkgr_fricc').click(function(){
+                    $('.hover_bkgr_fricc').hide();
+                });
+                $('.popupCloseButton').click(function(){
+                    $('.hover_bkgr_fricc').hide();
+                });
+            });
+
+            function updateABETSelection(checkbox, index){
+                if (checkbox.checked){
+                    var aText = $("#abet_text_" + index).text();
+                    $("#abet_outcomes").append("<li id='abet_" + index + "'>" + aText + "</li>");
+                }
+                else{
+                    $("#abet_" + index).remove();
+                }
+            };
+            var verbsByKnowledge;
+
+            function updateActionList(knowledge){
+                if(!(typeof knowledge === 'string')) {
+                    debugger;
+                    knowledge = knowledge.value;
+                }
+                options = ["not found"];
+                $('#actionList').empty();
+                jQuery.each(verbsByKnowledge[knowledge], function(i, verb){
+                    $('#actionList').append(new Option(verb, verb, false, false));
+                });
+            };
+
+            function selectAction(actionValue){
+                $('.verbDisplay').each(function() {
+                    $(this).text(actionValue.value);
+                });
+            };
+
+            $( document ).ready(function() {
+                debugger;
+                var knowledgeOrder = JSON.parse("{{ knowledge_order|escapejs }}");
+                verbsByKnowledge = JSON.parse("{{ verbs_by_knowledge|escapejs }}");
+                // Setup knowledge dropdown
+                 knowledgeOrder.map( function(knowledge){
+                    $('#knowledgeSelection').append(new Option(knowledge, knowledge, false, false));
+                });
+                updateActionList(knowledgeOrder[0]);
+
+                $(document).on('input','#condition',function () {
+                    var conditionText = $(this).val();
+                    $('.conditionDisplay').each(function() {
+                        $(this).text(conditionText);
+                    });
+                });
+                $(document).on('input','#task',function () {
+                    var taskText = $(this).val();
+                    $('.taskDisplay').each(function() {
+                        $(this).text(taskText);
+                    });
+                });
+                $(document).on('input','#degree',function () {
+                    var degreeText = $(this).val();
+                    $('.degreeDisplay').each(function() {
+                        $(this).text(degreeText);
+                    });
+                });
+            });
+
             $( function() {
                 lo_dialog = $( "#learning-objective-dialog" ).dialog({
                     autoOpen: false,
@@ -97,9 +187,7 @@
                     }
                 });
 
-                $("#add-objective-btn").click(function( event ) {
-                    lo_dialog.dialog( "open" );
-                } );
+
             } );
 
             $('.LO_form').formset({
@@ -116,6 +204,111 @@
                 // specify the empty form representation
                 formTemplate: "#LO_Empty_form",
             });
+
+            $("#wizardLO").steps({
+                headerTag: "h2",
+                bodyTag: "section",
+                transitionEffect: "slideLeft",
+                onStepChanging: function (event, currentIndex, newIndex)
+                {
+                    // Always allow previous action even if the current form is not valid
+                    if (currentIndex > newIndex)
+                    {
+                        return true;
+                    }
+                    if(currentIndex === 0){
+                        if($("#condition").val().trim().length == 0){
+                            return false;
+                        }
+                    }
+                    if(currentIndex === 1){
+                        if($("#actionText").val().trim().length == 0){
+                            return false;
+                        }
+                    }
+                    if(currentIndex === 2){
+                        if($("#task").val().trim().length == 0){
+                            return false;
+                        }
+                    }
+                    if(currentIndex === 3){
+                        if($("#degree").val().trim().length == 0){
+                            return false;
+                        }
+                    }
+                    if(currentIndex === 4){
+                    }
+                    return true;
+                },
+
+                onFinished: function (event, currentIndex)
+                {
+                    var outcomes_ids = $("#outcomes_selection input:checked").map(function(){
+                                          return $(this).val();
+                                        }).get();
+                    var values_dictionary = {
+                        "condition": $(".conditionDisplay").html(),
+                        "task": $(".taskDisplay").html(),
+                        "degree": $(".degreeDisplay").html(),
+                        "level": $("#knowledgeSelection option:selected").text(),
+                        "verb": $(".verbDisplay").html(),
+                        "outcomes": outcomes_ids
+                    }
+                    // add the new form
+                    $('.add-row').click();
+                    var learning_objective_form = $('.LO_form').last();
+                    updateLearningObjective(learning_objective_form, values_dictionary);
+                    $('.ui-dialog-titlebar-close').click();
+                    resetWizard();
+                }
+            });
+
+            function updateLearningObjective(form, values_dictionary){
+                form.find('input[name$=condition]').val(values_dictionary['condition']);
+                form.find('input[name$=task]').val(values_dictionary['task']);
+                form.find('input[name$=degree]').val(values_dictionary['degree']);
+                form.find('input[name$=level]').val(values_dictionary['level']);
+                form.find('input[name$=verb]').val(values_dictionary['verb']);
+                form.find('input[name$=outcomes]').val(values_dictionary['outcomes']);
+
+                var learn = values_dictionary["condition"] + " " + values_dictionary["verb"] + " " + values_dictionary["task"] + " " + values_dictionary["degree"];
+                form.find('div.LO_representation').last().html(learn);
+            }
+
+            function resetWizard(){
+                // reset inputs
+                $("#condition").val("");
+                $("#task").val("");
+                $("#degree").val("");
+                $("#actionText").val("");
+                updateActionList("Remembering");
+                $("#outcomes_selection input:checked").map(function(){
+                                              return $(this).prop('checked', false);
+                                            }).get();
+                $("#knowledgeSelection").prop("selectedIndex", 0).change();
+
+                // reset displays
+                $('.conditionDisplay').each(function() {
+                    $(this).text("");
+                });
+                $('.taskDisplay').each(function() {
+                    $(this).text("");
+                });
+                $('.degreeDisplay').each(function() {
+                    $(this).text("");
+                });
+                $('.verbDisplay').each(function() {
+                    $(this).text("");
+                });
+                $("#abet_outcomes").empty();
+
+                // click back to beginning
+                $('a[href="#previous"]').click();
+                $('a[href="#previous"]').click();
+                $('a[href="#previous"]').click();
+                $('a[href="#previous"]').click();
+                $('a[href="#previous"]').click();
+            }
 
             // remove the inital row... TODO, this will be removed when we're hooked into the backend?
             $('.delete-row').click()
