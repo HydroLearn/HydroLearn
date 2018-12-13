@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0005_collaboration_table_addition'),
+        ('core', '0006_add_cloned_lesson_derived_fields'),
     ]
 
     operations = [

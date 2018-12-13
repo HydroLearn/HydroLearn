@@ -11,6 +11,10 @@ from django.forms.formsets import DELETION_FIELD_NAME, formset_factory
 from django.template import RequestContext
 from django.utils.translation import gettext as _
 from django.utils.timezone import now
+from src.apps.core.models.LearningObjModels import Learning_Level, Learning_Verb, \
+    Learning_Outcome, Learning_Objective
+from collections import defaultdict
+from .forms import Learning_ObjectiveTextForm, inlineLearning_ObjectiveFormset
 
 
 from django.views.generic import (
@@ -93,6 +97,7 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
     form_class = editor_LessonForm
 
     def get_context_data(self, **kwargs):
+        print("GETTINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGg")
         context = super(editor_LessonCreateView, self).get_context_data(**kwargs)
 
         # add context variable for if this form is instanced
@@ -113,6 +118,28 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
             # otherwise this is a new lesson the user is creating (grant edit permissions)
             context['edit_access'] = True
 
+        if self.request.POST:
+            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST, instance=self.object)
+            context['learning_objective_formset'].full_clean()
+        else:
+            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(instance=self.object)
+
+        # read existing objectives for listing
+        initial_data = []
+        for lo in Learning_Objective.objects.all():
+            initial_data.append(
+                {lo.pk: "{} {} {} {}".format(lo.condition, lo.verb.verb, lo.task, lo.degree)})
+
+        # read form selections
+        knowledge_order = list(Learning_Level.objects.values_list("label", flat=True).order_by("pk"))
+        verbs_by_knowledge = defaultdict(list)
+        for verb in Learning_Verb.objects.all():
+            verbs_by_knowledge[verb.level.label].append(verb.verb)
+        abet_outcomes = Learning_Outcome.objects.values_list("outcome", flat=True).order_by("pk")
+        context['verbs_by_knowledge'] = json.dumps(verbs_by_knowledge)
+        context['knowledge_order'] = json.dumps(knowledge_order)
+        context['abet_outcomes'] = abet_outcomes
+        context['existing_objectives'] = initial_data
 
         return context
 

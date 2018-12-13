@@ -150,65 +150,61 @@
 
 <div class="content">
     <script>
-        $(function ()
-        {
-            var form = $("#wizard").show();
-            form.steps({
-                headerTag: "h2",
-                bodyTag: "section",
-                transitionEffect: "slideLeft",
-                onStepChanging: function (event, currentIndex, newIndex)
+        $("#wizardLO").steps({
+            headerTag: "h2",
+            bodyTag: "section",
+            transitionEffect: "slideLeft",
+            onStepChanging: function (event, currentIndex, newIndex)
+            {
+                // Always allow previous action even if the current form is not valid
+                if (currentIndex > newIndex)
                 {
-                    // Always allow previous action even if the current form is not valid
-                    if (currentIndex > newIndex)
-                    {
-                        return true;
-                    }
-                    if(currentIndex === 0){
-                        if($("#condition").val().trim().length == 0){
-                            return false;
-                        }
-                    }
-                    if(currentIndex === 1){
-                        if($("#actionText").val().trim().length == 0){
-                            return false;
-                        }
-                    }
-                    if(currentIndex === 2){
-                        if($("#task").val().trim().length == 0){
-                            return false;
-                        }
-                    }
-                    if(currentIndex === 3){
-                        if($("#degree").val().trim().length == 0){
-                            return false;
-                        }
-                    }
-                    if(currentIndex === 4){
-                    }
                     return true;
-                },
-                onFinished: function (event, currentIndex)
-                {
-                    var outcomes_ids = $("#outcomes_selection input:checked").map(function(){
-                                          return $(this).val();
-                                        }).get();
-                    var values_dictionary = {
-                        "condition": $(".conditionDisplay").html(),
-                        "task": $(".taskDisplay").html(),
-                        "degree": $(".degreeDisplay").html(),
-                        "level": $("#knowledgeSelection option:selected").text(),
-                        "verb": $(".verbDisplay").html(),
-                        "outcomes": outcomes_ids
-                    }
-                    // add the new form
-                    $('.add-row').click();
-                    var learning_objective_form = $('#learning_outcomes_formset .learning_obj_form .LO_form').last();
-                    updateLearningObjective(learning_objective_form, values_dictionary);
-                    $('.ui-dialog-titlebar-close').click();
-                    resetWizard();
                 }
-            });
+                if(currentIndex === 0){
+                    if($("#condition").val().trim().length == 0){
+                        return false;
+                    }
+                }
+                if(currentIndex === 1){
+                    if($("#actionText").val().trim().length == 0){
+                        return false;
+                    }
+                }
+                if(currentIndex === 2){
+                    if($("#task").val().trim().length == 0){
+                        return false;
+                    }
+                }
+                if(currentIndex === 3){
+                    if($("#degree").val().trim().length == 0){
+                        return false;
+                    }
+                }
+                if(currentIndex === 4){
+                }
+                return true;
+            },
+            onFinished: function (event, currentIndex)
+            {
+                var outcomes_ids = $("#outcomes_selection input:checked").map(function(){
+                                      return $(this).val();
+                                    }).get();
+                var values_dictionary = {
+                    "condition": $(".conditionDisplay").html(),
+                    "task": $(".taskDisplay").html(),
+                    "degree": $(".degreeDisplay").html(),
+                    "level": $("#knowledgeSelection option:selected").text(),
+                    "verb": $(".verbDisplay").html(),
+                    "outcomes": outcomes_ids
+                }
+                // add the new form
+                $('.add-row').click();
+                var learning_objective_form = $('.LO_form').last();
+                updateLearningObjective(learning_objective_form, values_dictionary);
+                $('.ui-dialog-titlebar-close').click();
+                resetWizard();
+            }
         });
 
         function updateLearningObjective(form, values_dictionary){
@@ -259,7 +255,7 @@
         }
     </script>
 
-    <form id="wizard" action="#">
+    <form id="wizardLO" action="#">
 <!-- Section 1 -->
         <h2>Describe</h2>
         <a class="trigger_popup_fricc">help</a>

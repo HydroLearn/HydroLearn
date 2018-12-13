@@ -39,6 +39,28 @@
                 <table>
                     {{ form.as_table }}
                 </table>
+                <div>
+                    {% for map in existing_objectives %}
+                        {% for pk,objective in map.items %}
+                            <div pk="{{ pk }}">{{ objective }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                <div id="learning_outcomes_formset" class="LO_form">
+                    <div id="LO_Empty_form">
+                        <div class="LO_representation"></div>
+                        {{ learning_objective_formset.empty_form }}
+                    </div>
+                    <div class="learning_obj_form empty_form" method="post">
+                        {{ learning_objective_formset.management_form }}
+                        {% for lo_form in  learning_objective_formset %}
+                            <div class="LO_form">
+                                <div class="LO_representation"></div>
+                                {{ lo_form }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
                 <div id="content_form_controls">
                     <button class="Submit_button btn btn-default" type="submit">Submit Lesson</button>
                     <button class="Cancel_button btn btn-default">Cancel</button>
@@ -48,31 +70,53 @@
                     {% endif %}
                 </div>
             </form>
+            <div>
+                <button id="add-objective-btn">Add</button>
+            </div>
         </div>
     {% endif %}
 
 </div>
 
-<script>
 
-    // load the management form for this lesson into 'manage_form' block
-    $('#manage_form').load('{{ content_view }}', function(){
+        <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" href="{% static 'css/jquery.steps.css' %}">
+        <script src="{% static 'js/plugins/modernizr-2.6.2.min.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery.cookie-1.3.1.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery.steps.js' %}"></script>
+        <script src="{% static 'js/plugins/jquery.formset.js' %}"></script>
+        <script type='text/javascript'>
+            $( function() {
+                lo_dialog = $( "#learning-objective-dialog" ).dialog({
+                    autoOpen: false,
+                    width: 1200,
+                    modal: true,
+                    close: function() {
+                        //TODO handle form here?
+                    }
+                });
 
-        // potential starting point for tying into the placeholder dialog's save button
-        //      the action buttons are created after the modal is opened,
-        //      but this method was not functional as implemented
+                $("#add-objective-btn").click(function( event ) {
+                    lo_dialog.dialog( "open" );
+                } );
+            } );
 
-        //  debugger;
-        //  CMS.Modal.options.onClose = 'REFRESH_PAGE'
-        //  //  after loading the content add event to modal
-        //  //  so when opened an event can be bound to the save button
-        //  $('.cms-modal').on('focus', function(event){
-        //      console.log('modal opened')
-        //      // buttons are added after opening, so need to wait a bit
-        //      $('a.cms-btn.cms-btn-action.default').click(function(event){
-        //      event.stopPropagation()
-        //      })
-        //  })
+            $('.LO_form').formset({
 
-    });
-</script>
+                formCssClass: "LO_form",
+
+                // add prefix for formset (you can comment this out for now, but you will
+                // need to add this once it’s part of the lesson form)
+                // prefix: '{{ learning_objective_formset.prefix }}',
+
+                // this will remove the text from the add button so you don’t need to hide it
+                addText: "",
+
+                // specify the empty form representation
+                formTemplate: "#LO_Empty_form",
+            });
+
+            // remove the inital row... TODO, this will be removed when we're hooked into the backend?
+            $('.delete-row').click()
+        </script>
