@@ -1,5 +1,6 @@
 from django.db import models
-from src.apps.core.models.CreationTrackingModels import CreationTrackingBaseModel
+from .CreationTrackingModels import CreationTrackingBaseModel
+from .ModuleModels import Lesson
 
 class Learning_Level(models.Model):
     label = models.CharField(max_length=64)
@@ -13,6 +14,7 @@ class Learning_Outcome(models.Model):
     outcome = models.CharField(max_length=256)
 
 class Learning_Objective(CreationTrackingBaseModel):
+    lesson = models.ForeignKey(Lesson)
     condition = models.TextField()
     task = models.TextField()
     degree = models.TextField()
