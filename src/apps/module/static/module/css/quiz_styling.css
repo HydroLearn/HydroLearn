@@ -1,0 +1,60 @@
+#quiz_question_wrapper .quiz_header_wrapper {
+  font-size: 1.2em; }
+  #quiz_question_wrapper .quiz_header_wrapper .quiz_current_question {
+    font-size: 1.5em;
+    color: #45a4f3; }
+  #quiz_question_wrapper .quiz_header_wrapper .quiz_question_total {
+    color: #45a4f3; }
+#quiz_question_wrapper .quiz_question {
+  margin: 20px 20px;
+  padding: 10px;
+  border-radius: 7px; }
+  #quiz_question_wrapper .quiz_question .question_counter {
+    background: #45a4f3;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 50%;
+    text-align: center;
+    width: 20px;
+    display: inline-block; }
+  #quiz_question_wrapper .quiz_question .question_text {
+    margin: 20px 10px;
+    margin-top: 0;
+    font-size: 1.2em;
+    display: inline-block; }
+  #quiz_question_wrapper .quiz_question .answers_wrapper {
+    margin: 5px 20px; }
+    #quiz_question_wrapper .quiz_question .answers_wrapper label {
+      font-weight: normal; }
+#quiz_question_wrapper .quiz_nav_wrapper {
+  background: #ececec;
+  border-radius: 7px;
+  padding: 5px 10px;
+  width: 100%; }
+  #quiz_question_wrapper .quiz_nav_wrapper .quiz_nav_button {
+    border: none;
+    border-radius: 7px;
+    margin: 5px 10px;
+    padding: 3px 5px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+    background: #45a4f3;
+    transition: all 0.2s; }
+    #quiz_question_wrapper .quiz_nav_wrapper .quiz_nav_button:focus {
+      outline: none;
+      border: none; }
+    #quiz_question_wrapper .quiz_nav_wrapper .quiz_nav_button:hover {
+      background: #008bff; }
+    #quiz_question_wrapper .quiz_nav_wrapper .quiz_nav_button.submit_button {
+      background: #62c562; }
+      #quiz_question_wrapper .quiz_nav_wrapper .quiz_nav_button.submit_button:hover {
+        background: #6ce56c; }
+      #quiz_question_wrapper .quiz_nav_wrapper .quiz_nav_button.submit_button.disabled {
+        display: none; }
+    #quiz_question_wrapper .quiz_nav_wrapper .quiz_nav_button.disabled {
+      background: #ccc !important;
+      color: #888 !important;
+      cursor: not-allowed !important; }
+
+/*# sourceMappingURL=quiz_styling.css.map */

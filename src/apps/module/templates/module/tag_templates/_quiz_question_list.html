@@ -1,0 +1,58 @@
+<div id="quiz_question_wrapper">
+
+    {% for question in questions %}
+
+        {% with forloop.counter as curr_question %}
+
+        <div class="quiz_question" data-question-type="{{question.question_type}}">
+            <div class="question_counter">{{ curr_question }}</div>
+            <div class="question_text">{{ question.question_text }}</div>
+
+
+
+
+                <div class="answers_wrapper">
+
+                {% if question.question_type == "multi-choice" %}
+
+                    {% for answer in question.answers.all %}
+
+                        <input type="radio" id="answer-{{ curr_question }}-{{ forloop.counter}}" name="question-{{ curr_question }}" class="answer_text" value="{{answer.is_correct}}">
+                        <label for="answer-{{ curr_question }}-{{ forloop.counter}}">{{ answer.answer_text }}</label>
+                        <br/>
+                    {% endfor %}
+
+                {% elif question.question_type == "multi-select"  %}
+                    {% for answer in question.answers.all %}
+                        <input type="checkbox" id="answer-{{ curr_question }}-{{ forloop.counter}}" name="question-{{ curr_question }}" class="answer_text" value="{{answer.is_correct}}">
+                        <label for="answer-{{ curr_question }}-{{ forloop.counter}}">{{ answer.answer_text }}</label>
+                        <br/>
+
+                    {% endfor %}
+
+                {% else %}
+                    <div> un-recognized question type, could not display answers! </div>
+                {% endif %}
+
+                </div>
+
+
+
+        </div>
+
+        {% endwith %}
+    {% empty %}
+        <div> This quiz looks empty! Questions/Answers can be added from the edit form. </div>
+    {% endfor %}
+
+</div>
+
+<!--add some js for show/hide questions-->
+<script>
+    $(document).ready(function(){
+        var Quiz_mgr = new QUIZ_MANAGER('#quiz_question_wrapper')
+
+
+    })
+
+</script>

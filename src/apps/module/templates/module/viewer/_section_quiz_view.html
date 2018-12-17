@@ -10,29 +10,9 @@
         
         <h2 class="lesson-header">{{object.name}}</h2>
         <hr class="headerSpacer">
-        
-        {% for question in object.quiz_question_item.all %}
-
-        {# Load content into non editable context variable  #}
-        {% render_placeholder question.question_text as question_text%}
-        <div>question: {{ question_text }}</div>
-
-
-            {% for answer in question.answer_item.all %}
-
-                {# Load content into non editable context variable  #}
-                {% render_placeholder answer.answer_text as answer_text%}
-                <p>Answer: {{ answer_text }} </p>
-
-            {% empty %}
-                <p>There don't appear to be answers for this question... paradoxical </p>
-            {% endfor %}
-        <hr/>
-        {% empty %}
-
-        <p> There doesn't appear to be any questions in this quiz, please add some. </p>
-
-        {% endfor %}
+        <div>
+        {% show_quiz_questions object.questions.all %}
+        </div>
     </div>
 
 

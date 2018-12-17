@@ -12,7 +12,7 @@
         {% endif %}
 
         <div class="content_block">
-            <button class="Toggle_list_view_btn btn btn-default">List View</button>
+
             {# content_editor_button request.user object #}
             <div id="manage_form" style="width:100%; border:none;"></div>
 
@@ -74,15 +74,6 @@
 <script>
     $('#manage_form').load('{{ content_view }}')
 
-    $('.Toggle_list_view_btn').click(function(event){
-        event.preventDefault();
-
-        debugger;
-
-        // toggle list/wizard views here
-
-
-    });
 
     $('#Add_Question').click(function(evt){
         evt.preventDefault()
