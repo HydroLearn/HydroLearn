@@ -1,0 +1,28 @@
+<div class="form_errors">{{form.errors}}</div>
+
+{% for field in form.visible_fields %}
+    <div class="form_cell form_content">
+        {{ field }}
+    </div>
+{% endfor %}
+
+
+<div style="display:none;" class="form_cell form_content">
+
+    {% if can_delete %}
+        <a style="display:none" class="delete_answer form_delete"><i class="fas fa-trash glyph-button glyph-delete"></i></a>
+        {{ form.DELETE }}
+    {% endif %}
+
+    {% for field in form.hidden_fields %}
+        {# exclude the delete field since already added #}
+        {% if field.name != 'DELETE' %}
+            {{ field }}
+        {% endif %}
+    {% endfor %}
+
+
+
+</div>
+
+<!--potentially need to add in child formset in this template tag-->

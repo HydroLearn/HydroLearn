@@ -55,6 +55,13 @@
     <!--end template css-->
 </head>
 <body>
+    {% if ajax_force_refresh %}
+        <script>
+            console.log("CAUGHT IT")
+            location.reload(true)
+        </script>
+    {% endif %}
+
     <div id="base-cms-toolbar-container" class="noshow">
         {% block load_cms_toolbar %}{% endblock load_cms_toolbar %}
     </div>

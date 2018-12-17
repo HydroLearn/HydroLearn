@@ -7,12 +7,10 @@
 {% endblock subtitle %}
 
 {% block sidebar_nav_links %}
-
     <!--activate this tab in the sidebar by adding active-->
     <li class="nav-item active">
         <a class="nav-link" id="TOC_tab" data-toggle="tab" href="#TOC_content_container" role="tab" aria-controls="TOC_content_container" aria-selected="false">Table of Contents</a>
     </li>
-
 {% endblock sidebar_nav_links %}
 
 {% block sidebar_nav_content %}
@@ -26,7 +24,6 @@
 
 {% block content %}
     {% addtoblock 'head_js' %}
-
 
         <!-- load the mathjax configuration in the head of the page -->
         <script src="{% static 'module/js/plugins/MathJax/v2.7.1/MathJax.js' %}?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -60,6 +57,7 @@
             window.current_module = '{{Lesson.short_name}}' || '{{Lesson.name}}';
             window.current_module_slug = '{{Lesson.slug}}';
         </script>
+
 
     {% endaddtoblock 'head_js' %}
 

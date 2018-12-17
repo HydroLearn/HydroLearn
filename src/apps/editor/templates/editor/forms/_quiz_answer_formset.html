@@ -1,0 +1,59 @@
+{% load static editor_template_tags %}
+
+    <h4 style="margin:0;padding:0;display:inline-block;"> Answers</h4>
+    <!--<div class="Add_Answer Submit_button btn btn-default" style="float:right;"> <i class="fas fa-plus-circle"></i> New Answer </div>-->
+
+    <span style="margin:0 30px;display:block;font-style:italic">
+        Populate possible answers for this quiz question. Each question must:
+        <ul>
+            <li>contain at least one correct answer, indicated by the <span style="font-weight:bold;">Is correct</span> checkbox.</li>
+            <li>
+                If any Answers do not provide text, they will be ignored when saving.
+                <ul>
+                    <li>
+                        i.e. to create a True/False question select the "Multiple Choice" question type, and only populate the first two answers.
+                    </li>
+                </ul>
+            </li>
+            <li>
+                Currently removing an existing answer is not supported. If you need to remove an answer from an existing question, delete the original question and create a new one with the expected answers.
+            </li>
+
+        </ul>
+    </span>
+
+    <div style="padding-left:60px;" class="quiz_answer_fs_wrapper dynamic_formset">
+
+        {% if formset %}
+
+            <div class="formset_header_row">
+                {% for field in formset.empty_form.visible_fields  %}
+                    <div class="formset_header_cell">{{ field.label }}</div>
+                {% endfor %}
+
+                {% comment %}
+                {% if formset.can_delete  %}
+                    <div class="formset_header_cell">Remove</div>
+                {% endif %}
+                {% endcomment %}
+
+                <div class="formset_errors">{{ formset.non_form_errors }}</div>
+                <div class="mgmt_form">
+                    {{ formset.management_form }}
+                    {{ formset.media }}
+                </div>
+            </div>
+
+
+            {% for form in formset %}
+                <div class="form_row" data-form-type="quiz-answer">
+                    {% show_quiz_answer_form form formset.can_delete %}
+                </div>
+            {% endfor %}
+
+        {% endif %}
+
+    </div>
+
+
+

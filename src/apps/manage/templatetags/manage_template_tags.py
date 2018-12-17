@@ -126,3 +126,9 @@ def show_collab_form(form, can_delete=False):
         'form': form,
         'can_delete': can_delete,
     }
+
+@register.inclusion_tag('manage/partials/_quiz_question_list.html')
+def show_quiz_questions(questions):
+    return {
+        'questions': questions,
+    }

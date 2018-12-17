@@ -12,7 +12,7 @@
         {% endif %}
 
         <div class="content_block">
-
+            <button class="Toggle_list_view_btn btn btn-default">List View</button>
             {# content_editor_button request.user object #}
             <div id="manage_form" style="width:100%; border:none;"></div>
 
@@ -34,12 +34,25 @@
         </h2>
         <hr class="headerSpacer">
 
+        <div id="Question_Empty_form" class="form_row" data-form-type="quiz-question" style="display:none;background:none;">
+            {% show_quiz_question_form questions_fs.empty_form %}
+        </div>
+
+        <div id="Answer_Empty_form" class="form_row" data-form-type="quiz-answer" style="display:none;background:none;">
+            {% show_quiz_answer_form answer_form %}
+        </div>
+
         <form id="content_form" action="{{ request.path }}" method="post">
             {% csrf_token %}
             {{ form.media }}
             <table>
                 {{ form.as_table }}
             </table>
+
+
+            <div id="Add_Question" class="Submit_button btn btn-default" style="float:right;"> <i class="fas fa-plus-circle"></i> New Question </div>
+            {% show_quiz_question_formset questions_fs %}
+
             <div id="content_form_controls">
                 <button class="Submit_button btn btn-default" type="submit">Submit Section</button>
                 <button class="Cancel_button btn btn-default">Cancel</button>
@@ -49,6 +62,10 @@
                 {% endif %}
             </div>
         </form>
+
+
+        {{ answer_form }}
+
     </div>
     {% endif %}
 </div>
@@ -56,4 +73,159 @@
 
 <script>
     $('#manage_form').load('{{ content_view }}')
+
+    $('.Toggle_list_view_btn').click(function(event){
+        event.preventDefault();
+
+        debugger;
+
+        // toggle list/wizard views here
+
+
+    });
+
+    $('#Add_Question').click(function(evt){
+        evt.preventDefault()
+
+        debugger;
+        // fire the 'add_question' button of formset
+        $('#quiz_question_fs_wrapper .question_fs_add').click();
+
+    });
+
+    $('.Add_Answer').each(function(index){
+        $(this).click(function(evt){
+            evt.preventDefault()
+            // fire the 'add_answer' button of sibling answer formset
+            debugger;
+            $(this).siblings('.quiz_answer_fs_wrapper').find('.answer_fs_add').click();
+
+        })
+    });
+
+    $('.question_answer_listing').each(function(index){
+        $(this).html($('#Answer_fs_template').html())
+    });
+
+    /**********************************************
+        INITIALIZE THE FORMSETs
+    **********************************************/
+
+    $('#quiz_question_fs_wrapper .form_row[data-form-type="quiz-question"]').formset({
+        formCssClass: "question_form",
+
+        // add prefix for formset (you can comment this out for now, but you will
+        // need to add this once it’s part of the lesson form)
+        prefix: '{{ questions_fs.prefix }}',
+
+        // this will remove the text from the add button so you don’t need to hide it
+        addText: "",
+        deleteText: "",
+
+        // specify the empty form representation
+        formTemplate: "#Question_Empty_form",
+
+
+        addCssClass: 'question_fs_add',
+        deleteCssClass: 'question_fs_remove',
+
+        // perform actions on add
+        added: function(row){
+
+            // on add replace the text of the remove
+            // button with the delete glyph-icon
+            var remove_btn = $(row).find('.question_fs_remove');
+
+            // example: <i class="fas fa-trash glyph-button glyph-delete"></i>
+            remove_btn.html($('<i>', {class: 'fas fa-trash glyph-button glyph-delete', style:'float:right;margin:10px;'}))
+
+            // move the remove button into the last cell
+            $(row).find('.question_card').prepend(remove_btn)
+        },
+
+    });
+
+    /*  TODO: could not get this functional as a dynamic nested formset
+
+    $('.quiz_answer_fs_wrapper').each(function(index){
+
+        $(this).find('.form_row[data-form-type="quiz-answer"]').formset({
+
+            formCssClass: "answer_form",
+
+            // add prefix for formset (you can comment this out for now, but you will
+            // need to add this once it’s part of the lesson form)
+            prefix: '{{ questions_fs.empty_form.answers.prefix }}',
+
+            // this will remove the text from the add button so you don’t need to hide it
+            addText: "",
+            deleteText: "",
+
+            // specify the empty form representation
+            formTemplate: "#Answer_Empty_form",
+
+
+            addCssClass: 'answer_fs_add',
+            deleteCssClass: 'answer_fs_remove',
+
+            // perform actions on add
+            added: function(row){
+                debugger;
+                // on add replace the text of the remove
+                // button with the delete glyph-icon
+                var remove_btn = $(row).find('.answer_fs_remove');
+
+                // example: <i class="fas fa-trash glyph-button glyph-delete"></i>
+                remove_btn.html($('<i>', {class: 'fas fa-trash glyph-button glyph-delete'}))
+
+                // move the remove button into the last cell
+                $(row).find('.form_cell').last().append(remove_btn)
+            },
+
+        });
+    });
+
+    */
+    /**********************************************
+    initialize delete buttons on existing forms to toggle 'deleted' state
+    **********************************************/
+
+    $('#quiz_question_fs_wrapper .delete_question').click(function(del_event){
+
+        var form = $(del_event.target).closest('.form_row')
+        var deletion_state = form.hasClass('deleted_form');
+        debugger;
+        // add styling class to the form row
+
+        if(deletion_state){
+            form.removeClass('deleted_form');
+            form.find('input[name$="DELETE"]').removeAttr('value')
+            form.find('.question_card').css('background', 'none')
+
+        }else{
+            form.addClass('deleted_form');
+            form.find('input[name$="DELETE"]').attr('value',!deletion_state)
+            form.find('.question_card').css('background', '#ecd4d4b0')
+        }
+    });
+
+    $('#quiz_question_fs_wrapper .delete_answer').click(function(del_event){
+
+        var form = $(del_event.target).closest('.form_row')
+        var deletion_state = form.hasClass('deleted_form');
+
+        // add styling class to the form row
+
+        if(deletion_state){
+            form.removeClass('deleted_form');
+            form.find('input[name$="DELETE"]').removeAttr('value')
+
+        }else{
+            form.addClass('deleted_form');
+            form.find('input[name$="DELETE"]').attr('value',!deletion_state)
+        }
+    });
+
+
+
 </script>
