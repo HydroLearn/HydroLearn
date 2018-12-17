@@ -97,7 +97,6 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
     form_class = editor_LessonForm
 
     def get_context_data(self, **kwargs):
-        print("GETTINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGg")
         context = super(editor_LessonCreateView, self).get_context_data(**kwargs)
 
         # add context variable for if this form is instanced
@@ -133,7 +132,7 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         # read form selections
         knowledge_order = list(Learning_Level.objects.values_list("label", flat=True).order_by("pk"))
         verbs_by_knowledge = defaultdict(list)
-        for verb in Learning_Verb.objects.all():
+        for verb in Learning_Verb.objects.all(default=True):
             verbs_by_knowledge[verb.level.label].append(verb.verb)
         abet_outcomes = Learning_Outcome.objects.values_list("outcome", flat=True).order_by("pk")
         context['verbs_by_knowledge'] = json.dumps(verbs_by_knowledge)
@@ -359,6 +358,22 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
             context['manage_denied_message'] = "You can view this Lesson, but don't have edit access! If you require edit access, please contact the owner."
             context['content_view'] = reverse('modules:lesson_content', kwargs={ 'slug': self.object.slug })
 
+        if self.request.POST:
+            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST)
+            context['learning_objective_formset'].full_clean()
+        else:
+            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset()
+
+        # read form selections
+        knowledge_order = list(Learning_Level.objects.values_list("label", flat=True).order_by("pk"))
+        verbs_by_knowledge = defaultdict(list)
+        for verb in Learning_Verb.objects.filter(default=True):
+            verbs_by_knowledge[verb.level.label].append(verb.verb)
+        abet_outcomes = Learning_Outcome.objects.values_list("outcome", flat=True).order_by("pk")
+        context['verbs_by_knowledge'] = json.dumps(verbs_by_knowledge)
+        context['knowledge_order'] = json.dumps(knowledge_order)
+        context['abet_outcomes'] = abet_outcomes
+
         return context
 
     def get_success_return_data(self,form):
@@ -373,10 +388,20 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
         }
 
     def form_valid(self, form, *args, **kwargs):
-        return super(editor_LessonUpdateView, self).form_valid(form, *args, **kwargs)
+        context = self.get_context_data(**kwargs)
+        learning_objective_formset = context['learning_objective_formset']
+        with transaction.atomic():
+            self.object = form.save()
 
-    def form_invalid(self, form, *args, **kwargs):
-        return super(editor_LessonUpdateView, self).form_invalid(form, *args, **kwargs)
+        if learning_objective_formset.is_valid():
+            learning_objective_formset.instance = self.object
+            learning_objective_formset.save()
+            for lo_form in learning_objective_formset:
+                if lo_form.is_valid():
+                    lo_form.save()
+            # TODO implement delete
+
+        return super(editor_LessonUpdateView, self).form_valid(form, *args, **kwargs)
 
 class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, UpdateView):
     model = Section

@@ -9,6 +9,7 @@ class Learning_Level(models.Model):
 class Learning_Verb(models.Model):
     verb = models.CharField(max_length=64)
     level = models.ForeignKey(Learning_Level)
+    default = models.BooleanField(default=False)
 
 class Learning_Outcome(models.Model):
     outcome = models.CharField(max_length=256)

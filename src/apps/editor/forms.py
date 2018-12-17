@@ -602,9 +602,6 @@ inlineQuizAnswerFormset = inlineformset_factory(
 inlineLearning_ObjectiveFormset = inlineformset_factory(
     Lesson,
     Learning_Objective,
-    #exclude=['collaboration_date'],
-    extra=1,
     form=Learning_ObjectiveTextForm,
-    #formset=BaseCollabFormset,
 )
 
