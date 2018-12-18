@@ -216,11 +216,19 @@ $(window).on('load',function(){
     $(link_rep).attr('id',link_input_id);
     $(link_rep).text('None Selected');
 
+    var disclaimer = $(document.createElement('span'))
+    disclaimer.css('font-style','italic')
+    disclaimer.html("<br/>* If there is no listing of HydroShare resources below, please check that your HydroShare account has been linked via your HydroLearn User Profile (accessed by the link at the top of your screen).*")
+
+
+
+
     // add the labels/representations to the hs_res_wrapper
     hs_res_wrapper.append(type_rep_label)
     hs_res_wrapper.append(type_rep)
     hs_res_wrapper.append(link_rep_label)
     hs_res_wrapper.append(link_rep)
+    hs_res_wrapper.append(disclaimer)
 
     //add container
     var container = $(document.createElement('div'));
