@@ -111,6 +111,10 @@ urlpatterns += i18n_patterns(
     url(r'^', include('cms.urls')),
 )  + staticfiles_urlpatterns()
 
+# url(r'^static/(?P<path>.*)$',serve,{'document_root': settings.STATIC_ROOT})
+
+
+
 # This is only needed when using runserver.
 if settings.DEBUG:
     urlpatterns = [

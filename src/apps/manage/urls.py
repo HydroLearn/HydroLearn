@@ -1,11 +1,9 @@
 from django.conf.urls import url
 from src.apps.manage.views import (
         Index,
-
         module_listing,
         collab_listing,
         find_modules,
-
         module_success,
         manage_ModuleCreateView,
         manage_ModuleEditView,
@@ -27,6 +25,8 @@ from src.apps.manage.views import (
         find_filter_form,
         find_listing,
 )
+
+from src.apps.manage.hydroshare.views import get_hs_res_list
 
 
 # 'manage' app urls
@@ -50,11 +50,15 @@ urlpatterns = [
 
         url(r'^collab/(?P<slug>[^/]+)/$', manage_ModuleCollaboration.as_view(), name="module_collaborate"),
 
-
-
         # create and edit functionality have been offloaded to the editor interface
         url(r'^create/module/$', manage_ModuleCreateView.as_view(), name="module_create"),
         url(r'^edit/module/(?P<slug>[^/]+)$', manage_ModuleEditView.as_view(), name="module_update"),
+
+
+
+
+
+
 
         url(r'^content/(?P<slug>[^/]+)/$', manage_LessonContent.as_view(), name="lesson_content"),
         url(r'^content/(?P<lesson_slug>[^/]+)/(?P<slug>[^/]+)/$', manage_SectionContent.as_view(), name="section_content"),
@@ -65,5 +69,9 @@ urlpatterns = [
         url(r'^find_list/$', find_listing, name="found_listing"),
         url(r'^clone_publication/(?P<slug>[^/]+)/$', manage_PublicationCloneIndex.as_view(), name="publication_clone_index"),
         url(r'^clone/(?P<slug>[^/]+)/$', manage_PublicationClone.as_view(), name="publication_clone"),
-    
+
+        # Hydroshare Resource Listing URL
+        url(r'^hsreslist/$', get_hs_res_list, name="get_hs_res_list"),
+
+
 ]
