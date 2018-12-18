@@ -44,22 +44,26 @@
                 <h4>Learning Objectives</h4>
                 <hr/>
 
-                <div id="learning_objectives_formset">
+                <div id="learning_objectives_formset_empty"style="visibility: hidden">
                     <div id="LO_Empty_form">
                         <div class="LO_representation"></div>
                         {{ learning_objective_formset.empty_form }}
                     </div>
-                    <div class="learning_obj_form empty_form" method="post">
-                        {{ learning_objective_formset.management_form }}
-                        {% for lo_form in  learning_objective_formset %}
-                            <div class="LO_form">
-                                <div class="LO_representation"></div>
-                                {{ lo_form }}
-                            </div>
-                        {% endfor %}
-                    </div>
+                </div>
+                <div id="learning_objectives_formset">
+                    {% for lo_form in  learning_objective_formset.forms %}
+                        <div id="{{ lo_form.prefix }}" class="LO_form">
+                            {% if lo_form.condition.value %}
+                            <div class="LO_representation">{{ lo_form.condition.value }} {{ lo_form.verb.value }} {{ lo_form.task.value }} {{ lo_form.degree.value }}</div>
+                            {% else %}
+                            <div class="LO_representation"></div>
+                            {% endif %}
+                            {{ lo_form }}
+                        </div>
+                    {% endfor %}
                 </div>
                 <div>
+                    {{ learning_objective_formset.management_form }}
                     <button id="add-objective-btn">Add</button>
                 </div>
 
@@ -96,7 +100,7 @@
 
 
         <script type='text/javascript'>
-
+            $('#manage_form').load('{{ content_view }}')
             $("#add-objective-btn").click(function(event ) {
                     event.preventDefault()
                     lo_dialog.dialog( "open" );
@@ -190,7 +194,7 @@
 
                 // add prefix for formset (you can comment this out for now, but you will
                 // need to add this once it’s part of the lesson form)
-                // prefix: '{{ learning_objective_formset.prefix }}',
+                prefix: '{{ learning_objective_formset.prefix }}',
 
                 // this will remove the text from the add button so you don’t need to hide it
                 addText: "",
@@ -249,8 +253,11 @@
                         "outcomes": outcomes_ids
                     }
                     // add the new form
-                    $('.add-row').click();
                     var learning_objective_form = $('.LO_form').last();
+                    if(learning_objective_form.attr('id') !== "learning_objective_set-0" || learning_objective_form.find(".LO_representation").text() !== ''){
+                        $('.add-row').click();
+                        learning_objective_form = $('.LO_form').last();
+                    }
                     updateLearningObjective(learning_objective_form, values_dictionary);
                     $('.ui-dialog-titlebar-close').click();
                     resetWizard();
