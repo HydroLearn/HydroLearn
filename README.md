@@ -144,6 +144,7 @@ The settings-directory's initialization procedure is set to first check for the 
       from src.settings.hydroshare import *
       from src.settings.cms_settings import *
       from src.settings.ckeditor import *
+      from src.settings.database import *
      ```
      
   4. save `__init__.py`

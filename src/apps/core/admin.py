@@ -38,10 +38,11 @@ from src.apps.core.models.SectionTypeModels import (
 
 from src.apps.core.models.QuizQuestionModels import (
     QuizQuestion,
-    MultiChoice_question,
-    MultiChoice_answer,
-    MultiSelect_question,
-    MultiSelect_answer
+    # MultiChoice_question,
+    # MultiChoice_answer,
+    # MultiSelect_question,
+    # MultiSelect_answer
+    QuizAnswer,
 )
 
 from src.apps.core.models.ResourceModels import (
@@ -115,18 +116,16 @@ class QuizInline(admin.TabularInline):
     fk_name = 'quizsection'
     readonly_fields = ['section_ptr']
     
-class QuizQuestionInline(SortableInlineAdminMixin, admin.TabularInline):
-
-    
-    model = QuizQuestion
-    base_model = QuizQuestion
-    #form = SectionForm
-    extra = 0
-    sortable_field_name = "position"
-    show_change_link = True
-    
-    def has_add_permission(self, request):
-        return False
+# class QuizQuestionInline(SortableInlineAdminMixin, admin.TabularInline):
+#     model = QuizQuestion
+#     base_model = QuizQuestion
+#     #form = SectionForm
+#     extra = 0
+#     sortable_field_name = "position"
+#     show_change_link = True
+#
+#     def has_add_permission(self, request):
+#         return False
 
 class SectionInline(SortableInlineAdminMixin, admin.TabularInline):
 
@@ -188,6 +187,22 @@ class CollaboratorInline(admin.TabularInline):
         'collaborator',
         'can_edit',
     )
+
+
+class QuizQuestionInline(SortableInlineAdminMixin, admin.TabularInline):
+    model = QuizQuestion
+    fields = ['quiz', 'question_text', 'position']
+    verbose_name = "Question"
+    verbose_name_plural = "Questions"
+    extra = 0
+
+class QuizAnswerInline(SortableInlineAdminMixin, admin.TabularInline):
+    model = QuizAnswer
+    fields = ['question', 'answer_text', 'is_correct', 'position']
+    verbose_name = "Answer"
+    verbose_name_plural = "Answers"
+    extra = 0
+
 
 
 # ============================================================
@@ -325,47 +340,6 @@ class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
 
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
-    
-class QuizQuestionChildAdmin(CreationTrackingMixin, PolymorphicChildModelAdmin, SortableAdminMixin, PlaceholderAdminMixin):
-    base_model = QuizQuestion
-    exclude = ["position", 'created_by', 'changed_by']
-
-class MultiChoice_QuestionAdmin(QuizQuestionChildAdmin, SortableAdminMixin):
-    model = MultiChoice_question
-    base_model = MultiChoice_question
-
-    sortable_field_name = "position"
-    # exclude = ['position']
-
-class MultiSelect_QuestionAdmin(QuizQuestionChildAdmin, SortableAdminMixin):
-    model = MultiSelect_question
-    base_model = MultiSelect_question
-
-    sortable_field_name = "position"
-    # exclude = ['position']
-
-class QuizQuestionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
-    model = QuizQuestion
-    base_model = QuizQuestion
-    extra = 0
-    sortable_field_name = "position"
-
-    child_models = (
-        MultiChoice_question,
-        MultiSelect_question,
-    )
-
-class MultiChoice_AnswerAdmin(PlaceholderAdminMixin, CreationTrackingMixin, admin.ModelAdmin):
-    model = MultiChoice_answer
-
-    sortable_field_name = "position"
-    exclude = ['position', 'created_by', 'changed_by']
-
-class MultiSelect_AnswerAdmin(PlaceholderAdminMixin, CreationTrackingMixin, admin.ModelAdmin):
-    model = MultiSelect_answer
-
-    sortable_field_name = "position"
-    exclude = ['position', 'created_by', 'changed_by']
 
 class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
     model = Lesson
@@ -413,21 +387,17 @@ class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehol
 
 
 ##############################################
+#       Quiz Question admin
+##############################################
+
+class QuizQuestionAdmin(SortableInlineAdminMixin, admin.ModelAdmin):
+    model = QuizQuestion
+    fields = ['quiz', 'question_text', 'position']
+
+
+##############################################
 #       (activity) Resource admin
 ##############################################
-# class ResourceInlineAdmin(admin.TabularInline):
-#     model = Resource
-#     fields = [
-#         'display_text',
-#         'resource_link',
-#         'resource_type',
-#         'activity',
-#     ]
-
-
-
-
-
 class ResourceAdmin(admin.ModelAdmin):
     model = Resource
 
@@ -484,6 +454,7 @@ class Learning_ObjectiveAdmin(PlaceholderAdminMixin, admin.ModelAdmin):
 
     list_display = ['condition', 'task', 'degree']
 
+
 # REGISTER THE ABOVE DEFINED ADMIN OBJECTS
 admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Section, SectionParentAdmin)
@@ -494,10 +465,12 @@ admin.site.register(QuizSection, QuizSectionAdmin)
 #admin.site.register(Collaboration)
 #admin.site.register(LayerRef, LayerRefAdmin)
 
+admin.site.register(QuizQuestion, QuizQuestionAdmin)
+admin.site.register(QuizAnswer)
 
-admin.site.register(QuizQuestion, QuizQuestionParentAdmin)
-admin.site.register(MultiChoice_answer, MultiChoice_AnswerAdmin)
-admin.site.register(MultiSelect_answer, MultiSelect_AnswerAdmin)
+# admin.site.register(QuizQuestion, QuizQuestionParentAdmin)
+# admin.site.register(MultiChoice_answer, MultiChoice_AnswerAdmin)
+# admin.site.register(MultiSelect_answer, MultiSelect_AnswerAdmin)
 
 admin.site.register(Resource, ResourceAdmin)
 

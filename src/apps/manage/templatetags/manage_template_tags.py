@@ -126,3 +126,5 @@ def show_collab_form(form, can_delete=False):
         'form': form,
         'can_delete': can_delete,
     }
+
+

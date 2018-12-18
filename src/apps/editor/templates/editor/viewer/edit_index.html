@@ -7,12 +7,10 @@
 {% endblock subtitle %}
 
 {% block sidebar_nav_links %}
-
     <!--activate this tab in the sidebar by adding active-->
     <li class="nav-item active">
         <a class="nav-link" id="TOC_tab" data-toggle="tab" href="#TOC_content_container" role="tab" aria-controls="TOC_content_container" aria-selected="false">Table of Contents</a>
     </li>
-
 {% endblock sidebar_nav_links %}
 
 {% block sidebar_nav_content %}
@@ -26,7 +24,6 @@
 
 {% block content %}
     {% addtoblock 'head_js' %}
-
 
         <!-- load the mathjax configuration in the head of the page -->
         <script src="{% static 'module/js/plugins/MathJax/v2.7.1/MathJax.js' %}?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -61,6 +58,7 @@
             window.current_module_slug = '{{Lesson.slug}}';
         </script>
 
+
     {% endaddtoblock 'head_js' %}
 
 
@@ -69,10 +67,12 @@
     {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'css/jquery-ui.multiselect.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
     {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/layout.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
     {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
+    {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'module/css/quiz_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
     {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'editor/css/editor_styling.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
     {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'css/jquery.contextMenu.min.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
     {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'core/css/formset_table_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
     {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'core/css/glyph_button_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
+
         <!--<link rel="stylesheet" href="{% static 'editor/css/editor_validation_styling.css' %}" type="text/css">-->
         <!--<link rel="stylesheet" href="{% static 'editor/css/DIV-TableStyle.css' %}" type="text/css">-->
         <!--<link rel="stylesheet" href="{% static 'editor/css/map.css' %}" type="text/css">-->
@@ -232,6 +232,7 @@
         <script src="{% static 'module/js/Color_manager.js' %}"></script>
         <script src="{% static 'module/js/Highcharts_manager.js' %}"></script>
         <script src="{% static 'module/js/Map_functionality.js' %}"></script>
+        <script src="{% static 'module/js/Quiz_Manager.js' %}"></script>
 
         <!--jquery contextMenu-->
         <script src="{% static 'js/plugins/jquery-contextMenu/jquery.ui.position.min.js' %}"></script>

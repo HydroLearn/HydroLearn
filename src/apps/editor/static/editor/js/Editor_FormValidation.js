@@ -110,7 +110,7 @@ function submit_content_form_evt(){
                         if(LESSON_MGR.get_Loaded_Section() != response.data.updated_toc_obj.slug){
                             LESSON_MGR.Show_Section(response.data.updated_toc_obj.slug)
                         }else{
-
+                            window.scrollTo(0,0)
                             TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.HIGHLIGHT_OBJ, [response.data.updated_toc_obj.slug])
                         }
 

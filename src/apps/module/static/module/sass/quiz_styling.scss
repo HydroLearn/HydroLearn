@@ -1,0 +1,116 @@
+@import 'branding';
+
+#quiz_question_wrapper{
+    .quiz_header_wrapper{
+
+        font-size: 1.2em;
+
+        .quiz_current_question{
+            font-size: 1.5em;
+            color: $HL_blue;
+
+        }
+        .quiz_question_total{
+            color: $HL_blue;
+        }
+
+
+    }
+
+    .quiz_question{
+        margin: 20px 20px;
+        padding: 10px;
+        border-radius: 7px;
+
+        .question_counter{
+            background: $HL_blue;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 50%;
+            text-align:center;
+            width:20px;
+            display: inline-block;
+
+        }
+
+        .question_text{
+            margin: 20px 10px;
+            margin-top: 0;
+            font-size: 1.2em;
+            display:inline-block;
+
+        }
+
+        .answers_wrapper{
+            margin: 5px 20px;
+
+            input{
+
+            }
+
+            label{
+                font-weight: normal;
+            }
+
+            .answers_text{
+
+            }
+        }
+    }
+
+
+
+    .quiz_nav_wrapper{
+        background: #ececec;
+        border-radius: 7px;
+        padding: 5px 10px;
+        width:100%;
+
+        .quiz_nav_button{
+            border: none;
+            border-radius: 7px;
+            margin: 5px 10px;
+            padding: 3px 5px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            color: #fff;
+            background: $HL_blue;
+
+            transition: all 0.2s;
+
+            &:focus {
+                outline: none;
+                border: none;
+            }
+
+            &:hover{
+                background: #008bff;
+            }
+
+            &.submit_button{
+                background: #62c562;
+                &:hover{
+                    background: #6ce56c;
+                }
+
+                &.disabled{
+                    display:none;
+                }
+
+            }
+
+
+
+            &.disabled{
+                background: #ccc !important;
+                color: #888 !important;
+                cursor: not-allowed !important;
+            }
+        }
+
+
+    }
+
+}

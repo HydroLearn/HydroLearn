@@ -78,3 +78,8 @@ def show_resources_box(context, resource_list):
         sezikai_ctx_var: context[sezikai_ctx_var],
     }
 
+@register.inclusion_tag('module/tag_templates/_quiz_question_list.html')
+def show_quiz_questions(questions):
+    return {
+        'questions': questions,
+    }

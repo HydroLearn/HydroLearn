@@ -1,0 +1,40 @@
+{% load static editor_template_tags %}
+<div class="form_cell form_content">
+    <div class="question_card" style="border-radius:7px; border: 1px solid #eee; box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);">
+
+
+        {% if can_delete %}
+            <a style="margin:10px;float:right" class="delete_question form_delete"><i class="fas fa-trash glyph-button glyph-delete"></i></a>
+            {{ form.DELETE }}
+        {% endif %}
+
+        <div class="form_errors">{{form.errors}}</div>
+
+        {% for field in form.visible_fields %}
+            <div style="padding:10px 5px;">
+                <span style="font-weight:bold;vertical-align:top;">{{field.label}}: </span>
+                <span style="vertical-align:top;">{{ field }}</span>
+            </div>
+
+        {% endfor %}
+
+        {% for field in form.hidden_fields %}
+            {# exclude the delete field since already added #}
+            {% if field.name != 'DELETE' %}
+                {{ field }}
+            {% endif %}
+        {% endfor %}
+
+
+        <div style="padding:10px 5px;">
+            <div class="question_answer_listing">
+                {% show_quiz_answer_formset form.answers %}
+            </div>
+            <!--<span style="vertical-align:top;">{% show_answer_form_list answer_form %}</span>-->
+        </div>
+
+
+    </div>
+</div>
+
+<!--potentially need to add in child formset in this template tag-->

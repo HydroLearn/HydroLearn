@@ -6,7 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
-from django.forms.formsets import DELETION_FIELD_NAME
+from django.forms import inlineformset_factory
+from django.forms.formsets import DELETION_FIELD_NAME, formset_factory
 from django.template import RequestContext
 from django.utils.translation import gettext as _
 from django.utils.timezone import now
@@ -17,7 +18,9 @@ from django.views.generic import (
     TemplateView,
     CreateView,
     UpdateView,
-    DeleteView, FormView)
+    DeleteView,
+    FormView
+)
 
 from django.http import JsonResponse, Http404, HttpResponseNotFound
 from django.shortcuts import redirect, render, get_object_or_404, render_to_response
@@ -30,6 +33,15 @@ from src.apps.core.models.ModuleModels import (
     Lesson,
     Section,
     Collaboration,
+)
+
+from src.apps.core.models.SectionTypeModels import (
+    QuizSection,
+)
+
+from src.apps.core.models.QuizQuestionModels import (
+    QuizQuestion,
+    QuizAnswer,
 )
 
 from src.apps.editor.editor_queries import (
@@ -46,7 +58,14 @@ from src.apps.editor.forms import (
     # editor_ExportLessonForm,
     # editor_ImportLessonForm,
 
-)
+    editor_AnswerForm,
+    editor_QuizQuestionForm,
+
+    BaseQuizAnswerFormset,
+
+    inlineQuizQuestionFormset,
+    inlineQuizAnswerFormset,
+    BaseQuizQuestionFormset)
 
 from src.apps.core.views.PublicationViews import (
     PublicationViewMixin,
@@ -89,8 +108,7 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
                 context['edit_access'] = True
             else:
                 context['edit_access'] = False
-                context[
-                    'manage_denied_message'] = "You cannot add to this lesson without editor access! ! If you require edit access, please contact the owner."
+                context['manage_denied_message'] = "You cannot add to this lesson without editor access! ! If you require edit access, please contact the owner."
         else:
             # otherwise this is a new lesson the user is creating (grant edit permissions)
             context['edit_access'] = True
@@ -154,8 +172,12 @@ class editor_SectionCreateView(LoginRequiredMixin, AjaxableResponseMixin, Create
 
                 if self.kwargs.get('section_type', None) == 'activity_section':
                     context['resources'] = ResourceInline(self.request.POST or None)
-                else:
-                    context['resources'] = None
+
+                elif self.kwargs.get('section_type', None) == "quiz_section":
+                    context['questions_fs'] = inlineQuizQuestionFormset(self.request.POST or None)
+
+
+
             else:
                 context['edit_access'] = False
                 context['manage_denied_message'] = "You cannot add to this lesson without editor access! ! If you require edit access, please contact the owner."
@@ -218,7 +240,7 @@ class editor_SectionCreateView(LoginRequiredMixin, AjaxableResponseMixin, Create
                     context = self.get_context_data(**kwargs)
 
                     # if there are resources for this section process them
-                    if context['resources']:
+                    if 'resources' in context:
                         resources_fs = context['resources']
 
                         if resources_fs.is_valid():
@@ -234,6 +256,36 @@ class editor_SectionCreateView(LoginRequiredMixin, AjaxableResponseMixin, Create
                         else:
                             return self.form_invalid(form, *args, **kwargs)
 
+                    if 'questions_fs' in context:
+                        questions_fs = context['questions_fs']
+
+                        if questions_fs.is_valid():
+
+                            questions_fs.instance = new_section
+
+                            new_section.save()
+                            questions_fs.save()
+
+                            for question_index, question in enumerate(questions_fs):
+
+                                new_question = question.save(commit=False)
+                                new_question.position = question_index
+                                new_question.save()
+
+
+                                for ans_index, ans in enumerate(question.answers):
+                                    new_answer = ans.save(commit=False)
+
+                                    # if answer text was provided save, otherwise ignore the empty form
+                                    if new_answer.answer_text:
+                                        new_answer.position = ans_index
+                                        new_answer.question = new_question
+                                        new_answer.save()
+
+                            form.save_m2m()
+                        else:
+                            form.add_error(None, questions_fs.errors)
+                            return self.form_invalid(form,*args, **kwargs)
 
                 else:
                     form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
@@ -328,13 +380,26 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
         edit_access = self.object.has_edit_access(self.request.user)
         context['edit_access'] = edit_access
 
+
+
         if edit_access:
             context['content_view'] = self.object.manage_url
 
             if self.section_type() == "activity_section":
                 context['resources'] = ResourceInline(self.request.POST or None, instance=self.object)
-            else:
-                context['resources'] = None
+
+            elif self.section_type() == "quiz_section":
+                #context['questions_fs'] = inlineQuizQuestionFormset(self.request.POST or None, instance=self.object)
+
+                no_extras = inlineformset_factory(
+                    QuizSection,
+                    QuizQuestion,
+                    extra=0,
+                    form=editor_QuizQuestionForm,
+                    formset=BaseQuizQuestionFormset,
+                )
+                context['questions_fs'] = no_extras(self.request.POST or None, instance=self.object)
+
 
         else:
             context['manage_denied_message'] = "You can view this Section, but don't have edit access! If you require edit access, please contact the owner."
@@ -362,7 +427,7 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
             context = self.get_context_data(**kwargs)
 
             # if there are resources for this section process them
-            if context['resources']:
+            if 'resources' in context:
                 resources_fs = context['resources']
 
                 if resources_fs.is_valid():
@@ -381,6 +446,47 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
                 else:
                     return self.form_invalid(form,*args, **kwargs)
 
+            if 'questions_fs' in context:
+                questions_fs = context['questions_fs']
+
+                if questions_fs.is_valid():
+
+                    questions_fs.instance = section
+
+                    questions_fs.save(commit=False)
+
+                    for deleted_q in questions_fs.deleted_objects:
+                        deleted_q.delete()
+
+                    for question_index, question in enumerate(questions_fs):
+
+                        if not question.cleaned_data.get(DELETION_FIELD_NAME):
+                            q = question.save(commit=False)
+                            q.position = question_index
+                            q.save()
+
+                            question.answers.save(commit=False)
+
+                            for deleted_a in question.answers.deleted_objects:
+                                deleted_a.delete()
+
+                            for ans_index, ans in enumerate(question.answers):
+
+                                if not ans.cleaned_data.get(DELETION_FIELD_NAME):
+                                    a = ans.save(commit=False)
+
+                                    # if answer text was provided save, otherwise ignore the empty form
+                                    if a.answer_text:
+                                        a.position = ans_index
+                                        a.question = q
+                                        a.save()
+
+                    section.save()
+                    form.save_m2m()
+
+                else:
+                    form.add_error(None, questions_fs.errors)
+                    return self.form_invalid(form, *args, **kwargs)
 
 
 
@@ -460,6 +566,12 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
         #   breaks the page
         #   to maintain workflow throw an error which triggers the CMS method
         #   to do a full refresh
+        #
+        #   potentially this could be caught with a context variable
+        #   and force a refresh in the view, but need to find a way
+        #   to trigger this before the cms js takes over
+        #   (which seems instant...)
+        #
         if self.request.is_ajax():
             raise Exception(
                 'KNOWN ERROR (editor_LessonView): Error Triggers necessary reloading of an edited lesson/section in frontend.')
@@ -469,8 +581,25 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
     def get_context_data(self, **kwargs):
         context = super(editor_LessonView, self).get_context_data(**kwargs)
 
-        # self.request.toolbar.edit_mode = False
-        # self.request.toolbar.edit_mode_active = False
+        # TODO: cant seem to find the right place to cause a refresh
+        #       prior to the initialization of the toolbar
+        #       (kept as reference for signaling the template)
+        #
+        #       { % if ajax_force_refresh %}
+        #           <script>
+        #               console.log("CAUGHT IT")
+        #               location.reload(true)
+        #           </script >
+        #       { % endif %}
+        #
+        #
+        # if self.request.is_ajax():
+        #     context['ajax_force_refresh'] = True
+        # else:
+        #     context['ajax_force_refresh'] = False
+
+
+
 
         # get the current editor's child topics based on editor slug
         # layers = get_module_layers(self.kwargs.get('slug'))
@@ -478,13 +607,6 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
         context['loaded_section'] = self.request.GET.get('v', '')
         context['has_edit_access'] = self.object.has_edit_access(self.request.user)
         context['TOC_Listing'] = get_editor_TOC_obj(self.kwargs.get('slug'))
-
-        # TODO: add in listing of section types to context
-        # {
-        #   ctype: verbose_name
-        # }
-
-        #context['is_dirty'] = self.object.is_dirty
 
         return context
 

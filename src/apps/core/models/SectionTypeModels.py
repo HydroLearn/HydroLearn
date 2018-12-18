@@ -6,6 +6,10 @@ from django.urls import reverse
 from src.apps.core.models.ModuleModels import Section
 from src.apps.core.models.PublicationModels import Publication
 from src.apps.core.models.ResourceModels import Resource
+from src.apps.core.models.QuizQuestionModels import (
+    QuizQuestion,
+    QuizAnswer,
+)
 
 class ReadingSection(Section):
     class Meta:
@@ -172,7 +176,7 @@ class ActivitySection(Section):
 
             new_resource.save()
 
-        pass
+
 
     def copy_content(self, from_instance):
 
@@ -247,32 +251,38 @@ class QuizSection(Section):
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
 
-    def copy_children(self, oldinstance, maintain_ref=False):
-        # Before copying related objects from the old instance, the ones
-        # on the current one need to be deleted. Otherwise, duplicates may
-        # appear on the public version of the page
-        self.quiz_question_item.all().delete()
+    def copy_children(self, from_instance, maintain_ref=False):
+        # delete any questions that may be present in this instance
+        self.questions.all().delete()
 
-        for quiz_question_item in oldinstance.quiz_question_item.all():
-            # copy the lesson item and set its linked topic
-            new_quiz_question_item = quiz_question_item.copy(maintain_ref)
-            new_quiz_question_item.quiz = self
-            new_quiz_question_item.position = quiz_question_item.position
+        # copy each question/answer from the reference instance
+        for question in from_instance.questions.all():
+            new_question = QuizQuestion(
+                question_type=question.question_type,
+                position=question.position,
+                question_text=question.question_text,
+                quiz=self,
+            )
 
-            # save the new topic instance
-            new_quiz_question_item.save()
-            new_quiz_question_item.copy_content(quiz_question_item)
-            new_quiz_question_item.copy_children(quiz_question_item, maintain_ref)
+            if maintain_ref:
+                new_question.ref_id = question.ref_id
+
+            new_question.save()
+
+            for answer in question.answers.all():
+                new_answer = QuizAnswer(
+                    position=answer.position,
+                    answer_text=answer.answer_text,
+                    is_correct=answer.is_correct,
+                    question=new_question,
+                )
+
+                if maintain_ref:
+                    new_answer.ref_id = answer.ref_id
+
+                new_answer.save()
+
 
     @property
     def is_dirty(self):
-        # TODO: iron this out once quizzes are implemented
-        #return False
-        result = super(QuizSection, self).is_dirty
-
-        if result: return result
-
-        for t in self.quiz_question_item.all():
-            if t.is_dirty: return True
-
-        return False
+        return super(QuizSection, self).is_dirty

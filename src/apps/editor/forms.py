@@ -12,6 +12,11 @@ from polymorphic.formsets import (
 
 from django.utils.translation import gettext as _
 
+from src.apps.core.models.QuizQuestionModels import (
+    QuizQuestion,
+    QuizAnswer,
+
+)
 
 ''' **********************************************************
     Model Forms 
@@ -236,6 +241,58 @@ class editor_QuizSectionForm(forms.ModelForm):
         # exclude = ['created_by']
 
 
+
+''' **********************************************************
+    Quiz Question/answer Forms
+********************************************************** '''
+
+class editor_QuizQuestionForm(forms.ModelForm):
+    #question_text = forms.Textarea(attrs={'class':'question_text_input'})
+    class Meta:
+        model = QuizQuestion
+        fields = [
+            'question_type',
+            'question_text',
+
+            'position',
+        ]
+
+        widgets = {
+            # 'content': TextEditorWidget(),
+            'position': forms.HiddenInput(),
+
+            'question_text': forms.Textarea(attrs={
+                'class':'question_text_input',
+                'cols': '75',
+                'rows': '3',
+                #'required': True,
+            }),
+        }
+
+
+class editor_AnswerForm(forms.ModelForm):
+    class Meta:
+        model = QuizAnswer
+
+        fields = [
+            'is_correct',
+            'answer_text',
+            'position',
+        ]
+
+        widgets = {
+            # 'content': TextEditorWidget(),
+            'position': forms.HiddenInput(),
+
+            'answer_text': forms.Textarea(attrs={
+                'class': 'answer_text_input',
+                'cols': '75',
+                'rows': '3',
+                #'required': True,
+            }),
+        }
+
+
 ''' **********************************************************
     Inline Formsets
 ********************************************************** '''
@@ -402,6 +459,94 @@ class BaseSectionFormset(BasePolymorphicInlineFormSet):
         # perform the standard clean
         super(BaseSectionFormset, self).clean()
 
+class BaseQuizQuestionFormset(BaseInlineFormSet):
+    def add_fields(self, form, index):
+        super(BaseQuizQuestionFormset, self).add_fields(form, index)
+
+
+        if self.can_delete:
+            form.fields['DELETE'] = forms.BooleanField(
+                label=_('Delete'),
+                required=False,
+                widget=forms.HiddenInput
+            )
+
+            # add the inline formset for sub_lessons in each lesson
+            form.answers = inlineQuizAnswerFormset(
+                instance=form.instance,
+                data=form.data if self.is_bound else None,
+                prefix='%s-%s' % (
+                    form.prefix,
+                    inlineQuizAnswerFormset.get_default_prefix()
+                ),
+            )
+
+    def is_valid(self):
+        result = super(BaseQuizQuestionFormset, self).is_valid()
+
+        if(self.is_bound):
+            # look at any nested formsets as well
+            for form in self.forms:
+                valid_answers = form.answers.is_valid()
+
+                if not valid_answers:
+                    form.add_error(None, form.answers.errors)
+                    form.add_error(None, form.answers.non_form_errors())
+
+
+
+                result = result and valid_answers
+
+        return result
+
+class BaseQuizAnswerFormset(BaseInlineFormSet):
+    def add_fields(self, form, index):
+        super(BaseQuizAnswerFormset, self).add_fields(form, index)
+
+
+        if self.can_delete:
+            form.fields['DELETE'] = forms.BooleanField(
+                label=_('Delete'),
+                required=False,
+                widget=forms.HiddenInput
+            )
+
+    def clean(self):
+        if any(self.errors):
+            return
+
+        num_populated = sum(a.cleaned_data.get('answer_text', '') != '' for a in self.forms)
+        num_correct = sum(a.cleaned_data.get('answer_text', '') != '' and a.cleaned_data.get('is_correct', False) for a in self.forms)
+
+        if num_populated < 2:
+            result = False
+            # self.add_error(None, 'You Must Provide at least TWO possible answers for quiz question.')
+            raise forms.ValidationError('You Must Provide at least TWO possible answers for quiz question.')
+
+        if num_correct == 0:
+            result = False
+            raise forms.ValidationError('At least one answer must be correct in each quiz question.')
+
+    def is_valid(self):
+        result = super(BaseQuizAnswerFormset, self).is_valid()
+
+        if not self.is_bound:
+            return False
+
+        result = True
+
+        # the answer formset is valid if it has at least 2 answers
+        #   and at least one entry is marked as correct
+        num_populated = sum(a.cleaned_data.get('answer_text', '') != '' for a in self.forms)
+        num_correct = sum(a.cleaned_data.get('answer_text', '') != '' and a.cleaned_data.get('is_correct', False) for a in self.forms)
+
+        if num_populated < 2:
+            result = False
+
+        if num_correct == 0:
+            result = False
+
+        return result
 
 ''' **********************************************************
 Formset Factories
@@ -432,4 +577,26 @@ inlineSectionFormset = polymorphic_inlineformset_factory(
 
         )
     )
+
+
+inlineQuizQuestionFormset = inlineformset_factory(
+    QuizSection,
+    QuizQuestion,
+    extra=1,
+    #fields=['question_type', 'question_text'],
+    form=editor_QuizQuestionForm,
+    formset=BaseQuizQuestionFormset,
+
+)
+
+inlineQuizAnswerFormset = inlineformset_factory(
+    QuizQuestion,
+    QuizAnswer,
+    #fields=['answer_text'],
+    form=editor_AnswerForm,
+    formset=BaseQuizAnswerFormset,
+    extra=4,
+    max_num=4,
+    min_num=2,
+)
 

@@ -30,7 +30,8 @@
       display: none; }
     .dynamic_formset .form_row .form_cell {
       display: table-cell;
-      padding: 5px 10px; }
+      padding: 5px 10px;
+      vertical-align: top; }
       .dynamic_formset .form_row .form_cell a.form_delete i {
         cursor: pointer;
         text-align: center;

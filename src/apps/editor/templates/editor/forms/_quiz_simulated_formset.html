@@ -1,0 +1,44 @@
+
+<div class="answer_formset">
+    <h4 style="margin:0;padding:0;display:inline-block;"> Answers</h4>
+    <div class="Add_Answer Submit_button btn btn-default" style="float:right;"> <i class="fas fa-plus-circle"></i> New Answer </div>
+
+    <div style="padding-left:60px;" class="quiz_answer_fs_wrapper dynamic_formset">
+        <div class="formset_header_row">
+            {% for field in form.visible_fields  %}
+                <div class="formset_header_cell">{{ field.label }}</div>
+            {% endfor %}
+
+            {% if can_delete  %}
+                <div class="formset_header_cell">Remove</div>
+            {% endif %}
+        </div>
+
+        <div class="form_row">
+            <div class="form_errors">{{form.errors}}</div>
+
+            {% for field in form.visible_fields %}
+                <div class="form_cell form_content">
+                    {{ field }}
+                </div>
+            {% endfor %}
+
+
+            <div class="form_cell form_content">
+
+                {% if can_delete %}
+                    <a class="delete_answer form_delete"><i class="fas fa-trash glyph-button glyph-delete"></i></a>
+                    {{ form.DELETE|safe }}
+                {% endif %}
+
+                {% for field in form.hidden_fields %}
+                    {# exclude the delete field since already added #}
+                    {% if field.name != 'DELETE' %}
+                        {{ field }}
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</div>

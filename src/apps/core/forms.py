@@ -14,7 +14,18 @@ from src.apps.core.models.PublicationModels import Publication
 from src.apps.core.models.SectionTypeModels import (
     ReadingSection,
     ActivitySection,
-    QuizSection
+    QuizSection,
+)
+
+from src.apps.core.models.QuizQuestionModels import (
+    QuizQuestion,
+    #MultiChoice_question,
+    #MultiSelect_question,
+
+    #MultiChoice_answer,
+    #MultiSelect_answer,
+    QuizAnswer,
+
 )
 
 from src.apps.core.models.ResourceModels import Resource
@@ -174,7 +185,6 @@ class CollaborationForm(forms.ModelForm):
             'collaborator',
             'can_edit',
         ]
-
 
 class ResourceForm(forms.ModelForm):
     class Meta:

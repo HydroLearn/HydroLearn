@@ -1,0 +1,29 @@
+{% load static editor_template_tags %}
+
+<div id="quiz_question_fs_wrapper" class="dynamic_formset">
+
+    {% if formset %}
+        <div class="formset_header_row">
+            <div class="formset_header_cell">
+                Questions
+                <div class="formset_errors">{{ formset.non_form_errors }}</div>
+                <div class="mgmt_form">
+                    {{ formset.management_form }}
+                    {{ formset.media }}
+                </div>
+            </div>
+        </div>
+
+        {% for form in formset %}
+            <div class="form_row" data-form-type="quiz-question" style="background: none;">
+                {% show_quiz_question_form form formset.can_delete %}
+            </div>
+        {% endfor %}
+
+
+    {% endif %}
+
+
+
+
+</div>
