@@ -67,7 +67,6 @@ $(window).on('load',function(){
     }
 
     let buildModelRepTable = function (modelList) {
-        console.log(modelList);
         let modelTableHtml;
 
         modelList = typeof modelList === 'string' ? JSON.parse(modelList) : modelList;
@@ -99,7 +98,6 @@ $(window).on('load',function(){
         container.html(modelTableHtml);
 
 
-        container.append($btn);
         addListenersToModelRepTable();
         dataTableLoadModels = $('#tbl-models').DataTable({
             'order': [[1, 'asc']],
@@ -115,7 +113,7 @@ $(window).on('load',function(){
                 footer: true
             }
         });
-        
+
         // search bar only searches on enter key press
         $('div.dataTables_filter input').unbind();
         $('div.dataTables_filter input').bind('keyup', function(e) {

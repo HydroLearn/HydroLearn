@@ -17,8 +17,11 @@ def get_hs_res_list(request):
     }
 
     resid = request.GET.get('resid')
+    print(resid)
     keyword = request.GET.get('keyword')
+    print(keyword)
     type = request.GET.get('type')
+    print(type)
 
     if request.method == 'GET' and request.is_ajax():
 

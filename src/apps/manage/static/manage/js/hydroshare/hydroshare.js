@@ -1,9 +1,9 @@
 // adopted from https://github.com/tylorbayer/tethysapp-epanet_model_repository/blob/master/tethysapp/epanet_model_repository/public/js/main.js
-$("div.dataTables_filter input").keyup( function (e) {
+/*$("div.dataTables_filter input").keyup( function (e) {
     if (e.keyCode == 13) {
         oTable.fnFilter( this.value );
     }
-});
+});*/
 
 /* May want to use this later
 $('#hydroshare-modal').on('hidden.bs.modal', function () {
@@ -43,7 +43,9 @@ $(document).ready(function(){
                         $modelRep.html('<div class="error">' + response.message + '</div>');
                     }
                     else if (response.hasOwnProperty('model_list')) {
+                        console.log(typeof response);
                         buildModelRepTable(response.model_list);
+                        console.log(response);
                         console.log(response.model_list);
                     }
                     else
