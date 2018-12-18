@@ -12,7 +12,7 @@ def get_hs_res_list(request):
         'success': False,
         'message': None,
         'model_list': None,
-	    'file_list': None,
+        'file_list': None,
         'json_url': 'No Json URL'
     }
 

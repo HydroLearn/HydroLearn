@@ -32,7 +32,7 @@ $(document).ready(function(){
     generateModelList = function (numRequests) {
         $.ajax({
             type: 'GET',
-            url: 'hsreslist',
+            url: 'hsreslist/',
             dataType: 'json',
             error: function () {
                 showError();
