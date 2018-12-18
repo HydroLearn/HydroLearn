@@ -158,6 +158,7 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         # Find parent_lesson by using the passed slug in the URL
         # this view may be called with or without specifying a parent lesson,
         #   depending on if the
+        new_lesson = None
         if self.kwargs.get('parent_lesson',None):
             parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
 
@@ -167,6 +168,24 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
             else:
                 form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
                 return self.form_invalid(form)
+
+        with transaction.atomic():
+
+            if not new_lesson:
+                new_lesson = form.save(commit=False)
+
+            context = self.get_context_data(**kwargs)
+            learning_objective_formset = context['learning_objective_formset']
+
+            if learning_objective_formset.is_valid():
+                for lo in learning_objective_formset:
+                    lo.save(new_lesson)
+
+                new_lesson.save()
+                form.save_m2m()
+
+            else:
+                return self.form_invalid(form,*args, **kwargs)
 
 
         return super(editor_LessonCreateView, self).form_valid(form, *args, **kwargs)
@@ -362,7 +381,8 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
             context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST)
             context['learning_objective_formset'].full_clean()
         else:
-            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset()
+            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(instance=self.object)
+
 
         # read form selections
         knowledge_order = list(Learning_Level.objects.values_list("label", flat=True).order_by("pk"))
@@ -388,18 +408,28 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
         }
 
     def form_valid(self, form, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        learning_objective_formset = context['learning_objective_formset']
         with transaction.atomic():
-            self.object = form.save()
 
-        if learning_objective_formset.is_valid():
-            learning_objective_formset.instance = self.object
-            learning_objective_formset.save()
-            for lo_form in learning_objective_formset:
-                if lo_form.is_valid():
-                    lo_form.save()
-            # TODO implement delete
+            lesson = form.save(commit=False)
+
+            context = self.get_context_data(**kwargs)
+            learning_objective_formset = context['learning_objective_formset']
+
+            if learning_objective_formset.is_valid():
+                #learning_objectives = learning_objective_formset.save(commit=False)
+
+                # delete any collabs marked for deletion
+                #for deleted_lo in learning_objectives.deleted_objects:
+                #    deleted_lo.delete()
+
+                for lo in learning_objective_formset:
+                    lo.save(lesson)
+
+                lesson.save()
+                form.save_m2m()
+
+            else:
+                return self.form_invalid(form,*args, **kwargs)
 
         return super(editor_LessonUpdateView, self).form_valid(form, *args, **kwargs)
 

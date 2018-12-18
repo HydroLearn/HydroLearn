@@ -261,6 +261,14 @@ class Learning_ObjectiveTextForm(forms.ModelForm):
         fields = ('condition', 'task', 'degree')
         widgets = {"condition": forms.HiddenInput(), "task": forms.HiddenInput(), "degree": forms.HiddenInput()}
 
+    def __init__(self, *args, **kwargs):
+        super(Learning_ObjectiveTextForm, self).__init__(*args, **kwargs)
+        lo = kwargs.pop('instance', None)
+        if lo:
+            self.fields['verb'] = forms.CharField(widget = forms.HiddenInput(), initial=lo.verb.verb)
+            self.fields['level'] = forms.CharField(widget = forms.HiddenInput(), initial=lo.verb.level.label)
+            self.fields['outcomes'] = forms.CharField(widget = forms.HiddenInput(), initial=",".join(set(str(outcome.id) for outcome in lo.outcomes.all())))
+
     def clean_verb(self):
         verb = self.cleaned_data.get('verb')
         level = self.cleaned_data.get('level')
@@ -284,8 +292,9 @@ class Learning_ObjectiveTextForm(forms.ModelForm):
             raise forms.ValidationError("No Learning_Outcome with ids {} exists".format(outcomes))
         return learning_outcomes
 
-    def save(self):
-        print("calling save!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+    def save(self, lesson=None):
+        if lesson:
+            self.instance.lesson = lesson
         self.instance.verb_id = self.cleaned_data.get("verb").pk
         self.instance.save()
         for outcome in self.cleaned_data.get("outcomes"):
