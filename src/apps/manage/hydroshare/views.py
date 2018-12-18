@@ -17,11 +17,11 @@ def get_hs_res_list(request):
     }
 
     resid = request.GET.get('resid')
-    print(resid)
+    #print(resid)
     keyword = request.GET.get('keyword')
-    print(keyword)
+    #print(keyword)
     type = request.GET.get('type')
-    print(type)
+    #print(type)
 
     if request.method == 'GET' and request.is_ajax():
 
@@ -41,8 +41,8 @@ def get_hs_res_list(request):
             else:
                 if keyword == None:
                     res_list = hsu.get_resource_list(return_type="dataframe", full_text_search="HydroShare Map Project")
-                    print(res_list.shape[0])
-                    print(res_list.shape[1])
+                    #print(res_list.shape[0])
+                    #print(res_list.shape[1])
                 else:# Actual search
                     if type == "All":
                         res_list = hsu.get_resource_list(return_type="dataframe", full_text_search=keyword)
