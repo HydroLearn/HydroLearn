@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0007_learning_outcome_optional'),
+        ('core', '0008_Alter_quiz_question_models'),
     ]
 
     operations = [
