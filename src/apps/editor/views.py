@@ -14,7 +14,7 @@ from django.utils.timezone import now
 from src.apps.core.models.LearningObjModels import Learning_Level, Learning_Verb, \
     Learning_Outcome, Learning_Objective
 from collections import defaultdict
-from .forms import Learning_ObjectiveTextForm, inlineLearning_ObjectiveFormset
+from .forms import inlineLearning_ObjectiveFormset
 
 
 from django.views.generic import (
@@ -132,22 +132,15 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         else:
             context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(instance=self.object)
 
-        # read existing objectives for listing
-        initial_data = []
-        for lo in Learning_Objective.objects.all():
-            initial_data.append(
-                {lo.pk: "{} {} {} {}".format(lo.condition, lo.verb.verb, lo.task, lo.degree)})
-
         # read form selections
         knowledge_order = list(Learning_Level.objects.values_list("label", flat=True).order_by("pk"))
         verbs_by_knowledge = defaultdict(list)
-        for verb in Learning_Verb.objects.all(default=True):
+        for verb in Learning_Verb.objects.filter(default=True):
             verbs_by_knowledge[verb.level.label].append(verb.verb)
         abet_outcomes = Learning_Outcome.objects.values_list("outcome", flat=True).order_by("pk")
         context['verbs_by_knowledge'] = json.dumps(verbs_by_knowledge)
         context['knowledge_order'] = json.dumps(knowledge_order)
         context['abet_outcomes'] = abet_outcomes
-        context['existing_objectives'] = initial_data
 
         return context
 
@@ -180,18 +173,25 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
         with transaction.atomic():
 
-            if not new_lesson:
-                new_lesson = form.save(commit=False)
+            lesson = form.save(commit=False)
 
             context = self.get_context_data(**kwargs)
             learning_objective_formset = context['learning_objective_formset']
 
             if learning_objective_formset.is_valid():
-                for lo in learning_objective_formset:
-                    lo.save(new_lesson)
+                if learning_objective_formset.has_changed():
+                    #learning_objectives = learning_objective_formset.save(commit=False)
 
-                new_lesson.save()
-                form.save_m2m()
+                    # delete any collabs marked for deletion
+                    #for deleted_lo in learning_objectives.deleted_objects:
+                    #    deleted_lo.delete()
+
+                    for lo in learning_objective_formset:
+                        if lo.has_changed():
+                            lo.save(lesson)
+
+                    lesson.save()
+                    form.save_m2m()
 
             else:
                 return self.form_invalid(form,*args, **kwargs)
@@ -427,11 +427,10 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
             context['content_view'] = reverse('modules:lesson_content', kwargs={ 'slug': self.object.slug })
 
         if self.request.POST:
-            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST)
+            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST, instance=self.object)
             context['learning_objective_formset'].full_clean()
         else:
             context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(instance=self.object)
-
 
         # read form selections
         knowledge_order = list(Learning_Level.objects.values_list("label", flat=True).order_by("pk"))
@@ -465,17 +464,19 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
             learning_objective_formset = context['learning_objective_formset']
 
             if learning_objective_formset.is_valid():
-                #learning_objectives = learning_objective_formset.save(commit=False)
+                if learning_objective_formset.has_changed():
+                    #learning_objectives = learning_objective_formset.save(commit=False)
 
-                # delete any collabs marked for deletion
-                #for deleted_lo in learning_objectives.deleted_objects:
-                #    deleted_lo.delete()
+                    # delete any collabs marked for deletion
+                    #for deleted_lo in learning_objectives.deleted_objects:
+                    #    deleted_lo.delete()
 
-                for lo in learning_objective_formset:
-                    lo.save(lesson)
+                    for lo in learning_objective_formset:
+                        if lo.has_changed():
+                            lo.save(lesson)
 
-                lesson.save()
-                form.save_m2m()
+                    lesson.save()
+                    form.save_m2m()
 
             else:
                 return self.form_invalid(form,*args, **kwargs)

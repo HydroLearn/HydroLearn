@@ -618,5 +618,6 @@ inlineLearning_ObjectiveFormset = inlineformset_factory(
     Learning_Objective,
     form=Learning_ObjectiveTextForm,
     extra=1,
+    can_delete=True,
 )
 
