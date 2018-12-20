@@ -180,15 +180,13 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
             if learning_objective_formset.is_valid():
                 if learning_objective_formset.has_changed():
-                    #learning_objectives = learning_objective_formset.save(commit=False)
-
-                    # delete any collabs marked for deletion
-                    #for deleted_lo in learning_objectives.deleted_objects:
-                    #    deleted_lo.delete()
-
                     for lo in learning_objective_formset:
                         if lo.has_changed():
                             lo.save(lesson)
+
+                    # delete any learning_objectives marked for deletion
+                    for deleted_lo in learning_objective_formset.deleted_forms:
+                        deleted_lo.delete()
 
                     lesson.save()
                     form.save_m2m()
@@ -465,15 +463,13 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
 
             if learning_objective_formset.is_valid():
                 if learning_objective_formset.has_changed():
-                    #learning_objectives = learning_objective_formset.save(commit=False)
-
-                    # delete any collabs marked for deletion
-                    #for deleted_lo in learning_objectives.deleted_objects:
-                    #    deleted_lo.delete()
-
                     for lo in learning_objective_formset:
                         if lo.has_changed():
                             lo.save(lesson)
+
+                    # delete any learning_objectives marked for deletion
+                    for deleted_lo in learning_objective_formset.deleted_forms:
+                        deleted_lo.delete()
 
                     lesson.save()
                     form.save_m2m()

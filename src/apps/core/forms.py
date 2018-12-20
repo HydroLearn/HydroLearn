@@ -300,3 +300,6 @@ class Learning_ObjectiveTextForm(forms.ModelForm):
         for outcome in self.cleaned_data.get("outcomes"):
             self.instance.outcomes.add(outcome)
         return super().save()
+
+    def delete(self):
+        self.instance.delete()
