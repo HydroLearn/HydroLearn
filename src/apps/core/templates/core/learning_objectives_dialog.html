@@ -198,7 +198,7 @@
                 {% for outcome in abet_outcomes %}
                 <tr>
                     <td>
-                        <input id="abet_{{ forloop.counter }}" type='checkbox' value="{{ forloop.counter }}" onclick='updateABETSelection(this, 1);'>
+                        <input id="abet_{{ forloop.counter }}" type='checkbox' value="{{ forloop.counter }}" onclick='updateABETSelection(this, {{ forloop.counter }});'>
                     </td>
                     <td id="abet_text_{{ forloop.counter }}"><label for="abet_{{ forloop.counter }}">{{ outcome }}</label></td>
                 </tr>
