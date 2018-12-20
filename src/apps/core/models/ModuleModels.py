@@ -711,6 +711,9 @@ class Section(PolyPublicationChild):
 
         return any(access_conditions)
 
+    def get_owner(self):
+        return self.lesson.get_owner()
+
     @property
     def is_dirty(self):
         # a module is considered dirty if it's pub_status is pending, or if it contains any plugins
