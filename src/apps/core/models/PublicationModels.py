@@ -675,3 +675,5 @@ class PolyPublicationChild(PolyCreationTrackingBaseModel):
 
         return self.get_Publishable_parent().has_draft_access(user)
 
+    def get_owner(self):
+        return self.get_Publishable_parent().get_owner()
