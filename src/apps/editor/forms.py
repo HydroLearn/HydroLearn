@@ -18,6 +18,10 @@ from src.apps.core.models.QuizQuestionModels import (
 
 )
 
+from src.apps.core.models.HS_AppFrameModels import (
+    AppReference
+)
+
 ''' **********************************************************
     Model Forms 
 ********************************************************** '''
@@ -145,6 +149,16 @@ class editor_SectionForm(forms.ModelForm):
             raise ValidationError("Section name must be at least 4 characters.")
 
         return name
+
+class editor_AppRefForm(forms.ModelForm):
+    class Meta:
+        model = AppReference
+        fields = [
+            'app_name',
+            'app_link',
+        ]
+
+
 
 
 ''' **********************************************************

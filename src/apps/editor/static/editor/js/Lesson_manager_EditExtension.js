@@ -45,11 +45,9 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
         //
         //$('a.cms-btn.cms-btn-action.default')
 
-
-
         // setup edit button functionality
-        $('.Toggle_edit_btn').unbind('click');
-        $('.Toggle_edit_btn').click(function(){
+        $('.lesson').find('.Toggle_edit_btn').unbind('click');
+        $('.lesson').find('.Toggle_edit_btn').click(function(){
 
             if($('.form_block').is(":visible")){
                 $('.form_block').hide()
@@ -103,111 +101,19 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
         }
 
-        $('.Delete_button').unbind('click');
-        $('.Delete_button').click(function(event){
+        $('.lesson').find('.Delete_button').unbind('click');
+        $('.lesson').find('.Delete_button').click(function(event){
             event.preventDefault()
 
             var obj_id = LESSON_MGR.get_Loaded_Section()
-            debugger;
+
             TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.DELETE_DIALOG, [obj_id]);
-
-            return
-            // hide the controls while loading
-            $('#form-confirmation-confirm').hide()
-            $('#form-confirmation-cancel').hide()
-
-            // load the delete form for the current loaded section
-            $('#form-confirmation-content').html("Loading Form...")
-
-            // generate the delete url, and get the associated form
-            var delete_url = '/editor/delete/{0}'.format(LESSON_MGR.get_Loaded_Section())
-
-            $('#form-confirmation-content').load(delete_url, function(){
-
-                // after loading show the controls
-                $('#form-confirmation-confirm').show()
-                $('#form-confirmation-cancel').show()
-
-                // map the confirm button's click action to submit form
-                $('#form-confirmation-confirm').unbind('click');
-                $('#form-confirmation-confirm').click(function(){
-
-                    // serialize the loaded form
-                    var form = $('#form-confirmation-content').find('form');
-                    var form_method = $(form).attr('method');
-                    var form_action =  $(form).attr('action');
-                    var form_data =  $(form).serialize();
-
-
-                    $('#form-confirmation-confirm').hide()
-                    $('#form-confirmation-cancel').hide()
-
-                    $('#form-confirmation-content').html('Processing request...')
-
-                    // submit the form,
-                    // if success
-                    //  refresh the content,
-                    //  and remove TOC representation
-
-                    // if error
-                    //      display error
-                    debugger;
-                    $.ajax({
-                        url: form_action,
-                        type: form_method,
-                        method: form_method,
-                        data: form_data,
-
-                        success: function(response){
-                            debugger;
-                            $('#form-confirmation-content').html(response)
-                            $('#form-confirmation-content').append('<p>You may now close this dialog</p>');
-
-                            var is_lesson = $('.current_selected_section').hasClass('Lesson_Link')
-                            var section_value = $('.current_selected_section').attr('value')
-                            var TOC_obj = TOC_MGR.get_TOC_obj(section_value)
-
-                            // if this was the base lesson object redirect to the management page
-                            if(TOC_obj.attr('id') == "Base_Lesson_obj"){
-                                window.location = "/manage/"
-                                return;
-                            }
-
-                            TOC_obj.remove();
-
-                            // redirect view to base lesson form
-                            LESSON_MGR.Show_Section(LESSON_MGR.get_Loaded_Module())
-
-                        },
-
-                        error: function(response){
-
-                            $('#form-confirmation-content').html("There was an error processing your request, Please try again later");
-
-                        },
-                    })
-
-
-
-                })
-
-
-            })
-
-
-            $('#form-confirmation-dialog').dialog("open")
-
-            // mark this form to delete on submit
-            //$('#id_delete_on_submit').val("True")
-
-            // fire submit event
-            //$('.Submit_button').click()
 
         });
 
 
-        $('.Cancel_button').unbind('click');
-        $('.Cancel_button').click(function(event){
+        $('.lesson').find('.Cancel_button').unbind('click');
+        $('.lesson').find('.Cancel_button').click(function(event){
             /*
               TODO: need to check if new lesson
 

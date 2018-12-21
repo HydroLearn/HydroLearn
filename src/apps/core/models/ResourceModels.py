@@ -21,7 +21,7 @@ class Resource(models.Model):
 
     # the resource type of the HydroShare resource
     resource_type = models.CharField(
-        "HydroShare Resource Type",
+        "Resource Type",
         blank=False,
         default="",
         help_text=_("Please supply a HydroShare Resource type"),
@@ -31,10 +31,10 @@ class Resource(models.Model):
 
     # the api link to the hydroshare resource
     resource_link = models.URLField(
-        'HydroShare Resource Link',
+        'Resource Link',
         blank=False,
         default="",
-        help_text=_('Please supply a HydroShare Resource Link'),
+        help_text=_('Please supply a Resource URL'),
     )
 
     # the activity this resource is linked to

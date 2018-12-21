@@ -20,11 +20,9 @@ from src.apps.core.models.ModuleModels import (
     Section,
 )
 
-# from src.apps.core.models.section_types import (
-#     ActivitySection,
-#     QuizSection,
-#     ReadingSection
-# )
+from src.apps.core.models.HS_AppFrameModels import (
+    AppReference,
+)
 
 from src.apps.core.models.QuizQuestionModels import (
     QuizQuestion
@@ -68,3 +66,8 @@ class core_QuizQuestionDetailView(DetailView):
     model = QuizQuestion
     context_object_name = "Quiz Question"
     queryset = QuizQuestion.objects.all()  #select all of the questions, add in published filter later
+
+class core_AppRefDetailView(DetailView):
+    model = AppReference
+    context_object_name = "App References"
+    

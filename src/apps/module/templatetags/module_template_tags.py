@@ -83,3 +83,10 @@ def show_quiz_questions(questions):
     return {
         'questions': questions,
     }
+
+@register.inclusion_tag('module/tag_templates/_app_ref_viewer.html')
+def show_app_ref_viewer(container_id, app_ref):
+    return {
+        'id': container_id,
+        'app': app_ref,
+    }

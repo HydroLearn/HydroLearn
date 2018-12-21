@@ -93,6 +93,22 @@
                                 <!--<li class="nav-item">-->
                                     <a class="nav-link" id="map-tab" data-toggle="tab" href="#map-content" role="tab" >Map</a>
                                 </li>
+
+                                {% for app in Lesson.app_refs.all %}
+                                    {% with forloop.counter|stringformat:"s" as counter %}
+                                    {% with "app-"|add:counter as AppID %}
+                                    <li onclick="VIEWPORT_MGR.Switch_View('{{ AppID }}');" class="nav-item">
+                                        <a class="nav-link" id="{{ AppID }}-tab" data-toggle="tab" href="#{{ AppID }}-content" role="tab" >{{app.app_name}}</a>
+                                    </li>
+                                    {% endwith %}
+                                    {% endwith %}
+                                {% endfor%}
+
+                                <li onclick="VIEWPORT_MGR.Switch_View('add-app');" class="nav-item">
+                                    <a class="nav-link" id="add-app-tab" data-toggle="tab" href="#add-app-content" role="tab" ><i class="fa fa-plus"></i> App</a>
+                                </li>
+
+
                             </ul>
 
 
@@ -131,40 +147,53 @@
                                 <button class="next_lesson_link" >Next Section <i class="fas  fa-caret-right"></i></button>
                                 <span class="lesson_complete_message">Module Complete!</span>
 
-                                <div id="lesson-nav-warning-dialog" title="Warning!">
-                                    <p>
-                                        If you navigate away from this form you will lose any unsaved changes.
-                                        Are you sure you would like to continue?
-                                    </p>
-
-                                    <button id="lesson-nav-confirm" title="Leave current Form">Yes, Navigate Away</button>
-                                    <button id="lesson-nav-cancel" title="Stay on current Form">No, Continue Editing</button>
-                                </div>
-
-                                <div id="lesson-nav-denied-dialog" title="Warning!">
-                                    <p>
-                                        You must finish or cancel editing the current form before adding another!
-                                    </p>
-
-                                    <button id="lesson-nav-denied-confirm" title="Leave current quiz">Ok</button>
-                                </div>
-
-                                <div id="form-confirmation-dialog" title="Warning!">
-
-                                    <div id="form-confirmation-content"></div>
-
-                                    <button id="form-confirmation-confirm" title="Confirm">Confirm</button>
-                                    <button id="form-confirmation-cancel" title="Cancel">Cancel</button>
-                                </div>
-
                             </div>
 
+
+
                             <div id="map-content" style="display:none" class="tab-pane fade" role="tabpanel">
-
                                 {% map_container %}
+                            </div>
 
 
+                            {% for app in Lesson.app_refs.all %}
+                                {% with forloop.counter|stringformat:"s" as counter %}
+                                {% with "app-"|add:counter as AppID %}
+                                    <div id="{{ AppID }}-content" style="display:none" class="tab-pane fade" role="tabpanel">
+                                        {% show_app_ref_editor AppID app Lesson.slug %}
+                                    </div>
+                                {% endwith %}
+                                {% endwith %}
+                            {% endfor%}
 
+                            <div id="add-app-content" style="display:none" class="tab-pane fade" role="tabpanel">
+                                {% show_app_ref_form Lesson.slug %}
+                            </div>
+
+                            <div style="display:none" id="lesson-nav-warning-dialog" title="Warning!">
+                                <p>
+                                    If you navigate away from this form you will lose any unsaved changes.
+                                    Are you sure you would like to continue?
+                                </p>
+
+                                <button id="lesson-nav-confirm" title="Leave current Form">Yes, Navigate Away</button>
+                                <button id="lesson-nav-cancel" title="Stay on current Form">No, Continue Editing</button>
+                            </div>
+
+                            <div style="display:none" id="lesson-nav-denied-dialog" title="Warning!">
+                                <p>
+                                    You must finish or cancel editing the current form before adding another!
+                                </p>
+
+                                <button id="lesson-nav-denied-confirm" title="Leave current quiz">Ok</button>
+                            </div>
+
+                            <div style="display:none" id="form-confirmation-dialog" title="Warning!">
+
+                                <div id="form-confirmation-content"></div>
+
+                                <button id="form-confirmation-confirm" title="Confirm">Confirm</button>
+                                <button id="form-confirmation-cancel" title="Cancel">Cancel</button>
                             </div>
 
                         </div>
@@ -225,6 +254,9 @@
         <script src="{% static 'module/js/Map_manager.js' %}"></script>
         <script src="{% static 'module/js/Layer_manager.js' %}"></script>
         <script src="{% static 'module/js/HS_JSON_Interpreter.js' %}"></script>
+
+        <!--apps-->
+        <script src="{% static 'module/js/App_manager.js' %}"></script>
 
         <script src="{% static 'module/js/Geoserver_Data_manager.js' %}"></script>
         <script src="{% static 'module/js/Interactive_Layer_Dialog_manager.js' %}"></script>
@@ -338,6 +370,20 @@
                 VIEWPORT_MGR.Register_View(mapView, '#map-tab');
 
 
+                /* ---------------------------------
+                   create a view for each app associated with this lesson
+                   and another tab for adding additional apps
+                ---------------------------------*/
+
+                {% for app in Lesson.app_refs.all %}
+                    {% with forloop.counter|stringformat:"s" as counter %}
+                    {% with "app-"|add:counter as AppID %}
+                        VIEWPORT_MGR.Register_View(new APP_VIEW('{{ AppID }}','#{{ AppID }}-content'), '#{{ AppID }}-tab');
+                    {% endwith %}
+                    {% endwith %}
+                {% endfor %}
+
+                VIEWPORT_MGR.Register_View(new APP_VIEW('add-app','#add-app-content'), '#add-app-tab');
 
                 /* ---------------------------------
                    initialize the Table of contents to link to the different SubStudies/sections
@@ -367,44 +413,12 @@
 
                 {% endif %}
 
-                /* ---------------------------------
-                    form manager initialization
-                ---------------------------------*/
-                // hide all section/lesson forms
-                //$('.View_form').hide()
-
-
-
-                //var FormManager = new Form_Manager('#post-new-module', '#editor_formset_init');
-                //initialize_existing_validation()
-
-                // add an ALL post add event to initialize the form accordions and set events for sorting
-                //FormManager.add_post_add_event("ALL", function(){
-                //    // get all uninitialized accordions
-                //    $('.accordion-form:not(.ui-accordion)').each(function(){
-                //        $(this).accordion({
-                //            active: 0,
-                //            collapsible:true,
-                //            heightStyle: "content",
-                //        });
-                //
-                //        // add validation rules to newly generated fields
-                //        $(this).find('input[name$="-name"]').each(function(){
-                //            $(this).rules('add',custom_validator_rules['name']);
-                //        });
-                //
-                //        $(this).find('input[name$="-duration"]').each(function(){
-                //            $(this).rules('add', custom_validator_rules['duration']);
-                //        });
-                //
-                //    });
-                //});
-
 
 
                 // set map to resize on window resize
                 $(window).resize(function () {
                     MAP_MGR.Resize()
+                    resize_app_wrapper()
                 });
 
                 // set map to resize based on custom 'body.sidebar_toggled_evt' event

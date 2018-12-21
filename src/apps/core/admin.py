@@ -49,6 +49,10 @@ from src.apps.core.models.ResourceModels import (
     Resource,
 )
 
+from src.apps.core.models.HS_AppFrameModels import (
+    AppReference,
+)
+
 #from src.apps.core.QuerysetManagers import *
 
 
@@ -188,6 +192,19 @@ class CollaboratorInline(admin.TabularInline):
         'can_edit',
     )
 
+
+class AppRefInline(admin.TabularInline):
+    model = AppReference
+
+    verbose_name = "Application Reference"
+    verbose_name_plural = "Application References"
+
+    extra = 0
+
+    fields = (
+        'app_name',
+        'app_link',
+    )
 
 class QuizQuestionInline(SortableInlineAdminMixin, admin.TabularInline):
     model = QuizQuestion
@@ -367,7 +384,7 @@ class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, Placehol
 
     #filter_horizontal = ('collaborators',)
 
-    inlines = [CollaboratorInline, SectionInline, LessonInline]
+    inlines = [AppRefInline, CollaboratorInline, SectionInline, LessonInline]
 
 
     # override 'get_form' to have a separate form for adding a new topic

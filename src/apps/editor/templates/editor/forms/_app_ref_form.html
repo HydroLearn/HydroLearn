@@ -1,0 +1,56 @@
+<div class="app_ref_form" style="padding:20px;">
+    {% if app %}
+
+
+        <div class="app_form" data-parent-lesson="{{ parent_lesson }}" data-id="{{ app.pk }}">
+            <form method="post" action="{{app.edit_url}}">
+                {% csrf_token %}
+
+                <div class="HL-message-banner success form_messages success_banner"></div>
+                <div class="HL-message-banner critical form_messages error_banner"></div>
+
+                <h3>Edit Application, "{{app.app_name}}"</h3>
+                <p>
+                    Using this form you can modify this app reference.
+                </p>
+
+                <table>
+                    {{ form.as_table }}
+                </table>
+
+                <div class="content_form_controls">
+                    <button class="Submit_button btn btn-default" type="submit">Save</button>
+                    <button class="Cancel_button btn btn-default">Cancel</button>
+                    <button class="Delete_button btn btn-default" data-slug="form.instance.slug"><i class="fas fa-trash"></i> Delete App </button>
+
+                </div>
+            </form>
+        </div>
+
+    {% else %}
+
+        <div class="app_form" data-parent-lesson="{{parent_lesson}}">
+            <form method="post" action="{% url 'editor:app_ref_create' parent_lesson %}">
+                {% csrf_token %}
+                <div class="HL-message-banner success form_messages success_banner"></div>
+                <div class="HL-message-banner critical form_messages error_banner"></div>
+
+                <h3>Add a new Application</h3>
+                <p>
+                    Using this form you can add a new app reference to this Module which will display as it's own tab
+                    and be made available for use within this module.
+                </p>
+
+                <table>
+                    {{ form.as_table }}
+                </table>
+
+                <div class="content_form_controls">
+                    <button class="Submit_button btn btn-default" type="submit">Add New App</button>
+                </div>
+            </form>
+        </div>
+
+    {% endif %}
+
+</div>

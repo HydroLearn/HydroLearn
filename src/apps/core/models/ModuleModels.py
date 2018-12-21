@@ -33,7 +33,7 @@ class Lesson(Publication):
     #       class Meta(Publishable.Meta):
     class Meta:
         app_label = 'core'
-        unique_together = ('parent_lesson', 'name')  # enforce only unique topic names within a module
+        #unique_together = ('parent_lesson', 'name')  # enforce only unique topic names within a module
         #ordering = ('name',)
         ordering = ('position',)
         verbose_name_plural = 'Lessons'
@@ -585,10 +585,7 @@ class Section(PolyPublicationChild):
 
     class Meta:
         app_label = 'core'
-        unique_together = (
-            'lesson',
-            'name'
-        )  # enforce only unique section names within a lesson
+        # unique_together = ('lesson','name')  # enforce only unique section names within a lesson
         ordering = ('position',)
         verbose_name_plural = 'Sections'
         manager_inheritance_from_future = True

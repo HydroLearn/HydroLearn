@@ -1,0 +1,22 @@
+{% load module_template_tags editor_template_tags %}
+<div class="app_ref_editor_wrapper {% if app %}edit_mode{% endif %}">
+
+    {% if app %}
+        <div>
+            <button class="app_ref_edit_btn btn btn-default">Edit This Application <i class="fas fa-edit"></i></button>
+        </div>
+
+        <div class="app_preview">
+            {% show_app_ref_viewer id app %}
+        </div>
+
+        {% show_app_ref_form parent_lesson app %}
+
+
+    {% else %}
+
+        {% show_app_ref_form parent_lesson %}
+
+    {% endif %}
+
+</div>

@@ -91,6 +91,17 @@
                                 <!--<li class="nav-item">-->
                                     <a class="nav-link" id="map-tab" data-toggle="tab" href="#map-content" role="tab" >Map</a>
                                 </li>
+
+                                {% for app in module.app_refs.all %}
+                                    {% with forloop.counter|stringformat:"s" as counter %}
+                                    {% with "app-"|add:counter as AppID %}
+                                    <li onclick="VIEWPORT_MGR.Switch_View('{{ AppID }}');" class="nav-item">
+                                        <a class="nav-link" id="{{ AppID }}-tab" data-toggle="tab" href="#{{ AppID }}-content" role="tab" >{{app.app_name}}</a>
+                                    </li>
+                                    {% endwith %}
+                                    {% endwith %}
+                                {% endfor%}
+
                             </ul>
 
 
@@ -106,6 +117,7 @@
                                     {% publication_status_banner object %}
                                 {% endif %}
                             </div>
+
                             <div id="lesson-content" style="display:none" class="tab-pane fade" role="tabpanel">
                                 <div class='lesson'>
                                     <h2>Welcome to HydroLearn!</h2>
@@ -134,6 +146,16 @@
                             <div id="map-content" style="display:none" class="tab-pane fade" role="tabpanel">
                                 {% map_container %}
                             </div>
+
+                            {% for app in module.app_refs.all %}
+                                {% with forloop.counter|stringformat:"s" as counter %}
+                                {% with "app-"|add:counter as AppID %}
+                                    <div id="{{ AppID }}-content" style="display:none" class="tab-pane fade" role="tabpanel">
+                                        {% show_app_ref_viewer AppID app %}
+                                    </div>
+                                {% endwith %}
+                                {% endwith %}
+                            {% endfor%}
 
                         </div>
 
@@ -182,6 +204,9 @@
         <!--lessons-->
         <script src="{% static 'module/js/Lesson_manager.js' %}"></script>
         <script src="{% static 'module/js/TableOfContents_manager.js' %}"></script>
+
+        <!--apps-->
+        <script src="{% static 'module/js/App_manager.js' %}"></script>
 
         <!--map-->
         <script src="{% static 'module/js/Map_manager.js' %}"></script>
@@ -291,6 +316,19 @@
                 var mapView = new MAP_VIEW('Map', Map_container, MAP_MGR);
                 VIEWPORT_MGR.Register_View(mapView, '#map-tab');
 
+
+                /* ---------------------------------
+                   create a view for each app associated with this lesson
+                   and another tab for adding additional apps
+                ---------------------------------*/
+
+                {% for app in module.app_refs.all %}
+                    {% with forloop.counter|stringformat:"s" as counter %}
+                    {% with "app-"|add:counter as AppID %}
+                        VIEWPORT_MGR.Register_View(new APP_VIEW('{{ AppID }}','#{{ AppID }}-content'), '#{{ AppID }}-tab');
+                    {% endwith %}
+                    {% endwith %}
+                {% endfor %}
 
 
                 /* ---------------------------------

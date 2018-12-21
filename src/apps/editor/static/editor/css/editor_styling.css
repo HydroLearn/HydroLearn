@@ -123,6 +123,39 @@
 .Toggle_edit_btn {
   float: right; }
 
+.content_form_controls {
+  background: #ececec;
+  width: 100%;
+  height: 50px;
+  padding: 8px;
+  margin-top: 15px;
+  border-radius: 7px; }
+  .content_form_controls .Submit_button {
+    float: left;
+    background: #85cfc1;
+    color: white;
+    font-weight: bold;
+    transition: all .2s; }
+    .content_form_controls .Submit_button:hover {
+      background: #31c55f; }
+  .content_form_controls .Cancel_button {
+    float: left;
+    margin: 0 10px;
+    background: #eaeaea;
+    font-weight: bold;
+    transition: all .2s; }
+    .content_form_controls .Cancel_button:hover {
+      background: #d2d2d2; }
+  .content_form_controls .Delete_button {
+    float: right;
+    margin: 0 10px;
+    background: #b1213c;
+    color: white;
+    font-weight: bold;
+    transition: all .2s; }
+    .content_form_controls .Delete_button:hover {
+      background: red; }
+
 #content_form .has_error {
   border: 1px dashed red;
   background: #ffeeee; }
