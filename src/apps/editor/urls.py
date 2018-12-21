@@ -14,17 +14,22 @@ from src.apps.editor.views import (
 
     editor_LessonView,
     editor_NewLessonView,
-    editor_LessonUpdateView,
-    editor_SectionUpdateView,
 
     editor_LessonCreateView,
-    editor_SectionCreateView,
-
+    editor_LessonUpdateView,
     editor_LessonDeleteView,
-    editor_SectionDeleteView,
 
     editor_LessonExportView,
     editor_LessonImportView,
+
+    editor_SectionCreateView,
+    editor_SectionUpdateView,
+    editor_SectionDeleteView,
+
+
+    editor_AppRefCreateView,
+    editor_AppRefUpdateView,
+    editor_AppRefDeleteView,
 )
 
 handler404 = 'src.editor.views.handler404'
@@ -57,7 +62,9 @@ urlpatterns = [
     url(r'^delete/(?P<slug>[^/]+)/$', editor_LessonDeleteView.as_view(), name="lesson_delete"),
     url(r'^delete/(?P<lesson_slug>[^/]+)/(?P<slug>[^/]+)/$', editor_SectionDeleteView.as_view(), name="section_delete"),
 
-    # editor detail view
+    url(r'^app/add/(?P<parent_lesson>[^/]+)/$', editor_AppRefCreateView.as_view(), name="app_ref_create"),
+    url(r'^app/edit/(?P<parent_lesson>[^/]+)/(?P<pk>[^/]+)/$', editor_AppRefUpdateView.as_view(), name="app_ref_edit"),
+    url(r'^app/delete/(?P<parent_lesson>[^/]+)/(?P<pk>[^/]+)/$', editor_AppRefDeleteView.as_view(), name="app_ref_delete"),
 
     # editor view for new lessons
     url(r'^new/$', editor_NewLessonView.as_view(), name="lesson_create"),

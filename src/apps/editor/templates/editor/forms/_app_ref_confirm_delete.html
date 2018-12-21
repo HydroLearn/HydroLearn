@@ -1,0 +1,8 @@
+<h3>Confirm Deletion</h3>
+
+<form method="post" action="{% url 'editor:app_ref_delete' lesson_slug object.pk %}">
+    {% csrf_token %}
+    <p>Are you sure you want to remove the application reference, "{{ object.app_name }}", from this Module? </p>
+
+    <p> This action is non-reversible!</p>
+</form>

@@ -22,7 +22,7 @@ from django.views.generic import (
     FormView
 )
 
-from django.http import JsonResponse, Http404, HttpResponseNotFound
+from django.http import JsonResponse, Http404, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404, render_to_response
 #from taggit.models import Tag
 from django.contrib.contenttypes.models import ContentType
@@ -44,9 +44,15 @@ from src.apps.core.models.QuizQuestionModels import (
     QuizAnswer,
 )
 
+from src.apps.core.models.HS_AppFrameModels import (
+    AppReference
+)
+
+
 from src.apps.editor.editor_queries import (
     get_editor_TOC_obj,
-    get_lesson_JSON_RAW, get_section_JSON_RAW)
+    get_lesson_JSON_RAW, get_section_JSON_RAW
+)
 
 from src.apps.editor.forms import (
 
@@ -58,6 +64,8 @@ from src.apps.editor.forms import (
     # editor_ExportLessonForm,
     # editor_ImportLessonForm,
 
+    editor_AppRefForm,
+
     editor_AnswerForm,
     editor_QuizQuestionForm,
 
@@ -65,7 +73,8 @@ from src.apps.editor.forms import (
 
     inlineQuizQuestionFormset,
     inlineQuizAnswerFormset,
-    BaseQuizQuestionFormset)
+    BaseQuizQuestionFormset
+)
 
 from src.apps.core.views.PublicationViews import (
     PublicationViewMixin,
@@ -302,6 +311,46 @@ class editor_SectionCreateView(LoginRequiredMixin, AjaxableResponseMixin, Create
         return super(editor_SectionCreateView, self).form_invalid(form, *args, **kwargs)
 
 
+class editor_AppRefCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
+    model = AppReference
+    template_name = 'editor/forms/_app_ref_form.html'
+    form_class = editor_AppRefForm
+    success_url = '/editor/success'
+
+    def get_context_data(self, **kwargs):
+        context = super(editor_AppRefCreateView, self).get_context_data(**kwargs)
+        context['lesson_slug'] = self.kwargs.get('parent_lesson', None)
+        return context
+
+    def get_failed_return_data(self, form):
+        return {
+            "errors": form.errors.as_json(),
+        }
+
+    def form_valid(self, form, *args, **kwargs):
+
+        # Find parent_lesson by using the passed slug in the URL
+        # this view may be called with or without specifying a parent lesson,
+        #   depending on if the
+        with transaction.atomic():
+            if self.kwargs.get('parent_lesson', None):
+                parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
+
+                if parent_lesson and parent_lesson.has_draft_access(self.request.user):
+                    new_ref = form.save(commit=False)
+                    new_ref.lesson = parent_lesson
+                    new_ref.save()
+
+                else:
+                    form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
+                    return self.form_invalid(form)
+        return super(editor_AppRefCreateView, self).form_valid(form, *args, **kwargs)
+
+    def form_invalid(self, form, *args, **kwargs):
+        return super(editor_AppRefCreateView, self).form_invalid(form, *args, **kwargs)
+
+
+
 #####################################################
 # UPDATE VIEWS
 #####################################################
@@ -350,6 +399,7 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
 
     def form_invalid(self, form, *args, **kwargs):
         return super(editor_LessonUpdateView, self).form_invalid(form, *args, **kwargs)
+
 
 class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, UpdateView):
     model = Section
@@ -515,6 +565,45 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
         }.get(self.section_type(), 'editor/forms/_reading_section_form.html')
 
 
+class editor_AppRefUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, UpdateView):
+    model = AppReference
+    template_name = 'editor/forms/_app_ref_form.html'
+    form_class = editor_AppRefForm
+    success_url = '/editor/success'
+
+    def get_context_data(self, **kwargs):
+        context = super(editor_AppRefUpdateView, self).get_context_data(**kwargs)
+        context['lesson_slug'] = self.kwargs.get('parent_lesson', None)
+        return context
+
+    def get_failed_return_data(self, form):
+        return {
+            "errors": form.errors.as_json(),
+        }
+
+    def form_valid(self, form, *args, **kwargs):
+
+        # Find parent_lesson by using the passed slug in the URL
+        # this view may be called with or without specifying a parent lesson,
+        #   depending on if the
+        with transaction.atomic():
+            if self.kwargs.get('parent_lesson', None):
+                parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
+
+                if parent_lesson and parent_lesson.has_draft_access(self.request.user):
+                    new_ref = form.save(commit=False)
+                    new_ref.lesson = parent_lesson
+                    new_ref.save()
+
+                else:
+                    form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
+                    return self.form_invalid(form)
+        return super(editor_AppRefUpdateView, self).form_valid(form, *args, **kwargs)
+
+    def form_invalid(self, form, *args, **kwargs):
+        return super(editor_AppRefUpdateView, self).form_invalid(form, *args, **kwargs)
+
+
 #####################################################
 # DELETE VIEWS
 #####################################################
@@ -538,6 +627,37 @@ class editor_SectionDeleteView(OwnershipRequiredMixin, DraftOnlyViewMixin, Ajaxa
     context_object_name = 'Section'
     template_name = "editor/forms/_section_confirm_delete.html"
     success_url = '/editor/success'
+
+
+class editor_AppRefDeleteView(AjaxableResponseMixin, DeleteView):
+    model = AppReference
+    template_name = "editor/forms/_app_ref_confirm_delete.html"
+    success_url = '/editor/success'
+
+    def get_object(self, queryset=None):
+        # get the requested parent
+        parent = Lesson.objects.get(slug=self.kwargs.get('parent_lesson', None))
+
+        # grab and return child app reference
+        if parent:
+            return parent.app_refs.get(pk=self.kwargs.get('pk', None))
+        else:
+            return None
+        #return super(editor_AppRefDeleteView, self).get_object(queryset)
+
+    def get_context_data(self, **kwargs):
+        context = super(editor_AppRefDeleteView, self).get_context_data(**kwargs)
+        context['lesson_slug'] = self.kwargs.get('parent_lesson', None)
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        if self.kwargs.get('parent_lesson', None):
+            parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
+
+            if parent_lesson and parent_lesson.has_draft_access(self.request.user):
+                return super().delete(request, *args, **kwargs)
+
+
 
 # DETAIL INHERITs:  (LoginRequiredMixin, PublicationViewMixin, DetailView)
 # CREATE INHERITs:  (LoginRequiredMixin, AjaxableResponseMixin, CreateView)

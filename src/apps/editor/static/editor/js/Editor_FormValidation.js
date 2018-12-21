@@ -111,6 +111,8 @@ function submit_content_form_evt(){
                             LESSON_MGR.Show_Section(response.data.updated_toc_obj.slug)
                         }else{
                             window.scrollTo(0,0)
+                            // show status message for a second, then refresh to updated lesson/section
+                            setTimeout(function(){window.location = window.location.href}, 1000)
                             TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.HIGHLIGHT_OBJ, [response.data.updated_toc_obj.slug])
                         }
 
