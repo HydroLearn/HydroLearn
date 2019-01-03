@@ -28,7 +28,7 @@
         </div>
 
     {% else %}
-
+        {% if parent_lesson %}
         <div class="app_form" data-parent-lesson="{{parent_lesson}}">
             <form method="post" action="{% url 'editor:app_ref_create' parent_lesson %}">
                 {% csrf_token %}
@@ -50,7 +50,10 @@
                 </div>
             </form>
         </div>
+        {% else %}
+        <div> Apps can only be added after creation of lesson!</div>
 
+        {% endif %}
     {% endif %}
 
 </div>
