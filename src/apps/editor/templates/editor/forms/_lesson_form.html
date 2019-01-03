@@ -41,7 +41,8 @@
                 </table>
 
 
-                <h4>Learning Objectives</h4>
+                <h4 style="display:inline-block;">Learning Objectives</h4>
+                <div id="add-objective-btn" style="float:right;" class="Submit_button btn btn-default"><i class="fas fa-plus-circle"></i> Add Objective</div>
                 <hr/>
 
                 <div id="learning_objectives_formset_empty"style="visibility: hidden">
@@ -64,7 +65,7 @@
                 </div>
                 <div>
                     {{ learning_objective_formset.management_form }}
-                    <button id="add-objective-btn">Add</button>
+
                 </div>
 
 
@@ -78,10 +79,6 @@
                 </div>
             </form>
 
-                                <div id="learning-objective-dialog" title="Add Learning Objective">
-                                  {% include "core/learning_objectives_dialog.html" %}
-                                </div>
-
 
         </div>
     {% endif %}
@@ -89,24 +86,21 @@
 </div>
 
 
-        {% addtoblock 'template_css'%}<link rel="stylesheet" href="{% static 'css/normalize.css' %}">{% endaddtoblock 'template_css'%}
-        {% addtoblock 'template_css'%}<link rel="stylesheet" href="{% static 'css/main.css' %}">{% endaddtoblock 'template_css'%}
-        {% addtoblock 'template_css'%}<link rel="stylesheet" href="{% static 'css/jquery.steps.css' %}">{% endaddtoblock 'template_css'%}
-
-        {% addtoblock 'template_js'%}<script src="{% static 'js/plugins/modernizr-2.6.2.min.js' %}"></script>{% endaddtoblock 'template_js'%}
-        {% addtoblock 'template_js'%}<script src="{% static 'js/plugins/jquery.cookie-1.3.1.js' %}"></script>{% endaddtoblock 'template_js'%}
-
-
-
+        <script src="{% static 'editor/js/Learning_obj_functionality.js' %}"></script>
 
         <script type='text/javascript'>
             $('#manage_form').load('{{ content_view }}')
+
             $("#add-objective-btn").click(function(event ) {
-                    event.preventDefault()
-                    lo_dialog.dialog( "open" );
-                } );
+                event.preventDefault()
+                resetWizard();
+                $("#learning-objective-dialog").dialog('open')
+            } );
 
             $(window).load(function () {
+
+                debugger;
+
                 $(".trigger_popup_fricc").click(function(){
                    $('.hover_bkgr_fricc').show();
                 });
@@ -118,33 +112,12 @@
                 });
             });
 
-            function updateABETSelection(checkbox, index){
-                if (checkbox.checked){
-                    var aText = $("#abet_text_" + index).text();
-                    $("#abet_outcomes").append("<li id='abet_" + index + "'>" + aText + "</li>");
-                }
-                else{
-                    $("#abet_" + index).remove();
-                }
-            };
+
             var verbsByKnowledge;
 
-            function updateActionList(knowledge){
-                if(!(typeof knowledge === 'string')) {
-                    knowledge = knowledge.value;
-                }
-                options = ["not found"];
-                $('#actionList').empty();
-                jQuery.each(verbsByKnowledge[knowledge], function(i, verb){
-                    $('#actionList').append(new Option(verb, verb, false, false));
-                });
-            };
 
-            function selectAction(actionValue){
-                $('.verbDisplay').each(function() {
-                    $(this).text(actionValue.value);
-                });
-            };
+
+
 
             $( document ).ready(function() {
                 var knowledgeOrder = JSON.parse("{{ knowledge_order|escapejs }}");
@@ -177,19 +150,6 @@
 
             });
 
-            $( function() {
-                lo_dialog = $( "#learning-objective-dialog" ).dialog({
-                    autoOpen: false,
-                    width: 1200,
-                    modal: true,
-                    close: function() {
-                        //TODO handle form here?
-                    }
-                });
-
-            });
-
-
             $('.LO_form').formset({
 
                 formCssClass: "LO_form",
@@ -208,7 +168,8 @@
             $("#wizardLO").steps({
                 headerTag: "h2",
                 bodyTag: "section",
-                transitionEffect: "slideLeft",
+                transitionEffect: "fade",
+
                 onStepChanging: function (event, currentIndex, newIndex)
                 {
                     // Always allow previous action even if the current form is not valid
@@ -266,52 +227,9 @@
                 }
             });
 
-            function updateLearningObjective(form, values_dictionary){
-                form.find('input[name$=condition]').val(values_dictionary['condition']);
-                form.find('input[name$=task]').val(values_dictionary['task']);
-                form.find('input[name$=degree]').val(values_dictionary['degree']);
-                form.find('input[name$=level]').val(values_dictionary['level']);
-                form.find('input[name$=verb]').val(values_dictionary['verb']);
-                form.find('input[name$=outcomes]').val(values_dictionary['outcomes']);
 
-                var learn = values_dictionary["condition"] + " " + values_dictionary["verb"] + " " + values_dictionary["task"] + " " + values_dictionary["degree"];
-                form.find('div.LO_representation').last().html(learn);
-            }
 
-            function resetWizard(){
-                // reset inputs
-                $("#condition").val("");
-                $("#task").val("");
-                $("#degree").val("");
-                $("#actionText").val("");
-                updateActionList("Remembering");
-                $("#outcomes_selection input:checked").map(function(){
-                                              return $(this).prop('checked', false);
-                                            }).get();
-                $("#knowledgeSelection").prop("selectedIndex", 0).change();
 
-                // reset displays
-                $('.conditionDisplay').each(function() {
-                    $(this).text("");
-                });
-                $('.taskDisplay').each(function() {
-                    $(this).text("");
-                });
-                $('.degreeDisplay').each(function() {
-                    $(this).text("");
-                });
-                $('.verbDisplay').each(function() {
-                    $(this).text("");
-                });
-                $("#abet_outcomes").empty();
-
-                // click back to beginning
-                $('a[href="#previous"]').click();
-                $('a[href="#previous"]').click();
-                $('a[href="#previous"]').click();
-                $('a[href="#previous"]').click();
-                $('a[href="#previous"]').click();
-            }
 
             // remove the inital row... TODO, this will be removed when we're hooked into the backend?
             $('.delete-row').click()

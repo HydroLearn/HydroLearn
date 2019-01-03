@@ -68,6 +68,20 @@ $(document).ready(function() {
             }
     });
 
+    $('#learning-objective-dialog').dialog({
+        autoOpen: false,
+        draggable: false,
+        modal: true,
+        resizable: false,
+//        width: '450px',
+        width: "80%",
+        maxHeight: window.innerHeight - 50,
+
+        open: function() {
+                place_dialog_center($(this));
+            }
+    })
+
     $('#lesson-nav-denied-confirm').click(function(){
         $('#lesson-nav-denied-dialog').dialog('close')
     })
@@ -84,6 +98,28 @@ $(document).ready(function() {
 
         if ($("#form-confirmation-dialog").dialog("isOpen") === true) {
             place_dialog_center($("#form-confirmation-dialog"));
+        }
+
+        if ($("#learning-objective-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#learning-objective-dialog"));
+        }
+    });
+
+    $(window).resize(function() {
+        if ($("#lesson-nav-warning-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#lesson-nav-warning-dialog"));
+        }
+
+        if ($("#lesson-nav-denied-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#lesson-nav-denied-dialog"));
+        }
+
+        if ($("#form-confirmation-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#form-confirmation-dialog"));
+        }
+
+        if ($("#learning-objective-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#learning-objective-dialog"));
         }
     });
 
@@ -102,9 +138,10 @@ function place_dialog_center(dialog_obj) {
 
     //$(dialog_obj).parent('.ui-dialog').css('top', window_height / 2 - $(dialog_obj).height() + scroll_top);
     //$(dialog_obj).parent('.ui-dialog').css('left', window_width / 2 - $(dialog_obj).width() / 2 + scroll_left);
-
-
     $(dialog_obj).parent('.ui-dialog').css('top', 50 + scroll_top);
+
+    // set max height for dialog to avoid scrollable background
+    $(dialog_obj).dialog('option', 'maxHeight', window.innerHeight - 50)
 
 }
 

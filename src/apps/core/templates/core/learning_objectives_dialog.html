@@ -1,90 +1,16 @@
 {% load static sekizai_tags %}
 
 
-    <style>
-        .redtext {
-            color: red;
-            font-size: small;
-        }
-        .inputtext {
-            width: 500px;
-        }
-        .purpletext {
-            color: purple;
-        }
-        .whitetext {
-            color: white;
-        }
-        /* Popup box BEGIN */
-        .hover_bkgr_fricc{
-            background:rgba(0,0,0,.4);
-            cursor:pointer;
-            display:none;
-            height:100%;
-            position:fixed;
-            text-align:center;
-            top:0;
-            width:100%;
-            z-index:10000;
-        }
-        .hover_bkgr_fricc .helper{
-            display:inline-block;
-            height:100%;
-            vertical-align:middle;
-        }
-        .hover_bkgr_fricc > div {
-            background-color: #fff;
-            box-shadow: 10px 10px 60px #555;
-            display: inline-block;
-            height: auto;
-            min-height: 100px;
-            vertical-align: middle;
-            text-align:left;
-            width: 65%;
-            position: relative;
-            border-radius: 8px;
-            padding: 15px 5%;
-        }
-        .popupCloseButton {
-            background-color: #fff;
-            border: 3px solid #999;
-            border-radius: 50px;
-            cursor: pointer;
-            display: inline-block;
-            font-family: arial;
-            font-weight: bold;
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            font-size: 25px;
-            line-height: 30px;
-            width: 30px;
-            height: 30px;
-            text-align: center;
-        }
-        .popupCloseButton:hover {
-            background-color: #ccc;
-        }
-        .trigger_popup_fricc {
-            cursor: pointer;
-            font-size: 20px;
-            margin: 20px;
-            display: inline-block;
-            font-weight: bold;
-        }
-        /* Popup box END */
-    </style>
-
-
 <!--[if lt IE 7]>
     <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
 
 <div class="content">
+    <a class="trigger_popup_fricc"><i class="fa fa-question-circle"></i></a>
+
     <form id="wizardLO" action="#">
 <!-- Section 1 -->
         <h2>Describe</h2>
-        <a class="trigger_popup_fricc">help</a>
         <section>
             <h3>Learning Objective:</h3>
             <span class="conditionDisplay"></span>
@@ -93,7 +19,7 @@
             <span class="degreeDisplay"></span>...<br/><br/>
 
             <h3>What's the condition?</h3>
-            <label for="condition" class="redtext"><i>Describe the condition under which the student will perform the described behavior in the gray box:</i></label>
+            <label for="condition" class="redtext"><i>Describe the condition under which the student will perform the described behavior:</i></label>
             <input class="inputtext required" id="condition" name="condition" type="text">
             <h3>Examples:</h3>
             <ul>
@@ -119,29 +45,43 @@
             <input id="actionText" list="actionList" onchange="selectAction(this);" type="text">
             <datalist id="actionList"></datalist>
             </br>
-            <table>
-                <tr>
-                    <td><i>Based on Bloom's Taxonomy</i></td>
-                </tr>
-                <tr>
-                    <td bgcolor="green" class="whitetext">Remembering (level 1)</br>Remembering involves recognizing or recalling relevant facts, terms, concepts, knowledge, or answers.</td>
-                </tr>
-                <tr>
-                    <td bgcolor="#9acd32" class="whitetext">Understanding (level 2)</br>Understanding involved constructing meaning from instructional messages.</td>
-                </tr>
-                <tr>
-                    <td bgcolor="orange" class="whitetext">Applying (level 3)</br>Applying involves using ideas and concepts to solve problems.</td>
-                </tr>
-                <tr>
-                    <td bgcolor="blue" class="whitetext">Analyzing (level 4)</br>Involves breaking something down into components, seeing relationships and overall structure.</td>
-                </tr>
-                <tr>
-                    <td bgcolor="purple" class="whitetext">Evaluating (level 5)</br>Involves making judgments based on criteria and standards</td>
-                </tr>
-                <tr>
-                    <td bgcolor="red" class="whitetext">Creating (level 6)</br>Involves reorganizing diverse elements to form a new pattern or structure</td>
-                </tr>
-            </table>
+            <div class="bloom_table styledTable">
+                <div class="row">
+                    <div class="cell header">Difficulty</div>
+                    <div class="cell header">Based on Bloom's Taxonomy</div>
+                    <div class="cell header">Description</div>
+                </div>
+                <div class="row">
+                    <div class="cell level1 whitetext">Level 1</div>
+                    <div class="cell level1 whitetext bold">Remembering</div>
+                    <div class="cell level1 whitetext">Recognizing or recalling relevant facts, terms, concepts, knowledge, or answers.</div>
+                </div>
+                <div class="row">
+                    <div class="cell level2 whitetext">Level 2</div>
+                    <div class="cell level2 whitetext bold">Understanding</div>
+                    <div class="cell level2 whitetext">Constructing meaning from instructional messages.</div>
+                </div>
+                <div class="row">
+                    <div class="cell level3 whitetext">Level 3</div>
+                    <div class="cell level3 whitetext bold">Applying </div>
+                    <div class="cell level3 whitetext">Using ideas and concepts to solve problems.</div>
+                </div>
+                <div class="row">
+                    <div class="cell level4 whitetext">Level 4</div>
+                    <div class="cell level4 whitetext bold">Analyzing</div>
+                    <div class="cell level4 whitetext">Breaking something down into components, seeing relationships and overall structure.</div>
+                </div>
+                <div class="row">
+                    <div class="cell level5 whitetext">Level 5</div>
+                    <div class="cell level5 whitetext bold">Evaluating</div>
+                    <div class="cell level5 whitetext">Making judgments based on criteria and standards</div>
+                </div>
+                <div class="row">
+                    <div class="cell level6 whitetext">Level 6</div>
+                    <div class="cell level6 whitetext bold">Creating </div>
+                    <div class="cell level6 whitetext">Reorganizing diverse elements to form a new pattern or structure</div>
+                </div>
+            </div>
         </section>
 <!-- Section 3 -->
         <h2>Task</h2>
