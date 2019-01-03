@@ -182,11 +182,14 @@ APP_VIEW.prototype = Object.create(View.prototype)
 
 
 function resize_app_wrapper(){
+    
+    if($(".app_viewer_wrapper").length){
+        var w_height = window.innerHeight
+        var content_top = $(".app_viewer_wrapper").offset().top
+        var footer_height = $('#footer').outerHeight()
+        var calc_height = w_height - content_top - footer_height;
 
-    var w_height = window.innerHeight
-    var content_top = $(".app_viewer_wrapper").offset().top
-    var footer_height = $('#footer').outerHeight()
-    var calc_height = w_height - content_top - footer_height;
+        $('.app_viewer_wrapper').height(calc_height)
+    }
 
-    $('.app_viewer_wrapper').height(calc_height)
 }
