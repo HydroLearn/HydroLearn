@@ -463,13 +463,15 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
 
             if learning_objective_formset.is_valid():
                 if learning_objective_formset.has_changed():
-                    for lo in learning_objective_formset:
-                        if lo.has_changed():
-                            lo.save(lesson)
 
                     # delete any learning_objectives marked for deletion
                     for deleted_lo in learning_objective_formset.deleted_forms:
                         deleted_lo.delete()
+
+                    for lo in learning_objective_formset:
+                        if lo.has_changed() and not lo.cleaned_data.get('DELETE'):
+                            lo.save(lesson)
+
 
                     lesson.save()
                     form.save_m2m()

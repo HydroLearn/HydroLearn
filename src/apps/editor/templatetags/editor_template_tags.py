@@ -73,3 +73,16 @@ def show_app_ref_form(parent_lesson, app=None):
         'form': form,
         'parent_lesson': parent_lesson,
     }
+
+@register.inclusion_tag('editor/forms/_learning_obj_formset.html')
+def show_learningObj_formset(formset):
+    return {
+        'formset':formset,
+    }
+
+@register.inclusion_tag('editor/forms/_learning_obj_form.html')
+def show_learningObj_form(form, can_delete=False):
+    return {
+        'form': form,
+        'can_delete': can_delete,
+    }

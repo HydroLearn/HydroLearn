@@ -33,6 +33,17 @@
             </h2>
             <hr class="headerSpacer">
 
+             <div id="learning_objectives_formset_empty">
+                <div id="LO_Empty_form" class="LO_form form_row" style="display:none;">
+                    {% show_learningObj_form learning_objective_formset.empty_form %}
+
+                    {% comment %}
+                    <div class="LO_representation"></div>
+                    {{ learning_objective_formset.empty_form }}
+                    {% endcomment %}
+                </div>
+            </div>
+
             <form id="content_form" action="{{ request.path }}" method="post">
                 {% csrf_token %}
                 {{ form.media }}
@@ -41,16 +52,14 @@
                 </table>
 
 
-                <h4 style="display:inline-block;">Learning Objectives</h4>
-                <div id="add-objective-btn" style="float:right;" class="Submit_button btn btn-default"><i class="fas fa-plus-circle"></i> Add Objective</div>
-                <hr/>
 
-                <div id="learning_objectives_formset_empty"style="visibility: hidden">
-                    <div id="LO_Empty_form">
-                        <div class="LO_representation"></div>
-                        {{ learning_objective_formset.empty_form }}
-                    </div>
-                </div>
+                <div id="add-objective-btn" style="float:right;" class="Submit_button btn btn-default"><i class="fas fa-plus-circle"></i> Add Objective</div>
+
+
+                {% show_learningObj_formset learning_objective_formset %}
+
+
+                {% comment %}
                 <div id="learning_objectives_formset">
                     {% for lo_form in  learning_objective_formset.forms %}
                         <div id="{{ lo_form.prefix }}" class="LO_form">
@@ -65,8 +74,10 @@
                 </div>
                 <div>
                     {{ learning_objective_formset.management_form }}
-
                 </div>
+                {% endcomment %}
+
+
 
 
                 <div id="content_form_controls">
@@ -97,9 +108,7 @@
                 $("#learning-objective-dialog").dialog('open')
             } );
 
-            $(window).load(function () {
-
-                debugger;
+            $(window).ready(function () {
 
                 $(".trigger_popup_fricc").click(function(){
                    $('.hover_bkgr_fricc').show();
@@ -112,12 +121,7 @@
                 });
             });
 
-
             var verbsByKnowledge;
-
-
-
-
 
             $( document ).ready(function() {
                 var knowledgeOrder = JSON.parse("{{ knowledge_order|escapejs }}");
@@ -160,9 +164,28 @@
 
                 // this will remove the text from the add button so you don’t need to hide it
                 addText: "",
+                deleteText: "",
 
                 // specify the empty form representation
                 formTemplate: "#LO_Empty_form",
+
+                addCssClass: 'LO_fs_add',
+                deleteCssClass: 'LO_fs_remove',
+
+                // perform actions on add
+                added: function(row){
+
+                    // on add replace the text of the remove
+                    // button with the delete glyph-icon
+                    var remove_btn = $(row).find('.LO_fs_remove');
+
+                    // example: <i class="fas fa-trash glyph-button glyph-delete"></i>
+                    remove_btn.html($('<i>', {class: 'fas fa-trash glyph-button glyph-delete'}))
+
+                    // move the remove button into the last cell
+                    $(row).find('.form_cell').last().append(remove_btn)
+                },
+
             });
 
             $("#wizardLO").steps({
@@ -204,6 +227,9 @@
 
                 onFinished: function (event, currentIndex)
                 {
+                    // add the new form row for this learning objective
+                    //$('.LO_fs_add').click()
+
                     var outcomes_ids = $("#outcomes_selection input:checked").map(function(){
                                           return $(this).val();
                                         }).get();
@@ -218,7 +244,7 @@
                     // add the new form
                     var learning_objective_form = $('.LO_form').last();
                     if(learning_objective_form.attr('id') !== "learning_objective_set-0" || learning_objective_form.find(".LO_representation").text() !== ''){
-                        $('.add-row').click();
+                        $('.LO_fs_add').click();
                         learning_objective_form = $('.LO_form').last();
                     }
                     updateLearningObjective(learning_objective_form, values_dictionary);
@@ -227,10 +253,31 @@
                 }
             });
 
+            // if any learning objective forms have been populated without a value (the extra form)
+            // remove it from the listing
+            $('.LO_form').each(function(index, form){
+                if($(this).find('.LO_representation').text().trim() == ""){
+                    $(this).remove()
+                }
+            })
+
+            // initialize any existing delete buttons for existing forms
+            $('#learning_objectives_formset .form_delete').click(function(del_event){
+
+                var form = $(del_event.target).closest('.form_row')
+                var deletion_state = form.hasClass('deleted_form');
+
+                // add styling class to the form row
+
+                if(deletion_state){
+                    form.removeClass('deleted_form');
+                    form.find('input[name$="DELETE"]').removeAttr('value')
+
+                }else{
+                    form.addClass('deleted_form');
+                    form.find('input[name$="DELETE"]').attr('value',!deletion_state)
+                }
+            });
 
 
-
-
-            // remove the inital row... TODO, this will be removed when we're hooked into the backend?
-            $('.delete-row').click()
         </script>

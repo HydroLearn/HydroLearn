@@ -131,6 +131,7 @@ $(document).ready(function() {
 
 // method to keep a given dialog box centered on screen based upon viewport size
 function place_dialog_center(dialog_obj) {
+    debugger;
     var window_height = $(window).height();
     var window_width = $(window).width();
     var scroll_top = $(window).scrollTop();

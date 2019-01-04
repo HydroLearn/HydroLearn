@@ -22,6 +22,8 @@ from src.apps.core.models.PublicationModels import (
     PolyPublicationChild
 )
 
+from src.apps.core.models.HS_AppFrameModels import AppReference
+
 from cms.utils.copy_plugins import copy_plugins_to
 
 User = settings.AUTH_USER_MODEL
@@ -395,6 +397,7 @@ class Lesson(Publication):
         # appear on the public version of the page
         self.sections.delete()
         self.sub_lessons.delete()
+        #self.app_refs.delete()
 
         for section_item in from_instance.sections.all():
             # copy the section items and set their linked lesson to this new instance
@@ -419,6 +422,14 @@ class Lesson(Publication):
             new_lesson.save()
             new_lesson.copy_content(sub_lesson)
             new_lesson.copy_children(sub_lesson, maintain_ref)
+
+        for app_ref in from_instance.app_refs.all():
+            new_ref = AppReference(
+                app_name=app_ref.app_name,
+                app_link=app_ref.app_link,
+                lesson=self,
+            )
+            new_ref.save()
 
     def copy_content(self, from_instance):
         '''

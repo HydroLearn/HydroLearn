@@ -297,8 +297,10 @@ class Learning_ObjectiveTextForm(forms.ModelForm):
             self.instance.lesson = lesson
         self.instance.verb_id = self.cleaned_data.get("verb").pk
         self.instance.save()
-        for outcome in self.cleaned_data.get("outcomes"):
-            self.instance.outcomes.add(outcome)
+        outcomes = self.cleaned_data.get("outcomes")
+        if outcomes:
+            for outcome in self.cleaned_data.get("outcomes"):
+                self.instance.outcomes.add(outcome)
         return super().save()
 
     def delete(self):

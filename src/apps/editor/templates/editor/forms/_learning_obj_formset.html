@@ -1,0 +1,38 @@
+{% load static editor_template_tags %}
+
+<div id="learning_objectives_formset" class="dynamic_formset">
+
+    {% if formset %}
+
+        <div class="formset_header_row">
+
+            <div class="formset_header_cell">Learning Objectives</div>
+
+
+            {% if formset.can_delete  %}
+                <div class="formset_header_cell">Remove</div>
+            {% endif %}
+
+            <div class="formset_errors">{{ formset.non_form_errors }}</div>
+            <div class="mgmt_form">
+                {{ formset.management_form }}
+                {{ formset.media }}
+            </div>
+        </div>
+
+
+        {% for form in formset %}
+            <div class="form_row LO_form">
+                {% show_learningObj_form form formset.can_delete %}
+            </div>
+        {% endfor %}
+
+
+
+
+    {% endif %}
+
+</div>
+
+
+
