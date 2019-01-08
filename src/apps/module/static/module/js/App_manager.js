@@ -182,7 +182,7 @@ APP_VIEW.prototype = Object.create(View.prototype)
 
 
 function resize_app_wrapper(){
-    
+
     if($(".app_viewer_wrapper").length){
         var w_height = window.innerHeight
         var content_top = $(".app_viewer_wrapper").offset().top

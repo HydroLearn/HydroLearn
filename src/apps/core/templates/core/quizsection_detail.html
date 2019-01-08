@@ -1,12 +1,13 @@
 <!--extend this to provide a detail view for a module-->
-{% extends CMS_TEMPLATE %}
-{% load cms_tags sekizai_tags static thumbnail %}
+{% extends "layout.html" %}
+
+{% load sekizai_tags static thumbnail %}
 
 {% block content %}
     {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
     <div id="section-detail">
         <h1>CORE QUIZ SECTION DETAIL</h1>
-        <h3>{% render_model object 'name' %}</h3>
+        <h3>{{ object.name }}</h3>
         <div id="meta_box">            
             <div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ object.slug }}</div>
             <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>
@@ -40,17 +41,18 @@
             <div id='lesson-content'>
                 <div class='lesson'>
                     
-                    <h2 class="lesson-header">{% render_model object 'name' %}</h2>
+                    <h2 class="lesson-header">{{ object.name }}</h2>
                     <hr class="headerSpacer">
                     <div>
                         {% for question in object.quiz_question_item.all %}
 
-                        question {{question.ref_id}}: ({{ question.polymorphic_ctype }}){% render_placeholder question.question_text %}
+                        question {{question.ref_id}}: ({{ question.polymorphic_ctype }})
+                        {# render_placeholder question.question_text #} {{ question.question_text }}
 
 
                             {% for answer in question.answer_item.all %}
                                 <p>
-                                    <span>Answer: {% render_placeholder answer.answer_text %}</span>
+                                    <span>Answer: {{ answer.answer_text }}</span>
                                     (<span>correct?: {{ answer.is_correct }}</span>)
                                 </p>
                             {% empty %}

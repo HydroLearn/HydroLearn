@@ -28,9 +28,8 @@ from django.views.generic import (
 
 from django.http import JsonResponse, Http404, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404, render_to_response
-#from taggit.models import Tag
 from django.contrib.contenttypes.models import ContentType
-#from django.views.generic.base import TemplateResponseMixin
+
 
 
 from src.apps.core.models.ModuleModels import (
@@ -83,12 +82,14 @@ from src.apps.editor.forms import (
 from src.apps.core.views.PublicationViews import (
     PublicationViewMixin,
     PublicationChildViewMixin,
-    DraftOnlyViewMixin)
+    DraftOnlyViewMixin,
+)
 
 from src.apps.core.views.mixins import (
     AjaxableResponseMixin,
     OwnershipRequiredMixin,
     CollabViewAccessMixin,
+    UserAwareFormMixin,
 )
 
 from src.apps.core.forms import ResourceInline
@@ -99,7 +100,7 @@ from src.apps.core.forms import ResourceInline
 # CREATE VIEWS
 #####################################################
 
-class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
+class editor_LessonCreateView(LoginRequiredMixin, UserAwareFormMixin, AjaxableResponseMixin, CreateView):
     model = Lesson
     context_object_name = 'Lesson'
     template_name = 'editor/forms/_lesson_form.html'
@@ -148,7 +149,7 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 
         return context
 
-    def get_success_return_data(self,form):
+    def get_success_return_data(self, form):
         return {
             "slug": form.instance.slug,
              "updated_toc_obj": get_lesson_JSON_RAW(form.instance.slug),
@@ -204,7 +205,8 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
     def form_invalid(self, form, *args, **kwargs):
         return super(editor_LessonCreateView, self).form_invalid(form, *args, **kwargs)
 
-class editor_SectionCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
+
+class editor_SectionCreateView(LoginRequiredMixin, UserAwareFormMixin, AjaxableResponseMixin, CreateView):
     model = Section
     context_object_name = 'Section'
     template_name = 'editor/forms/_section_form.html'
@@ -401,7 +403,7 @@ class editor_AppRefCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
 # UPDATE VIEWS
 #####################################################
 
-class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, UpdateView):
+class editor_LessonUpdateView(CollabViewAccessMixin, UserAwareFormMixin, AjaxableResponseMixin, UpdateView):
     model = Lesson
     context_object_name = 'Lesson'
     template_name = 'editor/forms/_lesson_form.html'
@@ -425,7 +427,7 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
             context['content_view'] = self.object.manage_url
         else:
             context['manage_denied_message'] = "You can view this Lesson, but don't have edit access! If you require edit access, please contact the owner."
-            context['content_view'] = reverse('modules:lesson_content', kwargs={ 'slug': self.object.slug })
+            context['content_view'] = reverse('module:lesson_content', kwargs={ 'slug': self.object.slug })
 
         context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST or None, instance=self.object)
 
@@ -488,7 +490,7 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
         return super(editor_LessonUpdateView, self).form_valid(form, *args, **kwargs)
 
 
-class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, UpdateView):
+class editor_SectionUpdateView(CollabViewAccessMixin, UserAwareFormMixin, AjaxableResponseMixin, UpdateView):
     model = Section
     context_object_name = 'Section'
     template_name = 'editor/forms/_section_form.html'
@@ -540,7 +542,7 @@ class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upd
 
         else:
             context['manage_denied_message'] = "You can view this Section, but don't have edit access! If you require edit access, please contact the owner."
-            context['content_view'] = reverse('modules:section_content', kwargs={'lesson_slug': self.object.lesson.slug,'slug': self.object.slug})
+            context['content_view'] = reverse('module:section_content', kwargs={'lesson_slug': self.object.lesson.slug,'slug': self.object.slug})
 
         return context
 
@@ -760,9 +762,9 @@ class editor_LessonView(LoginRequiredMixin, PublicationViewMixin, DraftOnlyViewM
 
         # if accessing this page out of edit mode trigger a redirect
         # edit enabled view
-        if not self.request.toolbar.edit_mode_active:
-            current_partial = request.GET.get('v','')
-            return redirect(self.request.path_info + '?edit&v=' + current_partial)
+        # if not self.request.toolbar.edit_mode_active:
+        #     current_partial = request.GET.get('v','')
+        #     return redirect(self.request.path_info + '?edit&v=' + current_partial)
 
 
         # TODO: THIS IS HACKY, FIND A BETTER WAY
@@ -926,7 +928,7 @@ class editor_LessonExportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
             if retained:
 
                 # if retaining the lesson being exported, generate a copy
-                new_copy = exported_lesson.copy()
+                new_copy = exported_lesson.copy(self.request.user)
 
                 new_copy.created_by = self.request.user
                 new_copy.parent_lesson = None
@@ -934,7 +936,7 @@ class editor_LessonExportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
 
                 new_copy.save()
                 new_copy.copy_content(exported_lesson)
-                new_copy.copy_children(exported_lesson)
+                new_copy.copy_children(self.request.user, exported_lesson)
 
             else:
                 # otherwise just remove the parent reference and save
@@ -1053,15 +1055,14 @@ class editor_LessonImportView(LoginRequiredMixin, PublicationViewMixin, DraftOnl
 
             if retained:
                 # if retaining the lesson being imported generate a copy
-                new_copy = imported_lesson.copy()
+                new_copy = imported_lesson.copy(self.request.user)
 
-                new_copy.created_by = self.request.user
                 new_copy.parent_lesson = parent_lesson
                 new_copy.position = parent_lesson.num_children
 
                 new_copy.save()
                 new_copy.copy_content(imported_lesson)
-                new_copy.copy_children(imported_lesson)
+                new_copy.copy_children(self.request.user, imported_lesson)
 
                 # set the return slug for this view
                 self.imported_lesson_slug_return = new_copy.slug

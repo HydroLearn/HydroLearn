@@ -1,6 +1,7 @@
 <!--extend this to provide a detail view for a module-->
-{% extends CMS_TEMPLATE %}
-{% load cms_tags sekizai_tags static thumbnail %}
+{% extends "layout.html" %}
+
+{% load sekizai_tags static thumbnail %}
 
 {% block content %}
     {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
@@ -8,7 +9,7 @@
     <h1>CORE LESSON DETAIL</h1>
     <div class="lesson">
 
-        <h3>{% render_model lesson 'name' %}</h3>
+        <h3>{{ object.name }}</h3>
 
         <div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ object.slug }}</div>
         <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>

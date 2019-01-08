@@ -3,6 +3,7 @@ from django.conf.urls import url
 from src.apps.core.views.ModuleViews import *
 
 # 'core' app urls
+app_name = 'core'
 urlpatterns = [
     
     # url(r'^tag/(?P<slug>[-\w]+)/$', TagIndexView.as_view(), name='tagged'),

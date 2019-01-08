@@ -455,6 +455,12 @@ a {
     position: absolute;
     right: 20px;
     font-size: 0.6em; }
+  #sidebar #navigation ul {
+    margin: 0; }
+    #sidebar #navigation ul li {
+      width: 100%; }
+      #sidebar #navigation ul li a {
+        width: 100%; }
   #sidebar ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;

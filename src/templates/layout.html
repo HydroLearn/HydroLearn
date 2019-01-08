@@ -1,4 +1,4 @@
-{% load menu_tags sekizai_tags static %}
+{% load sekizai_tags static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,10 +62,6 @@
         </script>
     {% endif %}
 
-    <div id="base-cms-toolbar-container" class="noshow">
-        {% block load_cms_toolbar %}{% endblock load_cms_toolbar %}
-    </div>
-
 
     <div class="sidebar_wrapper">
 
@@ -82,8 +78,6 @@
                         <a class="nav-link" id="navigation-tab" data-toggle="tab" href="#navigation" role="tab" aria-controls="navigation" aria-selected="false">Navigation</a>
                     </li>
 
-
-
                     {% block sidebar_nav_links %}{% endblock sidebar_nav_links %}
 
                 </ul>
@@ -98,9 +92,11 @@
 
                     <div class="tab-pane fade" id="navigation" role="tabpanel" aria-labelledby="navigation-tab">
                         <!-- Sidebar Links -->
-                        <ul class="list-unstyled components">
-                            {% show_menu 0 100 100 100 %}
-                        </ul>
+                        <!--<ul class="list-unstyled components">-->
+                            {# show_menu 0 100 100 100 #}
+                            {% include 'shared/_navbar.html' %}
+
+                        <!--</ul>-->
                     </div>
 
                     {% block sidebar_nav_content %}{% endblock sidebar_nav_content %}
@@ -133,9 +129,11 @@
                         <a class="navbar-brand" href="/" title="Return Home"><div class="logo"></div></a>
 
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                          <ul class="nav navbar-nav navbar-right">
-                            {% show_menu 0 100 100 100 %}
-                          </ul>
+                          <!--<ul class="nav navbar-nav navbar-right">-->
+                            {# show_menu 0 100 100 100 #}
+                            {% include 'shared/_navbar.html' %}
+
+                          <!--</ul>-->
                         </div>
 
                     </div>
@@ -159,7 +157,7 @@
                         <div class="container">
                             <!--<div class="footer-nav collapse navbar-collapse" id="bs-example-navbar-collapse-1">-->
                                 <!--<ul class="nav navbar-nav navbar-right">-->
-                                    <!--{% show_menu 0 100 100 100 %}-->
+                                    <!--{# show_menu 0 100 100 100 #}-->
                                     <!--&lt;!&ndash;<li><a href="#home" class="page-scroll">Home</a></li>&ndash;&gt;-->
                                 <!--</ul>-->
                             <!--</div>-->

@@ -1,8 +1,5 @@
 <!--extend this to provide a detail view for a module-->
-{% extends 'content.html' %}
-{% load cms_tags sekizai_tags static thumbnail %}
-
-{% block subtitle%} - Manage Lesson {% endblock subtitle %}
+{% load sekizai_tags static thumbnail %}
 
 {% block content %}
     {% addtoblock "template_css" %}
@@ -21,7 +18,11 @@
         <hr>
         <div>
 
-            {% render_placeholder object.content %}
+            {% if object.content %}
+                {{ object.content }}
+            {% else %}
+                <p>This Reading section doesn't appear to have any content, you can populate this from the edit interface.</p>
+            {% endif %}
         </div>
     </div>
 

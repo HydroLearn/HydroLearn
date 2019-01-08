@@ -1,4 +1,4 @@
-import datetime
+from django.utils.timezone import now
 import uuid
 from django.conf import settings
 from django.db import models, transaction
@@ -43,7 +43,6 @@ User = settings.AUTH_USER_MODEL
     
     
 '''
-
 class Publication(CreationTrackingBaseModel):
     class Meta:
         app_label = 'core'
@@ -144,9 +143,12 @@ class Publication(CreationTrackingBaseModel):
 
         target.pub_id = self.pub_id
 
-    def revert_to_live(self):
+    def revert_to_live(self, user=None):
         ''' if there is a published copy, revert the current draft to the published version
         '''
+        assert user, "User reverting publication must be provided."
+        assert user == self.get_owner(), "Only the owner can revert a publication!"
+
         # assert that we can only revert a draft copy
         assert self.is_draft, "Cannot 'revert_to_live' a published copy. Use draft copy."
 
@@ -162,16 +164,16 @@ class Publication(CreationTrackingBaseModel):
 
             self.save()
 
-    def copy(self, maintain_ref=False):
+    def copy(self, user=None, maintain_ref=False):
         raise NotImplemented("Objects Inheriting from Publication must provide a 'copy' method to generate a new instance! (don't call this super method)")
 
     def copy_content(self, from_instance):
         raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_content' method to copy over content fields after saving a new 'copy'! (don't call this super method)")
 
-    def copy_children(self, from_instance, maintain_ref=False):
+    def copy_children(self, user=None, from_instance=None, maintain_ref=False):
         raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_children' method for copying any child objects! (don't call this super method)")
 
-    def publish(self):
+    def publish(self, user=None):
         '''
             Generate a new published copy for a Draft (publication with is_draft == True)
             or throw error if attempting to publish a published copy. (cant publish 'a publication', only 'a draft')
@@ -179,75 +181,78 @@ class Publication(CreationTrackingBaseModel):
         '''
 
         '''
-            TODO: 
+            TODO:
                 -   Modify this method to maintain a 'publish' copy instead of deleting it (maintaining the slug)
                 -   implement a linkage between 'past publications' and the current publication
                 -   determine if publication linkage should be utilizing the same FK relationship as 'draft/publish'
                     or if a new key relationship should be added. (should be able to get away with the same ideally)
-                    
-                
-            ideal method will be: 
+
+
+            ideal method will be:
                 - copy the current publication and store it. (linked to the current published copy)
                 - update the current publication with the content of the current draft.
-                
-                
-            
-            
-        '''
 
+
+
+
+        '''
+        assert user, "User performing Publish must be provided."
+        assert user == self.get_owner(), "Only The owner is allowed to Publish!"
         assert self.is_draft, "Published instance cannot be published. Use Draft"
 
 
         with transaction.atomic():
             # if there's an existing publication, delete it (hopefully this wont delete the draft too...)
-            if self.published_copy:
-                self.published_copy.delete()
-                self.published_copy = None
-                self.save()
+            self.unpublish(user)
 
             # create a new publication with the same publication id as the draft, and same creator
-            public_page = self.copy(True)
+            public_page = self.copy(user, True)
 
 
 
             # copy any additional attributes from draft to public copy
-            self._copy_attributes_to(public_page)
+            # self._copy_attributes_to(public_page)
 
 
             public_page.is_draft = False
             public_page.publish_status = self.PUBLICATION_OBJECT
 
-            #public_page.published_date = datetime.datetime.now()
-
             # save publication to generate instance
+            public_page.created_by = user
+            public_page.changed_by = user
             public_page.save()
 
             # copy any children
             public_page.copy_content(self)
-            public_page.copy_children(self, True)
+            public_page.copy_children(user, self, True)
 
             # mark the current draft as published (happens in save)
             #self.publish_status = self.PUBLISHED
             self.published_copy = public_page
 
             # save the draft with the new reference to the public copy
+            self.changed_by = user
             self.save()
 
             # only way to ensure published time is correct is to save it after the draft
-            public_page.published_date = datetime.datetime.now()
+            public_page.published_date = now()
             public_page.save()
 
         # save the new published copy
-        #public_page.save()
+        public_page.save()
 
-    def unpublish(self):
+    def unpublish(self, user=None):
         # if there is an existing published copy of this Publication, delete it and save
-        assert self.is_draft, "Can only Unpublish from Draft Copy of Publication."
+        assert user, "User performing unpublish must be provided."
+        assert user == self.get_owner(), "Only the owner can Unpublish!"
+
+        assert self.is_draft, "Unpublish can only be performed from the Draft Copy of Publication."
 
         with transaction.atomic():
             if self.published_copy:
                 self.published_copy.delete()
                 self.published_copy = None
+                self.changed_by = user
                 self.save()
 
     def is_published(self):
@@ -260,7 +265,7 @@ class Publication(CreationTrackingBaseModel):
         '''
             method to check if the publication child has been modified after the last
             change to it's parent publication
-        :return: Boolean representing if the child is dirty
+        :return: Boolean representing if the instance is dirty
         '''
         if not self.is_draft:
             return False
@@ -348,6 +353,15 @@ class PublicationChild(CreationTrackingBaseModel):
         :return:
         '''
         raise NotImplemented("Models Inheriting from PublicationChild must define 'get_Publishable_parent method' to return the parent publication")
+
+    def copy(self, user=None, maintain_ref=False):
+        raise NotImplemented("Objects Inheriting from Publication must provide a 'copy' method to generate a new instance! (don't call this super method)")
+
+    def copy_content(self, from_instance):
+        raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_content' method to copy over content fields! (don't call this super method)")
+
+    def copy_children(self, user=None, from_instance=None, maintain_ref=False):
+        raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_children' method for copying any child objects! (don't call this super method)")
 
 
     def is_draft(self):
@@ -504,57 +518,57 @@ class PolyPublication(PolyCreationTrackingBaseModel):
 
             self.save()
 
-    def publish(self):
-
-        assert self.is_draft, "Published instance cannot be published. Use Draft"
-
-        with transaction.atomic():
-            # if there's an existing publication, delete it (hopefully this wont delete the draft too...)
-            if self.published_copy:
-                self.published_copy.delete()
-                self.published_copy = None
-                self.save()
-
-            # create a new publication with the same publication id as the draft, and same creator
-            public_page = self.copy(True)
-
-            # copy any additional attributes from draft to public copy
-            self._copy_attributes_to(public_page)
-
-            public_page.is_draft = False
-            public_page.publish_status = self.PUBLICATION_OBJECT
-            public_page.published_copy = public_page
-
-            # save publication to generate instance
-            public_page.save()
-
-            # copy any children
-            public_page.copy_content(self)
-            public_page.copy_children(self, True)
-
-            # mark the current draft as published (happens in save)
-            # self.publish_status = self.PUBLISHED
-            self.published_copy = public_page
-
-            # save the draft with the new reference to the public copy
-            self.save()
-
-
-
-        # save the new published copy
-        # public_page.save()
-
-        # TODO: add method of marking descendants as published (potentially add in an MP_Node implementation)
-
-    def unpublish(self):
-        # if there is an existing published copy of this Publication, delete it and save
-        assert self.is_draft, "Can only Unpublish from Draft Copy of Publication."
-
-        with transaction.atomic():
-            if self.published_copy:
-                self.published_copy.delete()
-                self.published_copy = None
-                self.save()
+    # def publish(self):
+    #
+    #     assert self.is_draft, "Published instance cannot be published. Use Draft"
+    #
+    #     with transaction.atomic():
+    #         # if there's an existing publication, delete it (hopefully this wont delete the draft too...)
+    #         if self.published_copy:
+    #             self.published_copy.delete()
+    #             self.published_copy = None
+    #             self.save()
+    #
+    #         # create a new publication with the same publication id as the draft, and same creator
+    #         public_page = self.copy(True)
+    #
+    #         # copy any additional attributes from draft to public copy
+    #         self._copy_attributes_to(public_page)
+    #
+    #         public_page.is_draft = False
+    #         public_page.publish_status = self.PUBLICATION_OBJECT
+    #         public_page.published_copy = public_page
+    #
+    #         # save publication to generate instance
+    #         public_page.save()
+    #
+    #         # copy any children
+    #         public_page.copy_content(self)
+    #         public_page.copy_children(self, True)
+    #
+    #         # mark the current draft as published (happens in save)
+    #         # self.publish_status = self.PUBLISHED
+    #         self.published_copy = public_page
+    #
+    #         # save the draft with the new reference to the public copy
+    #         self.save()
+    #
+    #
+    #
+    #     # save the new published copy
+    #     # public_page.save()
+    #
+    #     # TODO: add method of marking descendants as published (potentially add in an MP_Node implementation)
+    #
+    # def unpublish(self):
+    #     # if there is an existing published copy of this Publication, delete it and save
+    #     assert self.is_draft, "Can only Unpublish from Draft Copy of Publication."
+    #
+    #     with transaction.atomic():
+    #         if self.published_copy:
+    #             self.published_copy.delete()
+    #             self.published_copy = None
+    #             self.save()
 
     def is_published(self):
         assert self.is_draft, "Can only check publish status on Draft copy."
@@ -631,13 +645,13 @@ class PolyPublicationChild(PolyCreationTrackingBaseModel):
         verbose_name_plural = 'Poly-Publication Children'
         abstract = True
 
-    def copy(self, maintain_ref=False):
+    def copy(self, user=None, maintain_ref=False):
         raise NotImplemented("Objects Inheriting from Publication must provide a 'copy' method to generate a new instance! (don't call this super method)")
 
     def copy_content(self, from_instance):
         raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_content' method to copy over content fields! (don't call this super method)")
 
-    def copy_children(self, from_instance, maintain_ref=False):
+    def copy_children(self, user=None, from_instance=None, maintain_ref=False):
         raise NotImplemented("Objects Inheriting from a Publication must provide a 'copy_children' method for copying any child objects! (don't call this super method)")
 
 
