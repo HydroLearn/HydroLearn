@@ -46,7 +46,12 @@ from src.apps.core.models.SectionTypeModels import (
 )
 
 
-from src.apps.core.model_queries import *
+# from src.apps.core.model_queries import (
+#     publish_lesson,
+#     unpublish_lesson,
+#     revert_lesson,
+#
+# )
 #from src.apps.core.forms import *
 from src.apps.core.views.PublicationViews import (
     PublicationChildViewMixin,
@@ -57,7 +62,9 @@ from src.apps.core.views.PublicationViews import (
 from src.apps.core.views.mixins import (
     AjaxableResponseMixin,
     OwnershipRequiredMixin,
-    CollabEditorAccessRequiredMixin)
+    CollabEditorAccessRequiredMixin,
+    UserAwareFormMixin,
+)
 
 from src.apps.manage.forms import *
 
@@ -79,8 +86,8 @@ class Index(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
 
-        if not self.request.toolbar.edit_mode_active:
-            return redirect("/manage/?edit")
+        # if not self.request.toolbar.edit_mode_active:
+        #     return redirect("/manage/?edit")
 
 
         return super(Index, self).get(request, *args, **kwargs)
@@ -284,7 +291,6 @@ class manage_ModuleCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         } for sectionForm in sections_formset.forms]
 
 
-#class manage_ModuleEditView(LoginRequiredMixin, PublicationViewMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
 class manage_ModuleEditView(PublicationViewMixin, OwnershipRequiredMixin, DraftOnlyViewMixin, AjaxableResponseMixin, UpdateView):
     model = Lesson
     template_name = 'manage/forms/module_form.html'
@@ -523,16 +529,15 @@ class manage_ModulePublish(LoginRequiredMixin, FormView):
 
         if 'publish' in self.request.POST:
             draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
-            draft_instance.publish()
-
+            draft_instance.publish(self.request.user)
 
         if 'unpublish' in self.request.POST:
             draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
-            draft_instance.unpublish()
+            draft_instance.unpublish(self.request.user)
 
         if 'revert' in self.request.POST:
             draft_instance = get_object_or_404(Lesson, slug=self.kwargs['slug'])
-            draft_instance.revert_to_live()
+            draft_instance.revert_to_live(self.request.user)
 
         return super(manage_ModulePublish, self).form_valid(form)
 
@@ -557,7 +562,7 @@ class manage_ModuleDeleteView(PublicationViewMixin, OwnershipRequiredMixin, Dele
 
         raise Http404
 
-class manage_ModuleCollaboration(PublicationViewMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
+class manage_ModuleCollaboration(PublicationViewMixin, UserAwareFormMixin, OwnershipRequiredMixin, AjaxableResponseMixin, UpdateView):
     template_name = 'manage/forms/module_collaborate_form.html'
     success_url = '/manage/'
     model = Lesson
@@ -639,7 +644,7 @@ class manage_ModuleCollaboration(PublicationViewMixin, OwnershipRequiredMixin, A
     def form_invalid(self, form, *args, **kwargs):
         return super(manage_ModuleCollaboration, self).form_invalid(form, *args, **kwargs)
 
-class manage_PublicationCloneIndex(LoginRequiredMixin, AjaxableResponseMixin, DetailView):
+class manage_PublicationCloneIndex(LoginRequiredMixin, UserAwareFormMixin, AjaxableResponseMixin, DetailView):
     model = Lesson
     template_name = 'manage/forms/module_clone_publication_form.html'
     form_class = manage_PublicationCloneForm
@@ -665,13 +670,12 @@ class manage_PublicationClone(LoginRequiredMixin, FormView):
             publication_instance = Lesson.objects.public().get(slug=self.kwargs['slug'])
 
             with transaction.atomic():
-                new_clone = publication_instance.derivation()
+                new_clone = publication_instance.derivation(self.request.user)
 
-                new_clone.created_by = self.request.user
                 new_clone.save()
 
                 new_clone.copy_content(publication_instance)
-                new_clone.derive_children_from(publication_instance)
+                new_clone.derive_children_from(self.request.user, publication_instance)
 
 
 
@@ -680,6 +684,8 @@ class manage_PublicationClone(LoginRequiredMixin, FormView):
 
     def form_invalid(self, form, **kwargs):
         return super(manage_PublicationClone, self).form_invalid(form)
+
+
 ###############################################################################
 ###                 CONTENT EDITING VIEWS                                   ###
 ###############################################################################

@@ -1,13 +1,14 @@
 <!--extend this to provide a detail view for a module-->
-{% extends CMS_TEMPLATE %}
-{% load cms_tags sekizai_tags static thumbnail %}
+{% extends "layout.html" %}
+
+{% load sekizai_tags static thumbnail %}
 
 {% block content %}
     {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
 
     <div id="section-detail">
         <h1>CORE READING SECTION DETAIL</h1>
-        <h3>{% render_model object 'name' %}</h3>
+        <h3>{{ object.name }}</h3>
         <div id="meta_box">
 
             <div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ object.slug }}</div>
@@ -43,11 +44,12 @@
             <div id='lesson-content'>
                 <div class='lesson'>
 
-                    <h2>{% render_model object 'name' %}</h2>
+                    <h2>{{ object.name }}</h2>
                     <hr class="headerSpacer">
                     <div>
                         {% if object.content %}
-                            {% render_placeholder object.content %}
+                            {# render_placeholder object.content #}
+                            {{ object.content }}
 
                         {% else %}
                             <p>there is no content please add some</p>

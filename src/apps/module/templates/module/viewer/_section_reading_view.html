@@ -1,19 +1,20 @@
 <!--extend this to provide a detail view for a module-->
-{% load cms_tags module_template_tags sekizai_tags static thumbnail menu_tags %}
+{% load module_template_tags sekizai_tags static thumbnail %}
 
 {% block content %}
     {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
 
     {# Load content into non editable context variable  #}
-    {% render_placeholder object.content as content %}
+    {# render_placeholder object.content as content #}
 
     <div class='lesson'>
         {# content_editor_button request.user object #}
-        
+
         <h2 class="lesson-header">{{object.name}}</h2>
         <hr class="headerSpacer">
-    
-        {{ content }}
+
+        {# content #}
+        {{ object.content }}
     </div>
 
     {% addtoblock 'template_js' %}

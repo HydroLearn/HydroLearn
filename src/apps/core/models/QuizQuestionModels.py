@@ -1,6 +1,6 @@
 import uuid
 
-from cms.utils.copy_plugins import copy_plugins_to
+# from cms.utils.copy_plugins import copy_plugins_to
 from django.urls import reverse
 from django.db import models, transaction
 from django_extensions.db.fields import RandomCharField
@@ -9,7 +9,7 @@ from django_extensions.db.fields import RandomCharField
 
 from polymorphic.models import PolymorphicModel
 
-from cms.models.fields import PlaceholderField
+# from cms.models.fields import PlaceholderField
 
 from src.apps.core.managers.IterativeDeletionManagers import (
     IterativeDeletion_Manager,

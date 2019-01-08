@@ -6,6 +6,7 @@ from src.apps.module.views import *
 handler404 = 'src.module.views.handler404'
 
 # 'module' app urls
+app_name = 'module'
 urlpatterns = [
     
         # url(r'^tag/(?P<slug>[-\w]+)/$', TagIndexView.as_view(), name='tagged'),

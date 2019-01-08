@@ -1,9 +1,5 @@
 {% extends 'layout.html' %}
-{% load cms_tags menu_tags sekizai_tags static %}
-
-{% block load_cms_toolbar %}
-    {% include 'shared/cms_toolbar.html' %}
-{% endblock load_cms_toolbar %}
+{% load sekizai_tags static %}
 
 {% block precontent %}
 
@@ -24,7 +20,13 @@
         <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}"/>
     {% endaddtoblock %}
 
-    {% placeholder "content" %}
+
+    <h2 style="text-align: center;" class="lesson-header">Coming Soon</h2>
+    <hr>
+    <p style="text-align: center;">
+        Changes are currently being made to the content of Hydrolearn. Check back soon to see what we've been working on.
+    </p>
+
 
     {% addtoblock 'template_js' %}
         <!-- Header -->

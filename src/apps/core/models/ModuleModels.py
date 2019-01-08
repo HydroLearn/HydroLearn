@@ -1,7 +1,8 @@
 from datetime import timedelta
 from django.utils.timezone import now
 
-from cms.models import PlaceholderField, ValidationError, uuid
+# from cms.models import PlaceholderField, ValidationError, uuid
+import uuid
 from django.urls import reverse
 from django.db import models, transaction
 from django.conf import settings
@@ -16,16 +17,14 @@ from src.apps.core.managers.IterativeDeletionManagers import (
     IterativeDeletion_Manager,
     PolyIterativeDeletion_Manager
 )
-from src.apps.core.models.LearningObjModels import Learning_Objective
+from src.apps.core.models.HS_AppFrameModels import AppReference
 
 from src.apps.core.models.PublicationModels import (
     Publication,
     PolyPublicationChild
 )
 
-from src.apps.core.models.HS_AppFrameModels import AppReference
-
-from cms.utils.copy_plugins import copy_plugins_to
+# from cms.utils.copy_plugins import copy_plugins_to
 
 User = settings.AUTH_USER_MODEL
 
@@ -64,18 +63,6 @@ class Lesson(Publication):
                                       null=True,
                                       on_delete=models.CASCADE,
                                       )
-
-    # Being that lessons will be clonable
-    #   maintain a linkage to the lesson copied from
-    #   used for giving credit to original creator
-    # derived_from_lesson = models.ForeignKey('self',
-    #                           related_name="derivations",
-    #                           blank=True,
-    #                           default=None,
-    #                           help_text=u'Lesson this lesson was copied from.',
-    #                           null=True,
-    #                           on_delete=models.SET_NULL,
-    #                           )
 
     # position amongst siblings, siblings can be of type Lessons or Sections
     position = models.PositiveIntegerField(default=0, blank=False, null=False)
@@ -123,15 +110,14 @@ class Lesson(Publication):
 
     # many to many relationship for collaborators
     # allowed to make edits to the draft of a publication
-    collaborators = models.ManyToManyField(
-            User,
-            related_name="collaborations",
-            through='Collaboration'
-        )
+    collaborators = models.ManyToManyField(User, related_name="collaborations", through='Collaboration')
 
     # the content of this lesson
-    summary = PlaceholderField('lesson_summary')
-
+    # summary = PlaceholderField('lesson_summary')
+    summary = models.TextField(u'Lesson Summary',
+                               blank=True,
+                               default='',
+                               help_text="Enter the content for this lesson summary")
 
     ########################################
     # Cloning references
@@ -205,13 +191,13 @@ class Lesson(Publication):
 
     # path to the viewer page for a topic
     def viewer_url(self):
-        return reverse('modules:lesson_detail', kwargs={
+        return reverse('module:lesson_detail', kwargs={
             'slug': self.slug
         })
 
     # path to the viewer 'module' page for a module
     def reference_url(self):
-        return reverse('modules:module_ref', kwargs={
+        return reverse('module:module_ref', kwargs={
             'ref_id': self.ref_id,
         })
 
@@ -237,20 +223,6 @@ class Lesson(Publication):
         }.get(self.depth, "INVALID")
 
         super(Lesson, self).save(**kwargs)
-
-    def delete(self, *args, **kwargs):
-
-        # self.cleanup_placeholders()
-        placeholders = [self.summary]
-
-        self.sections.delete()
-        self.sub_lessons.delete()
-
-        super(Lesson, self).delete(*args, **kwargs)
-
-        for ph in placeholders:
-            ph.clear()
-            ph.delete()
 
     def validate_unique(self, exclude=None):
         # add a conditional unique constraint to prevent
@@ -292,28 +264,33 @@ class Lesson(Publication):
     def num_sub_lessons(self):
         return self.sub_lessons.count()
 
-    def derivation(self):
+    def derivation(self, user=None):
         '''
             Method to copy a published lesson instance and set
             derivation attributes to point to this lesson and it's creator
 
         :return: new lesson instance with attributes set to link to derived lesson
         '''
+        assert user, "User generating derivation must be provided."
 
-        derivation = self.copy()
+        derivation = self.copy(user)
         derivation.derived_date = now()
         derivation.derived_lesson_slug = self.slug
         derivation.derived_lesson_creator = self.created_by
 
         return derivation
 
-    def derive_children_from(self,from_lesson):
+    def derive_children_from(self, user=None, from_lesson=None):
+
+        assert user, "User deriving the children must be provided."
+        assert from_lesson, "Lesson to derive from must be provided."
+
         self.sections.delete()
         self.sub_lessons.delete()
 
         for section_item in from_lesson.sections.all():
             # copy the section items and set their linked lesson to this new instance
-            new_section = section_item.copy()
+            new_section = section_item.copy(user)
 
             new_section.lesson = self
             new_section.position = section_item.position
@@ -321,11 +298,11 @@ class Lesson(Publication):
             # save the copied section instance
             new_section.save()
             new_section.copy_content(section_item)
-            new_section.copy_children(section_item)
+            new_section.copy_children(user, section_item)
 
         for sub_lesson in from_lesson.sub_lessons.all():
             # copy the sub-lesson items and set their linked parent_lesson to this new instance
-            new_lesson = sub_lesson.derivation()
+            new_lesson = sub_lesson.derivation(user)
 
             new_lesson.parent_lesson = self
             new_lesson.position = sub_lesson.position
@@ -333,15 +310,15 @@ class Lesson(Publication):
             # save the copied sub-lesson instance
             new_lesson.save()
             new_lesson.copy_content(sub_lesson)
-            new_lesson.derive_children_from(sub_lesson)
+            new_lesson.derive_children_from(user, sub_lesson)
 
 
     ########################################
     #   Publication Method overrides
     ########################################
 
-    def copy(self, maintain_ref=False):
-        '''
+    def copy(self, user=None, maintain_ref=False):
+        """
             generate a new (unsaved) lesson instance based on this lesson, with a fresh ref_id if specified.
 
             Notes:
@@ -353,18 +330,30 @@ class Lesson(Publication):
                 Additionally, this method does not copy placeholder(content), tags, collaborators, or
                 child-objects (use copy_content (or copy_children for children) after save to do this)
 
+        :param user: the user copying the Lesson
+        :param maintain_ref: Boolean representing if the ref_id should be maintained on the child objects, this should only be true in the case of publication.
 
         :return: a new (unsaved) copy of this lesson
-        '''
+        """
+
+        assert user, "The user generating the copy must be provided."
+
+        if maintain_ref:
+            assert user == self.get_owner(), "Only the lesson owner can generate a copy with the same Reference Id."
 
         new_instance = Lesson(
 
-            parent_lesson = None,
+            parent_lesson=None,
             position=0,
-            is_deleted = False,
+            is_deleted=False,
 
-            name = self.name,
-            short_name = self.short_name,
+            name=self.name,
+            short_name=self.short_name,
+            summary=self.summary,
+
+            created_by=user,
+            changed_by=user,
+
 
 
         )
@@ -379,21 +368,24 @@ class Lesson(Publication):
             new_instance.derived_lesson_slug = self.derived_lesson_slug
             new_instance.derived_lesson_creator = self.derived_lesson_creator
 
-
-
-
         return new_instance
 
-    def copy_children(self, from_instance, maintain_ref=False):
+    def copy_children(self, user=None, from_instance=None, maintain_ref=False):
         '''
             Copy child relations (sub_lessons/sections) from a passed lesson, with the option of specifying
             if the ref_id should be maintained. this should only happen during publishing.
 
+        :param user: the user copying the children
         :param from_instance: Lesson instance from which the child relations are provided.
         :param maintain_ref: Boolean representing if the ref_id should be maintained on the child objects, this should only be true in the case of publication.
 
         :return: None
         '''
+
+        assert user, "The user copying the children must be provided."
+        assert from_instance, 'Lesson Instance to copy children from must be provided.'
+
+
         # copy over the content
         #self.copy_content(from_instance)
 
@@ -402,11 +394,10 @@ class Lesson(Publication):
         # appear on the public version of the page
         self.sections.delete()
         self.sub_lessons.delete()
-        #self.app_refs.delete()
 
         for section_item in from_instance.sections.all():
             # copy the section items and set their linked lesson to this new instance
-            new_section = section_item.copy(maintain_ref)
+            new_section = section_item.copy(user, maintain_ref)
 
             new_section.lesson = self
             new_section.position = section_item.position
@@ -414,11 +405,11 @@ class Lesson(Publication):
             # save the copied section instance
             new_section.save()
             new_section.copy_content(section_item)
-            new_section.copy_children(section_item, maintain_ref)
+            new_section.copy_children(user, section_item, maintain_ref)
 
         for sub_lesson in from_instance.sub_lessons.all():
             # copy the sub-lesson items and set their linked parent_lesson to this new instance
-            new_lesson = sub_lesson.copy(maintain_ref)
+            new_lesson = sub_lesson.copy(user, maintain_ref)
 
             new_lesson.parent_lesson = self
             new_lesson.position = sub_lesson.position
@@ -426,7 +417,7 @@ class Lesson(Publication):
             # save the copied sub-lesson instance
             new_lesson.save()
             new_lesson.copy_content(sub_lesson)
-            new_lesson.copy_children(sub_lesson, maintain_ref)
+            new_lesson.copy_children(user, sub_lesson, maintain_ref)
 
         for app_ref in from_instance.app_refs.all():
             new_ref = AppReference(
@@ -435,20 +426,6 @@ class Lesson(Publication):
                 lesson=self,
             )
             new_ref.save()
-
-        for learning_obj in from_instance.learning_objectives.all():
-            new_lo = Learning_Objective(
-                lesson = self,
-                condition = learning_obj.condition,
-                task=learning_obj.task,
-                degree=learning_obj.degree,
-                verb=learning_obj.verb,
-            )
-
-            new_lo.save()
-
-            for outcome in learning_obj.outcomes.all():
-                new_lo.outcomes.add(outcome)
 
     def copy_content(self, from_instance):
         '''
@@ -462,13 +439,13 @@ class Lesson(Publication):
         self.tags.add(*list(from_instance.tags.names()))
 
         # clear any existing plugins
-        self.summary.clear()
+        # self.summary.clear()
 
-        # get the list of plugins in the 'from_instance's intro
-        plugins = from_instance.summary.get_plugins_list()
-
-        # copy 'from_instance's intro plugins to this object's intro
-        copy_plugins_to(plugins, self.summary, no_signals=True)
+        # # get the list of plugins in the 'from_instance's intro
+        # plugins = from_instance.summary.get_plugins_list()
+        #
+        # # copy 'from_instance's intro plugins to this object's intro
+        # copy_plugins_to(plugins, self.summary, no_signals=True)
 
     def get_Publishable_parent(self):
 
@@ -510,8 +487,7 @@ class Lesson(Publication):
             # if this is a published copy
             result = any([
                 super(Lesson, self).is_dirty,
-                self.summary.cmsplugin_set.filter(
-                    changed_date__gt=pub_date).exists(),
+                #self.summary.cmsplugin_set.filter(changed_date__gt=pub_date).exists(),
             ])
 
             if result:
@@ -548,8 +524,7 @@ class Lesson(Publication):
             result = any([
                 #super(Lesson, self).is_dirty,
                 self.changed_date > pub_date,
-                self.summary.cmsplugin_set.filter(
-                    changed_date__gt=pub_date).exists(),
+                #self.summary.cmsplugin_set.filter(changed_date__gt=pub_date).exists(),
             ])
 
             if result:
@@ -604,6 +579,10 @@ class Lesson(Publication):
             return self.parent_lesson.get_Publishable_parent().get_owner()
         else:
             return self.created_by
+
+
+
+
 
 class Section(PolyPublicationChild):
 
@@ -698,7 +677,7 @@ class Section(PolyPublicationChild):
 
     # path to the viewer page for a topic
     def viewer_url(self):
-        return reverse('modules:section_content', kwargs={
+        return reverse('module:section_content', kwargs={
             'lesson_slug': self.lesson.slug,
             'slug': self.slug
         })

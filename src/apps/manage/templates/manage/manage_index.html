@@ -1,5 +1,5 @@
-{% extends CMS_TEMPLATE %}
-{% load cms_tags menu_tags sekizai_tags static manage_template_tags%}
+{% extends "layout.html" %}
+{% load sekizai_tags static manage_template_tags%}
 
 {% block title %}Manage{% endblock title %}
 
@@ -39,10 +39,6 @@
 
             <div id="content-tab-body" class="tab-content">
 
-                <!--<div id="home-content" class="tab-pane fade" role="tabpanel">-->
-                    <!--{# include "manage/partials/_manage_home_tab_content.html" #}-->
-                <!--</div>-->
-
                 <div id="modules-content" class="tab-pane fade" role="tabpanel">
                     <div id="my_modules_wrapper"></div>
 
@@ -57,9 +53,6 @@
                     <div id="find_modules_wrapper"></div>
 
                 </div>
-                <!-- <div id="app-tab" class="tab-pane fade" role="tabpanel"> -->
-                    <!-- {# include "manage/partials/_apps_tab_content.html" #} -->
-                <!-- </div> -->
 
             </div>
 

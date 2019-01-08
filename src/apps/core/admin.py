@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
 #from django.utils.translation import ugettext as _
 
-from cms.admin.placeholderadmin import PlaceholderAdminMixin
+# from cms.admin.placeholderadmin import PlaceholderAdminMixin
 #from cms.admin.placeholderadmin import FrontendEditableAdminMixin
 #from djangocms_text_ckeditor.widgets import TextEditorWidget
 #from src.apps.core.admin_actions import *
@@ -102,19 +102,16 @@ class CreationTrackingMixin(object):
 #   Inline Admin interfaces
 # ============================================================
 
-#class ReadingInline(SortableTabularInline):
 class ReadingInline(admin.TabularInline):
     model = ReadingSection
     fk_name = 'readingsection'
     readonly_fields = ['section_ptr']
 
-#class ActivityInline(SortableTabularInline):    
 class ActivityInline(admin.TabularInline):
     model = ActivitySection
     fk_name = 'activitysection'
     readonly_fields = ['section_ptr']
     
-#class QuizInline(SortableTabularInline):
 class QuizInline(admin.TabularInline):
     model = QuizSection
     fk_name = 'quizsection'
@@ -245,7 +242,7 @@ class SectionChildAdmin(CreationTrackingMixin, PolymorphicChildModelAdmin, Sorta
         'lesson',
     )
 
-class ReadingSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
+class ReadingSectionAdmin(SectionChildAdmin):
     model = ReadingSection
     base_model  = ReadingSection
     #show_in_index = False
@@ -271,7 +268,7 @@ class ReadingSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
 
-class ActivitySectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
+class ActivitySectionAdmin(SectionChildAdmin):
     model = ActivitySection
     base_model  = ActivitySection
     #show_in_index = False
@@ -296,7 +293,7 @@ class ActivitySectionAdmin(PlaceholderAdminMixin, SectionChildAdmin):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
 
-class QuizSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin, SortableAdminMixin):
+class QuizSectionAdmin(SectionChildAdmin, SortableAdminMixin):
     base_model = QuizSection
     #show_in_index = False
     sortable_field_name = "position"
@@ -320,7 +317,7 @@ class QuizSectionAdmin(PlaceholderAdminMixin, SectionChildAdmin, SortableAdminMi
     
     inlines = [QuizQuestionInline,]
 
-class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
+class SectionParentAdmin(PolymorphicParentModelAdmin):
     """ The parent model admin """
     base_model = Section
     show_in_index = True
@@ -358,7 +355,7 @@ class SectionParentAdmin(PlaceholderAdminMixin, PolymorphicParentModelAdmin):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
 
-class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, PlaceholderAdminMixin, admin.ModelAdmin):
+class LessonAdmin(PolymorphicInlineSupportMixin, CreationTrackingMixin, admin.ModelAdmin):
     model = Lesson
     form = Edit_LessonForm
     # ordering = ('topic', 'name',)
@@ -466,7 +463,7 @@ class Learning_ObjectiveAdminForm(ModelForm):
         model = Learning_Objective
         fields = ['condition', 'task', 'degree', 'verb', 'outcomes']
 
-class Learning_ObjectiveAdmin(PlaceholderAdminMixin, admin.ModelAdmin):
+class Learning_ObjectiveAdmin(admin.ModelAdmin):
     form = Learning_ObjectiveAdminForm
 
     list_display = ['condition', 'task', 'degree']

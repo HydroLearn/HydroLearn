@@ -31,7 +31,7 @@ else:
     try:
         print("//Loading Production settings...")
         from src.settings.production import *
-        from src.settings.cms_settings import *
+        # from src.settings.cms_settings import *
         from src.settings.ckeditor import *
         from src.settings.database import *
         from src.settings.ssl import *

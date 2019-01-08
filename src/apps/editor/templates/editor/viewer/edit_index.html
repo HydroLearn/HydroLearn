@@ -1,6 +1,6 @@
-{% extends CMS_TEMPLATE %}
+{% extends "layout.html" %}
 
-{% load editor_template_tags module_template_tags menu_tags sekizai_tags static %}
+{% load editor_template_tags module_template_tags sekizai_tags static %}
 
 {% block subtitle %}
    - EDIT {{ Lesson.name }}
@@ -77,7 +77,7 @@
         <!--<link rel="stylesheet" href="{% static 'editor/css/editor_validation_styling.css' %}" type="text/css">-->
         <!--<link rel="stylesheet" href="{% static 'editor/css/DIV-TableStyle.css' %}" type="text/css">-->
         <!--<link rel="stylesheet" href="{% static 'editor/css/map.css' %}" type="text/css">-->
-
+    {% addtoblock 'template_css' %}<link rel="stylesheet" href="{% static 'module/css/resource_box_styling.css' %}" type="text/css">{% endaddtoblock 'template_css' %}
 
 
     <div id="content-wrapper">
@@ -461,7 +461,7 @@
 
         {% if Lesson.derived_date %}
         <div>
-            <a target="_blank" href="{% url 'modules:lesson_detail' slug=Lesson.derived_lesson_slug %}">Derived from Module</a>, by {{Lesson.derived_lesson_creator}}.
+            <a target="_blank" href="{% url 'module:lesson_detail' slug=Lesson.derived_lesson_slug %}">Derived from Module</a>, by {{Lesson.derived_lesson_creator}}.
         </div>
 
         {% endif %}

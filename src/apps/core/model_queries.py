@@ -4,6 +4,7 @@
 #           TODO: This should be converted into Model Managers for the given objects
 #           and attached to the appropriate modles
 #
+import datetime
 from django.urls import reverse
 
 from src.apps.core.models.ModuleModels import (
@@ -12,10 +13,16 @@ from src.apps.core.models.ModuleModels import (
 )
 import json
 
+
 # for checking the content type of queried objects
 #   (used for determining the type of polymorphic children)
 from django.contrib.contenttypes.models import ContentType
+from django.db import models, transaction
 
+
+#################################################
+# General methods
+#################################################
 
 def get_all_lessons():
     return Lesson.objects.all()
@@ -84,7 +91,7 @@ def get_lesson_JSON_RAW(lesson_slug):
         'name': lesson.name,
         'short_name': lesson.short_name,
         'position': lesson.position,
-        'content_url': reverse('modules:lesson_content', kwargs={'slug': lesson.slug,}),
+        'content_url': reverse('module:lesson_content', kwargs={'slug': lesson.slug,}),
         'children': children,
     }
 
@@ -111,7 +118,7 @@ def get_section_JSON_RAW(section_slug):
         'short_name': section.short_name,
         'position': section.position,
         'sectionType': str(ContentType.objects.get_for_id(section.polymorphic_ctype_id)),
-        'content_url': reverse('modules:section_content', kwargs={'lesson_slug': section.lesson.slug, 'slug': section.slug,}),
+        'content_url': reverse('module:section_content', kwargs={'lesson_slug': section.lesson.slug, 'slug': section.slug,}),
 
     }
 
@@ -125,3 +132,5 @@ def get_module_TOC_obj(lesson_slug):
     return_obj = get_lesson_JSON_RAW(lesson_slug)
 
     return json.dumps(return_obj)
+
+
