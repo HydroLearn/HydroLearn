@@ -87,7 +87,8 @@ TEMPLATES = [
                 'social_django.context_processors.login_redirect',
                 'sekizai.context_processors.sekizai',
                 'django.template.context_processors.static',
-                'cms.context_processors.cms_settings'
+
+                #'cms.context_processors.cms_settings'
             ],
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
@@ -99,7 +100,7 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE_CLASSES = (
-    'cms.middleware.utils.ApphookReloadMiddleware',
+    # 'cms.middleware.utils.ApphookReloadMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -107,10 +108,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'cms.middleware.user.CurrentUserMiddleware',
-    'cms.middleware.page.CurrentPageMiddleware',
-    'cms.middleware.toolbar.ToolbarMiddleware',
-    'cms.middleware.language.LanguageCookieMiddleware',
+    # 'cms.middleware.user.CurrentUserMiddleware',
+    # 'cms.middleware.page.CurrentPageMiddleware',
+    # 'cms.middleware.toolbar.ToolbarMiddleware',
+    # 'cms.middleware.language.LanguageCookieMiddleware',
 
     # testing the following
     #'django.middleware.security.SecurityMiddleware'
@@ -119,7 +120,7 @@ MIDDLEWARE_CLASSES = (
 
 INSTALLED_APPS = (
     # include custom User from accounts app before loading the cms
-    'djangocms_admin_style',
+    # 'djangocms_admin_style',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -135,23 +136,23 @@ INSTALLED_APPS = (
     'social_django',
 
     # add in the django-cms apps
-    'cms',
-    'menus',
+    # 'cms',
+    # 'menus',
     'sekizai',
     'treebeard',
-    'djangocms_text_ckeditor',
+    # 'djangocms_text_ckeditor',
     'filer',
     'easy_thumbnails',
-    'djangocms_column',
-    'djangocms_link',
-    'cmsplugin_filer_file',
-    'cmsplugin_filer_folder',
-    'cmsplugin_filer_image',
-    'cmsplugin_filer_utils',
-    'djangocms_style',
-    'djangocms_snippet',
-    'djangocms_googlemap',
-    'djangocms_video',
+    # 'djangocms_column',
+    # 'djangocms_link',
+    # 'cmsplugin_filer_file',
+    # 'cmsplugin_filer_folder',
+    # 'cmsplugin_filer_image',
+    # 'cmsplugin_filer_utils',
+    # 'djangocms_style',
+    # 'djangocms_snippet',
+    # 'djangocms_googlemap',
+    # 'djangocms_video',
 
     # include django extensions
     'django_extensions',
@@ -177,8 +178,8 @@ INSTALLED_APPS = (
     'src.apps.tags',
 
     # ***************** include content plugins
-    'src.apps.Content_Plugins',
-    'src.apps.Content_Plugins.HS_ResourceLink',
+    # 'src.apps.Content_Plugins',
+    # 'src.apps.Content_Plugins.HS_ResourceLink',
 
 )
 

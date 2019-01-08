@@ -1,8 +1,8 @@
-from cms.models import PlaceholderField
-from cms.utils.copy_plugins import copy_plugins_to
+# from cms.models import PlaceholderField
+# from cms.utils.copy_plugins import copy_plugins_to
 
 from django.urls import reverse
-
+from django.db import models, transaction
 from src.apps.core.models.ModuleModels import Section
 from src.apps.core.models.PublicationModels import Publication
 from src.apps.core.models.ResourceModels import Resource
@@ -17,7 +17,10 @@ class ReadingSection(Section):
         verbose_name_plural = 'Reading Sections'
         manager_inheritance_from_future = True
 
-    content = PlaceholderField('reading_content')
+    content = models.TextField(u'Reading Content',
+                               blank=True,
+                               default='',
+                               help_text="Enter the content for this section.")
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
@@ -25,33 +28,33 @@ class ReadingSection(Section):
             'slug': self.slug
         })
 
-    def delete(self, *args, **kwargs):
-        #print("----- in ReadingSection overridden delete")
-        # self.cleanup_placeholders()
-        placeholders = [self.content]
-        super(ReadingSection, self).delete(*args, **kwargs)
-
-        for ph in placeholders:
-            ph.clear()
-            ph.delete()
-
     ########################################
     #   Publication Method overrides
     ########################################
 
-    def copy(self, maintain_ref=False):
+    def copy(self, user=None, maintain_ref=False):
         '''
             generate a new ReadingSection instance based on this ReadingSection instance with a fresh ref_id and no parent
         :return: a new lesson with a fresh reference id
         '''
+
+        assert user, "The user generating the copy must be provided."
+
+        if maintain_ref:
+            assert user == self.get_owner(), "Only the Section owner can generate copies with the same Reference Id."
+
         new_instance = ReadingSection(
                 lesson=None,
                 position=0,
-                is_deleted = False,
+                is_deleted=False,
 
-                name = self.name,
-                short_name = self.short_name,
-                duration = self.duration,
+                name=self.name,
+                short_name=self.short_name,
+                duration=self.duration,
+                content=self.content,
+
+                created_by=self.created_by,
+                changed_by=self.changed_by,
 
             )
 
@@ -60,25 +63,13 @@ class ReadingSection(Section):
 
         return new_instance
 
-    def copy_children(self, from_instance, maintain_ref=False):
-
-        # copy over the content
-        #self.copy_content(from_instance)
+    def copy_children(self, user=None, from_instance=None, maintain_ref=False):
         pass
 
     def copy_content(self, from_instance):
 
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
-
-        # clear any existing plugins
-        self.content.clear()
-
-        # get the list of plugins in the 'from_instance's intro
-        plugins = from_instance.content.get_plugins_list()
-
-        # copy 'from_instance's intro plugins to this object's intro
-        copy_plugins_to(plugins, self.content, no_signals=True)
 
 
     @property
@@ -102,7 +93,7 @@ class ReadingSection(Section):
 
         result = any([
             super(ReadingSection, self).is_dirty,
-            self.content.cmsplugin_set.filter(changed_date__gt=pub_date).exists()
+            #self.content.cmsplugin_set.filter(changed_date__gt=pub_date).exists()
         ])
 
         return result
@@ -117,7 +108,10 @@ class ActivitySection(Section):
         verbose_name_plural = 'Activity Sections'
         manager_inheritance_from_future = True
 
-    content = PlaceholderField('activity_content')
+    content = models.TextField(u'Activity Content',
+                               blank=True,
+                               default='',
+                               help_text="Enter the content for this section.")
 
     def absolute_url(self):
         return reverse('core:section_detail', kwargs={
@@ -125,43 +119,48 @@ class ActivitySection(Section):
             'slug': self.slug
         })
 
-    def delete(self, *args, **kwargs):
-        #print("----- in ActivitySection overridden delete")
-        # self.cleanup_placeholders()
-
-        placeholders = [self.content]
-        super(ActivitySection, self).delete(*args, **kwargs)
-
-        for ph in placeholders:
-            ph.clear()
-            ph.delete()
-
     ########################################
     #   Publication Method overrides
     ########################################
 
-    def copy(self, maintain_ref=False):
+    def copy(self, user=None, maintain_ref=False):
         '''
             generate a new Activity instance based on this Activitiy instance with a fresh ref_id and no parent
-        :return: a new lesson with a fresh reference id
+        :return: a new Activity with a fresh reference id
         '''
+
+        assert user, "The user generating the copy must be provided."
+
+        if maintain_ref:
+            assert user == self.get_owner(), "Only the Activity owner can generate copies with the same Reference Id."
+
         new_instance = ActivitySection(
                 lesson=None,
                 is_deleted=False,
-                position = 0,
+                position=0,
 
-                name = self.name,
-                short_name = self.short_name,
-                duration = self.duration,
+                name=self.name,
+                short_name=self.short_name,
+                duration=self.duration,
+                content=self.content,
 
+                created_by=user,
+                changed_by=user,
             )
 
         if maintain_ref:
             new_instance.ref_id = self.ref_id
 
+
         return new_instance
 
-    def copy_children(self, from_instance, maintain_ref=False):
+    def copy_children(self, user=None, from_instance=None, maintain_ref=False):
+
+        assert user, "The user copying the children must be provided."
+        assert from_instance, 'Activity Instance to copy children from must be provided.'
+
+        if maintain_ref:
+            assert user == self.get_owner(), "Only the Activity owner can generate copies with the same Reference Id."
 
         # copy over the resources for this activity
         self.resources.all().delete()
@@ -183,15 +182,6 @@ class ActivitySection(Section):
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
 
-        # clear any existing plugins
-        self.content.clear()
-
-        # get the list of plugins in the 'from_instance's intro
-        plugins = from_instance.content.get_plugins_list()
-
-        # copy 'from_instance's intro plugins to this object's intro
-        copy_plugins_to(plugins, self.content, no_signals=True)
-
     @property
     def is_dirty(self):
 
@@ -202,7 +192,7 @@ class ActivitySection(Section):
 
         result = any([
             super(ActivitySection, self).is_dirty,
-            self.content.cmsplugin_set.filter(changed_date__gt=self.get_Publishable_parent().published_copy.creation_date).exists()
+            #self.content.cmsplugin_set.filter(changed_date__gt=self.get_Publishable_parent().published_copy.creation_date).exists()
         ])
 
         return result
@@ -225,19 +215,28 @@ class QuizSection(Section):
     #   Publication Method overrides
     ########################################
 
-    def copy(self, maintain_ref=False):
+    def copy(self, user=None, maintain_ref=False):
         '''
             generate a new Quiz instance based on this Quiz instance with a fresh ref_id and no parent
         :return: a new lesson with a fresh reference id
         '''
+
+        assert user, "The user generating the copy must be provided."
+
+        if maintain_ref:
+            assert user == self.get_owner(), "Only the Quiz owner can generate a copy with the same Reference Id."
+
         new_instance = QuizSection(
                 lesson=None,
                 position=0,
-                is_deleted = False,
+                is_deleted=False,
 
-                name = self.name,
-                short_name = self.short_name,
-                duration = self.duration,
+                name=self.name,
+                short_name=self.short_name,
+                duration=self.duration,
+
+                created_by=user,
+                changed_by=user,
 
             )
 
@@ -251,8 +250,15 @@ class QuizSection(Section):
         # add any tags from the 'from_instance'
         self.tags.add(*list(from_instance.tags.names()))
 
-    def copy_children(self, from_instance, maintain_ref=False):
+    def copy_children(self, user=None, from_instance=None, maintain_ref=False):
         # delete any questions that may be present in this instance
+
+        assert user, "The user copying the children must be provided."
+        assert from_instance, 'Quiz Instance to copy children from must be provided.'
+
+        if maintain_ref:
+            assert user == self.get_owner(), "Only the Quiz owner can generate a copy with the same Reference Id."
+
         self.questions.all().delete()
 
         # copy each question/answer from the reference instance

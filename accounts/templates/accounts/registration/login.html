@@ -1,5 +1,6 @@
-{% extends CMS_TEMPLATE %}
-{% load cms_tags menu_tags sekizai_tags static %}
+{% extends "layout.html" %}
+
+{% load sekizai_tags static %}
 
 {% block title %}Login{% endblock title %}
 
@@ -7,7 +8,7 @@
 <div class="content-inner">
 
     {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
+        <p>Your username and password didn't match. Please try again.</p>
     {% endif %}
 
     {% if next %}
@@ -23,7 +24,7 @@
 
     <p>Please fill out your login credentials below.</p>
 
-    <form method="post" action="{% url 'login' %}">{% csrf_token %}
+    <form method="post" action="{% url 'accounts:login' %}">{% csrf_token %}
         <table>
             {{ form.as_table}}
         </table>
@@ -34,13 +35,13 @@
 
     <p>
         <!--currently unavailable due to Email Settings (need a host)-->
-        <!--<a href="{% url 'register' %}">Join HydroLearn</a>-->
+        <a href="{% url 'accounts:register' %}">Join HydroLearn</a>
     </p>
 
     {# Assumes you setup the password_reset view in your URLconf #}
     <p>
         <!--currently unavailable due to Email Settings (need a host)-->
-        <a href="{% url 'password_reset' %}">Lost password?</a>
+        <a href="{% url 'accounts:password_reset' %}">Lost password?</a>
     </p>
 
 

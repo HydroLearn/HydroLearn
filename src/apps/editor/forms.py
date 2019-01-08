@@ -1,5 +1,6 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
+from django import forms
 
 from taggit.forms import TagWidget
 from src.apps.core.forms import *
@@ -18,6 +19,8 @@ from src.apps.core.models.QuizQuestionModels import (
 
 )
 
+
+
 from src.apps.core.models.HS_AppFrameModels import (
     AppReference
 )
@@ -26,7 +29,7 @@ from src.apps.core.models.HS_AppFrameModels import (
     Model Forms 
 ********************************************************** '''
 
-class editor_LessonForm(forms.ModelForm):
+class editor_LessonForm(CreationTrackingForm):
     # content = forms.CharField(
     #         label='Content',
     #         widget=TextEditorWidget(placeholder=True),
@@ -46,6 +49,7 @@ class editor_LessonForm(forms.ModelForm):
             'short_name',
             'tags',
             'position',
+            'summary',
 
 
         ]
@@ -76,41 +80,8 @@ class editor_LessonForm(forms.ModelForm):
 
         return name
 
-    # def save(self, commit=True):
-    #
-    #     submitted_lesson = super(editor_LessonForm, self).save(commit=False)
-    #
-    #     summary_body = self.cleaned_data.get('content', '')
-    #
-    #     if summary_body and submitted_lesson.has_draft_access(self.user ) :
-    #
-    #         if not submitted_lesson.pk:
-    #             submitted_lesson.save()
-    #
-    #         if submitted_lesson and submitted_lesson.summary:
-    #
-    #             for plugin in submitted_lesson.summary.get_plugins():
-    #                 plugin_inst, plugin_class = plugin.get_plugin_instance()
-    #
-    #                 if plugin_class.__class__.__name__ == "TextPlugin":
-    #                     if plugin_inst.body == "This lesson's summary doesn't appear to have any content.":
-    #                         plugin_inst.body = summary_body
-    #                         plugin_inst.save()
-    #                         break
-    #             else:
-    #                 add_plugin(
-    #                     placeholder=submitted_lesson.summary,
-    #                     plugin_type='TextPlugin',
-    #                     language=self.language_code,
-    #                     body=summary_body,
-    #                 )
-    #
-    #     if commit:
-    #         submitted_lesson.save()
-    #
-    #     return submitted_lesson
 
-class editor_SectionForm(forms.ModelForm):
+class editor_SectionForm(CreationTrackingForm):
     #content = forms.CharField(widget=TextEditorWidget)
     # name = forms.CharField(min_length=4)
     class Meta:
@@ -165,7 +136,7 @@ class editor_AppRefForm(forms.ModelForm):
 POLYMORPHIC FORM TYPES
 ********************************************************** '''
 
-class editor_ReadingSectionForm(forms.ModelForm):
+class editor_ReadingSectionForm(CreationTrackingForm):
     class Meta:
         model = ReadingSection
         fields = [
@@ -174,6 +145,7 @@ class editor_ReadingSectionForm(forms.ModelForm):
             'duration',
             'tags',
             'position',
+            'content',
 
         ]
         widgets = {
@@ -191,7 +163,7 @@ class editor_ReadingSectionForm(forms.ModelForm):
 
         }
 
-class editor_ActivitySectionForm(forms.ModelForm):
+class editor_ActivitySectionForm(CreationTrackingForm):
     class Meta:
         model = ActivitySection
         fields = [
@@ -200,6 +172,7 @@ class editor_ActivitySectionForm(forms.ModelForm):
             'duration',
             'tags',
             'position',
+            'content',
         ]
 
         widgets = {
@@ -223,7 +196,7 @@ class editor_ActivitySectionForm(forms.ModelForm):
         readonly_fields = ['topic']
         # exclude = ['created_by']
 
-class editor_QuizSectionForm(forms.ModelForm):
+class editor_QuizSectionForm(CreationTrackingForm):
     class Meta:
         model = QuizSection
         fields = [

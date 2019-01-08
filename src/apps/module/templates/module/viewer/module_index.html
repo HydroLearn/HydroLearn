@@ -1,6 +1,6 @@
-{% extends CMS_TEMPLATE %}
+{% extends "layout.html" %}
 
-{% load module_template_tags menu_tags sekizai_tags static %}
+{% load module_template_tags sekizai_tags static %}
 
 {% block subtitle %}
    - {{ module.name }}
@@ -386,7 +386,7 @@
 
         {% if module.derived_date %}
         <div>
-            <a target="_blank" href="{% url 'modules:lesson_detail' slug=module.derived_lesson_slug %}">Derived from Module</a>, by {{module.derived_lesson_creator}}.
+            <a target="_blank" href="{% url 'module:lesson_detail' slug=module.derived_lesson_slug %}">Derived from Module</a>, by {{module.derived_lesson_creator}}.
         </div>
 
         {% endif %}

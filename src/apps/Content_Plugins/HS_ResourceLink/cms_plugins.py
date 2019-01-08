@@ -1,4 +1,4 @@
-from cms.plugin_pool import plugin_pool
+# from cms.plugin_pool import plugin_pool
 
 
 # import content plugin definitions

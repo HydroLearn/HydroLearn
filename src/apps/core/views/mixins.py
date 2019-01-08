@@ -6,11 +6,20 @@ from django.core.exceptions import ImproperlyConfigured
 import json
 from django.http import HttpResponse
 from django.utils.encoding import force_text
-from djangocms_installer.compat import unicode
+# from djangocms_installer.compat import unicode
 from django.utils.translation import gettext as _
 
 from src.apps.core.models.ModuleModels import Collaboration
 
+
+class UserAwareFormMixin(object):
+    '''
+        Mixin to add the current user to the kwargs for a view's form
+    '''
+    def get_form_kwargs(self):
+        kwargs = super(UserAwareFormMixin, self).get_form_kwargs()
+        kwargs.update({ 'user': self.request.user })
+        return kwargs
 
 class OwnershipRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     """
@@ -96,6 +105,20 @@ class CollabViewAccessMixin(LoginRequiredMixin, UserPassesTestMixin):
 
         return False
 
+#
+# class CreationTrackingFormMixin(object):
+#     def form_valid(self, form, *args, **kwargs):
+#
+#         if self.object.pk:
+#             # if this is an existing object update the changed by user
+#             self.object.changed_by = self.request.user
+#         else:
+#             # if this is a new object update the created by user and changed by user
+#             self.object.created_by = self.request.user
+#             self.object.changed_by = self.request.user
+#
+#         return super(CreationTrackingFormMixin, self).form_valid(form, *args, **kwargs)
+        
 
 class AjaxableResponseMixin(object):
     """

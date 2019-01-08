@@ -26,18 +26,18 @@ class CreationTrackingBaseModel(models.Model):
     changed_date = models.DateTimeField(auto_now=True)
 
 
-    def save(self, *args, **kwargs):
-
-        from cms.utils.permissions import get_current_user
-        self.changed_by = get_current_user()
-
-        is_new_instance = not bool(self.pk)
-
-        if is_new_instance:
-            self.created_by = self.changed_by
-
-
-        super(CreationTrackingBaseModel, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #
+    #     from cms.utils.permissions import get_current_user
+    #     self.changed_by = get_current_user()
+    #
+    #     is_new_instance = not bool(self.pk)
+    #
+    #     if is_new_instance:
+    #         self.created_by = self.changed_by
+    #
+    #
+    #     super(CreationTrackingBaseModel, self).save(*args, **kwargs)
 
     def is_owner(self, user):
         # provided a user
@@ -47,9 +47,6 @@ class CreationTrackingBaseModel(models.Model):
                 return True
 
         return False
-
-
-
 
 class PolyCreationTrackingBaseModel(PolymorphicModel):
     '''
@@ -66,13 +63,13 @@ class PolyCreationTrackingBaseModel(PolymorphicModel):
     creation_date = models.DateTimeField(auto_now_add=True)
     changed_date = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        from cms.utils.permissions import get_current_user
-        self.changed_by = get_current_user()
-
-        is_new_instance = not bool(self.pk)
-
-        if is_new_instance:
-            self.created_by = self.changed_by
-
-        super(PolyCreationTrackingBaseModel, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     from cms.utils.permissions import get_current_user
+    #     self.changed_by = get_current_user()
+    #
+    #     is_new_instance = not bool(self.pk)
+    #
+    #     if is_new_instance:
+    #         self.created_by = self.changed_by
+    #
+    #     super(PolyCreationTrackingBaseModel, self).save(*args, **kwargs)

@@ -1,9 +1,7 @@
 <!--extend this to provide a detail view for a module-->
-{% extends CMS_TEMPLATE %}
+{% extends "layout.html" %}
+
 {% load sekizai_tags static thumbnail %}
-
-
-
 
 {% block content %}
     {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}

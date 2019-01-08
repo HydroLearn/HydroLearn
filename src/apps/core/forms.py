@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ImproperlyConfigured
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext as _
 
@@ -32,9 +33,9 @@ from src.apps.core.models.ResourceModels import Resource
 
 # from djangocms_text_ckeditor.widgets import TextEditorWidget
 
-from cms.api import add_plugin
-from cms.utils import permissions
-from cms.wizards.forms import BaseFormMixin
+# from cms.api import add_plugin
+# from cms.utils import permissions
+# from cms.wizards.forms import BaseFormMixin
 
 # used for filterable selection of foreign key objects in forms
 from easy_select2 import apply_select2
@@ -42,7 +43,31 @@ from easy_select2 import select2_modelform_meta
 from easy_select2.widgets import Select2Multiple
 
 
-from pprint import pprint
+class CreationTrackingForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+
+        if not kwargs.get('user', None):
+            raise ImproperlyConfigured('User Not provided to CreationTrackingForm, calling view must inherit from UserAwareFormMixin!')
+
+        self.user = kwargs.pop('user')
+        super(CreationTrackingForm, self).__init__(*args, **kwargs)
+
+
+
+    def save(self, commit=True):
+
+        obj = super(CreationTrackingForm, self).save(commit=False)
+
+        obj.changed_by = self.user
+
+        # if this is a new instance, update the created by user
+        if not obj.pk:
+            obj.created_by = self.user
+
+        if commit:
+            obj.save()
+        return obj
 
 #================================== Model Forms ==============================
 
@@ -114,9 +139,6 @@ class SectionForm(forms.ModelForm):
         #         help_text=_('please enter the content for this section')
         #     )
 
-
-        
-#class ReadingSectionForm(forms.ModelForm):
 class ReadingSectionForm(forms.ModelForm):
     # content = forms.CharField(
     #             label="content",
@@ -145,7 +167,6 @@ class ReadingSectionForm(forms.ModelForm):
                }
         
         readonly_fields = ['topic']
-
 
 class ActivitySectionForm(forms.ModelForm):
     # content = forms.CharField(

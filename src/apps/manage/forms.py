@@ -17,7 +17,7 @@ from django.utils.translation import gettext as _
 Model Forms 
 ********************************************************** '''
 
-class manage_LessonForm(forms.ModelForm):
+class manage_LessonForm(CreationTrackingForm):
     class Meta:
         model = Lesson
         fields = [
@@ -43,7 +43,7 @@ class manage_LessonForm(forms.ModelForm):
 
         }
 
-class manage_LessonCollabForm(forms.ModelForm):
+class manage_LessonCollabForm(CreationTrackingForm):
     '''
         parent form for collaborators, expected to only provide id
         for use by updateview

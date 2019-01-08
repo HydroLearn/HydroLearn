@@ -1,11 +1,11 @@
 <!--extend this to provide a detail view for a module-->
-{% load cms_tags module_template_tags sekizai_tags static thumbnail %}
+{% load module_template_tags sekizai_tags static thumbnail %}
 
 {% block content %}
     {% addtoblock "template_css" %}<link rel="stylesheet" href="{% static 'module/css/activity_styling.css' %}" type="text/css">{% endaddtoblock "template_css" %}
 
     {# Load content into non editable context variable  #}
-    {% render_placeholder object.content as content %}
+    {# render_placeholder object.content as content #}
 
     <div class='lesson'>
         {# content_editor_button request.user object #}
@@ -14,7 +14,7 @@
         <hr class="headerSpacer">
         {% show_resources_box object.resources.all %}
 
-        {{ content }}
+        {{ object.content }}
     </div>
 
     {% addtoblock 'template_js' %}

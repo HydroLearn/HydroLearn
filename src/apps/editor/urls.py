@@ -35,6 +35,7 @@ from src.apps.editor.views import (
 handler404 = 'src.editor.views.handler404'
 
 # 'editor' app urls
+app_name = 'editor'
 urlpatterns = [
     
     # url(r'^tag/(?P<slug>[-\w]+)/$', TagIndexView.as_view(), name='tagged'),

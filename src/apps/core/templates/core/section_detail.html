@@ -1,6 +1,7 @@
 <!--extend this to provide a detail view for a module-->
-{% extends CMS_TEMPLATE %}
-{% load cms_tags sekizai_tags static thumbnail %}
+{% extends "layout.html" %}
+
+{% load sekizai_tags static thumbnail %}
 
 {% block content %}
     {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
@@ -9,7 +10,7 @@
     
     <div class="section-detail">
         
-        <h2>{% render_model Section 'name' %}</h2>
+        <h2>{{ object.name }}</h2>
         
         <div><span style="font-weight: bold; font-style: italic">Slug: </span>{{ object.slug }}</div>
             <div><span style="font-weight: bold; font-style: italic">Reference id: </span>{{ object.ref_id }}</div><br>
@@ -37,7 +38,9 @@
 
         <div>
             {% if object.content %}
-                {% render_placeholder object.content %}
+                {# render_placeholder object.content #}
+
+                {{ object.content }}
             
             {% else %}
                 <p>there is no content please add some</p>

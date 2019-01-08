@@ -85,7 +85,7 @@ def module_ModuleRefLookup(request, ref_id):
     try:
         module = Lesson.objects.get(ref_id=ref_id)
         if module:
-            return redirect('modules:lesson_detail', module.slug)
+            return redirect('module:lesson_detail', module.slug)
     except:
         raise Http404
 

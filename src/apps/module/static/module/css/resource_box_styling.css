@@ -1,4 +1,3 @@
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/apps\/module\/static\/module\/sass\/resource_box_styling\.scss}line{font-family:\000031}}
 .resource_box {
   display: block;
   float: right;
@@ -7,7 +6,6 @@
   border-radius: 7px;
   margin: 0 10px 25px 25px;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2); }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/apps\/module\/static\/module\/sass\/resource_box_styling\.scss}line{font-family:\0000312}}
   .resource_box .resource_box_header {
     display: inline-block;
     width: 100%;
@@ -17,22 +15,17 @@
     font-weight: bold;
     line-height: normal;
     color: #8F8F8F; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/apps\/module\/static\/module\/sass\/resource_box_styling\.scss}line{font-family:\0000326}}
   .resource_box .resource_box_listing {
     display: table;
     width: 100%; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/apps\/module\/static\/module\/sass\/resource_box_styling\.scss}line{font-family:\0000330}}
     .resource_box .resource_box_listing .resource_box_listing_row {
       display: table-row; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/apps\/module\/static\/module\/sass\/resource_box_styling\.scss}line{font-family:\0000333}}
       .resource_box .resource_box_listing .resource_box_listing_row .resource_box_listing_cell {
         display: table-cell;
         padding: 5px 10px;
         border-bottom: 1px solid #ccc; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/apps\/module\/static\/module\/sass\/resource_box_styling\.scss}line{font-family:\0000338}}
         .resource_box .resource_box_listing .resource_box_listing_row .resource_box_listing_cell:hover {
           background: #ffffff55; }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/Users\/crivet\/Documents\/Python\%20Projects\/HydroLearn\/src\/apps\/module\/static\/module\/sass\/resource_box_styling\.scss}line{font-family:\0000342}}
         .resource_box .resource_box_listing .resource_box_listing_row .resource_box_listing_cell .resource_link {
           display: block;
           text-decoration: none !important; }

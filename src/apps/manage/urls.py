@@ -30,6 +30,7 @@ from src.apps.manage.hydroshare.views import get_hs_res_list
 
 
 # 'manage' app urls
+app_name = 'manage'
 urlpatterns = [
     
         # url(r'^tag/(?P<slug>[-\w]+)/$', TagIndexView.as_view(), name='tagged'),

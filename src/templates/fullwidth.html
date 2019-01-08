@@ -1,8 +1,9 @@
-{% extends CMS_TEMPLATE %}
-{% load cms_tags %}
+{% extends "layout.html" %}
+
 
 {% block title %}{% page_attribute "page_title" %}{% endblock title %}
 
 {% block content %}
-	{% placeholder "content" %}
+	{# placeholder "content" #}
+
 {% endblock content %}
