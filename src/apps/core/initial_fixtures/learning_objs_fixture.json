@@ -1,0 +1,684 @@
+[
+  {
+    "model": "core.learning_level",
+    "pk": 1,
+    "fields": {
+      "label": "Remembering",
+      "definition": "Remembering involves recognizing or recalling relevant facts, terms, concepts, knowledge, or answers"
+    }
+  },
+  {
+    "model": "core.learning_level",
+    "pk": 2,
+    "fields": {
+      "label": "Understanding",
+      "definition": "Understanding involved constructing meaning from instructional messages"
+    }
+  },
+  {
+    "model": "core.learning_level",
+    "pk": 3,
+    "fields": {
+      "label": "Applying",
+      "definition": "Applying involves using ideas and concepts to solve problems"
+    }
+  },
+  {
+    "model": "core.learning_level",
+    "pk": 4,
+    "fields": {
+      "label": "Analyzing",
+      "definition": "Involves breaking something down into components, seeing relationships and overall structure"
+    }
+  },
+  {
+    "model": "core.learning_level",
+    "pk": 5,
+    "fields": {
+      "label": "Evaluating",
+      "definition": "Involves making judgments based on criteria and standards"
+    }
+  },
+  {
+    "model": "core.learning_level",
+    "pk": 6,
+    "fields": {
+      "label": "Creating",
+      "definition": "Involves reorganizing diverse elements to form a new pattern or structure"
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 1,
+    "fields": {
+      "verb": "define",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 2,
+    "fields": {
+      "verb": "describe",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 3,
+    "fields": {
+      "verb": "identify",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 4,
+    "fields": {
+      "verb": "label",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 5,
+    "fields": {
+      "verb": "list",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 6,
+    "fields": {
+      "verb": "match",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 7,
+    "fields": {
+      "verb": "name",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 8,
+    "fields": {
+      "verb": "order",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 9,
+    "fields": {
+      "verb": "recall",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 10,
+    "fields": {
+      "verb": "select",
+      "level": 1,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 11,
+    "fields": {
+      "verb": "illustrate",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 12,
+    "fields": {
+      "verb": "compare",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 13,
+    "fields": {
+      "verb": "distinguish",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 14,
+    "fields": {
+      "verb": "estimate",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 15,
+    "fields": {
+      "verb": "explain",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 16,
+    "fields": {
+      "verb": "classify",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 17,
+    "fields": {
+      "verb": "interpret",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 18,
+    "fields": {
+      "verb": "predict",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 19,
+    "fields": {
+      "verb": "summarize",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 20,
+    "fields": {
+      "verb": "translate",
+      "level": 2,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 21,
+    "fields": {
+      "verb": "organize",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 22,
+    "fields": {
+      "verb": "solve",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 23,
+    "fields": {
+      "verb": "demonstrate",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 24,
+    "fields": {
+      "verb": "discover",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 25,
+    "fields": {
+      "verb": "modify",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 26,
+    "fields": {
+      "verb": "operate",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 27,
+    "fields": {
+      "verb": "predict",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 28,
+    "fields": {
+      "verb": "prepare",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 29,
+    "fields": {
+      "verb": "produce",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 30,
+    "fields": {
+      "verb": "relate",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 31,
+    "fields": {
+      "verb": "solve",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 32,
+    "fields": {
+      "verb": "choose",
+      "level": 3,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 33,
+    "fields": {
+      "verb": "analyze",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 34,
+    "fields": {
+      "verb": "break down",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 35,
+    "fields": {
+      "verb": "compare",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 36,
+    "fields": {
+      "verb": "select",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 37,
+    "fields": {
+      "verb": "contrast",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 38,
+    "fields": {
+      "verb": "deconstruct",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 39,
+    "fields": {
+      "verb": "discriminate",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 40,
+    "fields": {
+      "verb": "distinguish",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 41,
+    "fields": {
+      "verb": "differentiate",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 42,
+    "fields": {
+      "verb": "outline",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 43,
+    "fields": {
+      "verb": "interelate",
+      "level": 4,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 44,
+    "fields": {
+      "verb": "Rate",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 45,
+    "fields": {
+      "verb": "assess",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 46,
+    "fields": {
+      "verb": "monitor",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 47,
+    "fields": {
+      "verb": "check",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 48,
+    "fields": {
+      "verb": "test",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 49,
+    "fields": {
+      "verb": "judge",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 50,
+    "fields": {
+      "verb": "critique",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 51,
+    "fields": {
+      "verb": "recommend",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 52,
+    "fields": {
+      "verb": "interpret",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 53,
+    "fields": {
+      "verb": "weigh",
+      "level": 5,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 54,
+    "fields": {
+      "verb": "generate",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 55,
+    "fields": {
+      "verb": "plan",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 56,
+    "fields": {
+      "verb": "compose",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 57,
+    "fields": {
+      "verb": "develop",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 58,
+    "fields": {
+      "verb": "create",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 59,
+    "fields": {
+      "verb": "invent",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 60,
+    "fields": {
+      "verb": "organize",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 61,
+    "fields": {
+      "verb": "construct",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 62,
+    "fields": {
+      "verb": "produce",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 63,
+    "fields": {
+      "verb": "compile",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 64,
+    "fields": {
+      "verb": "design",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_verb",
+    "pk": 65,
+    "fields": {
+      "verb": "devise",
+      "level": 6,
+      "default": true
+    }
+  },
+  {
+    "model": "core.learning_outcome",
+    "pk": 1,
+    "fields": {
+      "outcome": "An ability to identify, formulate, and solve complex engineering problems by applying principles of engineering, science, and mathematics"
+    }
+  },
+  {
+    "model": "core.learning_outcome",
+    "pk": 2,
+    "fields": {
+      "outcome": "An ability to apply engineering design to produce solutions that meet specified needs with consideration of public health, safety, and welfare, as well as global, cultural, social, environmental, and economic factors"
+    }
+  },
+  {
+    "model": "core.learning_outcome",
+    "pk": 3,
+    "fields": {
+      "outcome": "An ability to communicate effectively with a range of audiences"
+    }
+  },
+  {
+    "model": "core.learning_outcome",
+    "pk": 4,
+    "fields": {
+      "outcome": "An ability to recognize ethical and professional responsibilities in engineering situations and make informed judgments, which must consider the impact of engineering solutions in global, economic, environmetal, and societal contexts"
+    }
+  },
+  {
+    "model": "core.learning_outcome",
+    "pk": 5,
+    "fields": {
+      "outcome": "An ability to function effectively on a team whose members together provide leadership, create a collaborative and inclusive environmetna, establish goals, plan tasks, and meet objectives"
+    }
+  },
+  {
+    "model": "core.learning_outcome",
+    "pk": 6,
+    "fields": {
+      "outcome": "An ability to develop and conduct appropriate experimentation, analyze and interpret data, and use engineering judgement to draw conclusions"
+    }
+  },
+  {
+    "model": "core.learning_outcome",
+    "pk": 7,
+    "fields": {
+      "outcome": "An ability to acquire and apply new knowledge as needed, using appropriate learning strategies"
+    }
+  }
+]

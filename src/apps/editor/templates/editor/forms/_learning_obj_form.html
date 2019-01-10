@@ -1,8 +1,9 @@
 <div class="form_errors">{{form.errors}}</div>
 
 <div class="form_cell form_content LO_representation">
-    {% if form.condition.value and form.verb.value and form.task.value and form.degree.value %}
-    {{ form.condition.value }} {{ form.verb.value }} {{ form.task.value }} {{ form.degree.value }}
+    {# if this form is already an instance (with an id), output the representation #}
+    {% if form.instance.pk %}
+        {{ form.condition.value }} {{ form.instance.verb.verb }} {{ form.task.value }} {{ form.degree.value }}
     {% endif %}
 </div>
 

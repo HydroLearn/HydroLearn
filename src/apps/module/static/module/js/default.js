@@ -82,6 +82,20 @@ $(document).ready(function() {
             }
     })
 
+    $('#learning-objective-help-dialog').dialog({
+        autoOpen: false,
+        draggable: false,
+        modal: true,
+        resizable: false,
+//        width: '450px',
+        width: "80%",
+        maxHeight: window.innerHeight - 50,
+
+        open: function() {
+                place_dialog_center($(this));
+            }
+    })
+
     $('#lesson-nav-denied-confirm').click(function(){
         $('#lesson-nav-denied-dialog').dialog('close')
     })
@@ -103,6 +117,10 @@ $(document).ready(function() {
         if ($("#learning-objective-dialog").dialog("isOpen") === true) {
             place_dialog_center($("#learning-objective-dialog"));
         }
+
+        if ($("#learning-objective-help-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#learning-objective-dialog"));
+        }
     });
 
     $(window).resize(function() {
@@ -121,6 +139,10 @@ $(document).ready(function() {
         if ($("#learning-objective-dialog").dialog("isOpen") === true) {
             place_dialog_center($("#learning-objective-dialog"));
         }
+
+        if ($("#learning-objective-help-dialog").dialog("isOpen") === true) {
+            place_dialog_center($("#learning-objective-dialog"));
+        }
     });
 
     // highlight the active section in the table of contents
@@ -131,7 +153,7 @@ $(document).ready(function() {
 
 // method to keep a given dialog box centered on screen based upon viewport size
 function place_dialog_center(dialog_obj) {
-    debugger;
+    //debugger;
     var window_height = $(window).height();
     var window_width = $(window).width();
     var scroll_top = $(window).scrollTop();

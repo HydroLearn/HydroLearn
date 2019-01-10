@@ -133,14 +133,18 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
             context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(instance=self.object)
 
         # read form selections
-        knowledge_order = list(Learning_Level.objects.values_list("label", flat=True).order_by("pk"))
+        knowledge_order = list(Learning_Level.objects.order_by("pk").values('id', 'label'))
+
         verbs_by_knowledge = defaultdict(list)
         for verb in Learning_Verb.objects.filter(default=True):
-            verbs_by_knowledge[verb.level.label].append(verb.verb)
-        abet_outcomes = Learning_Outcome.objects.values_list("outcome", flat=True).order_by("pk")
+            verbs_by_knowledge[verb.level.id].append({'id': verb.id, 'verb': verb.verb})
+
+        # get outcomes in form [ { id: PK_VALUE, outcome: TEXT_VALUE } , ...]
+        abet_outcomes = list(Learning_Outcome.objects.order_by("pk").values('id', 'outcome'))
+
         context['verbs_by_knowledge'] = json.dumps(verbs_by_knowledge)
         context['knowledge_order'] = json.dumps(knowledge_order)
-        context['abet_outcomes'] = abet_outcomes
+        context['abet_outcomes'] = json.dumps(abet_outcomes)
 
         return context
 
@@ -160,35 +164,34 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         # Find parent_lesson by using the passed slug in the URL
         # this view may be called with or without specifying a parent lesson,
         #   depending on if the
-        new_lesson = None
-        if self.kwargs.get('parent_lesson',None):
-            parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
-
-            if parent_lesson and parent_lesson.has_draft_access(self.request.user):
-                new_lesson = form.save(commit=False)
-                new_lesson.parent_lesson = parent_lesson
-            else:
-                form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
-                return self.form_invalid(form)
 
         with transaction.atomic():
+            #check if this
+            new_lesson = form.save(commit=False)
 
-            lesson = form.save(commit=False)
+            # check for a provided parent lesson,
+            # and if the current user has access to it
+            if self.kwargs.get('parent_lesson', None):
+                parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
+
+                if parent_lesson and parent_lesson.has_draft_access(self.request.user):
+                    new_lesson.parent_lesson = parent_lesson
+                else:
+                    form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
+                    return self.form_invalid(form)
 
             context = self.get_context_data(**kwargs)
             learning_objective_formset = context['learning_objective_formset']
 
             if learning_objective_formset.is_valid():
+
                 if learning_objective_formset.has_changed():
-                    for lo in learning_objective_formset:
-                        if lo.has_changed():
-                            lo.save(lesson)
 
-                    # delete any learning_objectives marked for deletion
-                    for deleted_lo in learning_objective_formset.deleted_forms:
-                        deleted_lo.delete()
+                    learning_objective_formset.instance = new_lesson
 
-                    lesson.save()
+                    new_lesson.save()
+                    learning_objective_formset.save()
+
                     form.save_m2m()
 
             else:
@@ -424,21 +427,21 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
             context['manage_denied_message'] = "You can view this Lesson, but don't have edit access! If you require edit access, please contact the owner."
             context['content_view'] = reverse('modules:lesson_content', kwargs={ 'slug': self.object.slug })
 
-        if self.request.POST:
-            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST, instance=self.object)
-            context['learning_objective_formset'].full_clean()
-        else:
-            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(instance=self.object)
+        context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST or None, instance=self.object)
 
         # read form selections
-        knowledge_order = list(Learning_Level.objects.values_list("label", flat=True).order_by("pk"))
+        knowledge_order = list(Learning_Level.objects.order_by("pk").values('id', 'label'))
+
         verbs_by_knowledge = defaultdict(list)
         for verb in Learning_Verb.objects.filter(default=True):
-            verbs_by_knowledge[verb.level.label].append(verb.verb)
-        abet_outcomes = Learning_Outcome.objects.values_list("outcome", flat=True).order_by("pk")
+            verbs_by_knowledge[verb.level.id].append({'id':verb.id, 'verb':verb.verb})
+
+        # get outcomes in form [ { id: PK_VALUE, outcome: TEXT_VALUE } , ...]
+        abet_outcomes = list(Learning_Outcome.objects.order_by("pk").values('id', 'outcome'))
+
         context['verbs_by_knowledge'] = json.dumps(verbs_by_knowledge)
         context['knowledge_order'] = json.dumps(knowledge_order)
-        context['abet_outcomes'] = abet_outcomes
+        context['abet_outcomes'] = json.dumps(abet_outcomes)
 
         return context
 
@@ -469,8 +472,11 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
                         deleted_lo.delete()
 
                     for lo in learning_objective_formset:
+                        # 'has_changed()' is used to filter out the empty formset
+                        # ensure not saving a form marked for deletion
                         if lo.has_changed() and not lo.cleaned_data.get('DELETE'):
-                            lo.save(lesson)
+                            # lo.save(lesson)
+                            lo.save()
 
 
                     lesson.save()

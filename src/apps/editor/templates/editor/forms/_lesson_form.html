@@ -37,10 +37,6 @@
                 <div id="LO_Empty_form" class="LO_form form_row" style="display:none;">
                     {% show_learningObj_form learning_objective_formset.empty_form %}
 
-                    {% comment %}
-                    <div class="LO_representation"></div>
-                    {{ learning_objective_formset.empty_form }}
-                    {% endcomment %}
                 </div>
             </div>
 
@@ -110,51 +106,108 @@
 
             $(window).ready(function () {
 
-                $(".trigger_popup_fricc").click(function(){
-                   $('.hover_bkgr_fricc').show();
+                // set click event for dialog's help button
+                $(".learning_obj_help_icon").click(function(){
+                    $("#learning-objective-help-dialog").dialog('open')
                 });
-                $('.hover_bkgr_fricc').click(function(){
-                    $('.hover_bkgr_fricc').hide();
-                });
-                $('.popupCloseButton').click(function(){
-                    $('.hover_bkgr_fricc').hide();
-                });
+
+
             });
 
             var verbsByKnowledge;
 
             $( document ).ready(function() {
+
                 var knowledgeOrder = JSON.parse("{{ knowledge_order|escapejs }}");
                 verbsByKnowledge = JSON.parse("{{ verbs_by_knowledge|escapejs }}");
-                // Setup knowledge dropdown
-                 knowledgeOrder.map( function(knowledge){
-                    $('#knowledgeSelection').append(new Option(knowledge, knowledge, false, false));
-                });
-                updateActionList(knowledgeOrder[0]);
+                var outcomes = JSON.parse("{{ abet_outcomes|escapejs }}");
 
-                $(document).on('input','#condition',function () {
-                    var conditionText = $(this).val();
-                    $('.conditionDisplay').each(function() {
-                        $(this).text(conditionText);
-                    });
-                });
-                $(document).on('input','#task',function () {
-                    var taskText = $(this).val();
-                    $('.taskDisplay').each(function() {
-                        $(this).text(taskText);
-                    });
-                });
-                $(document).on('input','#degree',function () {
-                    var degreeText = $(this).val();
-                    $('.degreeDisplay').each(function() {
-                        $(this).text(degreeText);
-                    });
-                });
+                populateKnowledgeList(knowledgeOrder);
+                populateOutcomes(outcomes);
 
+                // set events to updated learning objective on text
+                mapWizardInputEvents();
+
+                //$(document).on('input','.outcome_checkbox', updateABETSelection)
+
+                // initialize wizard if not already initialized
+                $("#wizardLO:not(.wizard)").steps({
+                    headerTag: "h2",
+                    bodyTag: "section",
+                    transitionEffect: "fade",
+
+                    onStepChanging: function (event, currentIndex, newIndex)
+                    {
+                        // Always allow previous action even if the current form is not valid
+                        if (currentIndex > newIndex) return true;
+
+
+                        var valid_input = true;
+                        switch(currentIndex){
+                            case 0:
+                                valid_input = $("#condition").val().trim().length > 0;
+                                break;
+                            case 1:
+                                valid_input = $("#actionSelection").val().trim().length > 0
+                                break;
+                            case 2:
+                                valid_input = $("#task").val().trim().length > 0
+                                break;
+                            case 3:
+                                valid_input = $("#degree").val().trim().length > 0;
+                                break;
+
+                            //case 4: break;
+
+
+                            default: break;
+
+                        }
+
+                        // if loading the review step, update the selected ABET listing
+                        if(newIndex == 5){
+                            updateABETReview();
+                        }
+
+                        return valid_input;
+                    },
+
+                    onFinished: function (event, currentIndex)
+                    {
+                        // add the new form row for this learning objective
+                        //$('.LO_fs_add').click()
+
+                        var outcomes_ids = $("#outcomes_selection input:checked").map(function(){
+                                              return $(this).val();
+                                            }).get();
+
+                        // grab all input field values
+                        var values_dictionary = {
+                            "condition": $("#condition").val().trim(),
+                            "task": $("#task").val().trim(),
+                            "degree": $("#degree").val().trim(),
+                            "level": $("#knowledgeSelection option:selected").text(),
+                            "level_id": $("#knowledgeSelection option:selected").val(),
+                            "verb": $("#actionSelection option:selected").text(),
+                            'verb_id': $("#actionSelection option:selected").val(),
+                            "outcomes": outcomes_ids,
+                        }
+
+                        // add the new form
+                        var learning_objective_form = $('.LO_form').last();
+                        if(learning_objective_form.attr('id') !== "learning_objective_set-0" || learning_objective_form.find(".LO_representation").text() !== ''){
+                            $('.LO_fs_add').click();
+                            learning_objective_form = $('.LO_form').last();
+                        }
+                        updateLearningObjective(learning_objective_form, values_dictionary);
+                        $('.ui-dialog-titlebar-close').click();
+                        resetWizard();
+                    }
+                });
 
             });
 
-            $('.LO_form').formset({
+            $('#learning_objectives_formset .LO_form').formset({
 
                 formCssClass: "LO_form",
 
@@ -188,78 +241,6 @@
 
             });
 
-            $("#wizardLO").steps({
-                headerTag: "h2",
-                bodyTag: "section",
-                transitionEffect: "fade",
-
-                onStepChanging: function (event, currentIndex, newIndex)
-                {
-                    // Always allow previous action even if the current form is not valid
-                    if (currentIndex > newIndex)
-                    {
-                        return true;
-                    }
-                    if(currentIndex === 0){
-                        if($("#condition").val().trim().length == 0){
-                            return false;
-                        }
-                    }
-                    if(currentIndex === 1){
-                        if($("#actionText").val().trim().length == 0){
-                            return false;
-                        }
-                    }
-                    if(currentIndex === 2){
-                        if($("#task").val().trim().length == 0){
-                            return false;
-                        }
-                    }
-                    if(currentIndex === 3){
-                        if($("#degree").val().trim().length == 0){
-                            return false;
-                        }
-                    }
-                    if(currentIndex === 4){
-                    }
-                    return true;
-                },
-
-                onFinished: function (event, currentIndex)
-                {
-                    // add the new form row for this learning objective
-                    //$('.LO_fs_add').click()
-
-                    var outcomes_ids = $("#outcomes_selection input:checked").map(function(){
-                                          return $(this).val();
-                                        }).get();
-                    var values_dictionary = {
-                        "condition": $(".conditionDisplay").html(),
-                        "task": $(".taskDisplay").html(),
-                        "degree": $(".degreeDisplay").html(),
-                        "level": $("#knowledgeSelection option:selected").text(),
-                        "verb": $(".verbDisplay").html(),
-                        "outcomes": outcomes_ids
-                    }
-                    // add the new form
-                    var learning_objective_form = $('.LO_form').last();
-                    if(learning_objective_form.attr('id') !== "learning_objective_set-0" || learning_objective_form.find(".LO_representation").text() !== ''){
-                        $('.LO_fs_add').click();
-                        learning_objective_form = $('.LO_form').last();
-                    }
-                    updateLearningObjective(learning_objective_form, values_dictionary);
-                    $('.ui-dialog-titlebar-close').click();
-                    resetWizard();
-                }
-            });
-
-            // if any learning objective forms have been populated without a value (the extra form)
-            // remove it from the listing
-            $('.LO_form').each(function(index, form){
-                if($(this).find('.LO_representation').text().trim() == ""){
-                    $(this).remove()
-                }
-            })
 
             // initialize any existing delete buttons for existing forms
             $('#learning_objectives_formset .form_delete').click(function(del_event){
@@ -278,6 +259,19 @@
                     form.find('input[name$="DELETE"]').attr('value',!deletion_state)
                 }
             });
+
+            // if any learning objective forms have been populated without a value (the extra form)
+            // remove it from the listing
+            $('#learning_objectives_formset .LO_form').each(function(index, form){
+                if($(this).find('.LO_representation').text().trim() == ""){
+
+
+                    //$(this).find('.form_delete').click()
+                    $(this).remove()
+                }
+            })
+
+
 
 
         </script>

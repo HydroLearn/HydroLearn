@@ -248,60 +248,61 @@ class Learing_OutcomeForm(forms.ModelForm):
 class Learning_ObjectiveForm(forms.ModelForm):
     class Meta:
         model = Learning_Objective
-        fields = ['condition', 'task', 'degree', 'verb', 'outcomes']
+        fields = [
+            'condition',
+            'task',
+            'degree',
+            'verb',
+            'outcomes'
+        ]
 
 
 class Learning_ObjectiveTextForm(forms.ModelForm):
-    level = forms.CharField(widget = forms.HiddenInput())
-    verb = forms.CharField(widget = forms.HiddenInput())
-    outcomes = forms.CharField(widget = forms.HiddenInput(), required=False)
+    outcomes = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = Learning_Objective
-        fields = ('condition', 'task', 'degree')
-        widgets = {"condition": forms.HiddenInput(), "task": forms.HiddenInput(), "degree": forms.HiddenInput()}
+        fields = (
+            'condition',
+            'task',
+            'degree',
+            'verb',
 
-    def __init__(self, *args, **kwargs):
-        super(Learning_ObjectiveTextForm, self).__init__(*args, **kwargs)
-        lo = kwargs.pop('instance', None)
-        if lo:
-            self.fields['verb'] = forms.CharField(widget = forms.HiddenInput(), initial=lo.verb.verb)
-            self.fields['level'] = forms.CharField(widget = forms.HiddenInput(), initial=lo.verb.level.label)
-            self.fields['outcomes'] = forms.CharField(widget = forms.HiddenInput(), initial=",".join(set(str(outcome.id) for outcome in lo.outcomes.all())))
+        )
+        widgets = {
+            "condition": forms.HiddenInput(),
+            "task": forms.HiddenInput(),
+            "degree": forms.HiddenInput(),
+            "verb": forms.HiddenInput(),
+            "outcomes": forms.HiddenInput(),
+        }
 
-    def clean_verb(self):
-        verb = self.cleaned_data.get('verb')
-        level = self.cleaned_data.get('level')
-        if verb is None:
-            raise forms.ValidationError("verb is a required field.")
-        learning_level = Learning_Level.objects.get(label=level)
-        if learning_level is None:
-            raise forms.ValidationError("No Learning_Level with label {} exists".format(level))
-        learning_verb = Learning_Verb(verb=verb, level=learning_level)
-        learning_verb.save()
-        if learning_verb is None:
-            raise forms.ValidationError("No Learning_Verb with verb {} and level {} exists".format(verb, level))
-        return learning_verb
 
     def clean_outcomes(self):
         outcomes = self.cleaned_data.get('outcomes')
         if not outcomes:
             return Learning_Outcome.objects.none()
+
         learning_outcomes = Learning_Outcome.objects.filter(pk__in=outcomes.split(","))
         if learning_outcomes is None:
             raise forms.ValidationError("No Learning_Outcome with ids {} exists".format(outcomes))
+
         return learning_outcomes
 
-    def save(self, lesson=None):
-        if lesson:
-            self.instance.lesson = lesson
-        self.instance.verb_id = self.cleaned_data.get("verb").pk
-        self.instance.save()
-        outcomes = self.cleaned_data.get("outcomes")
-        if outcomes:
-            for outcome in self.cleaned_data.get("outcomes"):
-                self.instance.outcomes.add(outcome)
-        return super().save()
+    def save(self, commit=True):
+        # if lesson:
+        #     self.instance.lesson = lesson
+
+        # self.instance.verb_id = self.cleaned_data.get("verb")
+        lo_instance = super(Learning_ObjectiveTextForm, self).save(commit)
+
+        if commit:
+            # add outcomes to the new learning objective
+            outcomes = self.cleaned_data.get("outcomes")
+            for outcome in outcomes:
+                lo_instance.outcomes.add(outcome)
+
+        return lo_instance
 
     def delete(self):
         self.instance.delete()
