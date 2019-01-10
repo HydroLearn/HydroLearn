@@ -1,6 +1,6 @@
 from django.db import models
 from .CreationTrackingModels import CreationTrackingBaseModel
-from .ModuleModels import Lesson
+
 
 class Learning_Level(models.Model):
     label = models.CharField(max_length=64)
@@ -8,16 +8,33 @@ class Learning_Level(models.Model):
 
 class Learning_Verb(models.Model):
     verb = models.CharField(max_length=64)
-    level = models.ForeignKey(Learning_Level)
+    level = models.ForeignKey(
+        'core.Learning_Level',
+        related_name='verbs'
+    )
+
     default = models.BooleanField(default=False)
 
 class Learning_Outcome(models.Model):
     outcome = models.CharField(max_length=256)
 
 class Learning_Objective(CreationTrackingBaseModel):
-    lesson = models.ForeignKey(Lesson)
+
     condition = models.TextField()
     task = models.TextField()
     degree = models.TextField()
-    verb = models.ForeignKey(Learning_Verb)
-    outcomes = models.ManyToManyField(Learning_Outcome, blank=True)
+
+    lesson = models.ForeignKey(
+        'core.Lesson',
+        related_name='learning_objectives',
+        on_delete=models.CASCADE
+    )
+
+    verb = models.ForeignKey(
+            'core.Learning_Verb',
+        )
+
+    outcomes = models.ManyToManyField(
+            'core.Learning_Outcome',
+            blank=True
+        )

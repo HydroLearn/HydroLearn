@@ -16,6 +16,7 @@ from src.apps.core.managers.IterativeDeletionManagers import (
     IterativeDeletion_Manager,
     PolyIterativeDeletion_Manager
 )
+from src.apps.core.models.LearningObjModels import Learning_Objective
 
 from src.apps.core.models.PublicationModels import (
     Publication,
@@ -431,6 +432,20 @@ class Lesson(Publication):
             )
             new_ref.save()
 
+        for learning_obj in from_instance.learning_objectives.all():
+            new_lo = Learning_Objective(
+                lesson = self,
+                condition = learning_obj.condition,
+                task=learning_obj.task,
+                degree=learning_obj.degree,
+                verb=learning_obj.verb,
+            )
+
+            new_lo.save()
+
+            for outcome in learning_obj.outcomes.all():
+                new_lo.outcomes.add(outcome)
+
     def copy_content(self, from_instance):
         '''
             copy content including tags, and placeholder plugins to this instance from a passed Lesson
@@ -585,10 +600,6 @@ class Lesson(Publication):
             return self.parent_lesson.get_Publishable_parent().get_owner()
         else:
             return self.created_by
-
-
-
-
 
 class Section(PolyPublicationChild):
 
