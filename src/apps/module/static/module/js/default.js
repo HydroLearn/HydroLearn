@@ -119,7 +119,7 @@ $(document).ready(function() {
         }
 
         if ($("#learning-objective-help-dialog").dialog("isOpen") === true) {
-            place_dialog_center($("#learning-objective-dialog"));
+            place_dialog_center($("#learning-objective-help-dialog"));
         }
     });
 
@@ -141,7 +141,7 @@ $(document).ready(function() {
         }
 
         if ($("#learning-objective-help-dialog").dialog("isOpen") === true) {
-            place_dialog_center($("#learning-objective-dialog"));
+            place_dialog_center($("#learning-objective-help-dialog"));
         }
     });
 

@@ -78,10 +78,10 @@
 #learning-objective-dialog #outcomes_selection {
   display: table; }
   #learning-objective-dialog #outcomes_selection .outcome_row {
-    display: table-row;
-    margin: 5px 5px 12px; }
+    display: table-row; }
     #learning-objective-dialog #outcomes_selection .outcome_row input {
-      display: table-cell; }
+      display: table-cell;
+      margin: 10px; }
     #learning-objective-dialog #outcomes_selection .outcome_row label {
       display: table-cell;
       font-weight: normal; }
