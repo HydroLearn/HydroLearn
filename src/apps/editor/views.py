@@ -184,16 +184,39 @@ class editor_LessonCreateView(LoginRequiredMixin, UserAwareFormMixin, AjaxableRe
             context = self.get_context_data(**kwargs)
             learning_objective_formset = context['learning_objective_formset']
 
+            new_lesson.save()
+            form.save_m2m()
+
             if learning_objective_formset.is_valid():
 
                 if learning_objective_formset.has_changed():
 
-                    learning_objective_formset.instance = new_lesson
+                    # learning_objective_formset.instance = new_lesson
 
-                    new_lesson.save()
-                    learning_objective_formset.save()
 
-                    form.save_m2m()
+                    for lo in learning_objective_formset:
+                        # 'has_changed()' is used to filter out the empty formset
+                        # ensure not saving a form marked for deletion
+                        if lo.has_changed() and not lo.cleaned_data.get('DELETE'):
+                            # lo.save(lesson)
+                            new_lo = lo.save(commit=False)
+                            new_lo.created_by = self.request.user
+                            new_lo.changed_by = self.request.user
+                            new_lo.lesson = new_lesson
+
+                            new_lo.save()
+
+                            # add the outcomes
+                            outcomes = lo.cleaned_data.get("outcomes")
+                            for outcome in outcomes:
+                                new_lo.outcomes.add(outcome)
+
+
+
+
+                    # learning_objective_formset.save()
+
+
 
             else:
                 return self.form_invalid(form,*args, **kwargs)
@@ -478,7 +501,17 @@ class editor_LessonUpdateView(CollabViewAccessMixin, UserAwareFormMixin, Ajaxabl
                         # ensure not saving a form marked for deletion
                         if lo.has_changed() and not lo.cleaned_data.get('DELETE'):
                             # lo.save(lesson)
-                            lo.save()
+                            new_lo = lo.save(commit=False)
+                            new_lo.created_by = self.request.user
+                            new_lo.changed_by = self.request.user
+
+                            new_lo.save()
+
+                            # add the outcomes
+                            outcomes = lo.cleaned_data.get("outcomes")
+                            for outcome in outcomes:
+                                new_lo.outcomes.add(outcome)
+
 
 
                     lesson.save()
