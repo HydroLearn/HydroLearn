@@ -16,11 +16,14 @@ from src.apps.core.managers.IterativeDeletionManagers import (
     IterativeDeletion_Manager,
     PolyIterativeDeletion_Manager
 )
+from src.apps.core.models.LearningObjModels import Learning_Objective
 
 from src.apps.core.models.PublicationModels import (
     Publication,
     PolyPublicationChild
 )
+
+from src.apps.core.models.HS_AppFrameModels import AppReference
 
 from cms.utils.copy_plugins import copy_plugins_to
 
@@ -120,7 +123,11 @@ class Lesson(Publication):
 
     # many to many relationship for collaborators
     # allowed to make edits to the draft of a publication
-    collaborators = models.ManyToManyField(User, related_name="collaborations", through='Collaboration')
+    collaborators = models.ManyToManyField(
+            User,
+            related_name="collaborations",
+            through='Collaboration'
+        )
 
     # the content of this lesson
     summary = PlaceholderField('lesson_summary')
@@ -395,6 +402,7 @@ class Lesson(Publication):
         # appear on the public version of the page
         self.sections.delete()
         self.sub_lessons.delete()
+        #self.app_refs.delete()
 
         for section_item in from_instance.sections.all():
             # copy the section items and set their linked lesson to this new instance
@@ -419,6 +427,28 @@ class Lesson(Publication):
             new_lesson.save()
             new_lesson.copy_content(sub_lesson)
             new_lesson.copy_children(sub_lesson, maintain_ref)
+
+        for app_ref in from_instance.app_refs.all():
+            new_ref = AppReference(
+                app_name=app_ref.app_name,
+                app_link=app_ref.app_link,
+                lesson=self,
+            )
+            new_ref.save()
+
+        for learning_obj in from_instance.learning_objectives.all():
+            new_lo = Learning_Objective(
+                lesson = self,
+                condition = learning_obj.condition,
+                task=learning_obj.task,
+                degree=learning_obj.degree,
+                verb=learning_obj.verb,
+            )
+
+            new_lo.save()
+
+            for outcome in learning_obj.outcomes.all():
+                new_lo.outcomes.add(outcome)
 
     def copy_content(self, from_instance):
         '''
@@ -574,10 +604,6 @@ class Lesson(Publication):
             return self.parent_lesson.get_Publishable_parent().get_owner()
         else:
             return self.created_by
-
-
-
-
 
 class Section(PolyPublicationChild):
 

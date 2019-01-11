@@ -1,0 +1,155 @@
+{% load static sekizai_tags %}
+
+
+<!--[if lt IE 7]>
+    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+<![endif]-->
+
+<div class="content">
+    <a class="learning_obj_help_icon" title="What is a Learning Objective?"><i class="fa fa-question-circle"></i></a>
+
+    <form id="wizardLO" action="#">
+<!-- Section 1 -->
+        <h2>Describe</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span>...<br/><br/>
+
+            <h3>What's the condition?</h3>
+            <label for="condition" class="redtext"><i>Describe the condition under which the student will perform the described behavior:</i></label>
+            <input class="inputtext required" id="condition" name="condition" type="text">
+            <h3>Examples:</h3>
+            <ul>
+                <li>Given a map</li>
+                <li>Given a set of data</li>
+                <li>Using course notes</li>
+                <li>Using the equation resource worksheet</li>
+            </ul>
+        </section>
+<!-- Section 2 -->
+        <h2>Action</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span>...<br/><br/>
+
+            <a>Choose Level of Knowledge:</a>
+            <!--<select id="knowledgeSelection" onChange="updateActionList(this);"></select>-->
+            <select id="knowledgeSelection"></select>
+            </br>
+            <a>Choose an Action:</a>
+            <!--<input id="actionText" list="actionList" onchange="selectAction(this);" type="text">-->
+            <!--<datalist id="actionList"></datalist>-->
+            <!--<select id="actionSelection" onChange="selectAction(this);"></select>-->
+            <select id="actionSelection"></select>
+            </br>
+            <div class="bloom_table styledTable">
+                <div class="row">
+                    <div class="cell header">Difficulty</div>
+                    <div class="cell header">Based on Bloom's Taxonomy</div>
+                    <div class="cell header">Description</div>
+                </div>
+                <div class="row">
+                    <div class="cell level1 whitetext">Level 1</div>
+                    <div class="cell level1 whitetext bold">Remembering</div>
+                    <div class="cell level1 whitetext">Recognizing or recalling relevant facts, terms, concepts, knowledge, or answers.</div>
+                </div>
+                <div class="row">
+                    <div class="cell level2 whitetext">Level 2</div>
+                    <div class="cell level2 whitetext bold">Understanding</div>
+                    <div class="cell level2 whitetext">Constructing meaning from instructional messages.</div>
+                </div>
+                <div class="row">
+                    <div class="cell level3 whitetext">Level 3</div>
+                    <div class="cell level3 whitetext bold">Applying </div>
+                    <div class="cell level3 whitetext">Using ideas and concepts to solve problems.</div>
+                </div>
+                <div class="row">
+                    <div class="cell level4 whitetext">Level 4</div>
+                    <div class="cell level4 whitetext bold">Analyzing</div>
+                    <div class="cell level4 whitetext">Breaking something down into components, seeing relationships and overall structure.</div>
+                </div>
+                <div class="row">
+                    <div class="cell level5 whitetext">Level 5</div>
+                    <div class="cell level5 whitetext bold">Evaluating</div>
+                    <div class="cell level5 whitetext">Making judgments based on criteria and standards</div>
+                </div>
+                <div class="row">
+                    <div class="cell level6 whitetext">Level 6</div>
+                    <div class="cell level6 whitetext bold">Creating </div>
+                    <div class="cell level6 whitetext">Reorganizing diverse elements to form a new pattern or structure</div>
+                </div>
+            </div>
+        </section>
+<!-- Section 3 -->
+        <h2>Task</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span>...<br/><br/>
+
+            <label for="task"><b>What is the TASK the learner has to do?</b></br><i class="redtext">Describe the task as specific as possible in the gray box</i></label>
+            <input class="inputtext required" id="task" name="task" type="text">
+            <h3>Examples:</h3>
+            <ul>
+                <li>all areas below 100 year flood plane</li>
+                <li>{example 2}</li>
+                <li>{example 2}</li>
+                <li>{example 2}</li>
+            </ul>
+        </section>
+<!-- Section 4 -->
+        <h2>Degree</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span>...<br/><br/>
+
+            <label for="degree">Describe the desired degree or level of performance. <i class="redtext">Write degree in gray box</i></label>
+            <input class="inputtext required" id="degree" name="condition" type="text">
+            <h3>Examples:</h3>
+            <ul>
+                <li>With a definition of each source of ground water recharge and how it functions in the water cycle </li>
+                <li>to 90% accuracy</li>
+                <li>within 0.1 correct measure</li>
+                <li>with at least 5 characteristics listed</li>
+            </ul>
+
+        </section>
+<!-- Section 5 -->
+        <h2>ABET</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span><br/><br/>
+
+            <h3>Link to ABET Outcomes</h3>
+            <p class="redtext">OPTIONAL: Select ABET Outcomes that correspond with your learning objectives</p>
+
+            <div id="outcomes_selection"></div>
+        </section>
+<!-- Section 6 -->
+        <h2>Review</h2>
+        <section>
+            <h3>Learning Objective:</h3>
+            <span class="conditionDisplay"></span>
+            <span class="verbDisplay"></span>
+            <span class="taskDisplay"></span>
+            <span class="degreeDisplay"></span><br/><br/>
+            <h3>ABET Outcomes:</h3>
+            <ul id="abet_outcomes"></ul>
+        </section>
+
+    </form>
+</div>

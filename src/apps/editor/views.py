@@ -11,6 +11,10 @@ from django.forms.formsets import DELETION_FIELD_NAME, formset_factory
 from django.template import RequestContext
 from django.utils.translation import gettext as _
 from django.utils.timezone import now
+from src.apps.core.models.LearningObjModels import Learning_Level, Learning_Verb, \
+    Learning_Outcome, Learning_Objective
+from collections import defaultdict
+from .forms import inlineLearning_ObjectiveFormset
 
 
 from django.views.generic import (
@@ -122,6 +126,25 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
             # otherwise this is a new lesson the user is creating (grant edit permissions)
             context['edit_access'] = True
 
+        if self.request.POST:
+            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST, instance=self.object)
+            context['learning_objective_formset'].full_clean()
+        else:
+            context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(instance=self.object)
+
+        # read form selections
+        knowledge_order = list(Learning_Level.objects.order_by("pk").values('id', 'label'))
+
+        verbs_by_knowledge = defaultdict(list)
+        for verb in Learning_Verb.objects.filter(default=True):
+            verbs_by_knowledge[verb.level.id].append({'id': verb.id, 'verb': verb.verb})
+
+        # get outcomes in form [ { id: PK_VALUE, outcome: TEXT_VALUE } , ...]
+        abet_outcomes = list(Learning_Outcome.objects.order_by("pk").values('id', 'outcome'))
+
+        context['verbs_by_knowledge'] = json.dumps(verbs_by_knowledge)
+        context['knowledge_order'] = json.dumps(knowledge_order)
+        context['abet_outcomes'] = json.dumps(abet_outcomes)
 
         return context
 
@@ -141,15 +164,38 @@ class editor_LessonCreateView(LoginRequiredMixin, AjaxableResponseMixin, CreateV
         # Find parent_lesson by using the passed slug in the URL
         # this view may be called with or without specifying a parent lesson,
         #   depending on if the
-        if self.kwargs.get('parent_lesson',None):
-            parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
 
-            if parent_lesson and parent_lesson.has_draft_access(self.request.user):
-                new_lesson = form.save(commit=False)
-                new_lesson.parent_lesson = parent_lesson
+        with transaction.atomic():
+            #check if this
+            new_lesson = form.save(commit=False)
+
+            # check for a provided parent lesson,
+            # and if the current user has access to it
+            if self.kwargs.get('parent_lesson', None):
+                parent_lesson = get_object_or_404(Lesson, slug=self.kwargs['parent_lesson'])
+
+                if parent_lesson and parent_lesson.has_draft_access(self.request.user):
+                    new_lesson.parent_lesson = parent_lesson
+                else:
+                    form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
+                    return self.form_invalid(form)
+
+            context = self.get_context_data(**kwargs)
+            learning_objective_formset = context['learning_objective_formset']
+
+            if learning_objective_formset.is_valid():
+
+                if learning_objective_formset.has_changed():
+
+                    learning_objective_formset.instance = new_lesson
+
+                    new_lesson.save()
+                    learning_objective_formset.save()
+
+                    form.save_m2m()
+
             else:
-                form.add_error(None, 'Submission error! Either the parent lesson you are attempting to save to does not exist, or you do not have edit permissions!')
-                return self.form_invalid(form)
+                return self.form_invalid(form,*args, **kwargs)
 
 
         return super(editor_LessonCreateView, self).form_valid(form, *args, **kwargs)
@@ -381,6 +427,22 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
             context['manage_denied_message'] = "You can view this Lesson, but don't have edit access! If you require edit access, please contact the owner."
             context['content_view'] = reverse('modules:lesson_content', kwargs={ 'slug': self.object.slug })
 
+        context['learning_objective_formset'] = inlineLearning_ObjectiveFormset(self.request.POST or None, instance=self.object)
+
+        # read form selections
+        knowledge_order = list(Learning_Level.objects.order_by("pk").values('id', 'label'))
+
+        verbs_by_knowledge = defaultdict(list)
+        for verb in Learning_Verb.objects.filter(default=True):
+            verbs_by_knowledge[verb.level.id].append({'id':verb.id, 'verb':verb.verb})
+
+        # get outcomes in form [ { id: PK_VALUE, outcome: TEXT_VALUE } , ...]
+        abet_outcomes = list(Learning_Outcome.objects.order_by("pk").values('id', 'outcome'))
+
+        context['verbs_by_knowledge'] = json.dumps(verbs_by_knowledge)
+        context['knowledge_order'] = json.dumps(knowledge_order)
+        context['abet_outcomes'] = json.dumps(abet_outcomes)
+
         return context
 
     def get_success_return_data(self,form):
@@ -395,10 +457,35 @@ class editor_LessonUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
         }
 
     def form_valid(self, form, *args, **kwargs):
-        return super(editor_LessonUpdateView, self).form_valid(form, *args, **kwargs)
+        with transaction.atomic():
 
-    def form_invalid(self, form, *args, **kwargs):
-        return super(editor_LessonUpdateView, self).form_invalid(form, *args, **kwargs)
+            lesson = form.save(commit=False)
+
+            context = self.get_context_data(**kwargs)
+            learning_objective_formset = context['learning_objective_formset']
+
+            if learning_objective_formset.is_valid():
+                if learning_objective_formset.has_changed():
+
+                    # delete any learning_objectives marked for deletion
+                    for deleted_lo in learning_objective_formset.deleted_forms:
+                        deleted_lo.delete()
+
+                    for lo in learning_objective_formset:
+                        # 'has_changed()' is used to filter out the empty formset
+                        # ensure not saving a form marked for deletion
+                        if lo.has_changed() and not lo.cleaned_data.get('DELETE'):
+                            # lo.save(lesson)
+                            lo.save()
+
+
+                    lesson.save()
+                    form.save_m2m()
+
+            else:
+                return self.form_invalid(form,*args, **kwargs)
+
+        return super(editor_LessonUpdateView, self).form_valid(form, *args, **kwargs)
 
 
 class editor_SectionUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, UpdateView):

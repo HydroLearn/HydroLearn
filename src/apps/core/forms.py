@@ -1,6 +1,8 @@
 from django import forms
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext as _
+from .models.LearningObjModels import Learning_Level, Learning_Verb, Learning_Outcome, \
+    Learning_Objective
 
 from src.apps.core.models.ModuleModels import (
     #Module,
@@ -224,3 +226,83 @@ ResourceInline = inlineformset_factory(
     form=ResourceForm,
     formset=BaseResourceFormset,
 )
+
+class Learing_LevelForm(forms.ModelForm):
+    class Meta:
+        model = Learning_Level
+        fields = ['label', 'definition']
+
+
+class Learing_VerbForm(forms.ModelForm):
+    class Meta:
+        model = Learning_Verb
+        fields = ['verb', 'level']
+
+
+class Learing_OutcomeForm(forms.ModelForm):
+    class Meta:
+        model = Learning_Outcome
+        fields = ['outcome']
+
+
+class Learning_ObjectiveForm(forms.ModelForm):
+    class Meta:
+        model = Learning_Objective
+        fields = [
+            'condition',
+            'task',
+            'degree',
+            'verb',
+            'outcomes'
+        ]
+
+
+class Learning_ObjectiveTextForm(forms.ModelForm):
+    outcomes = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        model = Learning_Objective
+        fields = (
+            'condition',
+            'task',
+            'degree',
+            'verb',
+
+        )
+        widgets = {
+            "condition": forms.HiddenInput(),
+            "task": forms.HiddenInput(),
+            "degree": forms.HiddenInput(),
+            "verb": forms.HiddenInput(),
+            "outcomes": forms.HiddenInput(),
+        }
+
+
+    def clean_outcomes(self):
+        outcomes = self.cleaned_data.get('outcomes')
+        if not outcomes:
+            return Learning_Outcome.objects.none()
+
+        learning_outcomes = Learning_Outcome.objects.filter(pk__in=outcomes.split(","))
+        if learning_outcomes is None:
+            raise forms.ValidationError("No Learning_Outcome with ids {} exists".format(outcomes))
+
+        return learning_outcomes
+
+    def save(self, commit=True):
+        # if lesson:
+        #     self.instance.lesson = lesson
+
+        # self.instance.verb_id = self.cleaned_data.get("verb")
+        lo_instance = super(Learning_ObjectiveTextForm, self).save(commit)
+
+        if commit:
+            # add outcomes to the new learning objective
+            outcomes = self.cleaned_data.get("outcomes")
+            for outcome in outcomes:
+                lo_instance.outcomes.add(outcome)
+
+        return lo_instance
+
+    def delete(self):
+        self.instance.delete()

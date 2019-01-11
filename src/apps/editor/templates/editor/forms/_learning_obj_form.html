@@ -1,0 +1,25 @@
+<div class="form_errors">{{form.errors}}</div>
+
+<div class="form_cell form_content LO_representation">
+    {# if this form is already an instance (with an id), output the representation #}
+    {% if form.instance.pk %}
+        {{ form.condition.value }} {{ form.instance.verb.verb }} {{ form.task.value }} {{ form.degree.value }}
+    {% endif %}
+</div>
+
+<div class="form_cell form_content">
+
+    {% if can_delete %}
+        <a class="form_delete"><i class="fas fa-trash glyph-button glyph-delete"></i></a>
+        {{ form.DELETE }}
+    {% endif %}
+
+    {% for field in form.hidden_fields %}
+        {# exclude the delete field since already added #}
+        {% if field.name != 'DELETE' %}
+            {{ field }}
+        {% endif %}
+    {% endfor %}
+
+
+</div>

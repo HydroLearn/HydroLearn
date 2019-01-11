@@ -1,6 +1,5 @@
 from django.conf.urls import url
 
-
 from src.apps.core.views.ModuleViews import *
 
 # 'core' app urls
@@ -20,7 +19,6 @@ urlpatterns = [
     url(r'^(?P<lesson_slug>[^/]+)/(?P<quiz_slug>[^/]+)/(?P<pk>[^/]+)/$', core_QuizQuestionDetailView.as_view(), name="quiz_question_detail"),
 
     # ======================================== PARTIAL VIEW RETURNS ====================
-        
         
 
 

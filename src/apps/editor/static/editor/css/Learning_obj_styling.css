@@ -1,0 +1,91 @@
+#learning-objective-dialog .wizard {
+  display: table;
+  width: 100%;
+  height: 100%; }
+  #learning-objective-dialog .wizard .steps {
+    display: table-row; }
+    #learning-objective-dialog .wizard .steps:before, #learning-objective-dialog .wizard .steps:after {
+      content: none; }
+    #learning-objective-dialog .wizard .steps ul {
+      display: table-cell; }
+      #learning-objective-dialog .wizard .steps ul li {
+        width: unset;
+        float: unset;
+        display: inline-block; }
+        #learning-objective-dialog .wizard .steps ul li a {
+          margin: 0 5px 5px;
+          padding: 5px 7px; }
+          #learning-objective-dialog .wizard .steps ul li a .number {
+            font-size: inherit; }
+        #learning-objective-dialog .wizard .steps ul li.current a {
+          background: #45a4f3;
+          font-weight: bold; }
+        #learning-objective-dialog .wizard .steps ul li.error a {
+          background: #b1213c;
+          font-weight: bold; }
+  #learning-objective-dialog .wizard .content {
+    overflow: auto;
+    display: table-row;
+    background: none;
+    margin-bottom: 50px; }
+    #learning-objective-dialog .wizard .content .body {
+      display: table-cell;
+      padding: 10px 25px;
+      position: inherit;
+      background: #eee;
+      border-radius: 7px;
+      height: fit-content; }
+      #learning-objective-dialog .wizard .content .body ul {
+        margin: 3px 2em; }
+  #learning-objective-dialog .wizard .actions {
+    display: table-row; }
+    #learning-objective-dialog .wizard .actions:before, #learning-objective-dialog .wizard .actions:after {
+      content: none; }
+    #learning-objective-dialog .wizard .actions ul {
+      display: table-cell;
+      float: right;
+      padding: 10px; }
+#learning-objective-dialog .bloom_table {
+  color: #fff; }
+  #learning-objective-dialog .bloom_table .bold {
+    font-weight: bold; }
+  #learning-objective-dialog .bloom_table .level1 {
+    background: #00890080; }
+  #learning-objective-dialog .bloom_table .level2 {
+    background: #5bb61880; }
+  #learning-objective-dialog .bloom_table .level3 {
+    background: #ff830080; }
+  #learning-objective-dialog .bloom_table .level4 {
+    background: #0087ff80; }
+  #learning-objective-dialog .bloom_table .level5 {
+    background: #ab00ff80; }
+  #learning-objective-dialog .bloom_table .level6 {
+    background: #ff000080; }
+#learning-objective-dialog .redtext {
+  color: red;
+  font-size: small; }
+#learning-objective-dialog .inputtext {
+  width: 500px; }
+#learning-objective-dialog .purpletext {
+  color: purple; }
+#learning-objective-dialog .learning_obj_help_icon {
+  color: #45a4f3;
+  position: absolute;
+  right: 15px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold; }
+#learning-objective-dialog #outcomes_selection {
+  display: table; }
+  #learning-objective-dialog #outcomes_selection .outcome_row {
+    display: table-row; }
+    #learning-objective-dialog #outcomes_selection .outcome_row input {
+      display: table-cell;
+      margin: 10px; }
+    #learning-objective-dialog #outcomes_selection .outcome_row label {
+      display: table-cell;
+      font-weight: normal; }
+    #learning-objective-dialog #outcomes_selection .outcome_row:hover {
+      background: #45a4f355; }
+
+/*# sourceMappingURL=Learning_obj_styling.css.map */

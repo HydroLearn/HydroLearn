@@ -592,7 +592,6 @@ inlineSectionFormset = polymorphic_inlineformset_factory(
         )
     )
 
-
 inlineQuizQuestionFormset = inlineformset_factory(
     QuizSection,
     QuizQuestion,
@@ -612,5 +611,13 @@ inlineQuizAnswerFormset = inlineformset_factory(
     extra=4,
     max_num=4,
     min_num=2,
+)
+
+inlineLearning_ObjectiveFormset = inlineformset_factory(
+    Lesson,
+    Learning_Objective,
+    form=Learning_ObjectiveTextForm,
+    extra=1,
+    can_delete=True,
 )
 

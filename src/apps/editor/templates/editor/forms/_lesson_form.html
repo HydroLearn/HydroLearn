@@ -33,12 +33,49 @@
             </h2>
             <hr class="headerSpacer">
 
+             <div id="learning_objectives_formset_empty">
+                <div id="LO_Empty_form" class="LO_form form_row" style="display:none;">
+                    {% show_learningObj_form learning_objective_formset.empty_form %}
+
+                </div>
+            </div>
+
             <form id="content_form" action="{{ request.path }}" method="post">
                 {% csrf_token %}
                 {{ form.media }}
                 <table>
                     {{ form.as_table }}
                 </table>
+
+
+
+                <div id="add-objective-btn" style="float:right;" class="Submit_button btn btn-default"><i class="fas fa-plus-circle"></i> Add Objective</div>
+
+
+                {% show_learningObj_formset learning_objective_formset %}
+
+
+                {% comment %}
+                <div id="learning_objectives_formset">
+                    {% for lo_form in  learning_objective_formset.forms %}
+                        <div id="{{ lo_form.prefix }}" class="LO_form">
+                            {% if lo_form.condition.value %}
+                            <div class="LO_representation">{{ lo_form.condition.value }} {{ lo_form.verb.value }} {{ lo_form.task.value }} {{ lo_form.degree.value }}</div>
+                            {% else %}
+                            <div class="LO_representation"></div>
+                            {% endif %}
+                            {{ lo_form }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div>
+                    {{ learning_objective_formset.management_form }}
+                </div>
+                {% endcomment %}
+
+
+
+
                 <div id="content_form_controls">
                     <button class="Submit_button btn btn-default" type="submit">Submit Lesson</button>
                     <button class="Cancel_button btn btn-default">Cancel</button>
@@ -48,31 +85,193 @@
                     {% endif %}
                 </div>
             </form>
+
+
         </div>
     {% endif %}
 
 </div>
 
-<script>
 
-    // load the management form for this lesson into 'manage_form' block
-    $('#manage_form').load('{{ content_view }}', function(){
+        <script src="{% static 'editor/js/Learning_obj_functionality.js' %}"></script>
 
-        // potential starting point for tying into the placeholder dialog's save button
-        //      the action buttons are created after the modal is opened,
-        //      but this method was not functional as implemented
+        <script type='text/javascript'>
+            $('#manage_form').load('{{ content_view }}')
 
-        //  debugger;
-        //  CMS.Modal.options.onClose = 'REFRESH_PAGE'
-        //  //  after loading the content add event to modal
-        //  //  so when opened an event can be bound to the save button
-        //  $('.cms-modal').on('focus', function(event){
-        //      console.log('modal opened')
-        //      // buttons are added after opening, so need to wait a bit
-        //      $('a.cms-btn.cms-btn-action.default').click(function(event){
-        //      event.stopPropagation()
-        //      })
-        //  })
+            $("#add-objective-btn").click(function(event ) {
+                event.preventDefault()
+                resetWizard();
+                $("#learning-objective-dialog").dialog('open')
+            } );
 
-    });
-</script>
+            $(window).ready(function () {
+
+                // set click event for dialog's help button
+                $(".learning_obj_help_icon").click(function(){
+                    $("#learning-objective-help-dialog").dialog('open')
+                });
+
+
+            });
+
+            var verbsByKnowledge;
+
+            $( document ).ready(function() {
+
+                var knowledgeOrder = JSON.parse("{{ knowledge_order|escapejs }}");
+                verbsByKnowledge = JSON.parse("{{ verbs_by_knowledge|escapejs }}");
+                var outcomes = JSON.parse("{{ abet_outcomes|escapejs }}");
+
+                populateKnowledgeList(knowledgeOrder);
+                populateOutcomes(outcomes);
+
+                // set events to updated learning objective on text
+                mapWizardInputEvents();
+
+                //$(document).on('input','.outcome_checkbox', updateABETSelection)
+
+                // initialize wizard if not already initialized
+                $("#wizardLO:not(.wizard)").steps({
+                    headerTag: "h2",
+                    bodyTag: "section",
+                    transitionEffect: "fade",
+
+                    onStepChanging: function (event, currentIndex, newIndex)
+                    {
+                        // Always allow previous action even if the current form is not valid
+                        if (currentIndex > newIndex) return true;
+
+
+                        var valid_input = true;
+                        switch(currentIndex){
+                            case 0:
+                                valid_input = $("#condition").val().trim().length > 0;
+                                break;
+                            case 1:
+                                valid_input = $("#actionSelection").val().trim().length > 0
+                                break;
+                            case 2:
+                                valid_input = $("#task").val().trim().length > 0
+                                break;
+                            case 3:
+                                valid_input = $("#degree").val().trim().length > 0;
+                                break;
+
+                            //case 4: break;
+
+
+                            default: break;
+
+                        }
+
+                        // if loading the review step, update the selected ABET listing
+                        if(newIndex == 5){
+                            updateABETReview();
+                        }
+
+                        return valid_input;
+                    },
+
+                    onFinished: function (event, currentIndex)
+                    {
+                        // add the new form row for this learning objective
+                        //$('.LO_fs_add').click()
+
+                        var outcomes_ids = $("#outcomes_selection input:checked").map(function(){
+                                              return $(this).val();
+                                            }).get();
+
+                        // grab all input field values
+                        var values_dictionary = {
+                            "condition": $("#condition").val().trim(),
+                            "task": $("#task").val().trim(),
+                            "degree": $("#degree").val().trim(),
+                            "level": $("#knowledgeSelection option:selected").text(),
+                            "level_id": $("#knowledgeSelection option:selected").val(),
+                            "verb": $("#actionSelection option:selected").text(),
+                            'verb_id': $("#actionSelection option:selected").val(),
+                            "outcomes": outcomes_ids,
+                        }
+
+                        // add the new form
+                        var learning_objective_form = $('.LO_form').last();
+                        if(learning_objective_form.attr('id') !== "learning_objective_set-0" || learning_objective_form.find(".LO_representation").text() !== ''){
+                            $('.LO_fs_add').click();
+                            learning_objective_form = $('.LO_form').last();
+                        }
+                        updateLearningObjective(learning_objective_form, values_dictionary);
+                        $('.ui-dialog-titlebar-close').click();
+                        resetWizard();
+                    }
+                });
+
+            });
+
+            $('#learning_objectives_formset .LO_form').formset({
+
+                formCssClass: "LO_form",
+
+                // add prefix for formset (you can comment this out for now, but you will
+                // need to add this once it’s part of the lesson form)
+                prefix: '{{ learning_objective_formset.prefix }}',
+
+                // this will remove the text from the add button so you don’t need to hide it
+                addText: "",
+                deleteText: "",
+
+                // specify the empty form representation
+                formTemplate: "#LO_Empty_form",
+
+                addCssClass: 'LO_fs_add',
+                deleteCssClass: 'LO_fs_remove',
+
+                // perform actions on add
+                added: function(row){
+
+                    // on add replace the text of the remove
+                    // button with the delete glyph-icon
+                    var remove_btn = $(row).find('.LO_fs_remove');
+
+                    // example: <i class="fas fa-trash glyph-button glyph-delete"></i>
+                    remove_btn.html($('<i>', {class: 'fas fa-trash glyph-button glyph-delete'}))
+
+                    // move the remove button into the last cell
+                    $(row).find('.form_cell').last().append(remove_btn)
+                },
+
+            });
+
+
+            // initialize any existing delete buttons for existing forms
+            $('#learning_objectives_formset .form_delete').click(function(del_event){
+
+                var form = $(del_event.target).closest('.form_row')
+                var deletion_state = form.hasClass('deleted_form');
+
+                // add styling class to the form row
+
+                if(deletion_state){
+                    form.removeClass('deleted_form');
+                    form.find('input[name$="DELETE"]').removeAttr('value')
+
+                }else{
+                    form.addClass('deleted_form');
+                    form.find('input[name$="DELETE"]').attr('value',!deletion_state)
+                }
+            });
+
+            // if any learning objective forms have been populated without a value (the extra form)
+            // remove it from the listing
+            $('#learning_objectives_formset .LO_form').each(function(index, form){
+                if($(this).find('.LO_representation').text().trim() == ""){
+
+
+                    //$(this).find('.form_delete').click()
+                    $(this).remove()
+                }
+            })
+
+
+
+
+        </script>

@@ -1,41 +1,51 @@
 from django.db import models
-from django.forms import ModelForm
-from src.apps.core.models.CreationTrackingModels import CreationTrackingBaseModel
+from .CreationTrackingModels import CreationTrackingBaseModel
+
 
 class Learning_Level(models.Model):
     label = models.CharField(max_length=64)
     definition = models.CharField(max_length=256)
 
-class Learing_LevelForm(ModelForm):
-    class Meta:
-        model = Learning_Level
-        fields = ['label', 'definition']
-
 class Learning_Verb(models.Model):
     verb = models.CharField(max_length=64)
-    level = models.ForeignKey(Learning_Level)
+    level = models.ForeignKey(
+        'core.Learning_Level',
+        related_name='verbs',
+        blank=False,
+        null=False,
+        help_text="Specify the learning level for this verb."
+    )
 
-class Learing_VerbForm(ModelForm):
-    class Meta:
-        model = Learning_Verb
-        fields = ['verb', 'level']
+    default = models.BooleanField(default=False)
 
 class Learning_Outcome(models.Model):
     outcome = models.CharField(max_length=256)
 
-class Learing_OutcomeForm(ModelForm):
-    class Meta:
-        model = Learning_Outcome
-        fields = ['outcome']
-
 class Learning_Objective(CreationTrackingBaseModel):
+
     condition = models.TextField()
     task = models.TextField()
     degree = models.TextField()
-    verb = models.ForeignKey(Learning_Verb)
-    outcomes = models.ManyToManyField(Learning_Outcome)
 
-class Learning_ObjectiveForm(ModelForm):
-    class Meta:
-        model = Learning_Objective
-        fields = ['condition', 'task', 'degree', 'verb', 'outcomes']
+    lesson = models.ForeignKey(
+        'core.Lesson',
+        related_name='learning_objectives',
+        blank=False,
+        null=False,
+        help_text="Specify a lesson for this Learning Objective.",
+        on_delete=models.CASCADE,
+    )
+
+    verb = models.ForeignKey(
+            'core.Learning_Verb',
+            blank=False,
+            null=False,
+            help_text="Specify a verb for this Learning Objective",
+
+        )
+
+    outcomes = models.ManyToManyField(
+            'core.Learning_Outcome',
+            blank=True,
+
+        )
