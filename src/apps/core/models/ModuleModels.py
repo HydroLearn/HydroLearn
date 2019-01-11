@@ -18,6 +18,7 @@ from src.apps.core.managers.IterativeDeletionManagers import (
     PolyIterativeDeletion_Manager
 )
 from src.apps.core.models.HS_AppFrameModels import AppReference
+from src.apps.core.models.LearningObjModels import Learning_Objective
 
 from src.apps.core.models.PublicationModels import (
     Publication,
@@ -426,6 +427,23 @@ class Lesson(Publication):
                 lesson=self,
             )
             new_ref.save()
+
+        for learning_obj in from_instance.learning_objectives.all():
+            new_lo = Learning_Objective(
+                lesson=self,
+                condition=learning_obj.condition,
+                task=learning_obj.task,
+                degree=learning_obj.degree,
+                verb=learning_obj.verb,
+
+                created_by=learning_obj.created_by,
+                changed_by=learning_obj.changed_by,
+            )
+
+            new_lo.save()
+
+            for outcome in learning_obj.outcomes.all():
+                new_lo.outcomes.add(outcome)
 
     def copy_content(self, from_instance):
         '''
