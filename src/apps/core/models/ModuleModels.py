@@ -123,7 +123,11 @@ class Lesson(Publication):
 
     # many to many relationship for collaborators
     # allowed to make edits to the draft of a publication
-    collaborators = models.ManyToManyField(User, related_name="collaborations", through='Collaboration')
+    collaborators = models.ManyToManyField(
+            User,
+            related_name="collaborations",
+            through='Collaboration'
+        )
 
     # the content of this lesson
     summary = PlaceholderField('lesson_summary')

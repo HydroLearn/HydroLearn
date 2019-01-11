@@ -10,7 +10,10 @@ class Learning_Verb(models.Model):
     verb = models.CharField(max_length=64)
     level = models.ForeignKey(
         'core.Learning_Level',
-        related_name='verbs'
+        related_name='verbs',
+        blank=False,
+        null=False,
+        help_text="Specify the learning level for this verb."
     )
 
     default = models.BooleanField(default=False)
@@ -27,14 +30,22 @@ class Learning_Objective(CreationTrackingBaseModel):
     lesson = models.ForeignKey(
         'core.Lesson',
         related_name='learning_objectives',
-        on_delete=models.CASCADE
+        blank=False,
+        null=False,
+        help_text="Specify a lesson for this Learning Objective.",
+        on_delete=models.CASCADE,
     )
 
     verb = models.ForeignKey(
             'core.Learning_Verb',
+            blank=False,
+            null=False,
+            help_text="Specify a verb for this Learning Objective",
+
         )
 
     outcomes = models.ManyToManyField(
             'core.Learning_Outcome',
-            blank=True
+            blank=True,
+
         )
