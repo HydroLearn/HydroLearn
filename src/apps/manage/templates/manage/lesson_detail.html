@@ -17,7 +17,7 @@
             Editing: {{ lesson.name }}
         </h2>
         <hr>
-        <div>
+        <div id="editor">
             {% if object.summary %}
                 {{ object.summary }}
             {% else %}
@@ -28,7 +28,7 @@
 
 
     <!--</div>-->
-    {% addtoblock 'template_js' %}{% endaddtoblock 'template_js' %}
+    <script src="{% static 'editor/js/HL_ck5_custom.js' %}"></script>
 
 {% endblock content %}
 
