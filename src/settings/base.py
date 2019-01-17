@@ -176,6 +176,7 @@ INSTALLED_APPS = (
     'src.apps.module',
     'src.apps.editor',
     'src.apps.tags',
+    'src.apps.uploads',
 
     # ***************** include content plugins
     # 'src.apps.Content_Plugins',

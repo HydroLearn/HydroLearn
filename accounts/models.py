@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from accounts.UserManager import UserManager
+import uuid
 
 '''
     Custom user implementation to use email as the 'username' 
@@ -24,6 +25,8 @@ from accounts.UserManager import UserManager
 
 class User(AbstractUser):
     # password is a default field, so no need to add it here
+    id = models.UUIDField(primary_key=True, unique=True, default=uuid.uuid4(), editable=False)
+
     email = models.EmailField(max_length=255, unique=True)
     is_active = models.BooleanField(default=False)  # can log in
     is_staff = models.BooleanField(default=False)  # staff user

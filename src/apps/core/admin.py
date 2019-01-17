@@ -53,6 +53,14 @@ from src.apps.core.models.HS_AppFrameModels import (
     AppReference,
 )
 
+from src.apps.uploads.admin import (
+    Uploads_ImageAdmin,
+)
+
+from src.apps.uploads.models import (
+    Image,
+)
+
 #from src.apps.core.QuerysetManagers import *
 
 
@@ -468,6 +476,10 @@ class Learning_ObjectiveAdmin(admin.ModelAdmin):
 
     list_display = ['condition', 'task', 'degree']
 
+
+
+
+admin.site.register(Image, Uploads_ImageAdmin)
 
 # REGISTER THE ABOVE DEFINED ADMIN OBJECTS
 admin.site.register(Lesson, LessonAdmin)

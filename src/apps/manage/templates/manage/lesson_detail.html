@@ -17,7 +17,7 @@
             Editing: {{ lesson.name }}
         </h2>
         <hr>
-        <div id="editor">
+        <div class="editor">
             {% if object.summary %}
                 {{ object.summary }}
             {% else %}
@@ -28,7 +28,24 @@
 
 
     <!--</div>-->
-    <script src="{% static 'editor/js/HL_ck5_custom.js' %}"></script>
+    <!--<script src="{% static 'editor/js/HL_ck5_custom.js' %}"></script>-->
+
+    <script>
+        if(typeof(HL_CKEDITOR) != 'undefined'){
+            $('.editor').each(function(){
+
+                HL_CKEDITOR.default.classic_editor.create(this,{
+                        imageUploadUrl: "/upload_img/"
+                    })
+                    .catch(err => {
+                        console.log(err.stack)
+                    });
+                })
+        }else{
+            alert('Failed to Create Editor! Please try again later.')
+        }
+
+    </script>
 
 {% endblock content %}
 
