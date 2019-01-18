@@ -8,9 +8,6 @@ import django.db.models.deletion
 import src.apps.uploads.models
 import easy_thumbnails.fields
 
-# from easy_thumbnails.signals import saved_file
-# from easy_thumbnails.signal_handlers import generate_aliases_global
-
 class Migration(migrations.Migration):
 
     initial = True
@@ -37,5 +34,3 @@ class Migration(migrations.Migration):
         ),
     ]
 
-
-# saved_file.connect(generate_aliases_global)
