@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models.fields.files import ImageField
 from django.conf import settings
 
+from easy_thumbnails.fields import ThumbnailerImageField
+
 import os
 from uuid import uuid4
 from django.core.signing import Signer
@@ -67,7 +69,8 @@ class Image(models.Model):
 
 
     # image field
-    img = ImageField(upload_to=path_and_rename)
+    # img = ImageField(upload_to=path_and_rename)
+    img = ThumbnailerImageField(upload_to=path_and_rename, blank=True)
 
 
 

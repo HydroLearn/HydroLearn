@@ -6,7 +6,10 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import src.apps.uploads.models
+import easy_thumbnails.fields
 
+# from easy_thumbnails.signals import saved_file
+# from easy_thumbnails.signal_handlers import generate_aliases_global
 
 class Migration(migrations.Migration):
 
@@ -23,7 +26,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('creation_date', models.DateTimeField(auto_now_add=True)),
                 ('is_temp', models.BooleanField(default=True, help_text='Checking this option marks the image for deletion within 24 hours. (allowing temp image hosting for use in the editor)', verbose_name='Temp Image')),
-                ('img', models.ImageField(upload_to=src.apps.uploads.models.path_and_rename)),
+                ('img', easy_thumbnails.fields.ThumbnailerImageField(blank=True, upload_to=src.apps.uploads.models.path_and_rename)),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_images', to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -33,3 +36,6 @@ class Migration(migrations.Migration):
             },
         ),
     ]
+
+
+# saved_file.connect(generate_aliases_global)

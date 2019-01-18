@@ -25,7 +25,7 @@ import uuid
 
 class User(AbstractUser):
     # password is a default field, so no need to add it here
-    id = models.UUIDField(primary_key=True, unique=True, default=uuid.uuid4(), editable=False)
+    id = models.UUIDField(primary_key=True, unique=True, default=uuid.uuid4, editable=False)
 
     email = models.EmailField(max_length=255, unique=True)
     is_active = models.BooleanField(default=False)  # can log in

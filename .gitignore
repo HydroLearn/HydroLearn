@@ -1,8 +1,9 @@
 .idea/
 *.db
 media/
+
 static_files/
-static_root/
+media_files/
 fixtures/
 src/settings/test_settings/
 generateHydroLearnFixtures.bat
