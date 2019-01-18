@@ -1,12 +1,17 @@
 from django.db import models
 from django.db.models.fields.files import ImageField
 from django.conf import settings
-
-from easy_thumbnails.fields import ThumbnailerImageField
-
 import os
 from uuid import uuid4
-from django.core.signing import Signer
+
+from django.dispatch import receiver
+
+from easy_thumbnails.alias import aliases
+from easy_thumbnails.fields import ThumbnailerImageField
+from easy_thumbnails.files import get_thumbnailer
+from easy_thumbnails.signals import saved_file
+from easy_thumbnails.signal_handlers import generate_aliases_global
+
 
 User = settings.AUTH_USER_MODEL
 
@@ -73,4 +78,22 @@ class Image(models.Model):
     img = ThumbnailerImageField(upload_to=path_and_rename, blank=True)
 
 
+saved_file.connect(generate_aliases_global)
 
+# generate thumbnail aliases for uploaded images
+if not aliases.get('content_thumb'):
+    aliases.set('content_thumb', {'size': (300, 200), 'crop': True})
+
+
+
+# set up signal to auto delete the original image and any generated thumbnails
+# on deletion of an image instance
+#
+@receiver(models.signals.post_delete, sender=Image)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """Deletes file from filesystem
+    when corresponding `Image` object is deleted.
+    """
+    if instance.img:
+        thumbmanager = get_thumbnailer(instance.img)
+        thumbmanager.delete(save=False)
