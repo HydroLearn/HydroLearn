@@ -1,0 +1,7 @@
+<h2>Images catalog</h2>
+
+<ul>
+    {% for image in object_list  %}
+        <li><a href="{% url 'uploads:img_detail' image.pk %}">{{ image }}</a></li>
+    {% endfor %}
+</ul>

@@ -5,6 +5,7 @@ import os
 from uuid import uuid4
 
 from django.dispatch import receiver
+from django.urls import reverse
 
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.fields import ThumbnailerImageField
@@ -78,6 +79,26 @@ class Image(models.Model):
     img = ThumbnailerImageField(upload_to=path_and_rename, blank=True)
 
 
+    def __str__(self):
+        return "img:%s:%s" % (self.created_by, self.creation_date)
+
+
+    ########################################
+    #   URL Methods
+    ########################################
+
+    # define for use by FormMixin
+    # (calls this method specifically, but isn't defined by default... right...)
+    def get_absolute_url(self):
+        return self.absolute_url()
+
+    def absolute_url(self):
+        return reverse('uploads:img_detail', kwargs={
+            'pk': self.pk
+        })
+
+
+
 saved_file.connect(generate_aliases_global)
 
 # generate thumbnail aliases for uploaded images
@@ -97,3 +118,5 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     if instance.img:
         thumbmanager = get_thumbnailer(instance.img)
         thumbmanager.delete(save=False)
+
+

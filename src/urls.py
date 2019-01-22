@@ -59,6 +59,8 @@ urlpatterns += i18n_patterns(
     url(r'^editor/', include('src.apps.editor.urls')),
     url(r'^manage/', include('src.apps.manage.urls')),
 
+    url(r'^uploads/', include('src.apps.uploads.urls')),
+
     # *****************************************************
 
     url(r'^admin/', include(admin.site.urls)),  # NOQA

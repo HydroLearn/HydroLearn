@@ -1,0 +1,35 @@
+{% load thumbnail %}
+
+<h2>Image Detail</h2>
+<table>
+    <tr>
+        <td>Upload Created by:</td>
+        <td>{{ object.created_by }}</td>
+    </tr>
+    <tr>
+        <td>Uploaded:</td>
+        <td>{{ object.creation_date }}</td>
+    </tr><tr>
+        <td>is temp? </td>
+        <td>{{ object.is_temp }}</td>
+    </tr><tr>
+        <td>url:</td>
+        <td>{{ object.img}}</td>
+    </tr><tr>
+        <td>thumb_url:</td>
+        <td>{{ object.img|thumbnail_url:'content_thumb'}}</td>
+    </tr>
+
+</table>
+
+
+<div>
+    <h2>Preview:</h2>
+    <img style="width:300px" src="{% thumbnail object.img 'content_thumb' %}" alt="image preview">
+</div>
+<!--<img src="{{ object.img|thumbnail_url:'content_thumb' }}" alt="">-->
+
+
+
+
+

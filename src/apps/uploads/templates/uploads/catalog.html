@@ -1,4 +1,5 @@
+<h2>Uploads Catalog</h2>
 
-{% for image in Images %}
-    {{ image }}
-{% endfor %}
+<ul>
+    <li><a href="{% url 'uploads:img_list' %}">View Images</a></li>
+</ul>

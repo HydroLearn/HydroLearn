@@ -21,21 +21,19 @@
             {% if object.summary %}
                 {{ object.summary }}
             {% else %}
-                <p>This lesson doesn't appear to have a summary, you can populate this content from the edit interface.</p>
+                This lesson doesn't appear to have a summary, you can populate this content from the edit interface.
             {% endif %}
         </div>
     </div>
 
-
-    <!--</div>-->
-    <!--<script src="{% static 'editor/js/HL_ck5_custom.js' %}"></script>-->
-
     <script>
         if(typeof(HL_CKEDITOR) != 'undefined'){
             $('.editor').each(function(){
-
+                console.log("{{csrf_token}}")
                 HL_CKEDITOR.default.classic_editor.create(this,{
-                        imageUploadUrl: "/upload_img/"
+                        //imageUploadUrl: "/upload_img/",
+                        imageUploadUrl: "{% url 'uploads:img_upload' %}",
+                        csrf_token: "{{csrf_token}}"
                     })
                     .catch(err => {
                         console.log(err.stack)

@@ -140,19 +140,10 @@ INSTALLED_APPS = (
     # 'menus',
     'sekizai',
     'treebeard',
-    # 'djangocms_text_ckeditor',
-    'filer',
     'easy_thumbnails',
-    # 'djangocms_column',
-    # 'djangocms_link',
-    # 'cmsplugin_filer_file',
-    # 'cmsplugin_filer_folder',
-    # 'cmsplugin_filer_image',
-    # 'cmsplugin_filer_utils',
-    # 'djangocms_style',
-    # 'djangocms_snippet',
-    # 'djangocms_googlemap',
-    # 'djangocms_video',
+
+    # currently not in use but kept just incase for later
+    # 'filer',
 
     # include django extensions
     'django_extensions',
@@ -200,7 +191,7 @@ THUMBNAIL_QUALITY = 95
 THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.colorspace',
     'easy_thumbnails.processors.autocrop',
-    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    #'filer.thumbnail_processors.scale_and_crop_with_subject_location',
     'easy_thumbnails.processors.filters'
 )
 

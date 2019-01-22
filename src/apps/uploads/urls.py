@@ -1,6 +1,13 @@
 from django.conf.urls import url
 
-from src.apps.uploads.views import *
+from src.apps.uploads.views import (
+    Index,
+    ImageListView,
+    ImageDetailView,
+
+    ImageUpload,
+
+)
 
 
 app_name = 'uploads'
@@ -12,20 +19,22 @@ urlpatterns = [
     ####################################
     # Image Model Routes
     ####################################
-    # upload a temp image
-    url(r'^image/upload/$', Index.as_view(), name="upload"),
+        url(r'^imgs/$', ImageListView.as_view(), name='img_list'),
+        url(r'^img/(?P<pk>[^/]+)$', ImageDetailView.as_view(), name='img_detail'),
 
-    # view a stored image
-    url(r'^image/view/$', Index.as_view(), name="view"),
+        # upload a temp image
+        # url(r'^image/upload/$', Index.as_view(), name="img_upload"),
+        url(r'^image/upload/$', ImageUpload, name="img_upload"),
 
-    # mark image as 'not temp'
-    url(r'^image/mark/$', Index.as_view(), name="mark"),
+        # view a stored image
+        url(r'^image/view/$', Index.as_view(), name="img_view"),
 
-    # delete image
-    url(r'^image/delete/$', Index.as_view(), name="delete"),
+        # mark image as 'not temp'
+        url(r'^image/mark/$', Index.as_view(), name="img_mark"),
 
-    # partial view paths
-    # url(r'^my_listing/$', module_listing, name="module_list"),
-    # url(r'^my_collabs/$', collab_listing, name="collab_list"),
+        # delete image
+        url(r'^image/delete/$', Index.as_view(), name="img_delete"),
+
+
 
 ]
