@@ -388,8 +388,8 @@ div[class^='multicolumn'] {
     }
 
     .glow_border{
-        border-left: 1px solid #ccc;
-        border-right: 1px solid #ccc;
+        border-left: 1px solid #eee;
+        border-right: 1px solid #eee;
         box-shadow: 0 0 20px 20px rgba(0, 0, 0, 0.05);
     }
 }
@@ -507,6 +507,14 @@ a:focus {
   text-decoration: none;
   color: $HL_darkBlue;
 }
+
+.welcome_msg{
+    display: inline-block;
+    margin-top: 20px;
+    vertical-align: bottom;
+    font-size: .8em;
+}
+
 
 //@import 'navigation';
 @import 'sidebar-nav';

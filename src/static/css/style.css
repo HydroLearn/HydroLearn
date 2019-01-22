@@ -239,8 +239,8 @@ div[class^='multicolumn'] {
         min-width: 500px;
         margin: auto; } }
   #content .glow_border {
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #eee;
     box-shadow: 0 0 20px 20px rgba(0, 0, 0, 0.05); }
 
 /* Social Section */
@@ -307,6 +307,12 @@ div[class^='multicolumn'] {
 a:focus {
   text-decoration: none;
   color: #3D6BAA; }
+
+.welcome_msg {
+  display: inline-block;
+  margin-top: 20px;
+  vertical-align: bottom;
+  font-size: .8em; }
 
 /*
     DEMO STYLE

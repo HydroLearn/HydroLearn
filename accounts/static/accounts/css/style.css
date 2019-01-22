@@ -44,4 +44,13 @@
     #profile_form_wrapper #social_wrapper #social_content #social_form {
       display: inline-block; }
 
+table {
+  margin-bottom: 2em;
+  width: 100%; }
+  table .bottom_border {
+    border-bottom: 1px solid #ccc; }
+  table tr td,
+  table tr th {
+    padding: 5px 7px; }
+
 /*# sourceMappingURL=style.css.map */

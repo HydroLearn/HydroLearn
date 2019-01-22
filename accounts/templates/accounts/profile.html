@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% load sekizai_tags static %}
+{% load sekizai_tags accounts_tags static %}
 
 {% block title %}User Profile{% endblock title %}
 
@@ -14,25 +14,37 @@
 
         <h3>User Profile</h3>
         <hr/>
-        <div class="uProfile_content">
+        <div id="uProfile_content">
             <table>
                 <tr>
-                    <td>Email:</td>
+                    <th>Email:</th>
                     <td>{{ user.email }}</td>
                 </tr>
 
                 <tr>
-                    <td>Name:</td>
+                    <th>Name:</th>
                     <td>{{ user.full_name }}</td>
                 </tr>
+            </table>
 
+            <table>
                 <tr>
-                    <td>Linked to Hydroshare?</td>
+                    <th class="bottom_border">Provider</th>
+                    <th class="bottom_border">Linked Account</th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://www.hydroshare.org/">
+                            <img style="height:30px;" src="{% static  'accounts/images/hs_logo.png' %}">
+                        </a>
+                    </td>
                     <td>
                     {% if "hydroshare" not in backends.not_associated %}
-                        Yes
+                        {%  with backends.associated|provider_filter:"hydroshare" as association %}
+                            {{ association.uid }}
+                        {% endwith %}
                     {% else %}
-                        No
+                        None
                     {% endif %}
 
                     </td>

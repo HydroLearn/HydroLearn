@@ -1,3 +1,10 @@
+
+{% if user.is_authenticated %}
+    <div class="welcome_msg">
+        Welcome, {{ user.full_name }}!
+    </div>
+{% endif %}
+
 <ul class="nav navbar-nav navbar-right">
 
 

@@ -26,27 +26,50 @@
 
 
     <div id="social_wrapper">
-        <h3>Social Accounts</h3>
+        <h4>Social Accounts</h4>
 
 
         <div id="social_content">
-        <div class="hs-logo-container">
-            <a href="https://www.hydroshare.org/">
-                <img src="{% static  'accounts/images/hs_logo.png' %}">
-            </a>
-        </div>
+            <table>
+                <tr>
+                    <th class="bottom_border">Provider</th>
+                    <th class="bottom_border">Linked Account</th>
+                    <th class="bottom_border"></th>
+                </tr>
 
-        {% if "hydroshare" not in backends.not_associated %}
-            {%  with backends.associated|provider_filter:"hydroshare" as association %}
-            <form id="social_form" role="form" method="post" action="{% url 'social:disconnect_individual' association.provider association.id %}?next={% url 'accounts:update_user_profile' user.username %}">
-                     {% csrf_token %}
-                  <button type="submit" id="disconnect-social-submit" class="btn btn-danger" name="disconnect-social-submit">Disconnect</button>
-            </form>
-            {% endwith %}
-        {% else %}
-            <a href="{% url 'social:begin' 'hydroshare' %}?next={{ request.path }}"><span class="btn btn-success">Connect</span></a>
-        {% endif %}
+                <tr>
 
+                {% if "hydroshare" not in backends.not_associated %}
+                    <td>
+                        <div class="hs-logo-container">
+                            <a href="https://www.hydroshare.org/">
+                                <img src="{% static  'accounts/images/hs_logo.png' %}">
+                            </a>
+                        </div>
+                    </td>
+
+                    {%  with backends.associated|provider_filter:"hydroshare" as association %}
+                        <td>
+                            <form id="social_form" role="form" method="post" action="{% url 'social:disconnect_individual' association.provider association.id %}?next={% url 'accounts:update_user_profile' user.username %}">
+                                     {% csrf_token %}
+                                <span>{{ association.uid }}</span>
+                            </form>
+                        </td>
+                        <td>
+                            <button type="submit" id="disconnect-social-submit" class="btn btn-danger" name="disconnect-social-submit">Disconnect</button>
+                        </td>
+                    {% endwith %}
+                {% else %}
+                    <td>
+                        None
+                    </td>
+                    <td>
+                        <a href="{% url 'social:begin' 'hydroshare' %}?next={{ request.path }}"><span class="btn btn-success">Connect</span></a>
+                    </td>
+                {% endif %}
+
+                </tr>
+            </table>
         </div>
     </div>
 
