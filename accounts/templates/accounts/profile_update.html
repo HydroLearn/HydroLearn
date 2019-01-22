@@ -15,7 +15,7 @@
 <br/>
 <h3>User Account: {{user.email}}</h3>
 
-<form method="post">
+<form method="post" action="{% url 'accounts:update_user_profile' user.username %}">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Update" />
@@ -27,13 +27,13 @@
 
         <div class="hs-logo-container">
         <a href="https://www.hydroshare.org/">
-        <img src={% static  "accounts/images/hs_logo.png"%}>
+        <img src="{% static  'accounts/images/hs_logo.png' %}">
         </a>
         </div>
 
         {% if "hydroshare" not in backends.not_associated %}
             {%  with backends.associated|provider_filter:"hydroshare" as association %}
-            <form role="form" method="post" action="{% url 'social:disconnect_individual' association.provider association.id %}?next=/accounts/profile/{{ user.username }}/">
+            <form role="form" method="post" action="{% url 'social:disconnect_individual' association.provider association.id %}?next={% url 'accounts:update_user_profile' user.username %}">
                      {% csrf_token %}
                   <button type="submit" id="disconnect-social-submit" class="btn btn-danger" name="disconnect-social-submit">Disconnect</button>
             </form>

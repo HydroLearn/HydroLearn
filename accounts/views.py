@@ -154,21 +154,21 @@ class UserProfileView(TemplateView):
         u = User.objects.none()
         if 'user' in kwargs:
             try:
-                u = User.objects.get(pk=int(kwargs['user']))
+                u = User.objects.get(pk=kwargs['user'])
             except:
                 u = User.objects.get(email=kwargs['user'])
 
 
         elif self.request.GET.get('user', False):
             try:
-                u = User.objects.get(pk=int(self.request.GET['user']))
+                u = User.objects.get(pk=self.request.GET['user'])
             except:
                 u = User.objects.get(email=self.request.GET['user'])
 
 
         elif not self.request.user.is_anonymous():
             # if the user is logged in and no user is specified, show logged in user
-            u = User.objects.get(pk=int(self.request.user.id))
+            u = User.objects.get(pk=self.request.user.id)
 
 
         # if requesting user is not the profile user, then show only resources that the requesting user has access
@@ -188,7 +188,7 @@ class UserProfileUpdateView(UpdateView):
     #model = Profile
     #fields = ['first_name', 'last_name']
     form_class = UserProfileForm
-    success_url = reverse_lazy('user_profile')
+    success_url = reverse_lazy('accounts:user_profile')
 
     def get_object(self, queryset=None):
         obj = Profile.objects.none()
@@ -197,7 +197,7 @@ class UserProfileUpdateView(UpdateView):
             if self.request.user.is_authenticated():
 
                 if "email" not in self.kwargs:
-                    u = User.objects.get(pk=int(self.request.user.id))
+                    u = User.objects.get(pk=self.request.user.id)
                 else:
                     u = User.objects.get(email=self.kwargs['email'])
                 if u == self.request.user or self.request.user.is_superuser:

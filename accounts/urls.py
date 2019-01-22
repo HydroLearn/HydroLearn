@@ -50,7 +50,7 @@ urlpatterns = [
 
     # ******************* Account Profile
     url(r'^profile/$', UserProfileUpdateView.as_view(), name='user_profile'),
-    url(r'^profile/(?P<email>.*)/', UserProfileUpdateView.as_view()),
+    url(r'^profile/(?P<email>.*)/', UserProfileUpdateView.as_view(), name='update_user_profile'),
 
 
 
