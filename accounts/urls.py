@@ -22,6 +22,7 @@ from accounts.views import (
         #LoginView,
         #LogoutView,
         PasswordResetView,
+        UserProfileView,
         UserProfileUpdateView,
 
         UserAccount_VerificationSent,
@@ -49,7 +50,7 @@ urlpatterns = [
 
 
     # ******************* Account Profile
-    url(r'^profile/$', UserProfileUpdateView.as_view(), name='user_profile'),
+    url(r'^profile/$', UserProfileView.as_view(), name='user_profile'),
     url(r'^profile/(?P<email>.*)/', UserProfileUpdateView.as_view(), name='update_user_profile'),
 
 

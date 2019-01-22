@@ -5,17 +5,45 @@
 {% block title %}User Profile{% endblock title %}
 
 {% block content %}
+    {% addtoblock "template_css" %}
+        <link rel="stylesheet" type="text/css" href="{% static 'accounts/css/style.css' %}" />
+    {% endaddtoblock "template_css" %}
 
 
-    asdasdasd
-asdasdasd
-asdasdasd
-asdasdasd
-<h1>sdfsdfsdfsdfsd</h1>
+    <div class="centered_container glow_border">
 
+        <h3>User Profile</h3>
+        <hr/>
+        <div class="uProfile_content">
+            <table>
+                <tr>
+                    <td>Email:</td>
+                    <td>{{ user.email }}</td>
+                </tr>
 
-    {{ form.as_ul  }}
+                <tr>
+                    <td>Name:</td>
+                    <td>{{ user.full_name }}</td>
+                </tr>
 
+                <tr>
+                    <td>Linked to Hydroshare?</td>
+                    <td>
+                    {% if "hydroshare" not in backends.not_associated %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
 
+                    </td>
+                </tr>
+
+            </table>
+            <br/>
+            <a href="{% url 'accounts:update_user_profile' user.email %}">Update Profile</a>
+
+        </div>
+
+    </div>
 
 {% endblock content %}

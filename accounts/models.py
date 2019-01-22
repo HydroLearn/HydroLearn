@@ -46,7 +46,11 @@ class User(AbstractUser):
         return self.email
 
     def get_full_name(self):
-        return self.email
+        if self.profile:
+            if self.profile.get_full_name():
+                return self.profile.get_full_name()
+
+        return None
 
     def get_short_name(self):
         return self.email
@@ -60,6 +64,10 @@ class User(AbstractUser):
     @property
     def username(self):
         return self.email
+
+    @property
+    def full_name(self):
+        return self.get_full_name()
 
     @property
     def is_admin(self):
@@ -89,6 +97,14 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=255, blank=True, null=True)
 
     email_confirmed = models.BooleanField(default=False)
+
+    def get_full_name(self):
+        if self.first_name and self.last_name:
+            return "%s %s" % (self.first_name, self.last_name)
+        elif self.first_name:
+            return "%s" % self.first_name
+        else:
+            return None
 
     # add any additional information to be tied to the user
     #

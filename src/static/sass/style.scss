@@ -370,7 +370,31 @@ div[class^='multicolumn'] {
             padding: 20px 10px;
         }
     }
+
+    .centered_container{
+        width:100%;
+        padding: 2em;
+
+        // if window is larger than 500px center form and add borders
+        @media (min-width: 500px){
+            // be max height - header/footer heights
+            height: calc(100% - 50px - 50px);
+            min-height: fit-content;
+            width: 50%;
+            min-width: 500px;
+            margin: auto;
+        }
+
+    }
+
+    .glow_border{
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+        box-shadow: 0 0 20px 20px rgba(0, 0, 0, 0.05);
+    }
 }
+
+
 
 
 /* Social Section */

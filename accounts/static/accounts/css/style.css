@@ -1,37 +1,47 @@
-.label {
-    width: 100%;
-    padding-left: 0;
-  }
-
-.label-hydroshare {
+#profile_form_wrapper .content {
+  padding: 0 2em;
+  margin-bottom: 1em; }
+#profile_form_wrapper .controls {
+  height: 50px; }
+#profile_form_wrapper #user_profile_form {
+  margin: auto;
+  width: max-content; }
+  #profile_form_wrapper #user_profile_form table tr td, #profile_form_wrapper #user_profile_form table tr th {
+    padding: 5px; }
+#profile_form_wrapper #submit_profile_btn {
+  float: right; }
+#profile_form_wrapper .label {
+  width: 100%;
+  padding-left: 0; }
+#profile_form_wrapper .label-hydroshare {
   color: #71a43a;
-  border: #aaaaaa solid 1px;
-}
-.label-hydroshare:hover {
-  color: #ffffff;
-  background-color: #71a43a;
-}
+  border: #aaaaaa solid 1px; }
+  #profile_form_wrapper .label-hydroshare:hover {
+    color: #ffffff;
+    background-color: #71a43a; }
+#profile_form_wrapper #social_wrapper {
+  width: 100%;
+  padding: 15px 0; }
+  #profile_form_wrapper #social_wrapper #social_content {
+    margin-left: 2em; }
+    #profile_form_wrapper #social_wrapper #social_content .span-hydroshare-logo {
+      width: 100px;
+      height: 20px;
+      background-size: 50%;
+      background: url("https://www.hydroshare.org/static/img/logo-lg.png") no-repeat;
+      display: block; }
+    #profile_form_wrapper #social_wrapper #social_content .hs-logo-container {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 15px; }
+      #profile_form_wrapper #social_wrapper #social_content .hs-logo-container img {
+        float: left;
+        height: 30px; }
+      #profile_form_wrapper #social_wrapper #social_content .hs-logo-container span {
+        position: relative;
+        top: 25px;
+        margin-left: 10px; }
+    #profile_form_wrapper #social_wrapper #social_content #social_form {
+      display: inline-block; }
 
-.span-hydroshare-logo {
-    width: 100px;
-    height: 20px;
-    background-size: 50%;
-    background: url('https://www.hydroshare.org/static/img/logo-lg.png') no-repeat;
-    display:block;
-}
-
-.hs-logo-container {
-    float: left;
-    /*position: absolute;*/
-    bottom: 8px; //8
-}
-.hs-logo-container img {
-    float: left;
-    height: 30px; //50
-    /*width: 50px; //50*/
-}
-.hs-logo-container span {
-    position: relative;
-    top: 25px; //25px
-    margin-left: 10px;
-}
+/*# sourceMappingURL=style.css.map */

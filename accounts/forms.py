@@ -116,12 +116,12 @@ class UserProfileForm(forms.ModelForm):
 
     def clean_first_name(self):
         data = self.cleaned_data['first_name']
-        if not isinstance(data, six.string_types) or len(data.strip()) == 0:
-            raise forms.ValidationError("First name is a required field.")
+        # if not isinstance(data, six.string_types) or len(data.strip()) == 0:
+        #     raise forms.ValidationError("First name is a required field.")
         return data
 
     def clean_last_name(self):
         data = self.cleaned_data['last_name']
-        if not isinstance(data, six.string_types) or len(data.strip()) == 0:
-            raise forms.ValidationError("Last name is a required field.")
+        # if not isinstance(data, six.string_types) or len(data.strip()) == 0:
+        #     raise forms.ValidationError("Last name is a required field.")
         return data

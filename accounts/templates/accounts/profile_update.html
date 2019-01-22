@@ -10,30 +10,35 @@
         <link rel="stylesheet" type="text/css" href="{% static 'accounts/css/style.css' %}" />
     {% endaddtoblock "template_css" %}
 
-<br/>
-<br/>
-<br/>
-<h3>User Account: {{user.email}}</h3>
-
-<form method="post" action="{% url 'accounts:update_user_profile' user.username %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Update" />
-</form>
+<div id="profile_form_wrapper" class="centered_container glow_border">
+    <div class="content">
 
 
-    {% block social_parameters %}
+    <h3>Update Profile</h3>
+    <h4>{{user.email}}</h4>
+    <hr/>
+        <form id='user_profile_form' method="post" action="{% url 'accounts:update_user_profile' user.username %}">
+                {% csrf_token %}
+                <table>
+                {{ form.as_table }}
+                </table>
+        </form>
+
+
+    <div id="social_wrapper">
         <h3>Social Accounts</h3>
 
+
+        <div id="social_content">
         <div class="hs-logo-container">
-        <a href="https://www.hydroshare.org/">
-        <img src="{% static  'accounts/images/hs_logo.png' %}">
-        </a>
+            <a href="https://www.hydroshare.org/">
+                <img src="{% static  'accounts/images/hs_logo.png' %}">
+            </a>
         </div>
 
         {% if "hydroshare" not in backends.not_associated %}
             {%  with backends.associated|provider_filter:"hydroshare" as association %}
-            <form role="form" method="post" action="{% url 'social:disconnect_individual' association.provider association.id %}?next={% url 'accounts:update_user_profile' user.username %}">
+            <form id="social_form" role="form" method="post" action="{% url 'social:disconnect_individual' association.provider association.id %}?next={% url 'accounts:update_user_profile' user.username %}">
                      {% csrf_token %}
                   <button type="submit" id="disconnect-social-submit" class="btn btn-danger" name="disconnect-social-submit">Disconnect</button>
             </form>
@@ -41,8 +46,26 @@
         {% else %}
             <a href="{% url 'social:begin' 'hydroshare' %}?next={{ request.path }}"><span class="btn btn-success">Connect</span></a>
         {% endif %}
-{% endblock %}
 
+        </div>
+    </div>
+
+    </div>
+    <div class="controls">
+        <input type="submit" id="submit_profile_btn" class="Submit_button btn btn-default" value="Save Profile" />
+    </div>
+</div>
+
+    {% addtoblock "template_js" %}
+
+    <script>
+        $('#submit_profile_btn').click(function(){
+            $('#user_profile_form').submit();
+        })
+    </script>
+
+    {% endaddtoblock "template_js" %}
 
 
 {% endblock content %}
+

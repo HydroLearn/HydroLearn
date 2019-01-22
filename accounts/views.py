@@ -23,6 +23,7 @@ from django.views.generic import TemplateView
 from accounts.models import User
 from accounts.models import Profile
 from django.contrib.auth.decorators import login_required
+from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import gettext as _
@@ -147,11 +148,19 @@ class PasswordResetView(PasswordResetView):
     template_name = 'accounts/registration/password_reset_form.html'
     email_template_name = 'accounts/registration/password_reset_email.html'
 
+# TODO:
+#   refactor this view
+#   This view contains unnecessary queries, and should be converted to
+#   a generic detail view for the user's profile
+#       (will probably require passing the user's pk as kwarg)
 class UserProfileView(TemplateView):
     template_name = 'accounts/profile.html'
 
     def get_context_data(self, **kwargs):
         u = User.objects.none()
+
+
+
         if 'user' in kwargs:
             try:
                 u = User.objects.get(pk=kwargs['user'])
@@ -179,7 +188,7 @@ class UserProfileView(TemplateView):
                     pass
 
         return {
-            'profile_user': u,
+            'user': u,
         }
 
 
@@ -195,11 +204,13 @@ class UserProfileUpdateView(UpdateView):
         try:
 
             if self.request.user.is_authenticated():
-
+                # check the provided user email from kwargs
                 if "email" not in self.kwargs:
                     u = User.objects.get(pk=self.request.user.id)
                 else:
                     u = User.objects.get(email=self.kwargs['email'])
+
+                # if the requesting user is the associated user or an admin get/create profile
                 if u == self.request.user or self.request.user.is_superuser:
                     obj, created = Profile.objects.get_or_create(user=u)
         except:
