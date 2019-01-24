@@ -3,29 +3,22 @@
 <div class='lesson ck-content'>
 
     {% if edit_access %}
-        <!-- show toolbox -->
+        <!-- show edit toolbox  -->
         <div class="editor_toolbox">
             <div class="edit_icon" title="Save Changes"><i class="Submit_button far fa-save glyph-button"></i></div>
-            <div class="edit_icon" title="Edit Lesson"><i class="Toggle_edit_btn fas fa-edit glyph-button"></i></div>
-            <div class="edit_icon" title="Delete Lesson"><i class="Delete_button fas fa-trash glyph-button glyph-delete"></i></div>
+            {% if is_instance %}
+                <div class="edit_icon" title="Edit Lesson"><i class="Toggle_edit_btn fas fa-edit glyph-button"></i></div>
+                <div class="edit_icon" title="Delete Lesson"><i class="Delete_button fas fa-trash glyph-button glyph-delete"></i></div>
+            {% endif %}
         </div>
     {% else %}
         <!-- show edit access denied message -->
         <div class="HL-message-banner warning"> {{ manage_denied_message }}</div>
-
     {% endif %}
 
     {% if is_instance %}
-        {# if there's a form instance display it's content as it would be in the viewer #}
-        <!--
-            TODO:
-                this needs to be converted to just displaying the module view version
-                and if it is editable by the current user
-                add the necessary class/id for the editor to take effect
-
-        -->
-
         <div class="content_block">
+            {# display the lesson with its summary inside an editor block #}
             <div id="manage_form" style="width:100%; border:none;">
                 <h2>
                     {{ object.name }}
@@ -35,7 +28,7 @@
                     {% if object.summary %}
                         {{ object.summary|safe }}
                     {% else %}
-                        This lesson doesn't appear to have a summary, you can populate this content from the edit interface.
+                        <p>This lesson doesn't appear to have a summary, you can populate this content from the edit interface.</p>
                     {% endif %}
                 </div>
             </div>

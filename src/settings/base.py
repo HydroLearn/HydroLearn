@@ -187,7 +187,7 @@ MIGRATION_MODULES = {
 
 }
 
-THUMBNAIL_QUALITY = 95
+THUMBNAIL_QUALITY = 75
 THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.colorspace',
     'easy_thumbnails.processors.autocrop',
@@ -197,3 +197,9 @@ THUMBNAIL_PROCESSORS = (
 
 THUMBNAIL_SUBDIR = 'thumbnails'
 
+THUMBNAIL_ALIASES = {
+    '': {
+        'content_thumb': {'size': (300, 200), 'crop': True},
+        'content_large': {'size': (480, 300), 'crop': True},
+    },
+}

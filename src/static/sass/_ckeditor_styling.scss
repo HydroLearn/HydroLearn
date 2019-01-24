@@ -3,12 +3,29 @@
 
         // ********************* IMAGE STYLING *********************
         &.image{
-            &.image-style-align-right{ float:right; }
-            &.image-style-align-left{ float:left; }
 
             img{
-                height:200px;
+                height:300px;
             }
+
+            &.image-style-align-right{
+                float:right;
+
+                img{
+                    height:200px;
+                }
+
+            }
+            &.image-style-align-left{
+                float:left;
+
+                img{
+                    height:200px;
+                }
+
+            }
+
+
         }
 
 

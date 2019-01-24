@@ -626,12 +626,16 @@ table.responsive_table, table.responsive_table table.responsive_table {
     table.responsive_table tr:first-child th:last-child, table.responsive_table table.responsive_table tr:first-child th:last-child {
       border-top-right-radius: .75em; }
 
+.ck-content figure.image img {
+  height: 300px; }
 .ck-content figure.image.image-style-align-right {
   float: right; }
+  .ck-content figure.image.image-style-align-right img {
+    height: 200px; }
 .ck-content figure.image.image-style-align-left {
   float: left; }
-.ck-content figure.image img {
-  height: 200px; }
+  .ck-content figure.image.image-style-align-left img {
+    height: 200px; }
 .ck-content figure figcaption {
   background: #eee;
   font-style: italic;

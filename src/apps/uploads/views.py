@@ -59,12 +59,13 @@ def ImageUpload(request):
                 # save the instance
                 new_upload.save()
 
-                # TODO:
-                #   this method should return the link to the thumbnail
-                #   not the image itself
+                # get the thumbail url from the new object's thumbnailer
+                from easy_thumbnails.files import get_thumbnailer
+                thumb_url = get_thumbnailer(new_upload.img)['content_thumb'].url
+
 
                 # return the new uploaded image's url
-                return JsonResponse({'url': new_upload.img.url})
+                return JsonResponse({'url': thumb_url})
 
     return JsonResponse(None)
 

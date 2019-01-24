@@ -2,23 +2,23 @@
 
 <div class='lesson'>
 
-    {% if is_instance %}
-        {# if there's a form instance display it's content as it would be in the viewer #}
-
-        {% if edit_access %}
-            <div class="editor_toolbox">
-                <div class="edit_icon" title="Save Changes"><i class="Submit_button far fa-save glyph-button"></i></div>
+    {% if edit_access %}
+        <!-- show edit toolbox  -->
+        <div class="editor_toolbox">
+            <div class="edit_icon" title="Save Changes"><i class="Submit_button far fa-save glyph-button"></i></div>
+            {% if is_instance %}
                 <div class="edit_icon" title="Edit Section"><i class="Toggle_edit_btn fas fa-edit glyph-button"></i></div>
                 <div class="edit_icon" title="Delete Section"><i class="Delete_button fas fa-trash glyph-button glyph-delete"></i></div>
-                <!--<div class="edit_icon"></div>-->
-            </div>
-        {% else %}
-            <div class="HL-message-banner warning"> {{ manage_denied_message }}</div>
-        {% endif %}
+            {% endif %}
+        </div>
+    {% else %}
+        <!-- show edit access denied message -->
+        <div class="HL-message-banner warning"> {{ manage_denied_message }}</div>
+    {% endif %}
 
+    {% if is_instance %}
         <div class="content_block">
-
-            {# content_editor_button request.user object #}
+            {# display the section with its content inside an editor block #}
             <div id="manage_form" style="width:100%; border:none;">
                 <h2>
                     {{ object.name }}
@@ -31,9 +31,7 @@
                         <p>This Reading section doesn't appear to have any content, you can populate this from the edit interface.</p>
                     {% endif %}
                 </div>
-
             </div>
-
         </div>
     {% endif %}
 

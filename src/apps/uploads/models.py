@@ -101,12 +101,6 @@ class Image(models.Model):
 
 saved_file.connect(generate_aliases_global)
 
-# generate thumbnail aliases for uploaded images
-if not aliases.get('content_thumb'):
-    aliases.set('content_thumb', {'size': (300, 200), 'crop': True})
-
-
-
 # set up signal to auto delete the original image and any generated thumbnails
 # on deletion of an image instance
 #
