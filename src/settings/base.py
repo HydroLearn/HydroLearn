@@ -200,6 +200,6 @@ THUMBNAIL_SUBDIR = 'thumbnails'
 THUMBNAIL_ALIASES = {
     '': {
         'content_thumb': {'size': (300, 200), 'crop': True},
-        'content_large': {'size': (480, 300), 'crop': True},
+        # 'content_large': {'size': (480, 300), 'crop': True},
     },
 }
