@@ -17,11 +17,6 @@ from src.apps.manage.views import (
         manage_PublicationCloneIndex,
         manage_PublicationClone,
 
-        # manage_ModuleContent,
-        # manage_TopicContent,
-        manage_LessonContent,
-        manage_SectionContent,
-
         find_filter_form,
         find_listing,
 )
@@ -54,15 +49,6 @@ urlpatterns = [
         # create and edit functionality have been offloaded to the editor interface
         url(r'^create/module/$', manage_ModuleCreateView.as_view(), name="module_create"),
         url(r'^edit/module/(?P<slug>[^/]+)$', manage_ModuleEditView.as_view(), name="module_update"),
-
-
-
-
-
-
-
-        url(r'^content/(?P<slug>[^/]+)/$', manage_LessonContent.as_view(), name="lesson_content"),
-        url(r'^content/(?P<lesson_slug>[^/]+)/(?P<slug>[^/]+)/$', manage_SectionContent.as_view(), name="section_content"),
 
 
         # find modules urls

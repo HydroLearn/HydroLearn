@@ -19,7 +19,20 @@
         <div class="content_block">
 
             {# content_editor_button request.user object #}
-            <div id="manage_form" style="width:100%; border:none;"></div>
+            <div id="manage_form" style="width:100%; border:none;">
+                <h2>
+                    {{ object.name }}
+                </h2>
+                <hr>
+                <div id="content_editor">
+                    {% if object.content %}
+                        {{ object.content|safe }}
+                    {% else %}
+                        <p>This Reading section doesn't appear to have any content, you can populate this from the edit interface.</p>
+                    {% endif %}
+                </div>
+
+            </div>
 
         </div>
     {% endif %}
@@ -59,9 +72,12 @@
 
 
 <script>
-    EDITOR_MGR = new EDITOR_MANAGER('{{ csrf_token }}', '{% url 'uploads:img_upload' %}')
 
-    $('#manage_form').load('{{ content_view }}')
+    {% if edit_access %}
+        EDITOR_MGR = new EDITOR_MANAGER('{{ csrf_token }}', '{% url 'uploads:img_upload' %}')
+        EDITOR_MGR.register_editor('#content_editor', 'content')
+    {% endif %}
+
 
     $('.lesson .Submit_button').click(function(evt){
         evt.preventDefault();

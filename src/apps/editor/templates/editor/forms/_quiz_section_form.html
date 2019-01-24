@@ -19,7 +19,16 @@
         <div class="content_block">
 
             {# content_editor_button request.user object #}
-            <div id="manage_form" style="width:100%; border:none;"></div>
+            <div id="manage_form" style="width:100%; border:none;">
+                <h2>
+                    {{ object.name }}
+                </h2>
+                <hr>
+                <div>
+                    {% show_quiz_questions object.questions.all %}
+                </div>
+
+            </div>
 
         </div>
     {% endif %}
@@ -54,7 +63,7 @@
             </table>
 
 
-            <div id="Add_Question" class="Submit_button btn btn-default" style="float:right;"> <i class="fas fa-plus-circle"></i> New Question </div>
+            <div id="Add_Question" class="btn btn-default" style="float:right;"> <i class="fas fa-plus-circle"></i> New Question </div>
             {% show_quiz_question_formset questions_fs %}
 
             <div id="content_form_controls">
@@ -76,8 +85,14 @@
 
 
 <script>
-    $('#manage_form').load('{{ content_view }}')
 
+    $('.lesson .Submit_button').click(function(evt){
+        evt.preventDefault();
+
+        var form = $('.lesson #content_form')
+
+        form.submit()
+    });
 
     $('#Add_Question').click(function(evt){
         evt.preventDefault()

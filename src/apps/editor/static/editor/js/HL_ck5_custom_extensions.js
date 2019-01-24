@@ -39,10 +39,10 @@ function EDITOR_MANAGER(csrf_token, upload_path){
     }
 
     EDITOR_MANAGER.prototype.getData = function(field_name){
-        if(!!this.editors){
+        if(!!field_name && !!this.editors && field_name in this.editors){
             return this.editors[field_name].getData();
         }
-        return;
+        return '';
 
     }
 

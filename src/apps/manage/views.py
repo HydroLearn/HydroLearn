@@ -687,44 +687,6 @@ class manage_PublicationClone(LoginRequiredMixin, FormView):
 
 
 ###############################################################################
-###                 CONTENT EDITING VIEWS                                   ###
-###############################################################################
-#
-#   TODO:
-#           These content views need to be phased out, the editor app
-#           is in charge of content now, thus it should be serving the
-#           content with editable fields.
-#
-#
-class manage_LessonContent(CollabEditorAccessRequiredMixin, PublicationChildViewMixin, DetailView):
-    model = Lesson
-    template_name = "manage/lesson_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(manage_LessonContent, self).get_context_data(**kwargs)
-        context['edit'] = True
-        return context
-
-class manage_SectionContent(CollabEditorAccessRequiredMixin, PublicationChildViewMixin, DetailView):
-    model = Section
-
-    def get_context_data(self, **kwargs):
-
-        context = super(manage_SectionContent, self).get_context_data(**kwargs)
-
-        return context
-
-    def get_template_names(self):
-        c_type = str(ContentType.objects.get_for_id(self.get_object().polymorphic_ctype_id))
-
-        return {
-                'Reading Section':  'manage/section_reading_detail.html',
-                'Activity Section': 'manage/section_activity_detail.html',
-                'Quiz Section':     'manage/section_quiz_detail.html',
-            }.get(c_type, 'manage/section_detail.html')
-
-
-###############################################################################
 ###                 PARTIALVIEWS
 ###############################################################################
 

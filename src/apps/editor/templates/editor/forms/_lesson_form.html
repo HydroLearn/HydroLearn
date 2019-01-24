@@ -26,7 +26,19 @@
         -->
 
         <div class="content_block">
-            <div id="manage_form" style="width:100%; border:none;"></div>
+            <div id="manage_form" style="width:100%; border:none;">
+                <h2>
+                    {{ object.name }}
+                </h2>
+                <hr>
+                <div id="summary_editor">
+                    {% if object.summary %}
+                        {{ object.summary|safe }}
+                    {% else %}
+                        This lesson doesn't appear to have a summary, you can populate this content from the edit interface.
+                    {% endif %}
+                </div>
+            </div>
         </div>
     {% endif %}
 
@@ -58,7 +70,7 @@
                     {{ form.as_table }}
                 </table>
 
-                <div id="add-objective-btn" style="float:right;" class="Submit_button btn btn-default"><i class="fas fa-plus-circle"></i> Add Objective</div>
+                <div id="add-objective-btn" style="float:right;" class="btn btn-default"><i class="fas fa-plus-circle"></i> Add Objective</div>
 
 
                 {% show_learningObj_formset learning_objective_formset %}
@@ -83,10 +95,10 @@
         <script src="{% static 'editor/js/Learning_obj_functionality.js' %}"></script>
 
         <script type='text/javascript'>
-            EDITOR_MGR = new EDITOR_MANAGER('{{ csrf_token }}', '{% url 'uploads:img_upload' %}')
-
-            $('#manage_form').load('{{ content_view }}')
-
+            {% if edit_access %}
+                EDITOR_MGR = new EDITOR_MANAGER('{{ csrf_token }}', '{% url 'uploads:img_upload' %}')
+                EDITOR_MGR.register_editor('#summary_editor', 'summary')
+            {% endif %}
 
             $('.lesson .Submit_button').click(function(evt){
                 evt.preventDefault();

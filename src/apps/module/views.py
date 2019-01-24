@@ -116,7 +116,7 @@ class module_SectionDetailView(PublicationChildViewMixin, DetailView):
             'Quiz Section':     'module/viewer/_section_quiz_view.html',
         }.get(c_type, 'module/viewer/_section_reading_view.html')
 
-        #return 'module/section_detail.html'
+
     
     def render_to_response(self, context, **response_kwargs):
         # can define a custom DjangoCMS toolbar entry here (as an alternative to doubleclick edit)
