@@ -38,8 +38,6 @@
                 </tr>
 
                 <tr>
-
-                {% if "hydroshare" not in backends.not_associated %}
                     <td>
                         <div class="hs-logo-container">
                             <a href="https://www.hydroshare.org/">
@@ -47,6 +45,9 @@
                             </a>
                         </div>
                     </td>
+
+                {% if "hydroshare" not in backends.not_associated %}
+
 
                     {%  with backends.associated|provider_filter:"hydroshare" as association %}
                         <td>
