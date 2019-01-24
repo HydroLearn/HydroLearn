@@ -689,7 +689,13 @@ class manage_PublicationClone(LoginRequiredMixin, FormView):
 ###############################################################################
 ###                 CONTENT EDITING VIEWS                                   ###
 ###############################################################################
-
+#
+#   TODO:
+#           These content views need to be phased out, the editor app
+#           is in charge of content now, thus it should be serving the
+#           content with editable fields.
+#
+#
 class manage_LessonContent(CollabEditorAccessRequiredMixin, PublicationChildViewMixin, DetailView):
     model = Lesson
     template_name = "manage/lesson_detail.html"

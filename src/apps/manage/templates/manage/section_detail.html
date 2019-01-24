@@ -3,30 +3,19 @@
 {% load sekizai_tags static thumbnail %}
 
 {% block content %}
-    {% addtoblock "template_css" %}
-        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">-->
-        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_content_styling.css' %}" type="text/css">-->
-        <!--<link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">-->
-    {% endaddtoblock "template_css" %}
+    {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
 
-    <!--<div id="manage-content">-->
+    <h2>
+        {{ object.name }}
+    </h2>
+    <hr>
+    <div>
+        This is a non-typed section, if this is being displayed, there is an error in
+        the system that allowed a section to be created without a type.
 
-
-    <div class="lesson">
-        <h2>
-            Editing: {{ object.name }}
-        </h2>
-        <hr>
-        <div>
-            This is a non-typed section, if this is being displayed, there is an error in
-            the system that allowed a section to be created without a type.
-
-            Please, contact an administrator if this occurs.
-        </div>
+        Please, contact an administrator if this occurs.
     </div>
 
-
-    <!--</div>-->
     {% addtoblock 'template_js' %}{% endaddtoblock 'template_js' %}
 
 {% endblock content %}

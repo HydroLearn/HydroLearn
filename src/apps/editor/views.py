@@ -14,7 +14,6 @@ from django.utils.timezone import now
 from src.apps.core.models.LearningObjModels import Learning_Level, Learning_Verb, \
     Learning_Outcome, Learning_Objective
 from collections import defaultdict
-from .forms import inlineLearning_ObjectiveFormset
 
 
 from django.views.generic import (
@@ -54,7 +53,8 @@ from src.apps.core.models.HS_AppFrameModels import (
 
 from src.apps.editor.editor_queries import (
     get_editor_TOC_obj,
-    get_lesson_JSON_RAW, get_section_JSON_RAW
+    get_lesson_JSON_RAW,
+    get_section_JSON_RAW
 )
 
 from src.apps.editor.forms import (
@@ -64,8 +64,8 @@ from src.apps.editor.forms import (
     editor_ReadingSectionForm,
     editor_ActivitySectionForm,
     editor_QuizSectionForm,
-    # editor_ExportLessonForm,
-    # editor_ImportLessonForm,
+
+    # editor_ContentForm,
 
     editor_AppRefForm,
 
@@ -74,6 +74,7 @@ from src.apps.editor.forms import (
 
     BaseQuizAnswerFormset,
 
+    inlineLearning_ObjectiveFormset,
     inlineQuizQuestionFormset,
     inlineQuizAnswerFormset,
     BaseQuizQuestionFormset
@@ -448,6 +449,7 @@ class editor_LessonUpdateView(CollabViewAccessMixin, UserAwareFormMixin, Ajaxabl
 
         if edit_access:
             context['content_view'] = self.object.manage_url
+            # context['content_form'] = editor_ContentForm(self.request.POST or None)
         else:
             context['manage_denied_message'] = "You can view this Lesson, but don't have edit access! If you require edit access, please contact the owner."
             context['content_view'] = reverse('module:lesson_content', kwargs={ 'slug': self.object.slug })
@@ -459,7 +461,7 @@ class editor_LessonUpdateView(CollabViewAccessMixin, UserAwareFormMixin, Ajaxabl
 
         verbs_by_knowledge = defaultdict(list)
         for verb in Learning_Verb.objects.filter(default=True):
-            verbs_by_knowledge[verb.level.id].append({'id':verb.id, 'verb':verb.verb})
+            verbs_by_knowledge[verb.level.id].append({'id': verb.id, 'verb':verb.verb})
 
         # get outcomes in form [ { id: PK_VALUE, outcome: TEXT_VALUE } , ...]
         abet_outcomes = list(Learning_Outcome.objects.order_by("pk").values('id', 'outcome'))
@@ -724,6 +726,41 @@ class editor_AppRefUpdateView(CollabViewAccessMixin, AjaxableResponseMixin, Upda
 
     def form_invalid(self, form, *args, **kwargs):
         return super(editor_AppRefUpdateView, self).form_invalid(form, *args, **kwargs)
+
+#
+# class editor_ContentUpdateView(AjaxableResponseMixin, UpdateView):
+#     form_class = editor_ContentForm
+#     template_name = "editor/forms/_content_form.html"
+#
+#     def get_object(self, queryset=None):
+#         # determine what object to get based on something (lesson/section)
+#
+#         return super(editor_ContentUpdateView, self).get_object(queryset)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(editor_ContentUpdateView, self).get_context_data(**kwargs)
+#
+#         # add content to the context variable from the object
+#         # context['content'] =
+#
+#         return context
+#
+#     def form_valid(self, form, *args, **kwargs):
+#         # need way to get the model holding the content
+#
+#         # store the CKEditor contents to the model's content field
+#
+#         # need to parse the values in 'images' field of form
+#
+#         # update M2M mapping of 'image' and 'content model'
+#
+#
+#         return super(editor_ContentUpdateView, self).form_valid(form, *args, **kwargs)
+#
+#     def form_invalid(self, form, *args, **kwargs):
+#
+#
+#         return super(editor_ContentUpdateView, self).form_invalid(form, *args, **kwargs)
 
 
 #####################################################

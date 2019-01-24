@@ -626,6 +626,52 @@ table.responsive_table, table.responsive_table table.responsive_table {
     table.responsive_table tr:first-child th:last-child, table.responsive_table table.responsive_table tr:first-child th:last-child {
       border-top-right-radius: .75em; }
 
+.ck-content figure.image.image-style-align-right {
+  float: right; }
+.ck-content figure.image.image-style-align-left {
+  float: left; }
+.ck-content figure.image img {
+  height: 200px; }
+.ck-content figure figcaption {
+  background: #eee;
+  font-style: italic;
+  text-align: center; }
+.ck-content figure.table table {
+  border-spacing: 1px;
+  border-collapse: unset;
+                /*
+                tr:first-child{
+                    td:first-child, th:first-child{
+                         border-top-left-radius: 7px;
+                    }
+
+                    td:last-child, th:last-child{
+                         border-top-right-radius: 7px;
+                    }
+                }
+
+                tr:last-child{
+                    td:first-child, th:first-child{
+                         border-bottom-left-radius: 7px;
+                    }
+
+                    td:last-child, th:last-child{
+                         border-bottom-right-radius: 7px;
+                    }
+                }
+                */ }
+  .ck-content figure.table table tr th {
+    padding: 3px 5px;
+    margin: 1px;
+    background: #45a4f3;
+    color: #fff;
+    font-weight: 600;
+    font-style: italic; }
+  .ck-content figure.table table tr td {
+    padding: 3px 5px;
+    margin: 1px;
+    background: #eee; }
+
 /* Media Styling */
 @media (max-width: 768px) {
   .content {

@@ -7,10 +7,6 @@
     Learning Activities: #e55330
 
 */
-/*  TODO: ideally ekko will be replaced by 'prettyPhoto' plugin so this styling will be removed
-    restricting size of lightbox contents
-*/
-/* END TODO: ideally remove ekko... */
 /*  MATHJAX Styling
     fixing issue where chrome was placing a vertical line after all equations
     */
@@ -42,9 +38,10 @@
   overflow-x: hidden;
   height: 100%;
   width: 100%;
-  padding: 25px 25px 110px; }
+  padding: 10px 25px 110px; }
   #lesson-content h1, #lesson-content h2, #lesson-content h3, #lesson-content h4, #lesson-content h5 {
-    font-weight: bold;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
     line-height: normal;
     color: #8F8F8F;
     min-width: 950px;

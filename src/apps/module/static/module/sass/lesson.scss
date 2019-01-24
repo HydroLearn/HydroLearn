@@ -9,35 +9,6 @@
 
 */
 
-/*  TODO: ideally ekko will be replaced by 'prettyPhoto' plugin so this styling will be removed
-    restricting size of lightbox contents
-*/
-
-//.ekko-lightbox.modal {
-//  .modal-dialog {
-//    margin: auto;
-//    max-width: 75% !important;
-//  }
-//  .modal-body {
-//    margin: auto;
-//    img {
-//      margin: auto;
-//      max-height: 600px;
-//    }
-//  }
-//}
-
-//.modal {
-//  z-index: 8001 !important;
-//}
-
-//.modal-backdrop {
-//  z-index: 8000 !important;
-//}
-
-
-/* END TODO: ideally remove ekko... */
-
 
 /*  MATHJAX Styling
     fixing issue where chrome was placing a vertical line after all equations
@@ -73,19 +44,17 @@
 
 /* #region Basic Element Styling */
 
-
-
-
 #lesson-content {
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
   width: 100%;
   //padding-bottom: 50px;
-  padding: 25px 25px 110px;
+  padding: 10px 25px 110px;
 
     h1,h2,h3,h4,h5 {
-        font-weight: bold;
+        font-family: "Open Sans", sans-serif;
+        font-weight: 600;
         line-height: normal;
         color: #8F8F8F;
         min-width: 950px;
@@ -310,19 +279,19 @@
 
 /* #region ORDERED LIST STYLING */
 
-/* currently only supporting 3 nests before default*/
+    /* currently only supporting 3 nests before default*/
 
-/* #endregion Nested ol counter styling */
+    /* #endregion Nested ol counter styling */
 
 /* #endregion Ordered list*/
 
 /* #region Unordered list styling*/
 
-/*parent list*/
+    /*parent list*/
 
-/*sub listing 1*/
+    /*sub listing 1*/
 
-/*sub listing 2*/
+    /*sub listing 2*/
 
 /* #endregion Unordered list*/
 

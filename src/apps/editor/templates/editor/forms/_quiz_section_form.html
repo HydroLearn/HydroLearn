@@ -6,7 +6,12 @@
         {# if there's a form instance display it's content as it would be in the viewer #}
 
         {% if edit_access %}
-            <button class="Toggle_edit_btn btn btn-default">Edit</button>
+        <div class="editor_toolbox">
+            <div class="edit_icon" title="Save Changes"><i class="Submit_button far fa-save glyph-button"></i></div>
+            <div class="edit_icon" title="Edit Lesson"><i class="Toggle_edit_btn fas fa-edit glyph-button"></i></div>
+            <div class="edit_icon" title="Delete Lesson"><i class="Delete_button fas fa-trash glyph-button glyph-delete"></i></div>
+            <!--<div class="edit_icon"></div>-->
+        </div>
         {% else %}
             <div class="HL-message-banner warning"> {{ manage_denied_message }}</div>
         {% endif %}
@@ -25,7 +30,6 @@
         <div id="content_form_errors" class="HL-message-banner critical form_messages"></div>
 
         <h2 class="lesson-header">
-            Editing:
             {% if is_instance %}
                 {{form.instance.name}}
             {% else %}

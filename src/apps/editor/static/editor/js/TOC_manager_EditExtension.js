@@ -16,6 +16,7 @@ function EDITOR_TOC(target_container_selector, TOC_Listing, editor_access){
     this.EVENT_TRIGGERS['DELETE_DIALOG'] = '_TOC_delete_dialog';
     this.EVENT_TRIGGERS['EXPORT_DIALOG'] = '_TOC_export_dialog';
     this.EVENT_TRIGGERS['IMPORT_DIALOG'] = '_TOC_import_dialog';
+    this.EVENT_TRIGGERS['EDITED_CURRENT'] = '_TOC_edited_current';
 
     // bind custom trigger events to target container
     $(this._target).on(this.EVENT_TRIGGERS.ADD_SECTION, this._add_section_evt.bind(this))
@@ -24,6 +25,7 @@ function EDITOR_TOC(target_container_selector, TOC_Listing, editor_access){
     $(this._target).on(this.EVENT_TRIGGERS.DELETE_DIALOG, this._show_deletion_dialog_listener.bind(this))
     $(this._target).on(this.EVENT_TRIGGERS.EXPORT_DIALOG, this._show_export_dialog_listener.bind(this))
     $(this._target).on(this.EVENT_TRIGGERS.IMPORT_DIALOG, this._show_import_dialog_listener.bind(this))
+    $(this._target).on(this.EVENT_TRIGGERS.EDITED_CURRENT, this._edited_current_listener.bind(this))
 
 
 }
@@ -313,8 +315,6 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
     }
 
-
-
     EDITOR_TOC.prototype.generate_new_lesson_placeholder = function(parent_slug){
 
         // TODO: theoretically this representation needs to be passed in the lesson_listing
@@ -446,7 +446,21 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
 
     }
 
+    EDITOR_TOC.prototype._mark_current_as_edited = function(){
 
+        var current = this.get_TOC_obj(this._current_section);
+
+        if(!!current){
+            // if this object is a lesson, click it's summary link
+            if(current.hasClass('Lesson_obj')) current.find('.Lesson_Link:first').addClass('TOC_EDITED_OBJ')
+
+            // if this is a section link, click it
+            if(current.hasClass('Section_obj')) current.addClass('TOC_EDITED_OBJ')
+        }
+
+
+
+    }
 
 /*----------------------------------------------------
     Trigger-able event listeners
@@ -795,4 +809,8 @@ EDITOR_TOC.prototype = Object.create(TABLE_OF_CONTENTS_MANAGER.prototype)
         $('#form-confirmation-dialog').dialog("open")
     }
 
+    EDITOR_TOC.prototype._edited_current_listener = function(event){
 
+        this._mark_current_as_edited();
+
+    }

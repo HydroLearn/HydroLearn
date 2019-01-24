@@ -7,16 +7,19 @@
     {# Load content into non editable context variable  #}
     {# render_placeholder object.summary as content #}
 
-    <div class='lesson'>
+    <div class='lesson ck-content'>
         {# content_editor_button request.user object #}
 
         <h2 class="lesson-header">{{object.name}}</h2>
-        <h3>Summary</h3>
         <hr class="headerSpacer">
 
-
-
-        {{ object.summary }}
+        {% if object.summary %}
+            {{ object.summary|safe }}
+        {% else %}
+            <p>
+                This Lesson doesn't appear to have a summary!
+            </p>
+        {% endif %}
 
     </div>
 

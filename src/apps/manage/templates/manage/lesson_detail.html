@@ -3,46 +3,22 @@
 {% load sekizai_tags static thumbnail %}
 
 {% block content %}
-    {% addtoblock "template_css" %}
-        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_styling.css' %}" type="text/css">-->
-        <!--<link rel="stylesheet" href="{% static 'manage/css/manage_content_styling.css' %}" type="text/css">-->
-        <!--<link rel="stylesheet" href="{% static 'module/css/lesson.css' %}" type="text/css">-->
-    {% endaddtoblock "template_css" %}
-    
-    <!--<div id="manage-content">-->
+    {% addtoblock "template_css" %}{% endaddtoblock "template_css" %}
 
-
-    <div class="lesson">
-        <h2>
-            Editing: {{ lesson.name }}
-        </h2>
-        <hr>
-        <div class="editor">
-            {% if object.summary %}
-                {{ object.summary }}
-            {% else %}
-                This lesson doesn't appear to have a summary, you can populate this content from the edit interface.
-            {% endif %}
-        </div>
+    <h2>
+        {{ lesson.name }}
+    </h2>
+    <hr>
+    <div id="summary_editor">
+        {% if object.summary %}
+            {{ object.summary|safe }}
+        {% else %}
+            This lesson doesn't appear to have a summary, you can populate this content from the edit interface.
+        {% endif %}
     </div>
 
     <script>
-        if(typeof(HL_CKEDITOR) != 'undefined'){
-            $('.editor').each(function(){
-                console.log("{{csrf_token}}")
-                HL_CKEDITOR.default.classic_editor.create(this,{
-                        //imageUploadUrl: "/upload_img/",
-                        imageUploadUrl: "{% url 'uploads:img_upload' %}",
-                        csrf_token: "{{csrf_token}}"
-                    })
-                    .catch(err => {
-                        console.log(err.stack)
-                    });
-                })
-        }else{
-            alert('Failed to Create Editor! Please try again later.')
-        }
-
+        EDITOR_MGR.register_editor('#summary_editor', 'summary')
     </script>
 
 {% endblock content %}

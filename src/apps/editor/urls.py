@@ -50,10 +50,8 @@ urlpatterns = [
     #  edit lesson
     url(r'^content/(?P<slug>[^/]+)/$', editor_LessonUpdateView.as_view(),name="lesson_content"),
 
-    # add child lesson
+    # add child lesson/section
     url(r'^content/(?P<parent_lesson>[^/]+)/new_lesson/$', editor_LessonCreateView.as_view(), name="new_child_lesson"),
-
-    # add child section
     url(r'^content/(?P<parent_lesson>[^/]+)/new_section/(?P<section_type>[^/]+)/$', editor_SectionCreateView.as_view(), name="new_section"),
 
     # edit section

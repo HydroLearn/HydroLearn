@@ -7,14 +7,20 @@
     {# Load content into non editable context variable  #}
     {# render_placeholder object.content as content #}
 
-    <div class='lesson'>
+    <div class='lesson ck-content'>
         {# content_editor_button request.user object #}
         
         <h2 class="lesson-header">{{object.name}}</h2>
         <hr class="headerSpacer">
         {% show_resources_box object.resources.all %}
 
-        {{ object.content }}
+        {% if object.content %}
+            {{ object.content|safe }}
+        {% else %}
+            <p>
+                There appears to be no content for this Activity Section!
+            </p>
+        {% endif %}
     </div>
 
     {% addtoblock 'template_js' %}

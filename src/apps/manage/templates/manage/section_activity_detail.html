@@ -4,31 +4,26 @@
 
 {% block content %}
 
-    <!--<div id="manage-content">-->
+    <h2>
+        {{ object.name }}
+    </h2>
+    <hr>
 
+    {% show_resources_box object.resources.all %}
 
-    <div class="lesson">
-        <h2>
-            Editing: {{ object.name }}
-        </h2>
-        <hr>
+    <div id="content_editor">
 
-        {% show_resources_box object.resources.all %}
-
-        <div>
-
-            {% if object.content %}
-                {{ object.content }}
-            {% else %}
-                <p>This Activity doesn't appear to have any content, you can populate this from the edit interface.</p>
-            {% endif %}
-        </div>
-
-
+        {% if object.content %}
+            {{ object.content|safe }}
+        {% else %}
+            <p>This Activity doesn't appear to have any content, you can populate this from the edit interface.</p>
+        {% endif %}
     </div>
 
+    <script>
+        EDITOR_MGR.register_editor('#content_editor', 'content')
+    </script>
 
-    <!--</div>-->
     {% addtoblock 'template_js' %}{% endaddtoblock 'template_js' %}
 
 {% endblock content %}

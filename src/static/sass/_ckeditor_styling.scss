@@ -1,0 +1,73 @@
+.ck-content {
+    figure{
+
+        // ********************* IMAGE STYLING *********************
+        &.image{
+            &.image-style-align-right{ float:right; }
+            &.image-style-align-left{ float:left; }
+
+            img{
+                height:200px;
+            }
+        }
+
+
+
+        figcaption {
+            background: #eee;
+            font-style: italic;
+            text-align: center;
+        }
+
+        // ********************* TABLE STYLING *********************
+        &.table{
+            table{
+                border-spacing: 1px;
+                border-collapse: unset;
+
+                /*
+                tr:first-child{
+                    td:first-child, th:first-child{
+                         border-top-left-radius: 7px;
+                    }
+
+                    td:last-child, th:last-child{
+                         border-top-right-radius: 7px;
+                    }
+                }
+
+                tr:last-child{
+                    td:first-child, th:first-child{
+                         border-bottom-left-radius: 7px;
+                    }
+
+                    td:last-child, th:last-child{
+                         border-bottom-right-radius: 7px;
+                    }
+                }
+                */
+
+
+                tr{
+                    th{
+                        padding: 3px 5px;
+                        margin:1px;
+                        background: $HL_blue;
+                        color: #fff;
+                        font-weight: 600;
+                        font-style: italic;
+                        //border: 1px solid #ccc;
+                    }
+
+                    td{
+                        padding: 3px 5px;
+                        margin:1px;
+                        background: #eee;
+                        //border: 1px solid #ccc;
+                    }
+                }
+            }
+        }
+
+    }
+}

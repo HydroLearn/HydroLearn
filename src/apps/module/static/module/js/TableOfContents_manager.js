@@ -369,6 +369,7 @@ function TABLE_OF_CONTENTS_MANAGER(target_container_selector, TOC_Listing) {
 
                 $(".TOC_Title").removeClass('current_selected_section');
                 $(".TOC_Title[value='" + section_slug +"']").addClass('current_selected_section');
+                this._current_section = section_slug;
 
                 setTimeout(function(){ this._expand_to_section() }.bind(this), 500);
             }

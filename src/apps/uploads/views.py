@@ -59,6 +59,10 @@ def ImageUpload(request):
                 # save the instance
                 new_upload.save()
 
+                # TODO:
+                #   this method should return the link to the thumbnail
+                #   not the image itself
+
                 # return the new uploaded image's url
                 return JsonResponse({'url': new_upload.img.url})
 

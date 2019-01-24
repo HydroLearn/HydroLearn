@@ -19,10 +19,12 @@ from src.apps.core.models.QuizQuestionModels import (
 
 )
 
-
-
 from src.apps.core.models.HS_AppFrameModels import (
-    AppReference
+    AppReference,
+)
+
+from src.apps.uploads.models import (
+    Image,
 )
 
 ''' **********************************************************
@@ -63,12 +65,14 @@ class editor_LessonForm(CreationTrackingForm):
                         'class':'object_name'
                     },
                 ),
+
             'tags': TagWidget(attrs={
                     'class': 'tag_input',
                     'data-role': "tagsinput",
                     'placeholder': 'Add Tags',
                 }),
 
+            'summary': forms.HiddenInput(),
         }
 
     def clean_name(self):
@@ -79,7 +83,6 @@ class editor_LessonForm(CreationTrackingForm):
             raise ValidationError("Lesson name must be at least 4 characters.")
 
         return name
-
 
 class editor_SectionForm(CreationTrackingForm):
     #content = forms.CharField(widget=TextEditorWidget)
@@ -111,7 +114,6 @@ class editor_SectionForm(CreationTrackingForm):
 
         }
 
-
     def clean_name(self):
 
         # add a validation check for the name to be minimum 4 characters
@@ -129,6 +131,28 @@ class editor_AppRefForm(forms.ModelForm):
             'app_link',
         ]
 
+#
+# # generic content form for use by Lessons/Sections
+# # to store CKEditor
+# class editor_ContentForm(forms.Form):
+#     # the CKEditor Content
+#     content = forms.TextInput()
+#
+#     # the Model Type associated with the content
+#     model_type = forms.CharField(widget=forms.HiddenInput())
+#
+#     # collection of included images in the content
+#     #       need a way to handle images in content and
+#     #       mark Image.is_temp = False on save
+#     #       and store a mapping between that image and the content model
+#     images = forms.ModelMultipleChoiceField(queryset=Image.objects.none(), widget=forms.HiddenInput())
+#
+#
+#     class Media:
+#         # include the custom CK5 Build in this form
+#         js = [
+#             '/static/editor/js/HL_ck5_custom.js',
+#         ]
 
 
 
@@ -160,8 +184,12 @@ class editor_ReadingSectionForm(CreationTrackingForm):
                     'placeholder': 'Add Tags',
 
                 }),
+            'content': forms.HiddenInput(),
+
 
         }
+
+
 
 class editor_ActivitySectionForm(CreationTrackingForm):
     class Meta:
@@ -190,11 +218,14 @@ class editor_ActivitySectionForm(CreationTrackingForm):
 
 
                 }),
+            'content': forms.HiddenInput(),
 
         }
 
         readonly_fields = ['topic']
         # exclude = ['created_by']
+
+
 
 class editor_QuizSectionForm(CreationTrackingForm):
     class Meta:
@@ -226,6 +257,7 @@ class editor_QuizSectionForm(CreationTrackingForm):
 
         readonly_fields = ['topic']
         # exclude = ['created_by']
+
 
 
 

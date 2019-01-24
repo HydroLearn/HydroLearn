@@ -87,7 +87,6 @@ class UserAdminChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
-
 class LoginForm(forms.Form):
     email = forms.EmailField(label='Email')
     password = forms.CharField(widget=forms.PasswordInput)
@@ -106,9 +105,6 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    # def __init__(self, *args, **kwargs):
-    #     super(UserProfileForm, self).__init__(*args, **kwargs)
-    #     self.fields['identifiers'].required = False
 
     class Meta:
         model = Profile

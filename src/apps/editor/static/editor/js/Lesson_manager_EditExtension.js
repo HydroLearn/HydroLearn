@@ -54,7 +54,6 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
                 $('.content_block').show()
             }else{
 
-                //TODO: need to add class to TOC object to require confirmation before leaving
                 LESSON_MGR.get_Loaded_Section()
                 $('.current_selected_section').addClass('TOC_EDITED_OBJ')
 
@@ -105,6 +104,7 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
         $('.lesson').find('.Delete_button').click(function(event){
             event.preventDefault()
 
+
             var obj_id = LESSON_MGR.get_Loaded_Section()
 
             TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.DELETE_DIALOG, [obj_id]);
@@ -121,10 +121,13 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
                  if not, swap back from edit mode, and remove 'confirmation requirement'
             */
             event.preventDefault()
-
             if($('.current_selected_section').hasClass('TOC_EDITED_OBJ')){
-                $('.current_selected_section').removeClass('TOC_EDITED_OBJ')
+
+                // dont remove the class as there's no way to check
+                // if content has changed
+                //$('.current_selected_section').removeClass('TOC_EDITED_OBJ')
                 $('.Toggle_edit_btn').click()
+
             }
 
             // if in a new lesson link
@@ -136,17 +139,10 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
                     TOC_MGR.trigger_event(TOC_MGR.EVENT_TRIGGERS.REMOVE_OBJ, [$('.current_selected_section').attr('value')])
 
-
                     // no natural return point after this removal
                     //      so load the Root Lesson Introduction
                     LESSON_MGR.Show_Section(LESSON_MGR.get_Loaded_Module())
-                }else{
-
-
-
                 }
-
-
             }
 
             // if a new section
@@ -187,6 +183,8 @@ function EDIT_LESSON_VIEW(ViewName, target_container_selector, Lesson_Manager){
 
 
     }
+
+
 
 function EDITOR_LESSON_MANAGER(target_container_selector, Module_name, Loaded_Module, Loaded_Section){
 

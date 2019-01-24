@@ -6,7 +6,12 @@
         {# if there's a form instance display it's content as it would be in the viewer #}
 
         {% if edit_access %}
-            <button class="Toggle_edit_btn btn btn-default">Edit</button>
+        <div class="editor_toolbox">
+            <div class="edit_icon" title="Save Changes"><i class="Submit_button far fa-save glyph-button"></i></div>
+            <div class="edit_icon" title="Edit Section"><i class="Toggle_edit_btn fas fa-edit glyph-button"></i></div>
+            <div class="edit_icon" title="Delete Sectoin"><i class="Delete_button fas fa-trash glyph-button glyph-delete"></i></div>
+            <!--<div class="edit_icon"></div>-->
+        </div>
         {% else %}
             <div class="HL-message-banner warning"> {{ manage_denied_message }}</div>
         {% endif %}
@@ -25,7 +30,6 @@
             <div id="content_form_errors" class="HL-message-banner critical form_messages"></div>
 
             <h2 class="lesson-header">
-                Editing:
                 {% if is_instance %}
                     {{form.instance.name}}
                 {% else %}
@@ -69,7 +73,23 @@
 
 
 <script>
+    EDITOR_MGR = new EDITOR_MANAGER('{{ csrf_token }}', '{% url 'uploads:img_upload' %}')
+
     $('#manage_form').load('{{ content_view }}')
+
+    $('.lesson .Submit_button').click(function(evt){
+        evt.preventDefault();
+        debugger;
+        var form = $('.lesson #content_form')
+
+        // update the lesson form's summary to contain the CKEditor output
+        if(!!EDITOR_MGR.editors){
+            $('.lesson #content_form').find('input[name="content"]').val(EDITOR_MGR.getData('content'))
+        }
+
+
+        form.submit()
+    });
 
     $('#Add_Resource').click(function(evt){
         evt.preventDefault()

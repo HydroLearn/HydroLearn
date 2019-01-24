@@ -249,9 +249,26 @@
     display:none;
 }
 
-.Toggle_edit_btn{
+.editor_toolbox{
+
+    display: block;
+    background: #e2e2e2;
+    border-radius: 15px;
+    width: fit-content;
     float:right;
+    padding: 3px 5px;
+    margin-left: 20px;
+    transition: all .3s;
+
+    &:hover{
+        background: #c4e3fd;
+    }
+
+    .edit_icon{
+        display:inline-block;
+    }
 }
+
 
 .content_form_controls{
     background: #ececec;

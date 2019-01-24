@@ -1,0 +1,18 @@
+<h3>CONTENT FORM</h3>
+
+<div class="editor">
+    {% if object.summary %}
+        {{ object.summary }}
+    {% else %}
+        This lesson doesn't appear to have a summary, you can populate this content from the edit interface.
+    {% endif %}
+</div>
+
+<form>
+    {% csrf_token %}
+
+    <table>
+
+        {{ form.as_table }}
+    </table>
+</form>

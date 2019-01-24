@@ -1,20 +1,32 @@
 {% load module_template_tags sekizai_tags static thumbnail editor_template_tags %}
 
-<div class='lesson'>
+<div class='lesson ck-content'>
 
     {% if edit_access %}
-        <button class="Toggle_edit_btn btn btn-default">Edit</button>
+        <!-- show toolbox -->
+        <div class="editor_toolbox">
+            <div class="edit_icon" title="Save Changes"><i class="Submit_button far fa-save glyph-button"></i></div>
+            <div class="edit_icon" title="Edit Lesson"><i class="Toggle_edit_btn fas fa-edit glyph-button"></i></div>
+            <div class="edit_icon" title="Delete Lesson"><i class="Delete_button fas fa-trash glyph-button glyph-delete"></i></div>
+        </div>
     {% else %}
+        <!-- show edit access denied message -->
         <div class="HL-message-banner warning"> {{ manage_denied_message }}</div>
+
     {% endif %}
 
     {% if is_instance %}
         {# if there's a form instance display it's content as it would be in the viewer #}
+        <!--
+            TODO:
+                this needs to be converted to just displaying the module view version
+                and if it is editable by the current user
+                add the necessary class/id for the editor to take effect
+
+        -->
+
         <div class="content_block">
-
-            {# content_editor_button request.user object #}
             <div id="manage_form" style="width:100%; border:none;"></div>
-
         </div>
     {% endif %}
 
@@ -24,7 +36,6 @@
             <div id="content_form_errors" class="HL-message-banner critical form_messages"></div>
 
             <h2 class="lesson-header">
-                Editing:
                 {% if is_instance %}
                     {{form.instance.name}}
                 {% else %}
@@ -47,34 +58,10 @@
                     {{ form.as_table }}
                 </table>
 
-
-
                 <div id="add-objective-btn" style="float:right;" class="Submit_button btn btn-default"><i class="fas fa-plus-circle"></i> Add Objective</div>
 
 
                 {% show_learningObj_formset learning_objective_formset %}
-
-
-                {% comment %}
-                <div id="learning_objectives_formset">
-                    {% for lo_form in  learning_objective_formset.forms %}
-                        <div id="{{ lo_form.prefix }}" class="LO_form">
-                            {% if lo_form.condition.value %}
-                            <div class="LO_representation">{{ lo_form.condition.value }} {{ lo_form.verb.value }} {{ lo_form.task.value }} {{ lo_form.degree.value }}</div>
-                            {% else %}
-                            <div class="LO_representation"></div>
-                            {% endif %}
-                            {{ lo_form }}
-                        </div>
-                    {% endfor %}
-                </div>
-                <div>
-                    {{ learning_objective_formset.management_form }}
-                </div>
-                {% endcomment %}
-
-
-
 
                 <div id="content_form_controls">
                     <button class="Submit_button btn btn-default" type="submit">Submit Lesson</button>
@@ -96,7 +83,23 @@
         <script src="{% static 'editor/js/Learning_obj_functionality.js' %}"></script>
 
         <script type='text/javascript'>
+            EDITOR_MGR = new EDITOR_MANAGER('{{ csrf_token }}', '{% url 'uploads:img_upload' %}')
+
             $('#manage_form').load('{{ content_view }}')
+
+
+            $('.lesson .Submit_button').click(function(evt){
+                evt.preventDefault();
+
+                var form = $('.lesson #content_form')
+
+                // update the lesson form's summary to contain the CKEditor output
+                if(!!EDITOR_MGR.editors){
+                    $('.lesson #content_form').find('input[name="summary"]').val(EDITOR_MGR.getData('summary'))
+                }
+
+                form.submit()
+            });
 
             $("#add-objective-btn").click(function(event ) {
                 event.preventDefault()
