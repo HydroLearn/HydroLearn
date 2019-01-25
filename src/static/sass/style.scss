@@ -105,16 +105,6 @@ body{
     }
 }
 
-.logo-large{
-    background: url($logo_1280x720) no-repeat center center;
-    background-size: 80%;
-    //width: 1025px;
-    height: 200px;
-
-
-
-}
-
 h1,h2,h3,h4,h5 {
     font-family: $header_font;
     color: $dark_gray;
@@ -288,15 +278,13 @@ div[class^='multicolumn'] {
     top: 0;
     right: 0;
 
-    &:not(.always_full) > *:not(#menu):not(#footer):not(.always_full) {
-
-        @media (min-width: 1000px){
-            padding-left: 5%;
-            padding-right: 5%;
-
-        }
-
-    }
+    //&:not(.always_full) > *:not(#menu):not(#footer):not(.always_full) {
+//        @media (min-width: 1000px){
+//            padding-left: 5%;
+//            padding-right: 5%;
+//
+//        }
+//    }
 
     a:not(.cms-btn) {
         color: $HL_blue;

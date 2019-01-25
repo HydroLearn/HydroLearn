@@ -54,19 +54,14 @@ body {
   max-width: 100%; }
 
 .logo {
-  background: url("../img/logo_215x40.png") no-repeat left center;
+  background: url("/static/img/logo_215x40.png") no-repeat left center;
   width: 215px;
   height: 40px; }
   @media (max-width: 400px) {
     .logo {
-      background: url("../img/logo_150x28.png") no-repeat left center;
+      background: url("/static/img/logo_150x28.png") no-repeat left center;
       width: 150px;
       height: 28px; } }
-
-.logo-large {
-  background: url("../img/logo_1280x720.png") no-repeat center center;
-  background-size: 80%;
-  height: 200px; }
 
 h1, h2, h3, h4, h5 {
   font-family: "Lato", sans-serif;
@@ -189,10 +184,6 @@ div[class^='multicolumn'] {
   transition: all 0.3s;
   top: 0;
   right: 0; }
-  @media (min-width: 1000px) {
-    #content:not(.always_full) > *:not(#menu):not(#footer):not(.always_full) {
-      padding-left: 5%;
-      padding-right: 5%; } }
   #content a:not(.cms-btn) {
     color: #45a4f3; }
     #content a:not(.cms-btn):hover {
