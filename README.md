@@ -1,8 +1,7 @@
 # HydroLearn
-Repository for the HydroLearn Project
-
 HydroLearn is a platform for instructors to find learning modules and collaborate on developing resources for teaching hydrology and water resources
 
+Repository for the HydroLearn Project
 
 HydroLearn has been developed utilizing:  
 - Python 3.5.4
