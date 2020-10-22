@@ -1,5 +1,5 @@
 # HydroLearn
-HydroLearn is a platform for instructors to find learning modules and collaborate on developing resources for teaching hydrology and water resources
+HydroLearn (https://www.hydrolearn.org/) is a platform for instructors to find learning modules and collaborate on developing resources for teaching hydrology and water resources
 
 Repository for the HydroLearn Project
 
