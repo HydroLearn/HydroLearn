@@ -1,3 +1,7 @@
+# NOTICE
+
+This version of the project has been depreciated, and no longer being developed.
+
 # HydroLearn
 HydroLearn (https://www.hydrolearn.org/) is a platform for instructors to find learning modules and collaborate on developing resources for teaching hydrology and water resources
 
